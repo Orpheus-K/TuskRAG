@@ -54,7 +54,11 @@ func TestNativeTextSandboxMatchesBaseline(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			defer file.Close()
+			defer func() {
+				if err := file.Close(); err != nil {
+					t.Error(err)
+				}
+			}()
 			input := parser.ParseInput{File: file, MIME: item.mime, Limits: json.RawMessage(`{}`)}
 			baseline, err := parser.ParseNativeText(context.Background(), input, validator)
 			if err != nil {
@@ -83,7 +87,11 @@ func TestNativeTextSandboxMatchesBaseline(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			defer file.Close()
+			defer func() {
+				if err := file.Close(); err != nil {
+					t.Error(err)
+				}
+			}()
 			input := parser.ParseInput{File: file, MIME: "text/markdown", Limits: json.RawMessage(item.limits)}
 			_, baselineErr := parser.ParseNativeText(context.Background(), input, validator)
 			_, gotErr := isolated.Parse(context.Background(), input)

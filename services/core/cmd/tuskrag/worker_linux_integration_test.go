@@ -70,7 +70,11 @@ func TestWorkerProcess(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer admin.Close(context.Background())
+	defer func() {
+		if err := admin.Close(context.Background()); err != nil {
+			t.Error(err)
+		}
+	}()
 	pool, err := db.OpenWithLimit(ctx, appURL, 4)
 	if err != nil {
 		t.Fatal(err)
@@ -192,7 +196,11 @@ func TestWorkerProcess(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer files.Close()
+	defer func() {
+		if err := files.Close(); err != nil {
+			t.Error(err)
+		}
+	}()
 	queue, err := jobs.NewStore(pool, jobs.RetryPolicy{Initial: time.Second, Maximum: time.Minute})
 	if err != nil {
 		t.Fatal(err)
@@ -276,7 +284,9 @@ func TestWorkerProcess(t *testing.T) {
 	defer func() {
 		if !stopped {
 			_ = cmd.Process.Kill()
-			<-done
+			if err := <-done; err == nil {
+				t.Error("killed worker exited without an error")
+			}
 		}
 	}()
 	select {
@@ -290,7 +300,9 @@ func TestWorkerProcess(t *testing.T) {
 	if err := cmd.Process.Kill(); err != nil {
 		t.Fatal(err)
 	}
-	<-done
+	if err := <-done; err == nil {
+		t.Error("killed worker exited without an error")
+	}
 	stopped = true
 	// Advance only this test job's lease after the worker has actually died.
 	tag, err := admin.Exec(ctx, `UPDATE job SET lease_until=clock_timestamp()-interval '1 second'
@@ -443,7 +455,9 @@ func testAllProcess(t *testing.T, ctx context.Context, admin *pgx.Conn, environm
 	defer func() {
 		if !stopped {
 			_ = cmd.Process.Kill()
-			<-done
+			if err := <-done; err == nil {
+				t.Error("killed worker exited without an error")
+			}
 		}
 	}()
 	client := &http.Client{Timeout: 20 * time.Second}
