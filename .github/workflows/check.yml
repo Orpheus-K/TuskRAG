@@ -27,6 +27,8 @@ jobs:
         with:
           python-version: "3.13"
       - run: pnpm install --frozen-lockfile
+      - name: Check tracked files for credentials
+        run: node scripts/check-secrets.mjs
       - run: uv sync --locked --group dev
         working-directory: services/parser
       - name: Test parser without network
@@ -93,9 +95,15 @@ jobs:
         env:
           TUSKRAG_TEST_ADMIN_URL: postgres://postgres:${{ env.POSTGRES_PASSWORD }}@127.0.0.1:5432/tuskrag_test_ci?sslmode=disable
           TUSKRAG_TEST_APP_URL: postgres://tuskrag_app:${{ env.TUSKRAG_APP_PASSWORD }}@127.0.0.1:5432/tuskrag_test_ci?sslmode=disable
+          TUSKRAG_TEST_MIGRATOR_URL: postgres://tuskrag_migrator:${{ env.TUSKRAG_MIGRATOR_PASSWORD }}@127.0.0.1:5432/tuskrag_test_ci?sslmode=disable
         run: |
           sudo apt-get update
           sudo apt-get install -y bubblewrap
+          # Diagnose namespace support before testing parsers, without document data.
+          /usr/bin/bwrap --unshare-user --unshare-pid --unshare-net --unshare-uts --unshare-ipc --disable-userns \
+            --die-with-parent --new-session --cap-drop ALL --clearenv \
+            --ro-bind /usr /usr --ro-bind /bin /bin --ro-bind /lib /lib --ro-bind-try /lib64 /lib64 \
+            --proc /proc --dev /dev -- /usr/bin/true
           runtime="$RUNNER_TEMP/tuskrag-parser-runtime"
           production_env="$RUNNER_TEMP/tuskrag-parser-production"
           mkdir -p "$runtime/src/tuskrag_parser"
@@ -130,7 +138,7 @@ jobs:
           trap cleanup_cgroup EXIT
           sudo sh -c 'printf "%s" "$1" > "$2/manager/cgroup.procs"' sh "$$" "$TUSKRAG_TEST_CGROUP"
           cd services/core
-          go test -race -p 1 -count=1 ./internal/parser ./internal/ingest
+          go test -race -p 1 -count=1 ./internal/parser ./internal/ingest ./cmd/tuskrag
       - name: Synthetic Chinese retrieval baseline
         working-directory: services/core
         env:

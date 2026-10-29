@@ -1,11 +1,13 @@
 # 许可证盘点（未完成）
 
-2026-10-29 增量盘点：刷新 [Go 运行依赖](go-runtime.csv)，补充 [前端生产及开发依赖](frontend-all.json) 与 [锁文件、Python 安装元数据、许可原文 SHA-256 清单](inventory.json)。复现元数据清单：`node scripts/license-inventory.mjs <parser-site-packages>`；前端使用 `pnpm licenses list --json`。元数据来自已安装包，不等于已审核的交付 SBOM；项目自身许可保持 Unknown，pg_search 法务结论保持待取得。
+2026-10-29 增量盘点：刷新 [Go 运行依赖](go-runtime.csv)，补充 [前端生产及开发依赖](frontend-all.json) 与 [锁文件、Python 安装元数据、许可原文 SHA-256 清单](inventory.json)。复现元数据清单：`node scripts/license-inventory.mjs <parser-site-packages>`；前端使用 `pnpm licenses list --json`。元数据来自已安装包，不等于已审核的交付 SBOM；项目自有代码已根据所有者授权采用 MIT（根目录 LICENSE）；pg_search 仍保留 AGPL-3.0，法务结论待取得。
 
 | 组件 | 版本 | 许可证 | 原文 |
 |---|---|---|---|
 | pg_search | 0.22.6 | AGPL-3.0 | [原文](../postgres/licenses/pg_search-0.22.6.txt)；[上游](https://github.com/paradedb/paradedb/blob/v0.22.6/LICENSE) |
 | pgvector | 0.8.1 | PostgreSQL | [原文](../postgres/licenses/pgvector-0.8.1.txt)；[上游](https://github.com/pgvector/pgvector/blob/v0.8.1/LICENSE) |
+| gse（E4 分词） | 0.80.3 | Apache-2.0 | [原文](lexical/gse-0.80.3.txt) |
+| cedar（gse 依赖） | 0.20.2 | BSD-2-Clause | [原文](lexical/cedar-0.20.2.txt) |
 | River（仅 S3 实验） | 0.49.0 | MPL-2.0 | [上游](https://github.com/riverqueue/river/blob/v0.49.0/LICENSE) |
 | golang.org/x/crypto（身份组件） | 0.58.0 | BSD-3-Clause | [上游](https://cs.opensource.google/go/x/crypto/+/v0.58.0:LICENSE) |
 | golang.org/x/sys（crypto 依赖） | 0.49.0 | BSD-3-Clause | [上游](https://cs.opensource.google/go/x/sys/+/v0.49.0:LICENSE) |
@@ -38,7 +40,7 @@
 
 原文 SHA-256：`pg_search` 为 `8486a10c4393cee1c25392769ddd3b2d6c242d6ec7928e1414efff7dfb2f07ef`；`pgvector` 为 `3959f8e3ea8b08e35d1c26fc25bc7b6dcf7c2d80f372e4fbff6f6b0412758456`。
 
-- [Go 运行依赖报告](go-runtime.csv)：由 Windows amd64 环境的 `go-licenses` 2.0.1 对 `./cmd/tuskrag` 生成。项目自身尚无许可证声明，因此报告中的 `tuskrag.local/core` 为 `Unknown`；不得为消除告警自行指定许可。
+- [Go 运行依赖报告](go-runtime.csv)：由 Windows amd64 环境的 `go-licenses` 2.0.1 对 `./cmd/tuskrag` 生成。项目自有代码采用 MIT。工具对私有模块的源码 URL 显示 Unknown，不表示许可证未知；扫描时将根 LICENSE 复制到镜像工作目录的 Go 模块根，许可证真源仍是根 LICENSE。
 - [Go 解析包依赖报告](go-parser.csv)：由同一工具对尚未接入 worker 的 `./internal/parser` 生成；项目自身同样为 `Unknown`。
 - [Go tokenizer 包依赖报告](go-tokenizer.csv)：由同一工具对尚未接入 worker 的 `./internal/tokenizer` 生成；项目自身为 `Unknown`，内置字素切分代码的许可证原文已随包保存。
 - [前端生产依赖元数据](frontend-runtime.json)：由 `pnpm licenses list --prod --json` 提取包名、版本、许可与主页，不等同于最终构建产物的完整许可证核验。

@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "lockfiles": {
-    "services/core/go.mod": "c3d6415ecfaf50b884419340cee9af4886c3f202d89f7d5ebe82179f3fa4ad01",
-    "services/core/go.sum": "3da2b7ecfe218bda8b6d386d5e166823f3d976eed70f9db552eb6d338684afb6",
+    "services/core/go.mod": "38bc19c51bbc088ea620f2c5b926310066ad843f82aafe06d516ceabdded289b",
+    "services/core/go.sum": "3e79b195b0c7881641dff7e6b761bbf552c58cead0ac9502b2f37bee4203a750",
     "services/parser/uv.lock": "3feb31fac6481a200a2e316ae16a0a451be9574d591622ba869648cfb0d9fab4",
     "pnpm-lock.yaml": "60c5794f4fe0e991b2f28078e86fb30213f9c42b627b10fd1b089e9e8a49e5b6"
   },
@@ -342,6 +342,14 @@
       "sha256": "dd1081884a92952802f4803110a6bb543acea9a814c786d58605b4c1219b5ebb"
     },
     {
+      "path": "deploy/licenses/lexical/cedar-0.20.2.txt",
+      "sha256": "074d719e459af6c67b68ae8746a48c824798733a127301d156ce3401e3d399ad"
+    },
+    {
+      "path": "deploy/licenses/lexical/gse-0.80.3.txt",
+      "sha256": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1"
+    },
+    {
       "path": "deploy/licenses/parser/cffi-2.1.1/LICENSE",
       "sha256": "5ba24ddc57067f9249add644c3afc41a5d6dc37e23433ef759d95df370b0af63"
     },
@@ -594,7 +602,7 @@
       "sha256": "3959f8e3ea8b08e35d1c26fc25bc7b6dcf7c2d80f372e4fbff6f6b0412758456"
     }
   ],
-  "projectLicense": "UNRESOLVED",
+  "projectLicense": "MIT",
   "pgSearchLegalReview": "PENDING",
   "limitations": [
     "Installed Python distributions include development tools; bundled native libraries need separate review.",
