@@ -13,10 +13,6 @@ jobs:
         with:
           go-version-file: services/core/go.mod
           cache-dependency-path: services/core/go.sum
-      - uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
-        with:
-          version: v2.15.0
-          working-directory: services/core
       - uses: sqlc-dev/setup-sqlc@v5
         with:
           sqlc-version: '1.31.1'
@@ -37,6 +33,10 @@ jobs:
         working-directory: services/parser
         run: unshare --user --map-root-user --net -- env UV_OFFLINE=1 uv run --locked pytest -p no:cacheprovider -q
       - run: pnpm build
+      - uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
+        with:
+          version: v2.15.0
+          working-directory: services/core
       - name: Generate credentials for this test run
         run: |
           for name in POSTGRES_PASSWORD TUSKRAG_APP_PASSWORD TUSKRAG_MIGRATOR_PASSWORD TUSKRAG_E2E_PASSWORD; do
