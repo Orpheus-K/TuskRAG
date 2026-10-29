@@ -220,6 +220,7 @@ type ParseArtifact struct {
 	ContentSha256  []byte
 	ParsedDocument []byte
 	CreatedAt      pgtype.Timestamptz
+	ParseReport    []byte
 }
 
 type Section struct {

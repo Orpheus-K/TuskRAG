@@ -35,6 +35,10 @@ func TestRealModelEvaluation(t *testing.T) {
 		t.Fatal("empty real evaluation credential")
 	}
 	directory := os.Getenv("TUSKRAG_EVAL_REPORT_DIR")
+	scenario := os.Getenv("TUSKRAG_REAL_EVAL_CHUNKS")
+	if scenario != "" && scenario != "fixed" && scenario != "fixed-heading" && scenario != "structured" && scenario != "structured-no-heading" {
+		t.Fatal("invalid chunking scenario")
+	}
 	if directory == "" {
 		t.Fatal("report directory is required")
 	}
@@ -125,18 +129,69 @@ func TestRealModelEvaluation(t *testing.T) {
 			t.Fatalf("document %s token usage mismatch", doc.Key)
 		}
 		id := insertEvaluationDocument(t, f, space, doc, doc.Key == "restricted", result.Vectors[0])
+		if scenario != "" {
+			replaceEvaluationChunks(t, f, space, provider, id, doc, scenario, client, scope, counter.Count)
+		}
 		if doc.Key != "restricted" {
 			config.Documents[doc.Key] = id
 			config.AllowedDocumentIDs = append(config.AllowedDocumentIDs, id)
 		}
 	}
 	setupForeignSearchFixture(t, f)
+	var chunks int
+	if err := f.admin.QueryRow(ctx, `SELECT count(*) FROM chunk WHERE tenant_id=$1 AND kb_id=$2`, f.tenant, f.kbID).Scan(&chunks); err != nil {
+		t.Fatal(err)
+	}
+	writeRealReport(t, directory, "corpus", struct {
+		Scenario  string
+		Chunks    int
+		Documents int
+	}{scenario, chunks, len(dataset.Documents)})
 	if err := indexing.Provision(ctx, os.Getenv("TUSKRAG_TEST_MIGRATOR_URL"), f.tenant, space); err != nil {
 		t.Fatal(err)
 	}
 	service, err := retrieval.NewService(f.pool, vault, counter.Count)
 	if err != nil {
 		t.Fatal(err)
+	}
+	if os.Getenv("TUSKRAG_REAL_EVAL_LEXICAL") == "tsvector" {
+		lexical, err := retrieval.NewCompatibilityTokenizer()
+		if err != nil {
+			t.Fatal(err)
+		}
+		rows, err := f.admin.Query(ctx, `SELECT id,search_text FROM chunk WHERE tenant_id=$1`, f.tenant)
+		if err != nil {
+			t.Fatal(err)
+		}
+		type entry struct {
+			id   int64
+			text string
+		}
+		var entries []entry
+		for rows.Next() {
+			var e entry
+			if err := rows.Scan(&e.id, &e.text); err != nil {
+				rows.Close()
+				t.Fatal(err)
+			}
+			entries = append(entries, e)
+		}
+		rows.Close()
+		if err := rows.Err(); err != nil {
+			t.Fatal(err)
+		}
+		for _, e := range entries {
+			if _, err := f.admin.Exec(ctx, `UPDATE chunk SET lexical_tokens=to_tsvector('simple',$1) WHERE tenant_id=$2 AND id=$3`, strings.Join(lexical.Tokens(e.text), " "), f.tenant, e.id); err != nil {
+				t.Fatal(err)
+			}
+		}
+		if _, err := f.admin.Exec(ctx, `CREATE INDEX evaluation_lexical_gin ON chunk USING gin(lexical_tokens)`); err != nil {
+			t.Fatal(err)
+		}
+		service, err = retrieval.NewCompatibilityEvaluationService(f.pool, vault, counter.Count, lexical)
+		if err != nil {
+			t.Fatal(err)
+		}
 	}
 	for _, run := range []struct {
 		mode string

@@ -66,7 +66,10 @@ type Candidate struct {
 	SemanticDistance float64
 }
 
-type Driver struct{ pool *pgxpool.Pool }
+type Driver struct {
+	pool          *pgxpool.Pool
+	compatibility *CompatibilityTokenizer
+}
 
 func NewDriver(pool *pgxpool.Pool) (*Driver, error) {
 	if pool == nil {
@@ -142,9 +145,18 @@ func (d *Driver) Recall(ctx context.Context, actor Actor, kbID int64, binding Bi
 			return nil, fmt.Errorf("configure retrieval transaction: %w", err)
 		}
 	}
-	ranked, err := queries.RecallHybrid(ctx, dbquery.RecallHybridParams{TenantID: actor.TenantID, KbID: kbID, UserID: actor.UserID,
-		SpaceID: binding.SpaceID, PrincipalTags: principal, Query: query, DocTags: tags, Mimes: mimes,
-		UpdatedAfter: updatedAfter, Dimensions: binding.Dimensions, Vector: encoded})
+	var ranked []dbquery.RecallHybridRow
+	if d.compatibility != nil {
+		rows, recallErr := queries.RecallCompatibility(ctx, dbquery.RecallCompatibilityParams{TenantID: actor.TenantID, KbID: kbID, UserID: actor.UserID, SpaceID: binding.SpaceID, PrincipalTags: principal, QueryTokens: d.compatibility.Query(query), DocTags: tags, Mimes: mimes, UpdatedAfter: updatedAfter, Dimensions: binding.Dimensions, Vector: encoded})
+		err = recallErr
+		for _, r := range rows {
+			ranked = append(ranked, dbquery.RecallHybridRow(r))
+		}
+	} else {
+		ranked, err = queries.RecallHybrid(ctx, dbquery.RecallHybridParams{TenantID: actor.TenantID, KbID: kbID, UserID: actor.UserID,
+			SpaceID: binding.SpaceID, PrincipalTags: principal, Query: query, DocTags: tags, Mimes: mimes,
+			UpdatedAfter: updatedAfter, Dimensions: binding.Dimensions, Vector: encoded})
+	}
 	if err != nil {
 		return nil, fmt.Errorf("recall hybrid candidates: %w", err)
 	}

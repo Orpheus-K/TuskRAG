@@ -5,6 +5,7 @@ go 1.27.2
 require (
 	github.com/clipperhouse/stringish v0.1.1
 	github.com/danielgtaylor/huma/v2 v2.40.0
+	github.com/go-ego/gse v0.80.3
 	github.com/jackc/pgx/v5 v5.11.0
 	github.com/pressly/goose/v3 v3.29.0
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.3
@@ -20,6 +21,7 @@ require (
 	github.com/jackc/puddle/v2 v2.2.3 // indirect
 	github.com/mfridman/interpolate v0.0.2 // indirect
 	github.com/sethvargo/go-retry v0.5.0 // indirect
+	github.com/vcaesar/cedar v0.20.2 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/sync v0.24.0 // indirect
 	golang.org/x/text v0.43.0 // indirect

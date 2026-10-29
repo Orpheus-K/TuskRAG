@@ -87,5 +87,5 @@ await walk(path.join(root, "deploy/postgres/licenses"));
 texts.sort((a, b) => a.path.localeCompare(b.path));
 await writeFile(
   path.join(root, "deploy/licenses/inventory.json"),
-  `${JSON.stringify({ schemaVersion: 1, lockfiles, parserDistributions: distributions, licenseTexts: texts, projectLicense: "UNRESOLVED", pgSearchLegalReview: "PENDING", limitations: ["Installed Python distributions include development tools; bundled native libraries need separate review.", "Metadata declarations and stored license texts do not constitute legal clearance.", "Go and frontend dependency reports are separate files in this directory."] }, null, 2)}\n`,
+  `${JSON.stringify({ schemaVersion: 1, lockfiles, parserDistributions: distributions, licenseTexts: texts, projectLicense: "MIT", pgSearchLegalReview: "PENDING", limitations: ["Installed Python distributions include development tools; bundled native libraries need separate review.", "Metadata declarations and stored license texts do not constitute legal clearance.", "Go and frontend dependency reports are separate files in this directory."] }, null, 2)}\n`,
 );

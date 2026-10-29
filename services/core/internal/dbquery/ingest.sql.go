@@ -229,3 +229,34 @@ func (q *Queries) MarkVersionParsing(ctx context.Context, arg MarkVersionParsing
 	}
 	return result.RowsAffected(), nil
 }
+
+const saveParseReport = `-- name: SaveParseReport :execrows
+UPDATE parse_artifact SET parse_report=$1::jsonb
+WHERE tenant_id=$2 AND kb_id=$3
+  AND document_id=$4 AND version_id=$5
+  AND content_sha256=$6
+`
+
+type SaveParseReportParams struct {
+	ParseReport   []byte
+	TenantID      int64
+	KbID          int64
+	DocumentID    int64
+	VersionID     int64
+	ContentSha256 []byte
+}
+
+func (q *Queries) SaveParseReport(ctx context.Context, arg SaveParseReportParams) (int64, error) {
+	result, err := q.db.Exec(ctx, saveParseReport,
+		arg.ParseReport,
+		arg.TenantID,
+		arg.KbID,
+		arg.DocumentID,
+		arg.VersionID,
+		arg.ContentSha256,
+	)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
