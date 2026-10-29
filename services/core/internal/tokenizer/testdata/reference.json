@@ -1,0 +1,2512 @@
+[
+  {
+    "id": "zh_policy",
+    "text": "差旅住宿标准第三条：北京每晚不超过六百元。",
+    "reference_ids": [
+      0,
+      6,
+      9470,
+      27783,
+      28749,
+      14140,
+      20424,
+      7781,
+      12,
+      8732,
+      6824,
+      13936,
+      172930,
+      8375,
+      7242,
+      2954,
+      30,
+      2
+    ]
+  },
+  {
+    "id": "zh_table",
+    "text": "城市 | 住宿上限 | 货币\n北京 | 600 | 人民币",
+    "reference_ids": [
+      0,
+      6,
+      7048,
+      6,
+      58745,
+      6,
+      28749,
+      168889,
+      6,
+      58745,
+      6,
+      72652,
+      6,
+      8732,
+      6,
+      58745,
+      6331,
+      6,
+      58745,
+      6,
+      50257,
+      2
+    ]
+  },
+  {
+    "id": "zh_semantic",
+    "text": "员工出差可以报销多少酒店费用？",
+    "reference_ids": [
+      0,
+      6,
+      22416,
+      197226,
+      1441,
+      9001,
+      29906,
+      22517,
+      6989,
+      37428,
+      32,
+      2
+    ]
+  },
+  {
+    "id": "ascii",
+    "text": "A quick brown fox jumps over the lazy dog.",
+    "reference_ids": [
+      0,
+      62,
+      63773,
+      119455,
+      6,
+      147797,
+      88203,
+      7,
+      645,
+      70,
+      21,
+      3285,
+      10269,
+      5,
+      2
+    ]
+  },
+  {
+    "id": "mixed",
+    "text": "TuskRAG 支持 PostgreSQL 17 与 BM25 检索。",
+    "reference_ids": [
+      0,
+      1371,
+      1042,
+      12280,
+      724,
+      6,
+      7499,
+      2795,
+      7134,
+      158897,
+      729,
+      6,
+      1189,
+      90017,
+      2588,
+      6,
+      61026,
+      20615,
+      30,
+      2
+    ]
+  },
+  {
+    "id": "fullwidth",
+    "text": "ＡＢＣ１２３　差旅制度",
+    "reference_ids": [
+      0,
+      47457,
+      48636,
+      6,
+      9470,
+      27783,
+      10487,
+      2
+    ]
+  },
+  {
+    "id": "composed",
+    "text": "café résumé naïve",
+    "reference_ids": [
+      0,
+      26216,
+      233482,
+      24,
+      9392,
+      272,
+      2
+    ]
+  },
+  {
+    "id": "decomposed",
+    "text": "café résumé",
+    "reference_ids": [
+      0,
+      26216,
+      233482,
+      2
+    ]
+  },
+  {
+    "id": "repeated_spaces",
+    "text": "alpha    beta  gamma",
+    "reference_ids": [
+      0,
+      144,
+      14612,
+      51703,
+      87506,
+      2
+    ]
+  },
+  {
+    "id": "whitespace",
+    "text": "\t第一行\n\n第二行\r\n",
+    "reference_ids": [
+      0,
+      6,
+      5998,
+      2003,
+      85255,
+      2003,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "nbsp",
+    "text": "金额  人民币　元",
+    "reference_ids": [
+      0,
+      6,
+      102584,
+      6,
+      50257,
+      6,
+      2954,
+      2
+    ]
+  },
+  {
+    "id": "digits",
+    "text": "2026-10-28  ¥1,234.56  第十二条",
+    "reference_ids": [
+      0,
+      387,
+      4046,
+      52486,
+      3882,
+      6,
+      32389,
+      133063,
+      10289,
+      5,
+      13683,
+      23830,
+      37583,
+      7781,
+      2
+    ]
+  },
+  {
+    "id": "punctuation",
+    "text": "（一）权限：仅限“管理员”；禁止越权！",
+    "reference_ids": [
+      0,
+      15,
+      684,
+      16,
+      11608,
+      12040,
+      12,
+      31723,
+      12040,
+      155,
+      2438,
+      13052,
+      53956,
+      52325,
+      8119,
+      11608,
+      38,
+      2
+    ]
+  },
+  {
+    "id": "emoji",
+    "text": "文档 ✅ 🔐 🚀 👩‍💻",
+    "reference_ids": [
+      0,
+      6,
+      2564,
+      59529,
+      6,
+      142325,
+      6,
+      3,
+      6,
+      247206,
+      6,
+      244785,
+      6,
+      246382,
+      2
+    ]
+  },
+  {
+    "id": "rare_han",
+    "text": "𠀀𠮷𡃁，繁體字與简体字。",
+    "reference_ids": [
+      0,
+      6,
+      3,
+      4,
+      34941,
+      7820,
+      7234,
+      1109,
+      45088,
+      4742,
+      7234,
+      30,
+      2
+    ]
+  },
+  {
+    "id": "japanese",
+    "text": "出張の宿泊費は上限以内で精算する。",
+    "reference_ids": [
+      0,
+      6,
+      189212,
+      154,
+      157430,
+      13090,
+      342,
+      168889,
+      120186,
+      507,
+      8539,
+      10043,
+      1786,
+      30,
+      2
+    ]
+  },
+  {
+    "id": "korean",
+    "text": "출장 숙박비를 정해진 한도 내에서 처리합니다.",
+    "reference_ids": [
+      0,
+      6,
+      76301,
+      126023,
+      131496,
+      7063,
+      1963,
+      4033,
+      3103,
+      1048,
+      5920,
+      1180,
+      63176,
+      8642,
+      5,
+      2
+    ]
+  },
+  {
+    "id": "arabic",
+    "text": "مصاريف السفر والفندق وفق السياسة.",
+    "reference_ids": [
+      0,
+      665,
+      20573,
+      13620,
+      145429,
+      192148,
+      46324,
+      77285,
+      159514,
+      5,
+      2
+    ]
+  },
+  {
+    "id": "symbols",
+    "text": "① Ⅳ ½ ℃ Å ㎏ ﬃ",
+    "reference_ids": [
+      0,
+      106,
+      7610,
+      78660,
+      16207,
+      441,
+      8839,
+      5279,
+      6,
+      24500,
+      2
+    ]
+  },
+  {
+    "id": "zero_width",
+    "text": "A​B‍C﻿D",
+    "reference_ids": [
+      0,
+      62,
+      335,
+      313,
+      391,
+      2
+    ]
+  },
+  {
+    "id": "empty",
+    "text": "",
+    "reference_ids": [
+      0,
+      2
+    ]
+  },
+  {
+    "id": "spaces",
+    "text": "     ",
+    "reference_ids": [
+      0,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "special_literal",
+    "text": "文本 <s> 中的 <mask> 与 </s>",
+    "reference_ids": [
+      0,
+      6,
+      189061,
+      6,
+      0,
+      6,
+      8173,
+      250001,
+      6,
+      1189,
+      6,
+      2,
+      2
+    ]
+  },
+  {
+    "id": "formula",
+    "text": "f(x)=α²+β₂; x∈[0,1]",
+    "reference_ids": [
+      0,
+      1238,
+      132,
+      425,
+      16,
+      1369,
+      1445,
+      304,
+      1328,
+      5079,
+      304,
+      74,
+      1022,
+      245918,
+      1065,
+      2389,
+      4,
+      76172,
+      2
+    ]
+  },
+  {
+    "id": "special-0",
+    "text": "<s>",
+    "reference_ids": [
+      0,
+      0,
+      2
+    ]
+  },
+  {
+    "id": "special-1",
+    "text": "</s>",
+    "reference_ids": [
+      0,
+      2,
+      2
+    ]
+  },
+  {
+    "id": "special-2",
+    "text": "<pad>",
+    "reference_ids": [
+      0,
+      1,
+      2
+    ]
+  },
+  {
+    "id": "special-3",
+    "text": "<unk>",
+    "reference_ids": [
+      0,
+      3,
+      2
+    ]
+  },
+  {
+    "id": "special-4",
+    "text": "<mask>",
+    "reference_ids": [
+      0,
+      250001,
+      2
+    ]
+  },
+  {
+    "id": "special-5",
+    "text": "<ｓ>",
+    "reference_ids": [
+      0,
+      6,
+      0,
+      2
+    ]
+  },
+  {
+    "id": "special-6",
+    "text": "<ｐａｄ>",
+    "reference_ids": [
+      0,
+      6,
+      1,
+      2
+    ]
+  },
+  {
+    "id": "special-7",
+    "text": "<ｕｎｋ>",
+    "reference_ids": [
+      0,
+      6,
+      3,
+      2
+    ]
+  },
+  {
+    "id": "special-8",
+    "text": "<ｍａｓｋ>",
+    "reference_ids": [
+      0,
+      6,
+      250001,
+      2
+    ]
+  },
+  {
+    "id": "special-9",
+    "text": "＜s＞",
+    "reference_ids": [
+      0,
+      6,
+      0,
+      2
+    ]
+  },
+  {
+    "id": "special-10",
+    "text": "＜/s＞",
+    "reference_ids": [
+      0,
+      6,
+      2,
+      2
+    ]
+  },
+  {
+    "id": "special-11",
+    "text": "＜pad＞",
+    "reference_ids": [
+      0,
+      6,
+      1,
+      2
+    ]
+  },
+  {
+    "id": "special-12",
+    "text": "＜unk＞",
+    "reference_ids": [
+      0,
+      6,
+      3,
+      2
+    ]
+  },
+  {
+    "id": "special-13",
+    "text": "＜mask＞",
+    "reference_ids": [
+      0,
+      6,
+      250001,
+      2
+    ]
+  },
+  {
+    "id": "special-14",
+    "text": "＜ｓ＞",
+    "reference_ids": [
+      0,
+      6,
+      0,
+      2
+    ]
+  },
+  {
+    "id": "special-15",
+    "text": "＜ｐａｄ＞",
+    "reference_ids": [
+      0,
+      6,
+      1,
+      2
+    ]
+  },
+  {
+    "id": "special-16",
+    "text": "＜ｕｎｋ＞",
+    "reference_ids": [
+      0,
+      6,
+      3,
+      2
+    ]
+  },
+  {
+    "id": "special-17",
+    "text": "＜ｍａｓｋ＞",
+    "reference_ids": [
+      0,
+      6,
+      250001,
+      2
+    ]
+  },
+  {
+    "id": "special-18",
+    "text": "﹤s﹥",
+    "reference_ids": [
+      0,
+      6,
+      0,
+      2
+    ]
+  },
+  {
+    "id": "special-19",
+    "text": "﹤/s﹥",
+    "reference_ids": [
+      0,
+      6,
+      2,
+      2
+    ]
+  },
+  {
+    "id": "special-20",
+    "text": "﹤pad﹥",
+    "reference_ids": [
+      0,
+      6,
+      1,
+      2
+    ]
+  },
+  {
+    "id": "special-21",
+    "text": "﹤unk﹥",
+    "reference_ids": [
+      0,
+      6,
+      3,
+      2
+    ]
+  },
+  {
+    "id": "special-22",
+    "text": "﹤mask﹥",
+    "reference_ids": [
+      0,
+      6,
+      250001,
+      2
+    ]
+  },
+  {
+    "id": "special-23",
+    "text": "﹤ｓ﹥",
+    "reference_ids": [
+      0,
+      6,
+      0,
+      2
+    ]
+  },
+  {
+    "id": "special-24",
+    "text": "﹤ｐａｄ﹥",
+    "reference_ids": [
+      0,
+      6,
+      1,
+      2
+    ]
+  },
+  {
+    "id": "special-25",
+    "text": "﹤ｕｎｋ﹥",
+    "reference_ids": [
+      0,
+      6,
+      3,
+      2
+    ]
+  },
+  {
+    "id": "special-26",
+    "text": "﹤ｍａｓｋ﹥",
+    "reference_ids": [
+      0,
+      6,
+      250001,
+      2
+    ]
+  },
+  {
+    "id": "special-27",
+    "text": "<s＞",
+    "reference_ids": [
+      0,
+      6,
+      0,
+      2
+    ]
+  },
+  {
+    "id": "special-28",
+    "text": "</s＞",
+    "reference_ids": [
+      0,
+      6,
+      2,
+      2
+    ]
+  },
+  {
+    "id": "special-29",
+    "text": "<pad＞",
+    "reference_ids": [
+      0,
+      6,
+      1,
+      2
+    ]
+  },
+  {
+    "id": "special-30",
+    "text": "<unk＞",
+    "reference_ids": [
+      0,
+      6,
+      3,
+      2
+    ]
+  },
+  {
+    "id": "special-31",
+    "text": "<mask＞",
+    "reference_ids": [
+      0,
+      6,
+      250001,
+      2
+    ]
+  },
+  {
+    "id": "special-32",
+    "text": "<ｓ＞",
+    "reference_ids": [
+      0,
+      6,
+      0,
+      2
+    ]
+  },
+  {
+    "id": "special-33",
+    "text": "<ｐａｄ＞",
+    "reference_ids": [
+      0,
+      6,
+      1,
+      2
+    ]
+  },
+  {
+    "id": "special-34",
+    "text": "<ｕｎｋ＞",
+    "reference_ids": [
+      0,
+      6,
+      3,
+      2
+    ]
+  },
+  {
+    "id": "special-35",
+    "text": "<ｍａｓｋ＞",
+    "reference_ids": [
+      0,
+      6,
+      250001,
+      2
+    ]
+  },
+  {
+    "id": "special-36",
+    "text": "＜s>",
+    "reference_ids": [
+      0,
+      6,
+      0,
+      2
+    ]
+  },
+  {
+    "id": "special-37",
+    "text": "＜/s>",
+    "reference_ids": [
+      0,
+      6,
+      2,
+      2
+    ]
+  },
+  {
+    "id": "special-38",
+    "text": "＜pad>",
+    "reference_ids": [
+      0,
+      6,
+      1,
+      2
+    ]
+  },
+  {
+    "id": "special-39",
+    "text": "＜unk>",
+    "reference_ids": [
+      0,
+      6,
+      3,
+      2
+    ]
+  },
+  {
+    "id": "special-40",
+    "text": "＜mask>",
+    "reference_ids": [
+      0,
+      6,
+      250001,
+      2
+    ]
+  },
+  {
+    "id": "special-41",
+    "text": "＜ｓ>",
+    "reference_ids": [
+      0,
+      6,
+      0,
+      2
+    ]
+  },
+  {
+    "id": "special-42",
+    "text": "＜ｐａｄ>",
+    "reference_ids": [
+      0,
+      6,
+      1,
+      2
+    ]
+  },
+  {
+    "id": "special-43",
+    "text": "＜ｕｎｋ>",
+    "reference_ids": [
+      0,
+      6,
+      3,
+      2
+    ]
+  },
+  {
+    "id": "special-44",
+    "text": "＜ｍａｓｋ>",
+    "reference_ids": [
+      0,
+      6,
+      250001,
+      2
+    ]
+  },
+  {
+    "id": "special-45",
+    "text": "x<s>y",
+    "reference_ids": [
+      0,
+      1022,
+      0,
+      113,
+      2
+    ]
+  },
+  {
+    "id": "special-46",
+    "text": "x</s>y",
+    "reference_ids": [
+      0,
+      1022,
+      2,
+      113,
+      2
+    ]
+  },
+  {
+    "id": "special-47",
+    "text": "x<pad>y",
+    "reference_ids": [
+      0,
+      1022,
+      1,
+      113,
+      2
+    ]
+  },
+  {
+    "id": "special-48",
+    "text": "x<unk>y",
+    "reference_ids": [
+      0,
+      1022,
+      3,
+      113,
+      2
+    ]
+  },
+  {
+    "id": "special-49",
+    "text": "x<mask>y",
+    "reference_ids": [
+      0,
+      1022,
+      250001,
+      113,
+      2
+    ]
+  },
+  {
+    "id": "special-50",
+    "text": "x<ｓ>y",
+    "reference_ids": [
+      0,
+      1022,
+      0,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-51",
+    "text": "x<ｐａｄ>y",
+    "reference_ids": [
+      0,
+      1022,
+      1,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-52",
+    "text": "x<ｕｎｋ>y",
+    "reference_ids": [
+      0,
+      1022,
+      3,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-53",
+    "text": "x<ｍａｓｋ>y",
+    "reference_ids": [
+      0,
+      1022,
+      250001,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-54",
+    "text": "x＜s＞y",
+    "reference_ids": [
+      0,
+      1022,
+      0,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-55",
+    "text": "x＜/s＞y",
+    "reference_ids": [
+      0,
+      1022,
+      2,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-56",
+    "text": "x＜pad＞y",
+    "reference_ids": [
+      0,
+      1022,
+      1,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-57",
+    "text": "x＜unk＞y",
+    "reference_ids": [
+      0,
+      1022,
+      3,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-58",
+    "text": "x＜mask＞y",
+    "reference_ids": [
+      0,
+      1022,
+      250001,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-59",
+    "text": "x＜ｓ＞y",
+    "reference_ids": [
+      0,
+      1022,
+      0,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-60",
+    "text": "x＜ｐａｄ＞y",
+    "reference_ids": [
+      0,
+      1022,
+      1,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-61",
+    "text": "x＜ｕｎｋ＞y",
+    "reference_ids": [
+      0,
+      1022,
+      3,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-62",
+    "text": "x＜ｍａｓｋ＞y",
+    "reference_ids": [
+      0,
+      1022,
+      250001,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-63",
+    "text": "x﹤s﹥y",
+    "reference_ids": [
+      0,
+      1022,
+      0,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-64",
+    "text": "x﹤/s﹥y",
+    "reference_ids": [
+      0,
+      1022,
+      2,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-65",
+    "text": "x﹤pad﹥y",
+    "reference_ids": [
+      0,
+      1022,
+      1,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-66",
+    "text": "x﹤unk﹥y",
+    "reference_ids": [
+      0,
+      1022,
+      3,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-67",
+    "text": "x﹤mask﹥y",
+    "reference_ids": [
+      0,
+      1022,
+      250001,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-68",
+    "text": "x﹤ｓ﹥y",
+    "reference_ids": [
+      0,
+      1022,
+      0,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-69",
+    "text": "x﹤ｐａｄ﹥y",
+    "reference_ids": [
+      0,
+      1022,
+      1,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-70",
+    "text": "x﹤ｕｎｋ﹥y",
+    "reference_ids": [
+      0,
+      1022,
+      3,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-71",
+    "text": "x﹤ｍａｓｋ﹥y",
+    "reference_ids": [
+      0,
+      1022,
+      250001,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-72",
+    "text": "x<s＞y",
+    "reference_ids": [
+      0,
+      1022,
+      0,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-73",
+    "text": "x</s＞y",
+    "reference_ids": [
+      0,
+      1022,
+      2,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-74",
+    "text": "x<pad＞y",
+    "reference_ids": [
+      0,
+      1022,
+      1,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-75",
+    "text": "x<unk＞y",
+    "reference_ids": [
+      0,
+      1022,
+      3,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-76",
+    "text": "x<mask＞y",
+    "reference_ids": [
+      0,
+      1022,
+      250001,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-77",
+    "text": "x<ｓ＞y",
+    "reference_ids": [
+      0,
+      1022,
+      0,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-78",
+    "text": "x<ｐａｄ＞y",
+    "reference_ids": [
+      0,
+      1022,
+      1,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-79",
+    "text": "x<ｕｎｋ＞y",
+    "reference_ids": [
+      0,
+      1022,
+      3,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-80",
+    "text": "x<ｍａｓｋ＞y",
+    "reference_ids": [
+      0,
+      1022,
+      250001,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-81",
+    "text": "x＜s>y",
+    "reference_ids": [
+      0,
+      1022,
+      0,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-82",
+    "text": "x＜/s>y",
+    "reference_ids": [
+      0,
+      1022,
+      2,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-83",
+    "text": "x＜pad>y",
+    "reference_ids": [
+      0,
+      1022,
+      1,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-84",
+    "text": "x＜unk>y",
+    "reference_ids": [
+      0,
+      1022,
+      3,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-85",
+    "text": "x＜mask>y",
+    "reference_ids": [
+      0,
+      1022,
+      250001,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-86",
+    "text": "x＜ｓ>y",
+    "reference_ids": [
+      0,
+      1022,
+      0,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-87",
+    "text": "x＜ｐａｄ>y",
+    "reference_ids": [
+      0,
+      1022,
+      1,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-88",
+    "text": "x＜ｕｎｋ>y",
+    "reference_ids": [
+      0,
+      1022,
+      3,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "special-89",
+    "text": "x＜ｍａｓｋ>y",
+    "reference_ids": [
+      0,
+      1022,
+      250001,
+      53,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-0",
+    "text": "  ",
+    "reference_ids": [
+      0,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-1",
+    "text": "Å  ",
+    "reference_ids": [
+      0,
+      8839,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-2",
+    "text": "a  ",
+    "reference_ids": [
+      0,
+      10,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-3",
+    "text": "  ́",
+    "reference_ids": [
+      0,
+      3309,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-4",
+    "text": "<mask>  ",
+    "reference_ids": [
+      0,
+      250001,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-5",
+    "text": " ̈ ",
+    "reference_ids": [
+      0,
+      95353,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-6",
+    "text": "Å ̈ ",
+    "reference_ids": [
+      0,
+      8839,
+      95353,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-7",
+    "text": "a ̈ ",
+    "reference_ids": [
+      0,
+      10,
+      95353,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-8",
+    "text": " ̈ ́",
+    "reference_ids": [
+      0,
+      95353,
+      3309,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-9",
+    "text": "<mask> ̈ ",
+    "reference_ids": [
+      0,
+      250001,
+      95353,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-10",
+    "text": " \r",
+    "reference_ids": [
+      0,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-11",
+    "text": "Å \r",
+    "reference_ids": [
+      0,
+      8839,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-12",
+    "text": "a \r",
+    "reference_ids": [
+      0,
+      10,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-13",
+    "text": " \ŕ",
+    "reference_ids": [
+      0,
+      3309,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-14",
+    "text": "<mask> \r",
+    "reference_ids": [
+      0,
+      250001,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-15",
+    "text": " ̈\r",
+    "reference_ids": [
+      0,
+      95353,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-16",
+    "text": "Å ̈\r",
+    "reference_ids": [
+      0,
+      8839,
+      95353,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-17",
+    "text": "a ̈\r",
+    "reference_ids": [
+      0,
+      10,
+      95353,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-18",
+    "text": " ̈\ŕ",
+    "reference_ids": [
+      0,
+      95353,
+      3309,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-19",
+    "text": "<mask> ̈\r",
+    "reference_ids": [
+      0,
+      250001,
+      95353,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-20",
+    "text": " \n",
+    "reference_ids": [
+      0,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-21",
+    "text": "Å \n",
+    "reference_ids": [
+      0,
+      8839,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-22",
+    "text": "a \n",
+    "reference_ids": [
+      0,
+      10,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-23",
+    "text": " \ń",
+    "reference_ids": [
+      0,
+      3309,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-24",
+    "text": "<mask> \n",
+    "reference_ids": [
+      0,
+      250001,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-25",
+    "text": " ̈\n",
+    "reference_ids": [
+      0,
+      95353,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-26",
+    "text": "Å ̈\n",
+    "reference_ids": [
+      0,
+      8839,
+      95353,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-27",
+    "text": "a ̈\n",
+    "reference_ids": [
+      0,
+      10,
+      95353,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-28",
+    "text": " ̈\ń",
+    "reference_ids": [
+      0,
+      95353,
+      3309,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-29",
+    "text": "<mask> ̈\n",
+    "reference_ids": [
+      0,
+      250001,
+      95353,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-30",
+    "text": " \u0001",
+    "reference_ids": [
+      0,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-31",
+    "text": "Å \u0001",
+    "reference_ids": [
+      0,
+      8839,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-32",
+    "text": "a \u0001",
+    "reference_ids": [
+      0,
+      10,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-33",
+    "text": " \u0001́",
+    "reference_ids": [
+      0,
+      3309,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-34",
+    "text": "<mask> \u0001",
+    "reference_ids": [
+      0,
+      250001,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-35",
+    "text": " ̈\u0001",
+    "reference_ids": [
+      0,
+      95353,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-36",
+    "text": "Å ̈\u0001",
+    "reference_ids": [
+      0,
+      8839,
+      95353,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-37",
+    "text": "a ̈\u0001",
+    "reference_ids": [
+      0,
+      10,
+      95353,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-38",
+    "text": " ̈\u0001́",
+    "reference_ids": [
+      0,
+      95353,
+      4868,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-39",
+    "text": "<mask> ̈\u0001",
+    "reference_ids": [
+      0,
+      250001,
+      95353,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-40",
+    "text": " ‌",
+    "reference_ids": [
+      0,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-41",
+    "text": "Å ‌",
+    "reference_ids": [
+      0,
+      8839,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-42",
+    "text": "a ‌",
+    "reference_ids": [
+      0,
+      10,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-43",
+    "text": " ‌́",
+    "reference_ids": [
+      0,
+      3309,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-44",
+    "text": "<mask> ‌",
+    "reference_ids": [
+      0,
+      250001,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-45",
+    "text": " ̈‌",
+    "reference_ids": [
+      0,
+      95353,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-46",
+    "text": "Å ̈‌",
+    "reference_ids": [
+      0,
+      8839,
+      95353,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-47",
+    "text": "a ̈‌",
+    "reference_ids": [
+      0,
+      10,
+      95353,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-48",
+    "text": " ̈‌́",
+    "reference_ids": [
+      0,
+      95353,
+      3309,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-49",
+    "text": "<mask> ̈‌",
+    "reference_ids": [
+      0,
+      250001,
+      95353,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-50",
+    "text": " 🇦",
+    "reference_ids": [
+      0,
+      6,
+      246025,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-51",
+    "text": "Å 🇦",
+    "reference_ids": [
+      0,
+      8839,
+      6,
+      246025,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-52",
+    "text": "a 🇦",
+    "reference_ids": [
+      0,
+      10,
+      6,
+      246025,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-53",
+    "text": " 🇦́",
+    "reference_ids": [
+      0,
+      6,
+      246025,
+      4868,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-54",
+    "text": "<mask> 🇦",
+    "reference_ids": [
+      0,
+      250001,
+      6,
+      246025,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-55",
+    "text": " ̈🇦",
+    "reference_ids": [
+      0,
+      95353,
+      246025,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-56",
+    "text": "Å ̈🇦",
+    "reference_ids": [
+      0,
+      8839,
+      95353,
+      246025,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-57",
+    "text": "a ̈🇦",
+    "reference_ids": [
+      0,
+      10,
+      95353,
+      246025,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-58",
+    "text": " ̈🇦́",
+    "reference_ids": [
+      0,
+      95353,
+      246025,
+      4868,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-59",
+    "text": "<mask> ̈🇦",
+    "reference_ids": [
+      0,
+      250001,
+      95353,
+      246025,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-60",
+    "text": " ؀",
+    "reference_ids": [
+      0,
+      6,
+      3,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-61",
+    "text": "Å ؀",
+    "reference_ids": [
+      0,
+      8839,
+      6,
+      3,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-62",
+    "text": "a ؀",
+    "reference_ids": [
+      0,
+      10,
+      6,
+      3,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-63",
+    "text": " ؀́",
+    "reference_ids": [
+      0,
+      6,
+      3,
+      4868,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-64",
+    "text": "<mask> ؀",
+    "reference_ids": [
+      0,
+      250001,
+      6,
+      3,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-65",
+    "text": " ̈؀",
+    "reference_ids": [
+      0,
+      95353,
+      3,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-66",
+    "text": "Å ̈؀",
+    "reference_ids": [
+      0,
+      8839,
+      95353,
+      3,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-67",
+    "text": "a ̈؀",
+    "reference_ids": [
+      0,
+      10,
+      95353,
+      3,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-68",
+    "text": " ̈؀́",
+    "reference_ids": [
+      0,
+      95353,
+      3,
+      4868,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-69",
+    "text": "<mask> ̈؀",
+    "reference_ids": [
+      0,
+      250001,
+      95353,
+      3,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-70",
+    "text": " ਃ",
+    "reference_ids": [
+      0,
+      6,
+      245972,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-71",
+    "text": "Å ਃ",
+    "reference_ids": [
+      0,
+      8839,
+      6,
+      245972,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-72",
+    "text": "a ਃ",
+    "reference_ids": [
+      0,
+      10,
+      6,
+      245972,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-73",
+    "text": " ਃ́",
+    "reference_ids": [
+      0,
+      6,
+      245972,
+      4868,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-74",
+    "text": "<mask> ਃ",
+    "reference_ids": [
+      0,
+      250001,
+      6,
+      245972,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-75",
+    "text": " ̈ਃ",
+    "reference_ids": [
+      0,
+      95353,
+      245972,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-76",
+    "text": "Å ̈ਃ",
+    "reference_ids": [
+      0,
+      8839,
+      95353,
+      245972,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-77",
+    "text": "a ̈ਃ",
+    "reference_ids": [
+      0,
+      10,
+      95353,
+      245972,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-78",
+    "text": " ̈ਃ́",
+    "reference_ids": [
+      0,
+      95353,
+      245972,
+      4868,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-79",
+    "text": "<mask> ̈ਃ",
+    "reference_ids": [
+      0,
+      250001,
+      95353,
+      245972,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-80",
+    "text": " ᄀ",
+    "reference_ids": [
+      0,
+      6,
+      244134,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-81",
+    "text": "Å ᄀ",
+    "reference_ids": [
+      0,
+      8839,
+      6,
+      244134,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-82",
+    "text": "a ᄀ",
+    "reference_ids": [
+      0,
+      10,
+      6,
+      244134,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-83",
+    "text": " ᄀ́",
+    "reference_ids": [
+      0,
+      6,
+      244134,
+      4868,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-84",
+    "text": "<mask> ᄀ",
+    "reference_ids": [
+      0,
+      250001,
+      6,
+      244134,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-85",
+    "text": " ̈ᄀ",
+    "reference_ids": [
+      0,
+      95353,
+      244134,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-86",
+    "text": "Å ̈ᄀ",
+    "reference_ids": [
+      0,
+      8839,
+      95353,
+      244134,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-87",
+    "text": "a ̈ᄀ",
+    "reference_ids": [
+      0,
+      10,
+      95353,
+      244134,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-88",
+    "text": " ̈ᄀ́",
+    "reference_ids": [
+      0,
+      95353,
+      244134,
+      4868,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-89",
+    "text": "<mask> ̈ᄀ",
+    "reference_ids": [
+      0,
+      250001,
+      95353,
+      244134,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-90",
+    "text": " ᅠ",
+    "reference_ids": [
+      0,
+      6,
+      245601,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-91",
+    "text": "Å ᅠ",
+    "reference_ids": [
+      0,
+      8839,
+      6,
+      245601,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-92",
+    "text": "a ᅠ",
+    "reference_ids": [
+      0,
+      10,
+      6,
+      245601,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-93",
+    "text": " ᅠ́",
+    "reference_ids": [
+      0,
+      6,
+      245601,
+      4868,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-94",
+    "text": "<mask> ᅠ",
+    "reference_ids": [
+      0,
+      250001,
+      6,
+      245601,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-95",
+    "text": " ̈ᅠ",
+    "reference_ids": [
+      0,
+      95353,
+      245601,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-96",
+    "text": "Å ̈ᅠ",
+    "reference_ids": [
+      0,
+      8839,
+      95353,
+      245601,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-97",
+    "text": "a ̈ᅠ",
+    "reference_ids": [
+      0,
+      10,
+      95353,
+      245601,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-98",
+    "text": " ̈ᅠ́",
+    "reference_ids": [
+      0,
+      95353,
+      245601,
+      4868,
+      2
+    ]
+  },
+  {
+    "id": "grapheme-99",
+    "text": "<mask> ̈ᅠ",
+    "reference_ids": [
+      0,
+      250001,
+      95353,
+      245601,
+      2
+    ]
+  },
+  {
+    "id": "meta-0",
+    "text": "▁",
+    "reference_ids": [
+      0,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "meta-1",
+    "text": "▁▁",
+    "reference_ids": [
+      0,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "meta-2",
+    "text": "a▁b",
+    "reference_ids": [
+      0,
+      10,
+      876,
+      2
+    ]
+  },
+  {
+    "id": "meta-3",
+    "text": "▁a",
+    "reference_ids": [
+      0,
+      10,
+      2
+    ]
+  },
+  {
+    "id": "meta-4",
+    "text": "a▁",
+    "reference_ids": [
+      0,
+      10,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "meta-5",
+    "text": "a▁▁b",
+    "reference_ids": [
+      0,
+      10,
+      876,
+      2
+    ]
+  },
+  {
+    "id": "meta-6",
+    "text": "text ▁",
+    "reference_ids": [
+      0,
+      7986,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "meta-7",
+    "text": "▁<mask>",
+    "reference_ids": [
+      0,
+      6,
+      250001,
+      2
+    ]
+  },
+  {
+    "id": "meta-8",
+    "text": "＜mask＞▁",
+    "reference_ids": [
+      0,
+      6,
+      250001,
+      6,
+      2
+    ]
+  },
+  {
+    "id": "meta-9",
+    "text": "x▁<s>▁y",
+    "reference_ids": [
+      0,
+      1022,
+      6,
+      0,
+      113,
+      2
+    ]
+  }
+]

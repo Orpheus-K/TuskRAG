@@ -1,0 +1,23 @@
+version: "2"
+
+linters:
+  default: standard
+  enable:
+    - depguard
+  settings:
+    depguard:
+      rules:
+        transport-no-database:
+          list-mode: lax
+          files:
+            - "**/internal/httpapi/*.go"
+            - "**/internal/httpapi/**/*.go"
+            - "**/internal/mcp/*.go"
+            - "**/internal/mcp/**/*.go"
+          deny:
+            - pkg: database/sql
+              desc: transport must call domain services instead of accessing SQL
+            - pkg: github.com/jackc/pgx/v5
+              desc: transport must call domain services instead of accessing PostgreSQL
+            - pkg: tuskrag.local/core/internal/db
+              desc: transport must call domain services instead of accessing database packages

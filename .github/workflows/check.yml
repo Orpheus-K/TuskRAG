@@ -1,0 +1,176 @@
+name: check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: services/core/go.mod
+          cache-dependency-path: services/core/go.sum
+      - uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
+        with:
+          version: v2.15.0
+          working-directory: services/core
+      - uses: sqlc-dev/setup-sqlc@v5
+        with:
+          sqlc-version: '1.31.1'
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.13"
+      - run: pnpm install --frozen-lockfile
+      - run: uv sync --locked --group dev
+        working-directory: services/parser
+      - name: Test parser without network
+        working-directory: services/parser
+        run: unshare --user --map-root-user --net -- env UV_OFFLINE=1 uv run --locked pytest -p no:cacheprovider -q
+      - run: pnpm build
+      - name: Generate credentials for this test run
+        run: |
+          for name in POSTGRES_PASSWORD TUSKRAG_APP_PASSWORD TUSKRAG_MIGRATOR_PASSWORD TUSKRAG_E2E_PASSWORD; do
+            value="$(openssl rand -hex 24)"
+            echo "::add-mask::$value"
+            echo "$name=$value" >> "$GITHUB_ENV"
+          done
+      - name: Build and start isolated PostgreSQL
+        run: |
+          docker build -t tuskrag-postgres:ci deploy/postgres
+          docker run -d --name tuskrag-pg -p 127.0.0.1:5432:5432 \
+            -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
+            -e POSTGRES_DB=tuskrag_test_ci -e TUSKRAG_APP_PASSWORD="$TUSKRAG_APP_PASSWORD" \
+            -e TUSKRAG_MIGRATOR_PASSWORD="$TUSKRAG_MIGRATOR_PASSWORD" tuskrag-postgres:ci
+          for attempt in $(seq 1 30); do
+            if docker exec tuskrag-pg pg_isready -h 127.0.0.1 -U postgres -d tuskrag_test_ci; then exit 0; fi
+            sleep 2
+          done
+          docker logs tuskrag-pg
+          exit 1
+      - name: Migrate
+        working-directory: services/core
+        env:
+          TUSKRAG_ROLE: migrate
+          TUSKRAG_DATABASE_URL: postgres://tuskrag_migrator:${{ env.TUSKRAG_MIGRATOR_PASSWORD }}@127.0.0.1:5432/tuskrag_test_ci?sslmode=disable
+        run: go run ./cmd/tuskrag
+      - name: Check generated contracts
+        working-directory: services/core
+        run: |
+          go run ./cmd/tuskrag openapi > "$RUNNER_TEMP/openapi.json"
+          cmp ../../contracts/openapi.json "$RUNNER_TEMP/openapi.json"
+          cd ../..
+          pnpm generate:client
+          git diff --exit-code -- packages/api-client/src/schema.ts
+      - name: Check generated database queries
+        working-directory: services/core
+        run: |
+          sqlc generate
+          git diff --exit-code -- internal/dbquery
+      - name: Check parser schema copy
+        run: cmp contracts/parsed-document.schema.json services/core/internal/parser/parsed-document.schema.json
+      - name: Check Go, Python and web
+        env:
+          TUSKRAG_TEST_ADMIN_URL: postgres://postgres:${{ env.POSTGRES_PASSWORD }}@127.0.0.1:5432/tuskrag_test_ci?sslmode=disable
+          TUSKRAG_TEST_APP_URL: postgres://tuskrag_app:${{ env.TUSKRAG_APP_PASSWORD }}@127.0.0.1:5432/tuskrag_test_ci?sslmode=disable
+          TUSKRAG_TEST_MIGRATOR_URL: postgres://tuskrag_migrator:${{ env.TUSKRAG_MIGRATOR_PASSWORD }}@127.0.0.1:5432/tuskrag_test_ci?sslmode=disable
+          TUSKRAG_TEST_PARSER: ${{ github.workspace }}/services/parser/.venv/bin/tuskrag-parse
+        run: |
+          pnpm check
+          cd services/core
+          # Fault-injection tests alter shared tables and run packages serially.
+          go test -race -p 1 ./...
+      - name: Test Linux parser isolation
+        env:
+          TUSKRAG_TEST_ADMIN_URL: postgres://postgres:${{ env.POSTGRES_PASSWORD }}@127.0.0.1:5432/tuskrag_test_ci?sslmode=disable
+          TUSKRAG_TEST_APP_URL: postgres://tuskrag_app:${{ env.TUSKRAG_APP_PASSWORD }}@127.0.0.1:5432/tuskrag_test_ci?sslmode=disable
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bubblewrap
+          runtime="$RUNNER_TEMP/tuskrag-parser-runtime"
+          production_env="$RUNNER_TEMP/tuskrag-parser-production"
+          mkdir -p "$runtime/src/tuskrag_parser"
+          python_root="$(services/parser/.venv/bin/python -c 'import sys; print(sys.base_prefix)')"
+          cp -a "$python_root" "$runtime/python"
+          (cd services/parser && UV_PROJECT_ENVIRONMENT="$production_env" uv sync --locked --no-dev --no-install-project)
+          production_site="$("$production_env/bin/python" -c 'import site; print(site.getsitepackages()[0])')"
+          runtime_site="$runtime/python/lib/python3.13/site-packages"
+          mkdir -p "$runtime_site"
+          cp -a "$production_site/." "$runtime_site/"
+          rm -f "$runtime_site/_virtualenv.pth" "$runtime_site/_virtualenv.py"
+          cp services/parser/src/tuskrag_parser/*.py "$runtime/src/tuskrag_parser/"
+          cat > "$runtime/tuskrag-parse" <<'EOF'
+          #!/bin/sh
+          runtime_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+          PYTHONPATH="$runtime_dir/src" exec "$runtime_dir/python/bin/python3.13" -m tuskrag_parser.cli "$@"
+          EOF
+          chmod 755 "$runtime/tuskrag-parse"
+          export TUSKRAG_TEST_BWRAP=/usr/bin/bwrap
+          export TUSKRAG_TEST_PARSER_RUNTIME="$runtime"
+          export TUSKRAG_TEST_PARSER="$runtime/tuskrag-parse"
+          original_group="$(awk -F: '$1 == "0" {print $3}' /proc/self/cgroup)"
+          export TUSKRAG_TEST_CGROUP="/sys/fs/cgroup/tuskrag-ci-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          sudo mkdir "$TUSKRAG_TEST_CGROUP"
+          sudo sh -c 'printf "+cpu +memory +pids" > "$1/cgroup.subtree_control"' sh "$TUSKRAG_TEST_CGROUP"
+          sudo mkdir "$TUSKRAG_TEST_CGROUP/manager"
+          sudo chown "$(id -u):$(id -g)" "$TUSKRAG_TEST_CGROUP" "$TUSKRAG_TEST_CGROUP/cgroup.procs" "$TUSKRAG_TEST_CGROUP/cgroup.subtree_control" "$TUSKRAG_TEST_CGROUP/manager" "$TUSKRAG_TEST_CGROUP/manager/cgroup.procs"
+          cleanup_cgroup() {
+            sudo sh -c 'printf "%s" "$1" > "/sys/fs/cgroup$2/cgroup.procs"' sh "$$" "$original_group"
+            sudo rmdir "$TUSKRAG_TEST_CGROUP/manager" "$TUSKRAG_TEST_CGROUP"
+          }
+          trap cleanup_cgroup EXIT
+          sudo sh -c 'printf "%s" "$1" > "$2/manager/cgroup.procs"' sh "$$" "$TUSKRAG_TEST_CGROUP"
+          cd services/core
+          go test -race -p 1 -count=1 ./internal/parser ./internal/ingest
+      - name: Synthetic Chinese retrieval baseline
+        working-directory: services/core
+        env:
+          TUSKRAG_TEST_ADMIN_URL: postgres://postgres:${{ env.POSTGRES_PASSWORD }}@127.0.0.1:5432/tuskrag_test_ci?sslmode=disable
+          TUSKRAG_TEST_APP_URL: postgres://tuskrag_app:${{ env.TUSKRAG_APP_PASSWORD }}@127.0.0.1:5432/tuskrag_test_ci?sslmode=disable
+          TUSKRAG_TEST_MIGRATOR_URL: postgres://tuskrag_migrator:${{ env.TUSKRAG_MIGRATOR_PASSWORD }}@127.0.0.1:5432/tuskrag_test_ci?sslmode=disable
+          TUSKRAG_EVAL_REPORT_DIR: ${{ runner.temp }}/tuskrag-eval
+        run: |
+          mkdir -p "$TUSKRAG_EVAL_REPORT_DIR"
+          go test -race -count=1 -run '^TestSyntheticZHEvaluation$' -v ./internal/ingest
+          for mode in lexical vector rrf rerank; do
+            go run ./cmd/tuskrag eval compare "../../tests/eval/baselines/$mode.json" "$TUSKRAG_EVAL_REPORT_DIR/synthetic-zh-$mode.json"
+          done
+      - name: Upload retrieval evaluation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: synthetic-zh-retrieval
+          path: ${{ runner.temp }}/tuskrag-eval/*.json
+          if-no-files-found: warn
+      - name: Browser smoke test
+        env:
+          TUSKRAG_ROLE: api
+          TUSKRAG_LISTEN: 127.0.0.1:8080
+          TUSKRAG_DATABASE_URL: postgres://tuskrag_app:${{ env.TUSKRAG_APP_PASSWORD }}@127.0.0.1:5432/tuskrag_test_ci?sslmode=disable
+          TUSKRAG_INSECURE_LOCAL_COOKIES: "true"
+          TUSKRAG_BOOTSTRAP_TENANT: ci-browser
+          TUSKRAG_BOOTSTRAP_LOGIN: admin
+          TUSKRAG_BOOTSTRAP_DISPLAY_NAME: CI Administrator
+        run: |
+          pnpm exec playwright install --with-deps chromium
+          export TUSKRAG_STORAGE_DIR="$RUNNER_TEMP/tuskrag-browser-storage"
+          export TUSKRAG_BOOTSTRAP_PASSWORD_FILE="$RUNNER_TEMP/tuskrag-bootstrap-password"
+          printf '%s' "$TUSKRAG_E2E_PASSWORD" > "$TUSKRAG_BOOTSTRAP_PASSWORD_FILE"
+          chmod 600 "$TUSKRAG_BOOTSTRAP_PASSWORD_FILE"
+          export TUSKRAG_E2E_TENANT_ID="$(./dist/tuskrag bootstrap | node -e 'let s=""; process.stdin.on("data", c => s += c); process.stdin.on("end", () => process.stdout.write(String(JSON.parse(s).tenant_id)))')"
+          ./dist/tuskrag > "$RUNNER_TEMP/tuskrag.log" 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8080/api/health/ready; then break; fi
+            if [ "$attempt" -eq 30 ]; then cat "$RUNNER_TEMP/tuskrag.log"; exit 1; fi
+            sleep 1
+          done
+          pnpm test:e2e

@@ -1,0 +1,5 @@
+github.com/clipperhouse/stringish,https://github.com/clipperhouse/stringish/blob/v0.1.1/LICENSE,MIT
+github.com/tggo/goSentencePiece,https://github.com/tggo/goSentencePiece/blob/v1.1.0/LICENSE,MIT
+google.golang.org/protobuf,https://github.com/protocolbuffers/protobuf-go/blob/v1.36.12/LICENSE,BSD-3-Clause
+tuskrag.local/core/internal/tokenizer,Unknown,Unknown
+tuskrag.local/core/internal/tokenizer/grapheme16,Unknown,MIT

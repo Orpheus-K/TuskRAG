@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tuskrag.local/contracts/parsed-document.schema.json",
+  "title": "ParsedDocument",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "pages", "meta"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "pages": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/page" }
+    },
+    "outline": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/outlineItem" }
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["parser_profile"],
+      "properties": {
+        "title": { "type": "string" },
+        "author": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" },
+        "parser_profile": { "type": "string", "minLength": 1 }
+      }
+    }
+  },
+  "$defs": {
+    "page": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["no", "blocks", "signals"],
+      "properties": {
+        "no": { "type": "integer", "minimum": 1 },
+        "width": { "type": "number", "exclusiveMinimum": 0 },
+        "height": { "type": "number", "exclusiveMinimum": 0 },
+        "blocks": { "type": "array", "items": { "$ref": "#/$defs/block" } },
+        "signals": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["char_count"],
+          "properties": {
+            "char_count": { "type": "integer", "minimum": 0 },
+            "garbled_ratio": { "type": "number", "minimum": 0, "maximum": 1 },
+            "missing_tounicode_ratio": { "type": "number", "minimum": 0, "maximum": 1 },
+            "image_coverage": { "type": "number", "minimum": 0, "maximum": 1 },
+            "table_suspect": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "block": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": { "enum": ["heading", "paragraph", "table", "list", "code", "figure"] },
+        "level": { "type": "integer", "minimum": 1, "maximum": 9 },
+        "text": { "type": "string" },
+        "cells": {
+          "type": "array",
+          "items": { "type": "array", "items": { "type": "string" } }
+        },
+        "bbox": {
+          "type": "array",
+          "prefixItems": [{ "type": "number" }, { "type": "number" }, { "type": "number" }, { "type": "number" }],
+          "items": false,
+          "minItems": 4
+        }
+      },
+      "anyOf": [{ "required": ["text"] }, { "required": ["cells"] }]
+    },
+    "outlineItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "level"],
+      "properties": {
+        "title": { "type": "string" },
+        "level": { "type": "integer", "minimum": 1, "maximum": 9 },
+        "page": { "type": "integer", "minimum": 1 }
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+[
+  {
+    "file": "policy.docx",
+    "blocks": [
+      {"type": "heading", "level": 1, "text": "差旅管理办法"},
+      {"type": "paragraph", "text": "适用于所有员工。"},
+      {"type": "heading", "level": 2, "text": "住宿标准"},
+      {"type": "paragraph", "text": "出差住宿按城市分类执行。"},
+      {"type": "table", "cells": [["城市", "每晚上限"], ["北京", "600元"], ["上海", "600元"]]},
+      {"type": "paragraph", "text": "超出标准须事先审批。"}
+    ]
+  },
+  {
+    "file": "merged.docx",
+    "blocks": [
+      {"type": "heading", "level": 1, "text": "交通补贴"},
+      {"type": "table", "cells": [["城市", "补贴标准", "补贴标准"], ["北京", "80元", "包干"], ["北京", "60元", "据实"]]}
+    ]
+  },
+  {
+    "file": "styles.docx",
+    "blocks": [
+      {"type": "heading", "level": 1, "text": "安全手册"},
+      {"type": "heading", "level": 2, "text": "访问控制"},
+      {"type": "paragraph", "text": "禁止共享账号。查看指南"},
+      {"type": "paragraph", "text": "中文\t编号\n第二行"}
+    ]
+  }
+]

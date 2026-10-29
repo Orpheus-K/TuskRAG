@@ -1,0 +1,23 @@
+{
+  "dataset_version": "synthetic-zh-v1-20261029",
+  "dataset_sha256": "705f1b66d4351e714c4b13cc8b9a0a97866e04b5d07457ea972fdcde94a0b5be",
+  "config_sha256": "2bfd0af65dc434726a7164ecdf5cb1ca3d1120ed5a2cd6d69a0e4ff375b907bd",
+  "model_label": "character-hash-64+bigram-overlap-v1",
+  "model_kind": "stub",
+  "mode": "vector",
+  "status": "passed",
+  "summary": {
+    "Cases": 64,
+    "AnswerableCases": 54,
+    "UnanswerableCases": 10,
+    "Metrics": {
+      "RecallAt20": 1,
+      "HitAt5": 0.7962962962962963,
+      "MRRAt10": 0.6135802469135802,
+      "NDCGAt10": 0.6895377411966663
+    }
+  },
+  "unauthorized_evidence": 0,
+  "rows": [],
+  "latency_ms_p50_p95": {}
+}

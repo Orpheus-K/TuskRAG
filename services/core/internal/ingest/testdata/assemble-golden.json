@@ -1,0 +1,28 @@
+[
+  {
+    "file": "policy.md", "mime": "text/markdown",
+    "sections": [
+      {"parent": -1, "level": 1, "heading": "差旅管理办法", "path": ["差旅管理办法"], "blocks": 1},
+      {"parent": 0, "level": 2, "heading": "住宿标准", "path": ["差旅管理办法", "住宿标准"], "blocks": 2}
+    ]
+  },
+  {
+    "file": "encoding.md", "mime": "text/markdown",
+    "sections": [
+      {"parent": -1, "level": 1, "heading": "标题 & 附录", "path": ["标题 & 附录"], "blocks": 2}
+    ]
+  },
+  {
+    "file": "script.md", "mime": "text/markdown",
+    "sections": [
+      {"parent": -1, "level": 1, "heading": "计算示例", "path": ["计算示例"], "blocks": 1}
+    ]
+  },
+  {
+    "file": "policy.txt", "mime": "text/plain",
+    "sections": [
+      {"parent": -1, "level": 1, "heading": "第一章 总则", "path": ["第一章 总则"], "blocks": 1},
+      {"parent": 0, "level": 2, "heading": "第二节 审批", "path": ["第一章 总则", "第二节 审批"], "blocks": 1}
+    ]
+  }
+]

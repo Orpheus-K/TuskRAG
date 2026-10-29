@@ -1,0 +1,40 @@
+[
+  {
+    "file": "policy.md",
+    "mime": "text/markdown",
+    "blocks": [
+      {"type": "heading", "level": 1, "text": "差旅管理办法"},
+      {"type": "paragraph", "text": "出差前应向 负责人 提交 申请。"},
+      {"type": "heading", "level": 2, "text": "住宿标准"},
+      {"type": "table", "cells": [["城市", "上限"], ["北京", "600 元"], ["上海", "450 元"]]},
+      {"type": "list", "text": "2. 填写申请。\n3. 保留凭证。\n   - 住宿发票\n   - 交通票据"}
+    ]
+  },
+  {
+    "file": "encoding.md",
+    "mime": "text/markdown",
+    "blocks": [
+      {"type": "heading", "level": 1, "text": "标题 & 附录"},
+      {"type": "paragraph", "text": "换行 *原样* 与 &amp;。\n第二行。"},
+      {"type": "table", "cells": [["项目", "内容"], ["标记", "A|B"]]}
+    ]
+  },
+  {
+    "file": "script.md",
+    "mime": "text/markdown",
+    "blocks": [
+      {"type": "heading", "level": 1, "text": "计算示例"},
+      {"type": "code", "text": "value := 2\nprint(value)\n"}
+    ]
+  },
+  {
+    "file": "policy.txt",
+    "mime": "text/plain",
+    "blocks": [
+      {"type": "heading", "level": 1, "text": "第一章 总则"},
+      {"type": "paragraph", "text": "本办法适用于出差。\n第二行保持换行。"},
+      {"type": "heading", "level": 2, "text": "第二节 审批"},
+      {"type": "paragraph", "text": "申请应经负责人批准。"}
+    ]
+  }
+]

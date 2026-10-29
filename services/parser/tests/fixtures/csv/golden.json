@@ -1,0 +1,8 @@
+[
+  {"file":"policy.csv","cells":[["城市","住宿上限","货币"],["北京","600","人民币"],["上海","600","人民币"],["成都","450","人民币"]],"table_suspect":false},
+  {"file":"quoted.csv","cells":[["项目","说明","价格"],["培训","线上,含资料","120"],["教材","他说\"可以\"","35"]],"table_suspect":false},
+  {"file":"multiline.csv","cells":[["编号","事项","备注"],["1","审批","第一行\n第二行"],["2","结算","完成"]],"table_suspect":false},
+  {"file":"blanks.csv","cells":[["姓名","部门","备注"],["张三","","已确认"],["","财务",""],["李四","技术","待确认"]],"table_suspect":false},
+  {"file":"irregular.csv","cells":[["编号","事项","状态"],["1","导入"],["2","检索","完成","附注"]],"table_suspect":true},
+  {"file":"bom.csv","cells":[["产品","数量","备注"],["资料","2","含税"],["服务","1","已完成"]],"table_suspect":false}
+]

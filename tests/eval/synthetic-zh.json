@@ -1,0 +1,757 @@
+{
+  "version": "synthetic-zh-v1-20261029",
+  "documents": [
+    {
+      "key": "travel",
+      "title": "差旅住宿标准",
+      "content": "# 差旅住宿标准\n\nTR-101：出差应在启程前由直属经理批准。住宿凭实际发票报销，不按上限直接发放。\n\n| 城市 | 每晚住宿上限 |\n|---|---|\n| 北京 | 600元 |\n| 上海 | 650元 |\n| 成都 | 400元 |\n\n超标住宿须在预订前获财务负责人批准。"
+    },
+    {
+      "key": "expense",
+      "title": "报销提交规则",
+      "content": "# 报销提交规则\n\nEX-202：差旅结束后15个自然日内提交报销。申请须附电子发票、行程单和审批记录。发票抬头必须为公司全称。遗失发票不能用支付截图替代，须向开票方申请补开。\n\n财务在材料齐全后5个工作日内审核。"
+    },
+    {
+      "key": "leave",
+      "title": "员工休假办法",
+      "content": "# 员工休假办法\n\nHR-303：年假提前3个工作日申请，由直属经理批准。病假连续超过2天须提交医院证明。紧急事假可当天电话告知经理，但须在返岗后1个工作日内补录。\n\n| 工龄 | 年假 |\n|---|---|\n| 1至9年 | 5天 |\n| 10至19年 | 10天 |\n| 20年以上 | 15天 |"
+    },
+    {
+      "key": "vpn",
+      "title": "远程接入手册",
+      "content": "# 远程接入手册\n\nIT-404：远程访问内部系统须使用公司VPN并启用多因素认证。密码连续输错5次锁定30分钟。更换手机后，应联系服务台重置认证器，禁止共享验证码。\n\nVPN连接失败先检查系统时间，再检查客户端版本；仍失败时提交错误代码给服务台。"
+    },
+    {
+      "key": "incident",
+      "title": "安全事件响应",
+      "content": "# 安全事件响应\n\nSEC-505：发现账号疑似被盗，立即断开可疑会话并在10分钟内报告安全值班人员。保留日志与原始邮件，禁止自行删除证据。涉及数据泄露时由安全负责人决定对外通知，员工不得自行联系媒体。\n\n高危事件每30分钟更新处置记录。"
+    },
+    {
+      "key": "backup",
+      "title": "数据备份规程",
+      "content": "# 数据备份规程\n\nOPS-606：业务数据库每天02:00执行全量备份，每15分钟归档事务日志。备份保留30天，副本存放在独立存储域。每月首个周三演练恢复，恢复后比对行数及关键记录校验和。\n\n| 等级 | 恢复时间目标 | 数据丢失目标 |\n|---|---|---|\n| 核心 | 2小时 | 15分钟 |\n| 普通 | 8小时 | 24小时 |"
+    },
+    {
+      "key": "purchase",
+      "title": "采购审批制度",
+      "content": "# 采购审批制度\n\nBUY-707：采购申请须说明用途与预算，禁止拆单规避审批。\n\n| 金额 | 审批人 |\n|---|---|\n| 不超过5000元 | 部门经理 |\n| 5000元以上至50000元 | 财务负责人 |\n| 超过50000元 | 总经理 |\n\n超过20000元的采购须取得至少3家供应商报价。紧急采购仍须记录紧急原因。"
+    },
+    {
+      "key": "meeting",
+      "title": "会议室使用规则",
+      "content": "# 会议室使用规则\n\nADM-808：会议室最多提前14天预约，单次不超过3小时。预约开始后15分钟无人签到，自动释放。取消会议须及时在日历中撤销预约。\n\n视频会议结束后须关闭设备并擦除白板，涉密讨论不得使用开放区域的共享屏幕。"
+    },
+    {
+      "key": "onboarding",
+      "title": "新员工入职流程",
+      "content": "# 新员工入职流程\n\nHR-909：入职首日由人事核验身份证明并签署保密承诺。IT根据经理确认的岗位权限开通账号，禁止直接复制前任的全部权限。入职7天内完成安全培训，试用期导师每周安排一次沟通。\n\n设备领用须由员工签收并登记资产编号。"
+    },
+    {
+      "key": "offboarding",
+      "title": "员工离职交接",
+      "content": "# 员工离职交接\n\nHR-910：员工最后工作日18:00禁用账号并吊销远程访问凭据。业务文件移交经理指定接收人；个人设备上的公司数据由IT指导删除。归还电脑、门禁卡及安全令牌后由资产管理员确认。\n\n未完成交接项须记录责任人与截止日期。"
+    },
+    {
+      "key": "release",
+      "title": "应用发布流程",
+      "content": "# 应用发布流程\n\nDEV-011：生产发布必须通过自动化测试及双人复核。发布窗口为工作日20:00至22:00。变更前记录当前版本与回滚命令；监控错误率连续5分钟超过1%时立即回滚并通知值班人员。\n\n数据库迁移采用向前迁移，破坏性变更须单独评审。"
+    },
+    {
+      "key": "support",
+      "title": "服务台处理规范",
+      "content": "# 服务台处理规范\n\nHELP-012：工单必须填写影响范围、出现时间和错误代码，禁止附带明文密码。故障优先级按受影响人数及业务中断程度确定。\n\n| 优先级 | 首次响应 |\n|---|---|\n| P1全员中断 | 10分钟 |\n| P2部门受阻 | 30分钟 |\n| P3单人咨询 | 4小时 |\n\n用户确认恢复后关闭工单。"
+    }
+  ],
+  "questions": [
+    {
+      "id": "travel-1",
+      "question": "TR-101要求谁批准出差？",
+      "expected": [
+        "travel"
+      ],
+      "answerable": true,
+      "tags": [
+        "精确条款"
+      ]
+    },
+    {
+      "id": "travel-2",
+      "question": "去上海住一晚最多报销多少钱？",
+      "expected": [
+        "travel"
+      ],
+      "answerable": true,
+      "tags": [
+        "表格或时限"
+      ]
+    },
+    {
+      "id": "travel-3",
+      "question": "酒店价格超过标准，订房前应该找谁？",
+      "expected": [
+        "travel"
+      ],
+      "answerable": true,
+      "tags": [
+        "语义改写"
+      ]
+    },
+    {
+      "id": "travel-4",
+      "question": "成都和北京的住宿限额分别是多少？",
+      "expected": [
+        "travel"
+      ],
+      "answerable": true,
+      "tags": [
+        "语义改写"
+      ]
+    },
+    {
+      "id": "expense-1",
+      "question": "EX-202规定报销截止时间是什么？",
+      "expected": [
+        "expense"
+      ],
+      "answerable": true,
+      "tags": [
+        "精确条款"
+      ]
+    },
+    {
+      "id": "expense-2",
+      "question": "旅行结束两周后还能提交报销吗？",
+      "expected": [
+        "expense"
+      ],
+      "answerable": true,
+      "tags": [
+        "表格或时限"
+      ]
+    },
+    {
+      "id": "expense-3",
+      "question": "发票丢了，能否拿付款截图报账？",
+      "expected": [
+        "expense"
+      ],
+      "answerable": true,
+      "tags": [
+        "语义改写"
+      ]
+    },
+    {
+      "id": "expense-4",
+      "question": "财务收到齐全材料后多久审核？",
+      "expected": [
+        "expense"
+      ],
+      "answerable": true,
+      "tags": [
+        "语义改写"
+      ]
+    },
+    {
+      "id": "leave-1",
+      "question": "HR-303要求年假提前几天申请？",
+      "expected": [
+        "leave"
+      ],
+      "answerable": true,
+      "tags": [
+        "精确条款"
+      ]
+    },
+    {
+      "id": "leave-2",
+      "question": "工龄十二年的员工每年有多少天年假？",
+      "expected": [
+        "leave"
+      ],
+      "answerable": true,
+      "tags": [
+        "表格或时限"
+      ]
+    },
+    {
+      "id": "leave-3",
+      "question": "连续请三天病假要提供什么？",
+      "expected": [
+        "leave"
+      ],
+      "answerable": true,
+      "tags": [
+        "语义改写"
+      ]
+    },
+    {
+      "id": "leave-4",
+      "question": "临时有事当天打过电话，回来后何时补手续？",
+      "expected": [
+        "leave"
+      ],
+      "answerable": true,
+      "tags": [
+        "语义改写"
+      ]
+    },
+    {
+      "id": "vpn-1",
+      "question": "IT-404要求远程访问满足哪些条件？",
+      "expected": [
+        "vpn"
+      ],
+      "answerable": true,
+      "tags": [
+        "精确条款"
+      ]
+    },
+    {
+      "id": "vpn-2",
+      "question": "VPN密码错了五次要等多久？",
+      "expected": [
+        "vpn"
+      ],
+      "answerable": true,
+      "tags": [
+        "表格或时限"
+      ]
+    },
+    {
+      "id": "vpn-3",
+      "question": "换手机后无法生成登录码怎么办？",
+      "expected": [
+        "vpn"
+      ],
+      "answerable": true,
+      "tags": [
+        "语义改写"
+      ]
+    },
+    {
+      "id": "vpn-4",
+      "question": "远程连接不上，排查的第一步是什么？",
+      "expected": [
+        "vpn"
+      ],
+      "answerable": true,
+      "tags": [
+        "语义改写"
+      ]
+    },
+    {
+      "id": "incident-1",
+      "question": "SEC-505规定账号被盗后多久上报？",
+      "expected": [
+        "incident"
+      ],
+      "answerable": true,
+      "tags": [
+        "精确条款"
+      ]
+    },
+    {
+      "id": "incident-2",
+      "question": "怀疑账户被别人登录，应先做什么？",
+      "expected": [
+        "incident"
+      ],
+      "answerable": true,
+      "tags": [
+        "表格或时限"
+      ]
+    },
+    {
+      "id": "incident-3",
+      "question": "可疑邮件和日志能不能删掉？",
+      "expected": [
+        "incident"
+      ],
+      "answerable": true,
+      "tags": [
+        "语义改写"
+      ]
+    },
+    {
+      "id": "incident-4",
+      "question": "高危事件的处置记录多久更新一次？",
+      "expected": [
+        "incident"
+      ],
+      "answerable": true,
+      "tags": [
+        "语义改写"
+      ]
+    },
+    {
+      "id": "backup-1",
+      "question": "OPS-606的全量备份在几点执行？",
+      "expected": [
+        "backup"
+      ],
+      "answerable": true,
+      "tags": [
+        "精确条款"
+      ]
+    },
+    {
+      "id": "backup-2",
+      "question": "核心业务允许丢失的最大数据窗口是多少？",
+      "expected": [
+        "backup"
+      ],
+      "answerable": true,
+      "tags": [
+        "表格或时限"
+      ]
+    },
+    {
+      "id": "backup-3",
+      "question": "备份文件保存多长时间？",
+      "expected": [
+        "backup"
+      ],
+      "answerable": true,
+      "tags": [
+        "语义改写"
+      ]
+    },
+    {
+      "id": "backup-4",
+      "question": "恢复演练后怎样判断数据一致？",
+      "expected": [
+        "backup"
+      ],
+      "answerable": true,
+      "tags": [
+        "语义改写"
+      ]
+    },
+    {
+      "id": "purchase-1",
+      "question": "BUY-707禁止哪种规避审批的行为？",
+      "expected": [
+        "purchase"
+      ],
+      "answerable": true,
+      "tags": [
+        "精确条款"
+      ]
+    },
+    {
+      "id": "purchase-2",
+      "question": "购买六千元设备由谁审批？",
+      "expected": [
+        "purchase"
+      ],
+      "answerable": true,
+      "tags": [
+        "表格或时限"
+      ]
+    },
+    {
+      "id": "purchase-3",
+      "question": "三万元采购至少需要几家报价？",
+      "expected": [
+        "purchase"
+      ],
+      "answerable": true,
+      "tags": [
+        "语义改写"
+      ]
+    },
+    {
+      "id": "purchase-4",
+      "question": "花六万元采购需要哪位负责人批准？",
+      "expected": [
+        "purchase"
+      ],
+      "answerable": true,
+      "tags": [
+        "语义改写"
+      ]
+    },
+    {
+      "id": "meeting-1",
+      "question": "ADM-808允许提前多久订会议室？",
+      "expected": [
+        "meeting"
+      ],
+      "answerable": true,
+      "tags": [
+        "精确条款"
+      ]
+    },
+    {
+      "id": "meeting-2",
+      "question": "预订会议室后迟到二十分钟，会发生什么？",
+      "expected": [
+        "meeting"
+      ],
+      "answerable": true,
+      "tags": [
+        "表格或时限"
+      ]
+    },
+    {
+      "id": "meeting-3",
+      "question": "会议取消后应该怎样处理预约？",
+      "expected": [
+        "meeting"
+      ],
+      "answerable": true,
+      "tags": [
+        "语义改写"
+      ]
+    },
+    {
+      "id": "meeting-4",
+      "question": "视频会议结束要做哪些清理？",
+      "expected": [
+        "meeting"
+      ],
+      "answerable": true,
+      "tags": [
+        "语义改写"
+      ]
+    },
+    {
+      "id": "onboarding-1",
+      "question": "HR-909规定安全培训在几天内完成？",
+      "expected": [
+        "onboarding"
+      ],
+      "answerable": true,
+      "tags": [
+        "精确条款"
+      ]
+    },
+    {
+      "id": "onboarding-2",
+      "question": "新人的系统权限由谁确认？",
+      "expected": [
+        "onboarding"
+      ],
+      "answerable": true,
+      "tags": [
+        "表格或时限"
+      ]
+    },
+    {
+      "id": "onboarding-3",
+      "question": "能直接照搬上一位员工的全部访问权限吗？",
+      "expected": [
+        "onboarding"
+      ],
+      "answerable": true,
+      "tags": [
+        "语义改写"
+      ]
+    },
+    {
+      "id": "onboarding-4",
+      "question": "领到工作电脑时需要留下什么记录？",
+      "expected": [
+        "onboarding"
+      ],
+      "answerable": true,
+      "tags": [
+        "语义改写"
+      ]
+    },
+    {
+      "id": "offboarding-1",
+      "question": "HR-910要求何时关闭离职员工账号？",
+      "expected": [
+        "offboarding"
+      ],
+      "answerable": true,
+      "tags": [
+        "精确条款"
+      ]
+    },
+    {
+      "id": "offboarding-2",
+      "question": "离职时业务资料应交给谁？",
+      "expected": [
+        "offboarding"
+      ],
+      "answerable": true,
+      "tags": [
+        "表格或时限"
+      ]
+    },
+    {
+      "id": "offboarding-3",
+      "question": "个人电脑里的公司数据应该如何清理？",
+      "expected": [
+        "offboarding"
+      ],
+      "answerable": true,
+      "tags": [
+        "语义改写"
+      ]
+    },
+    {
+      "id": "offboarding-4",
+      "question": "离职需要归还哪些物品？",
+      "expected": [
+        "offboarding"
+      ],
+      "answerable": true,
+      "tags": [
+        "语义改写"
+      ]
+    },
+    {
+      "id": "release-1",
+      "question": "DEV-011规定生产发布有哪些前置检查？",
+      "expected": [
+        "release"
+      ],
+      "answerable": true,
+      "tags": [
+        "精确条款"
+      ]
+    },
+    {
+      "id": "release-2",
+      "question": "正常生产发布安排在什么时段？",
+      "expected": [
+        "release"
+      ],
+      "answerable": true,
+      "tags": [
+        "表格或时限"
+      ]
+    },
+    {
+      "id": "release-3",
+      "question": "错误率连续五分钟超过百分之一怎么办？",
+      "expected": [
+        "release"
+      ],
+      "answerable": true,
+      "tags": [
+        "语义改写"
+      ]
+    },
+    {
+      "id": "release-4",
+      "question": "发布前必须记录哪些回退信息？",
+      "expected": [
+        "release"
+      ],
+      "answerable": true,
+      "tags": [
+        "语义改写"
+      ]
+    },
+    {
+      "id": "support-1",
+      "question": "HELP-012要求工单包含什么信息？",
+      "expected": [
+        "support"
+      ],
+      "answerable": true,
+      "tags": [
+        "精确条款"
+      ]
+    },
+    {
+      "id": "support-2",
+      "question": "整个公司都不能工作，服务台多久首次响应？",
+      "expected": [
+        "support"
+      ],
+      "answerable": true,
+      "tags": [
+        "表格或时限"
+      ]
+    },
+    {
+      "id": "support-3",
+      "question": "单个员工咨询问题的响应期限是多少？",
+      "expected": [
+        "support"
+      ],
+      "answerable": true,
+      "tags": [
+        "语义改写"
+      ]
+    },
+    {
+      "id": "support-4",
+      "question": "支持人员能要求把明文密码放进工单吗？",
+      "expected": [
+        "support"
+      ],
+      "answerable": true,
+      "tags": [
+        "语义改写"
+      ]
+    },
+    {
+      "id": "cross-1",
+      "question": "去上海出差的住宿上限和返回后报销期限分别是多少？",
+      "expected": [
+        "travel",
+        "expense"
+      ],
+      "answerable": true,
+      "tags": [
+        "跨文档"
+      ]
+    },
+    {
+      "id": "cross-2",
+      "question": "新员工入职和离职时，账号权限分别如何处理？",
+      "expected": [
+        "onboarding",
+        "offboarding"
+      ],
+      "answerable": true,
+      "tags": [
+        "跨文档"
+      ]
+    },
+    {
+      "id": "cross-3",
+      "question": "VPN账号可能被盗时，接入要求和事件上报时限分别是什么？",
+      "expected": [
+        "vpn",
+        "incident"
+      ],
+      "answerable": true,
+      "tags": [
+        "跨文档"
+      ]
+    },
+    {
+      "id": "cross-4",
+      "question": "生产发布失败要怎样回滚，核心数据库恢复时间目标又是多少？",
+      "expected": [
+        "release",
+        "backup"
+      ],
+      "answerable": true,
+      "tags": [
+        "跨文档"
+      ]
+    },
+    {
+      "id": "cross-5",
+      "question": "采购工作电脑要如何审批，领用设备需要登记什么？",
+      "expected": [
+        "purchase",
+        "onboarding"
+      ],
+      "answerable": true,
+      "tags": [
+        "跨文档"
+      ]
+    },
+    {
+      "id": "cross-6",
+      "question": "视频会议设备故障，会议结束的设备处理要求与工单填写要求是什么？",
+      "expected": [
+        "meeting",
+        "support"
+      ],
+      "answerable": true,
+      "tags": [
+        "跨文档"
+      ]
+    },
+    {
+      "id": "none-1",
+      "question": "员工股票期权的行权价格是多少？",
+      "expected": [],
+      "answerable": false,
+      "tags": [
+        "无答案"
+      ]
+    },
+    {
+      "id": "none-2",
+      "question": "公司的午餐补贴每月多少钱？",
+      "expected": [],
+      "answerable": false,
+      "tags": [
+        "无答案"
+      ]
+    },
+    {
+      "id": "none-3",
+      "question": "境外出差的汇率使用哪家银行报价？",
+      "expected": [],
+      "answerable": false,
+      "tags": [
+        "无答案"
+      ]
+    },
+    {
+      "id": "none-4",
+      "question": "北京办公室的停车位如何分配？",
+      "expected": [],
+      "answerable": false,
+      "tags": [
+        "无答案"
+      ]
+    },
+    {
+      "id": "none-5",
+      "question": "公司宠物友好政策允许带猫吗？",
+      "expected": [],
+      "answerable": false,
+      "tags": [
+        "无答案"
+      ]
+    },
+    {
+      "id": "none-6",
+      "question": "公司法定代表人的生日是什么？",
+      "expected": [],
+      "answerable": false,
+      "tags": [
+        "无答案"
+      ]
+    },
+    {
+      "id": "none-7",
+      "question": "明年销售部门的奖金增长率是多少？",
+      "expected": [],
+      "answerable": false,
+      "tags": [
+        "无答案"
+      ]
+    },
+    {
+      "id": "none-8",
+      "question": "公司支持哪个版本的量子数据库？",
+      "expected": [],
+      "answerable": false,
+      "tags": [
+        "无答案"
+      ]
+    },
+    {
+      "id": "none-9",
+      "question": "董事长私人电话号码是多少？",
+      "expected": [],
+      "answerable": false,
+      "tags": [
+        "无答案"
+      ]
+    },
+    {
+      "id": "none-10",
+      "question": "家属医疗保险的报销比例是多少？",
+      "expected": [],
+      "answerable": false,
+      "tags": [
+        "无答案"
+      ]
+    }
+  ]
+}
