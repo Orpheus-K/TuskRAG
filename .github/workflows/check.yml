@@ -31,7 +31,7 @@ jobs:
         working-directory: services/parser
       - name: Test parser without network
         working-directory: services/parser
-        run: unshare --user --map-root-user --net -- env UV_OFFLINE=1 uv run --locked pytest -p no:cacheprovider -q
+        run: sudo unshare --net -- .venv/bin/python -m pytest -p no:cacheprovider -q
       - run: pnpm build
       - uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
         with:
