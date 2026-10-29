@@ -16,18 +16,18 @@
 - 软删除在事务内撤下证据、记录审计并安排清理；清理可取消仍在运行的入库并删除原件和派生数据。真实进程及并发测试见[删除报告](../docs/eval-reports/2026-10-28-document-deletion.md)；清理状态界面和清理任务手动重试未实现。
 - 可恢复的入库死信已支持任务查询和手动重试，原任务保留，版本重新排队与审计原子提交；详见[任务重试报告](../docs/eval-reports/2026-10-29-job-retry.md)。其他任务类型的查询和重试尚未实现。
 - 已接入外置重排、阈值、显式降级、权限复核后的调试 trace 和控制台阶段表格；模型配置按请求传入，知识库持久化配置尚未实现。`tuskrag eval run/compare` 支持批量检索、报告和两百分点回归门禁；`synthetic-zh` 64 题已在真实 PostgreSQL + 确定性替身上运行，四种模式越权数均为 0，RRF MRR@10=0.7919、替身重排后=0.9249。Go 相关竞态测试、12 项前端测试和两个视口的浏览器测试通过，证据及限制见[重排与评测报告](../docs/eval-reports/2026-10-29-m1.md)。这不等于真实模型或完整 M1 验收。
-- 跨知识库检索、问答、MCP、通用 ACL、OIDC、备份恢复、T13 嵌入空间重建切换尚未实现。真实模型 E1/E2、E4 及 E3 三组已完成，E3 fixed-heading 剩余部分与 V08 已迁往旧云端实例。32 份通过报告（每份 64 题、越权数 0）已保存；参见[迁移记录](../docs/eval-reports/2026-10-29-cloud-migration.md)。远端 CI 已执行，Linux 解析隔离仍失败，不能算通过。
+- 跨知识库检索、问答、MCP、通用 ACL、OIDC、备份恢复、T13 嵌入空间重建切换尚未实现。真实模型 E1/E2、E4 及 E3 三组已完成，E3 fixed-heading 六组已在旧云端实例完成；本地 32 份与云端 6 份通过报告（每份 64 题、越权数 0）已保存。V08 20 万块 SQL p95=833.479 ms，采样内存峰值约 1111.04 MiB，性能目标未通过；100 万块未测；参见[迁移记录](../docs/eval-reports/2026-10-29-cloud-migration.md)。远端 CI 已执行，Linux 解析隔离仍失败，不能算通过。
 - 解析与分块合成评测及局限见 [CSV](../docs/eval-reports/2026-10-28-csv-structure.md)、[DOCX](../docs/eval-reports/2026-10-28-docx-structure.md)、[XLSX](../docs/eval-reports/2026-10-28-xlsx-structure.md)、[PDF](../docs/eval-reports/2026-10-28-pdf-structure.md)、[Markdown/TXT](../docs/eval-reports/2026-10-28-native-text-structure.md)、[规整](../docs/eval-reports/2026-10-28-markdown-assembly.md)、[表格](../docs/eval-reports/2026-10-28-table-chunking.md)、[段落](../docs/eval-reports/2026-10-28-text-chunking.md)、[父节](../docs/eval-reports/2026-10-28-parent-sections.md)和[结构分块](../docs/eval-reports/2026-10-28-structured-chunking.md)。
 
 ## 关键判断与环境
 
 - 首发为客户内网私有化；项目自身许可已按所有者授权选择 MIT；pg_search AGPL 法务意见及完整传递依赖盘点尚未取得，见 [A03](../docs/11-架构决策记录.md#a03) 和[许可清单](../deploy/licenses/README.md)。
 - 当前目录已初始化 Git，私有远端为 `Orpheus-K/TuskRAG`；本机部分可执行工具不能访问项目目录，使用 `E:/agent-project/.tools/tuskrag-work/frontend` 构建并同步源文件。SSH 别名 `legacy-test-host` 已验证连接 `legacy-host.invalid`。用户授权在该旧实例测试；本轮独立目录为 `<deployment-path>`。
-- 本轮本机 PostgreSQL 容器、Docker 临时数据和 4 GiB 容量盘已清理；保留评测报告。后续容量测试只在云端独立容器执行。
+- 本轮本机 PostgreSQL 容器、Docker 临时数据和两块合计 10 GiB 的临时盘已清理；保留评测报告。后续容量测试只在云端独立容器执行。
 
 ## 下一步
 
-1. SiliconFlow 的 `BAAI/bge-m3`（1024 维）及 `BAAI/bge-reranker-v2-m3` 已实际调用成功，见[接口探测](../docs/eval-reports/2026-10-29-siliconflow-probe.md)；已完成 E1/E2、E4 及 E3 三组真实基线。继续收集云端 E3 fixed-heading 与 V08 报告，补齐知识库检索配置；真实模型重排延迟和兼容驱动词法召回仍须按门槛判断。完整 M1 退出条件仍按开发计划验收，不提前启动后续里程碑。
+1. SiliconFlow 的 `BAAI/bge-m3`（1024 维）及 `BAAI/bge-reranker-v2-m3` 已实际调用成功，见[接口探测](../docs/eval-reports/2026-10-29-siliconflow-probe.md)；已完成 E1/E2、E4 及 E3 三组真实基线。云端 E3 fixed-heading 与 V08 20 万块报告已保存；继续定位 SQL 性能问题、补测 V08 100 万块并补齐知识库检索配置；真实模型重排延迟和兼容驱动词法召回仍须按门槛判断。完整 M1 退出条件仍按开发计划验收，不提前启动后续里程碑。
 2. 实现逐表预览、清理任务可见和重试及更多 PDF 格式；核验真实模型的分词、用量和出域行为，补充可重复数据集与准确率评测。
 3. 补齐 Windows 解析隔离及发布许可；已有依赖元数据与许可文本校验值见许可清单，原生组件传递依赖与 pg_search 法务意见仍待完成。定位远端 CI 的 Linux 解析隔离失败；按真实结果推进 M0/M1。
 

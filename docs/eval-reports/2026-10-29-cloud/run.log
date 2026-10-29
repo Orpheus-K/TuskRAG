@@ -1,0 +1,68 @@
+73e11dca981a536726598d5675f8bc36f7640d8319ae0230e40ad6f21957b369
+127.0.0.1:5432 - no response
+127.0.0.1:5432 - accepting connections
+=== RUN   TestRealModelEvaluation
+2026/10/29 19:28:00 OK   00001_initial.sql (24.03ms)
+2026/10/29 19:28:00 OK   00002_job_contract.sql (7.28ms)
+2026/10/29 19:28:00 OK   00003_kb_membership.sql (13.84ms)
+2026/10/29 19:28:00 OK   00004_audit_member_details.sql (3.56ms)
+2026/10/29 19:28:00 OK   00005_local_identity.sql (9.55ms)
+2026/10/29 19:28:00 OK   00006_provider_credentials.sql (2.84ms)
+2026/10/29 19:28:00 OK   00007_idempotency.sql (9.31ms)
+2026/10/29 19:28:00 OK   00008_documents.sql (16.79ms)
+2026/10/29 19:28:00 OK   00009_parse_artifacts.sql (7.71ms)
+2026/10/29 19:28:00 OK   00010_index_storage.sql (24.92ms)
+2026/10/29 19:28:00 OK   00011_ingest_plan.sql (6.31ms)
+2026/10/29 19:28:00 OK   00012_audit_context.sql (3.92ms)
+2026/10/29 19:28:00 OK   00013_current_version_guard.sql (4.28ms)
+2026/10/29 19:28:00 OK   00014_qualify_version_guards.sql (3.24ms)
+2026/10/29 19:28:00 OK   00015_table_header_confirmation.sql (3.32ms)
+2026/10/29 19:28:00 OK   00016_document_version_identity.sql (3.39ms)
+2026/10/29 19:28:00 OK   00017_ingest_job_history_index.sql (2.4ms)
+2026/10/29 19:28:00 OK   00018_parse_report.sql (8.27ms)
+2026/10/29 19:28:00 goose: successfully migrated database to version: 18
+    real_eval_test.go:112: tokenizer probes passed: 13
+=== RUN   TestRealModelEvaluation/lexical-30
+    real_eval_test.go:208: lexical-30: {Cases:64 AnswerableCases:54 UnanswerableCases:10 Metrics:0xd438c1ba700} unauthorized=0
+=== RUN   TestRealModelEvaluation/vector-30
+    real_eval_test.go:208: vector-30: {Cases:64 AnswerableCases:54 UnanswerableCases:10 Metrics:0xd438b2caf60} unauthorized=0
+=== RUN   TestRealModelEvaluation/rrf-30
+    real_eval_test.go:208: rrf-30: {Cases:64 AnswerableCases:54 UnanswerableCases:10 Metrics:0xd438b4fbec0} unauthorized=0
+=== RUN   TestRealModelEvaluation/rerank-20
+    real_eval_test.go:208: rerank-20: {Cases:64 AnswerableCases:54 UnanswerableCases:10 Metrics:0xd438d2b3480} unauthorized=0
+=== RUN   TestRealModelEvaluation/rerank-30
+    real_eval_test.go:208: rerank-30: {Cases:64 AnswerableCases:54 UnanswerableCases:10 Metrics:0xd438c2372e0} unauthorized=0
+=== RUN   TestRealModelEvaluation/rerank-50
+    real_eval_test.go:208: rerank-50: {Cases:64 AnswerableCases:54 UnanswerableCases:10 Metrics:0xd438c0275a0} unauthorized=0
+--- PASS: TestRealModelEvaluation (181.78s)
+    --- PASS: TestRealModelEvaluation/lexical-30 (16.23s)
+    --- PASS: TestRealModelEvaluation/vector-30 (15.82s)
+    --- PASS: TestRealModelEvaluation/rrf-30 (15.61s)
+    --- PASS: TestRealModelEvaluation/rerank-20 (38.87s)
+    --- PASS: TestRealModelEvaluation/rerank-30 (43.19s)
+    --- PASS: TestRealModelEvaluation/rerank-50 (42.93s)
+PASS
+=== RUN   TestCapacity200K
+2026/10/29 19:31:01 OK   00001_initial.sql (29.53ms)
+2026/10/29 19:31:01 OK   00002_job_contract.sql (7.49ms)
+2026/10/29 19:31:01 OK   00003_kb_membership.sql (12.79ms)
+2026/10/29 19:31:01 OK   00004_audit_member_details.sql (2.5ms)
+2026/10/29 19:31:01 OK   00005_local_identity.sql (8.38ms)
+2026/10/29 19:31:01 OK   00006_provider_credentials.sql (2.51ms)
+2026/10/29 19:31:01 OK   00007_idempotency.sql (5.38ms)
+2026/10/29 19:31:01 OK   00008_documents.sql (14.85ms)
+2026/10/29 19:31:01 OK   00009_parse_artifacts.sql (6.1ms)
+2026/10/29 19:31:01 OK   00010_index_storage.sql (19.71ms)
+2026/10/29 19:31:01 OK   00011_ingest_plan.sql (6.2ms)
+2026/10/29 19:31:01 OK   00012_audit_context.sql (3.23ms)
+2026/10/29 19:31:01 OK   00013_current_version_guard.sql (4.57ms)
+2026/10/29 19:31:01 OK   00014_qualify_version_guards.sql (3.19ms)
+2026/10/29 19:31:01 OK   00015_table_header_confirmation.sql (3.91ms)
+2026/10/29 19:31:01 OK   00016_document_version_identity.sql (3.29ms)
+2026/10/29 19:31:01 OK   00017_ingest_job_history_index.sql (5.95ms)
+2026/10/29 19:31:01 OK   00018_parse_report.sql (3.05ms)
+2026/10/29 19:31:01 goose: successfully migrated database to version: 18
+    capacity_eval_test.go:83: 200000 chunks inserted in 21.7s
+    capacity_eval_test.go:89: indexes built in 67.7s
+--- PASS: TestCapacity200K (183.41s)
+PASS

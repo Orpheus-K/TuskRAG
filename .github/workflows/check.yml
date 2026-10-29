@@ -99,8 +99,20 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y bubblewrap
+          # Ubuntu restricts capabilities in unprivileged namespaces unless the
+          # executable has an explicit AppArmor userns grant. Keep the runner
+          # unprivileged and scope the grant to this disposable CI executable.
+          sudo install -m 0755 /usr/bin/bwrap /usr/local/lib/tuskrag-ci-bwrap
+          sudo tee /etc/apparmor.d/tuskrag-ci-bwrap > /dev/null <<'EOF'
+          abi <abi/4.0>,
+          include <tunables/global>
+          profile tuskrag-ci-bwrap /usr/local/lib/tuskrag-ci-bwrap flags=(unconfined) {
+            userns,
+          }
+          EOF
+          sudo apparmor_parser -r /etc/apparmor.d/tuskrag-ci-bwrap
           # Diagnose namespace support before testing parsers, without document data.
-          /usr/bin/bwrap --unshare-user --unshare-pid --unshare-net --unshare-uts --unshare-ipc --disable-userns \
+          /usr/local/lib/tuskrag-ci-bwrap --unshare-user --unshare-pid --unshare-net --unshare-uts --unshare-ipc --disable-userns \
             --die-with-parent --new-session --cap-drop ALL --clearenv \
             --ro-bind /usr /usr --ro-bind /bin /bin --ro-bind /lib /lib --ro-bind-try /lib64 /lib64 \
             --proc /proc --dev /dev -- /usr/bin/true
@@ -122,7 +134,7 @@ jobs:
           PYTHONPATH="$runtime_dir/src" exec "$runtime_dir/python/bin/python3.13" -m tuskrag_parser.cli "$@"
           EOF
           chmod 755 "$runtime/tuskrag-parse"
-          export TUSKRAG_TEST_BWRAP=/usr/bin/bwrap
+          export TUSKRAG_TEST_BWRAP=/usr/local/lib/tuskrag-ci-bwrap
           export TUSKRAG_TEST_PARSER_RUNTIME="$runtime"
           export TUSKRAG_TEST_PARSER="$runtime/tuskrag-parse"
           original_group="$(awk -F: '$1 == "0" {print $3}' /proc/self/cgroup)"
