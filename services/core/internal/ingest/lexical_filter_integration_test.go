@@ -33,7 +33,7 @@ func TestLexicalAdvancesPastRejectedCandidates(t *testing.T) {
 			}
 		}
 		if i >= 120 {
-			if _, err := f.admin.Exec(f.ctx, `UPDATE chunk SET access_tags='{}' WHERE tenant_id=$1 AND document_id=$2`, f.tenant, id); err != nil {
+			if _, err := f.admin.Exec(f.ctx, `UPDATE chunk SET access_tags=ARRAY['group:restricted']::text[] WHERE tenant_id=$1 AND document_id=$2`, f.tenant, id); err != nil {
 				t.Fatal(err)
 			}
 		}
