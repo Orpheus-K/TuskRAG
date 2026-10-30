@@ -7,6 +7,7 @@ import (
 	"math"
 	"os"
 	"sort"
+	"strconv"
 	"testing"
 	"time"
 
@@ -17,8 +18,9 @@ import (
 
 // V08 measures storage and SQL on deterministic synthetic vectors, not model quality.
 func TestCapacity200K(t *testing.T) {
-	if os.Getenv("TUSKRAG_CAPACITY_EVAL") != "200000" {
-		t.Skip("explicit 200000-block capacity opt-in required")
+	blocks, err := strconv.Atoi(os.Getenv("TUSKRAG_CAPACITY_EVAL"))
+	if err != nil || (blocks != 200000 && blocks != 1000000) {
+		t.Skip("explicit 200000 or 1000000-block capacity opt-in required")
 	}
 	directory := os.Getenv("TUSKRAG_EVAL_REPORT_DIR")
 	if directory == "" {
@@ -61,7 +63,7 @@ func TestCapacity200K(t *testing.T) {
 	}
 	started := time.Now()
 	if _, err := f.admin.Exec(ctx, `INSERT INTO chunk(tenant_id,kb_id,document_id,version_id,section_id,ordinal,kind,content,search_text,token_count,is_current,access_tags,doc_mime,doc_updated_at)
- SELECT $1,$2,$3,$4,$5,g,'text',repeat('合成制度条款，申请人提交材料，审批人审核记录。',20),'容量样本 差旅报销 条款'||(g%256)::text,512,true,ARRAY[$6]::text[],'text/markdown',now() FROM generate_series(2,200000) g`, f.tenant, f.kbID, doc, version, section, fmt.Sprintf("kb:%d:all", f.kbID)); err != nil {
+ SELECT $1,$2,$3,$4,$5,g,'text',repeat('合成制度条款，申请人提交材料，审批人审核记录。',20),'容量样本 差旅报销 条款'||(g%256)::text,512,true,ARRAY[$6]::text[],'text/markdown',now() FROM generate_series(2,$7::integer) g`, f.tenant, f.kbID, doc, version, section, fmt.Sprintf("kb:%d:all", f.kbID), blocks); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := f.admin.Exec(ctx, `CREATE TEMP TABLE capacity_vectors(n int PRIMARY KEY,v halfvec(1024))`); err != nil {
@@ -80,7 +82,7 @@ func TestCapacity200K(t *testing.T) {
 		t.Fatal(err)
 	}
 	insertSeconds := time.Since(started).Seconds()
-	t.Logf("200000 chunks inserted in %.1fs", insertSeconds)
+	t.Logf("%d chunks inserted in %.1fs", blocks, insertSeconds)
 	started = time.Now()
 	if err := indexing.Provision(ctx, os.Getenv("TUSKRAG_TEST_MIGRATOR_URL"), f.tenant, space); err != nil {
 		t.Fatal(err)
@@ -123,11 +125,11 @@ func TestCapacity200K(t *testing.T) {
 	if err := f.admin.QueryRow(ctx, `SELECT pg_total_relation_size('chunk'),pg_total_relation_size('chunk_vector'),pg_relation_size('tuskrag_chunk_bm25_v1'),pg_relation_size($1::regclass),pg_database_size(current_database())`, fmt.Sprintf("tuskrag_chunk_vector_hnsw_s%d", space)).Scan(&chunkBytes, &vectorBytes, &bm25Bytes, &hnswBytes, &databaseBytes); err != nil {
 		t.Fatal(err)
 	}
-	writeRealReport(t, directory, "v08-200k", struct {
+	writeRealReport(t, directory, fmt.Sprintf("v08-%dk", blocks/1000), struct {
 		Blocks, Dimensions, VectorPrototypes, Queries                          int
 		InsertSeconds, IndexSeconds, P50MS, P95MS                              float64
 		ChunkTotalBytes, VectorTotalBytes, BM25Bytes, HNSWBytes, DatabaseBytes int64
 		UnauthorizedEvidence                                                   int
 		Distribution                                                           string
-	}{200000, 1024, 256, 100, insertSeconds, indexSeconds, latencies[49], latencies[94], chunkBytes, vectorBytes, bm25Bytes, hnswBytes, databaseBytes, 0, "256 deterministic normalized sine vectors reused across 200000 synthetic blocks; excludes model latency"})
+	}{blocks, 1024, 256, 100, insertSeconds, indexSeconds, latencies[49], latencies[94], chunkBytes, vectorBytes, bm25Bytes, hnswBytes, databaseBytes, 0, "256 deterministic normalized sine vectors reused across synthetic blocks; excludes model latency"})
 }

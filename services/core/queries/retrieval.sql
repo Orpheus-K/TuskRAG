@@ -26,22 +26,29 @@ WHERE k.tenant_id = sqlc.arg(tenant_id) AND k.id = sqlc.arg(kb_id)
 
 -- name: RecallHybrid :many
 WITH lexical_candidates AS (
-  SELECT c.id AS chunk_id, paradedb.score(c.id)::float8 AS raw_score
-  FROM chunk c
-  JOIN document d ON d.tenant_id = c.tenant_id AND d.kb_id = c.kb_id AND d.id = c.document_id
-  JOIN document_version dv ON dv.tenant_id = c.tenant_id AND dv.kb_id = c.kb_id
-    AND dv.document_id = c.document_id AND dv.id = c.version_id
-  JOIN knowledge_base k ON k.tenant_id = c.tenant_id AND k.id = c.kb_id
+  SELECT candidates.chunk_id, candidates.raw_score
+  FROM knowledge_base k
   JOIN kb_membership m ON m.tenant_id = k.tenant_id AND m.kb_id = k.id
-  WHERE c.tenant_id = sqlc.arg(tenant_id) AND c.kb_id = sqlc.arg(kb_id)
+  JOIN document d ON d.tenant_id = k.tenant_id AND d.kb_id = k.id
+  JOIN document_version dv ON dv.tenant_id = d.tenant_id AND dv.kb_id = d.kb_id
+    AND dv.document_id = d.id AND dv.id = d.current_version_id
+  CROSS JOIN LATERAL (
+    SELECT c.id AS chunk_id, paradedb.score(c.id)::float8 AS raw_score
+    FROM chunk c
+    WHERE c.tenant_id = sqlc.arg(tenant_id) AND c.kb_id = sqlc.arg(kb_id)
+      AND c.document_id = d.id AND c.version_id = d.current_version_id
+      AND c.is_current AND NOT c.disabled AND c.access_tags && sqlc.arg(principal_tags)::text[]
+      AND c.search_text ||| sqlc.arg(query)::text
+      AND (cardinality(sqlc.arg(doc_tags)::text[]) = 0 OR c.doc_tags && sqlc.arg(doc_tags)::text[])
+      AND (cardinality(sqlc.arg(mimes)::text[]) = 0 OR c.doc_mime = ANY(sqlc.arg(mimes)::text[]))
+      AND (sqlc.narg(updated_after)::timestamptz IS NULL OR c.doc_updated_at >= sqlc.narg(updated_after)::timestamptz)
+    ORDER BY paradedb.score(c.id) DESC, c.id LIMIT 50
+  ) candidates
+  WHERE k.tenant_id = sqlc.arg(tenant_id) AND k.id = sqlc.arg(kb_id)
     AND m.user_id = sqlc.arg(user_id) AND k.status = 'active' AND k.embedding_space_id = sqlc.arg(space_id)
-    AND c.is_current AND NOT c.disabled AND c.access_tags && sqlc.arg(principal_tags)::text[]
-    AND d.deleted_at IS NULL AND d.acl_mode = 'inherit_kb' AND d.current_version_id = c.version_id
-    AND dv.status IN ('ready', 'partial') AND c.search_text ||| sqlc.arg(query)::text
-    AND (cardinality(sqlc.arg(doc_tags)::text[]) = 0 OR c.doc_tags && sqlc.arg(doc_tags)::text[])
-    AND (cardinality(sqlc.arg(mimes)::text[]) = 0 OR c.doc_mime = ANY(sqlc.arg(mimes)::text[]))
-    AND (sqlc.narg(updated_after)::timestamptz IS NULL OR c.doc_updated_at >= sqlc.narg(updated_after)::timestamptz)
-  ORDER BY raw_score DESC, c.id LIMIT 50
+    AND d.deleted_at IS NULL AND d.acl_mode = 'inherit_kb' AND dv.status IN ('ready', 'partial')
+  -- The global top 50 is contained in the union of each authorized document's top 50.
+  ORDER BY candidates.raw_score DESC, candidates.chunk_id LIMIT 50
 ), semantic_candidates AS (
   SELECT v.chunk_id, (halfvec(v.embedding, sqlc.arg(dimensions)::int, true) <=> sqlc.arg(vector)::text::halfvec)::float8 AS distance
   FROM chunk_vector v

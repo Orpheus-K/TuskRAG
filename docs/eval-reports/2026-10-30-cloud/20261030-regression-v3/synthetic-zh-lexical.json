@@ -1,0 +1,7573 @@
+{
+  "dataset_version": "synthetic-zh-v1-20261029",
+  "dataset_sha256": "705f1b66d4351e714c4b13cc8b9a0a97866e04b5d07457ea972fdcde94a0b5be",
+  "config_sha256": "2bfd0af65dc434726a7164ecdf5cb1ca3d1120ed5a2cd6d69a0e4ff375b907bd",
+  "model_label": "character-hash-64+bigram-overlap-v1",
+  "model_kind": "stub",
+  "mode": "lexical",
+  "status": "passed",
+  "summary": {
+    "Cases": 64,
+    "AnswerableCases": 54,
+    "UnanswerableCases": 10,
+    "Metrics": {
+      "RecallAt20": 0.9814814814814815,
+      "HitAt5": 0.9814814814814815,
+      "MRRAt10": 0.9598765432098765,
+      "NDCGAt10": 0.9631137975723982
+    }
+  },
+  "unauthorized_evidence": 0,
+  "rows": [
+    {
+      "id": "travel-1",
+      "fused": [
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.264,
+        "recall_rrf": 256.408,
+        "recheck": 10.118,
+        "total": 275.034
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "travel-2",
+      "fused": [
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.385,
+        "recall_rrf": 31.125,
+        "recheck": 6.194,
+        "total": 45.14
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "travel-3",
+      "fused": [
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 4.406,
+        "recall_rrf": 35.646,
+        "recheck": 6.281,
+        "total": 50.601
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "travel-4",
+      "fused": [
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 2.954,
+        "recall_rrf": 30.867,
+        "recheck": 5.498,
+        "total": 43.022
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "expense-1",
+      "fused": [
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 2.634,
+        "recall_rrf": 28.632,
+        "recheck": 6.313,
+        "total": 41.066
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "expense-2",
+      "fused": [
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 4.084,
+        "recall_rrf": 32.732,
+        "recheck": 5.701,
+        "total": 48.405
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "expense-3",
+      "fused": [
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 2.784,
+        "recall_rrf": 30.419,
+        "recheck": 5.392,
+        "total": 42.255
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "expense-4",
+      "fused": [
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.182,
+        "recall_rrf": 29.068,
+        "recheck": 9.813,
+        "total": 46.008
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "leave-1",
+      "fused": [
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3,
+        "recall_rrf": 32.391,
+        "recheck": 6.019,
+        "total": 45.446
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "leave-2",
+      "fused": [
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 2.993,
+        "recall_rrf": 33.899,
+        "recheck": 5.518,
+        "total": 46.641
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "leave-3",
+      "fused": [
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.005,
+        "recall_rrf": 27.982,
+        "recheck": 5.495,
+        "total": 40.364
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "leave-4",
+      "fused": [
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 2.819,
+        "recall_rrf": 34.399,
+        "recheck": 5.814,
+        "total": 46.966
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "vpn-1",
+      "fused": [
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.033,
+        "recall_rrf": 29.996,
+        "recheck": 5.72,
+        "total": 43.129
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "vpn-2",
+      "fused": [
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.074,
+        "recall_rrf": 30.268,
+        "recheck": 5.998,
+        "total": 43.753
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "vpn-3",
+      "fused": [
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.301,
+        "recall_rrf": 31.307,
+        "recheck": 5.8,
+        "total": 44.3
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "vpn-4",
+      "fused": [
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.162,
+        "recall_rrf": 35.043,
+        "recheck": 6.349,
+        "total": 48.714
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "incident-1",
+      "fused": [
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.044,
+        "recall_rrf": 28.634,
+        "recheck": 5.386,
+        "total": 41.323
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "incident-2",
+      "fused": [
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 0.5,
+        "NDCGAt10": 0.6309297535714574
+      },
+      "timings_ms": {
+        "embedding": 2.811,
+        "recall_rrf": 30.432,
+        "recheck": 5.862,
+        "total": 43.317
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "incident-3",
+      "fused": [
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 2.788,
+        "recall_rrf": 27.797,
+        "recheck": 6.005,
+        "total": 40.641
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "incident-4",
+      "fused": [
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.085,
+        "recall_rrf": 30.793,
+        "recheck": 5.938,
+        "total": 44.021
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "backup-1",
+      "fused": [
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.562,
+        "recall_rrf": 31.443,
+        "recheck": 5.949,
+        "total": 46.924
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "backup-2",
+      "fused": [
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.338,
+        "recall_rrf": 33.098,
+        "recheck": 6.102,
+        "total": 46.962
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "backup-3",
+      "fused": [
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 2.865,
+        "recall_rrf": 31.855,
+        "recheck": 5.992,
+        "total": 44.635
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "backup-4",
+      "fused": [
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 2.936,
+        "recall_rrf": 28.755,
+        "recheck": 5.675,
+        "total": 41.523
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "purchase-1",
+      "fused": [
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 2.892,
+        "recall_rrf": 29.856,
+        "recheck": 6.364,
+        "total": 42.955
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "purchase-2",
+      "fused": [
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 0.3333333333333333,
+        "NDCGAt10": 0.5
+      },
+      "timings_ms": {
+        "embedding": 3.296,
+        "recall_rrf": 30.438,
+        "recheck": 6.365,
+        "total": 44.948
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "purchase-3",
+      "fused": [
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.211,
+        "recall_rrf": 31.27,
+        "recheck": 5.874,
+        "total": 44.656
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "purchase-4",
+      "fused": [
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.099,
+        "recall_rrf": 35.401,
+        "recheck": 6.529,
+        "total": 49.476
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "meeting-1",
+      "fused": [
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.264,
+        "recall_rrf": 28.788,
+        "recheck": 5.583,
+        "total": 41.942
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "meeting-2",
+      "fused": [
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.128,
+        "recall_rrf": 42.614,
+        "recheck": 5.656,
+        "total": 55.277
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "meeting-3",
+      "fused": [
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 2.886,
+        "recall_rrf": 30.071,
+        "recheck": 6.187,
+        "total": 42.996
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "meeting-4",
+      "fused": [
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.273,
+        "recall_rrf": 30.724,
+        "recheck": 6.355,
+        "total": 44.816
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "onboarding-1",
+      "fused": [
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 2.922,
+        "recall_rrf": 29.716,
+        "recheck": 5.812,
+        "total": 43.203
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "onboarding-2",
+      "fused": [
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.515,
+        "recall_rrf": 30.267,
+        "recheck": 6.826,
+        "total": 45.356
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "onboarding-3",
+      "fused": [
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.061,
+        "recall_rrf": 33.708,
+        "recheck": 5.561,
+        "total": 46.942
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "onboarding-4",
+      "fused": [
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 0,
+        "HitAt5": 0,
+        "MRRAt10": 0,
+        "NDCGAt10": 0
+      },
+      "timings_ms": {
+        "embedding": 3.361,
+        "recall_rrf": 30.548,
+        "recheck": 5.989,
+        "total": 43.84
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "offboarding-1",
+      "fused": [
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.54,
+        "recall_rrf": 29.98,
+        "recheck": 5.867,
+        "total": 43.78
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "offboarding-2",
+      "fused": [
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.111,
+        "recall_rrf": 29.274,
+        "recheck": 6.234,
+        "total": 42.71
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "offboarding-3",
+      "fused": [
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.292,
+        "recall_rrf": 33.05,
+        "recheck": 6.671,
+        "total": 48.496
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "offboarding-4",
+      "fused": [
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.4,
+        "recall_rrf": 31.109,
+        "recheck": 5.788,
+        "total": 44.495
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "release-1",
+      "fused": [
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 2.997,
+        "recall_rrf": 32.278,
+        "recheck": 7.531,
+        "total": 46.707
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "release-2",
+      "fused": [
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.199,
+        "recall_rrf": 30.01,
+        "recheck": 5.681,
+        "total": 42.821
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "release-3",
+      "fused": [
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.899,
+        "recall_rrf": 39.254,
+        "recheck": 6.282,
+        "total": 54.737
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "release-4",
+      "fused": [
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.215,
+        "recall_rrf": 29.647,
+        "recheck": 6.503,
+        "total": 43.971
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "support-1",
+      "fused": [
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.427,
+        "recall_rrf": 28.42,
+        "recheck": 5.919,
+        "total": 42.498
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "support-2",
+      "fused": [
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.404,
+        "recall_rrf": 33.802,
+        "recheck": 5.919,
+        "total": 47.665
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "support-3",
+      "fused": [
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.258,
+        "recall_rrf": 31.516,
+        "recheck": 6.236,
+        "total": 45.544
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "support-4",
+      "fused": [
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.089,
+        "recall_rrf": 33.228,
+        "recheck": 6.203,
+        "total": 46.54
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "cross-1",
+      "fused": [
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.037,
+        "recall_rrf": 38.021,
+        "recheck": 5.597,
+        "total": 50.743
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "cross-2",
+      "fused": [
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.307,
+        "recall_rrf": 35.138,
+        "recheck": 6.274,
+        "total": 48.891
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "cross-3",
+      "fused": [
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.406,
+        "recall_rrf": 38.687,
+        "recheck": 6.098,
+        "total": 52.809
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "cross-4",
+      "fused": [
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 3.16,
+        "recall_rrf": 47.154,
+        "recheck": 6.89,
+        "total": 61.698
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "cross-5",
+      "fused": [
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 0.8772153153380494
+      },
+      "timings_ms": {
+        "embedding": 4,
+        "recall_rrf": 38.188,
+        "recheck": 5.761,
+        "total": 52.592
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "cross-6",
+      "fused": [
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": {
+        "RecallAt20": 1,
+        "HitAt5": 1,
+        "MRRAt10": 1,
+        "NDCGAt10": 1
+      },
+      "timings_ms": {
+        "embedding": 2.973,
+        "recall_rrf": 41.145,
+        "recheck": 8.178,
+        "total": 56.413
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "none-1",
+      "fused": [
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": null,
+      "timings_ms": {
+        "embedding": 3.541,
+        "recall_rrf": 36.526,
+        "recheck": 7.341,
+        "total": 52.042
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "none-2",
+      "fused": [
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": null,
+      "timings_ms": {
+        "embedding": 3.177,
+        "recall_rrf": 29.317,
+        "recheck": 5.962,
+        "total": 43.007
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "none-3",
+      "fused": [
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": null,
+      "timings_ms": {
+        "embedding": 2.983,
+        "recall_rrf": 30.985,
+        "recheck": 6.676,
+        "total": 44.786
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "none-4",
+      "fused": [
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": null,
+      "timings_ms": {
+        "embedding": 3.466,
+        "recall_rrf": 33.513,
+        "recheck": 5.763,
+        "total": 47.488
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "none-5",
+      "fused": [
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": null,
+      "timings_ms": {
+        "embedding": 3.095,
+        "recall_rrf": 28.676,
+        "recheck": 5.165,
+        "total": 40.98
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "none-6",
+      "fused": [
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": null,
+      "timings_ms": {
+        "embedding": 4.216,
+        "recall_rrf": 32.245,
+        "recheck": 5.466,
+        "total": 45.901
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "none-7",
+      "fused": [
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 12,
+          "DocumentID": 12,
+          "SectionID": 12,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": null,
+      "timings_ms": {
+        "embedding": 3.321,
+        "recall_rrf": 31.631,
+        "recheck": 5.823,
+        "total": 45.279
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "none-8",
+      "fused": [
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 11,
+          "DocumentID": 11,
+          "SectionID": 11,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 6,
+          "DocumentID": 6,
+          "SectionID": 6,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 4,
+          "DocumentID": 4,
+          "SectionID": 4,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 5,
+          "DocumentID": 5,
+          "SectionID": 5,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": null,
+      "timings_ms": {
+        "embedding": 3.384,
+        "recall_rrf": 31.245,
+        "recheck": 8.112,
+        "total": 47.203
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "none-9",
+      "fused": [
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 3,
+          "DocumentID": 3,
+          "SectionID": 3,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": null,
+      "timings_ms": {
+        "embedding": 3.021,
+        "recall_rrf": 30.384,
+        "recheck": 6.13,
+        "total": 43.57
+      },
+      "degraded": [
+        "rerank"
+      ]
+    },
+    {
+      "id": "none-10",
+      "fused": [
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "ranked": [
+        {
+          "ChunkID": 2,
+          "DocumentID": 2,
+          "SectionID": 2,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 1,
+          "DocumentID": 1,
+          "SectionID": 1,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 9,
+          "DocumentID": 9,
+          "SectionID": 9,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 8,
+          "DocumentID": 8,
+          "SectionID": 8,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 10,
+          "DocumentID": 10,
+          "SectionID": 10,
+          "PageStart": 0,
+          "PageEnd": 0
+        },
+        {
+          "ChunkID": 7,
+          "DocumentID": 7,
+          "SectionID": 7,
+          "PageStart": 0,
+          "PageEnd": 0
+        }
+      ],
+      "metrics": null,
+      "timings_ms": {
+        "embedding": 2.955,
+        "recall_rrf": 30.529,
+        "recheck": 5.559,
+        "total": 43.203
+      },
+      "degraded": [
+        "rerank"
+      ]
+    }
+  ],
+  "latency_ms_p50_p95": {
+    "embedding": [
+      3.162,
+      4
+    ],
+    "recall_rrf": [
+      31.125,
+      41.145
+    ],
+    "recheck": [
+      5.989,
+      8.112
+    ],
+    "total": [
+      44.948,
+      55.277
+    ]
+  }
+}

@@ -157,27 +157,34 @@ func (q *Queries) LockSearchBinding(ctx context.Context, arg LockSearchBindingPa
 
 const recallHybrid = `-- name: RecallHybrid :many
 WITH lexical_candidates AS (
-  SELECT c.id AS chunk_id, paradedb.score(c.id)::float8 AS raw_score
-  FROM chunk c
-  JOIN document d ON d.tenant_id = c.tenant_id AND d.kb_id = c.kb_id AND d.id = c.document_id
-  JOIN document_version dv ON dv.tenant_id = c.tenant_id AND dv.kb_id = c.kb_id
-    AND dv.document_id = c.document_id AND dv.id = c.version_id
-  JOIN knowledge_base k ON k.tenant_id = c.tenant_id AND k.id = c.kb_id
+  SELECT candidates.chunk_id, candidates.raw_score
+  FROM knowledge_base k
   JOIN kb_membership m ON m.tenant_id = k.tenant_id AND m.kb_id = k.id
-  WHERE c.tenant_id = $1 AND c.kb_id = $2
-    AND m.user_id = $3 AND k.status = 'active' AND k.embedding_space_id = $4
-    AND c.is_current AND NOT c.disabled AND c.access_tags && $5::text[]
-    AND d.deleted_at IS NULL AND d.acl_mode = 'inherit_kb' AND d.current_version_id = c.version_id
-    AND dv.status IN ('ready', 'partial') AND c.search_text ||| $6::text
-    AND (cardinality($7::text[]) = 0 OR c.doc_tags && $7::text[])
-    AND (cardinality($8::text[]) = 0 OR c.doc_mime = ANY($8::text[]))
-    AND ($9::timestamptz IS NULL OR c.doc_updated_at >= $9::timestamptz)
-  ORDER BY raw_score DESC, c.id LIMIT 50
+  JOIN document d ON d.tenant_id = k.tenant_id AND d.kb_id = k.id
+  JOIN document_version dv ON dv.tenant_id = d.tenant_id AND dv.kb_id = d.kb_id
+    AND dv.document_id = d.id AND dv.id = d.current_version_id
+  CROSS JOIN LATERAL (
+    SELECT c.id AS chunk_id, paradedb.score(c.id)::float8 AS raw_score
+    FROM chunk c
+    WHERE c.tenant_id = $1 AND c.kb_id = $2
+      AND c.document_id = d.id AND c.version_id = d.current_version_id
+      AND c.is_current AND NOT c.disabled AND c.access_tags && $3::text[]
+      AND c.search_text ||| $4::text
+      AND (cardinality($5::text[]) = 0 OR c.doc_tags && $5::text[])
+      AND (cardinality($6::text[]) = 0 OR c.doc_mime = ANY($6::text[]))
+      AND ($7::timestamptz IS NULL OR c.doc_updated_at >= $7::timestamptz)
+    ORDER BY paradedb.score(c.id) DESC, c.id LIMIT 50
+  ) candidates
+  WHERE k.tenant_id = $1 AND k.id = $2
+    AND m.user_id = $8 AND k.status = 'active' AND k.embedding_space_id = $9
+    AND d.deleted_at IS NULL AND d.acl_mode = 'inherit_kb' AND dv.status IN ('ready', 'partial')
+  -- The global top 50 is contained in the union of each authorized document's top 50.
+  ORDER BY candidates.raw_score DESC, candidates.chunk_id LIMIT 50
 ), semantic_candidates AS (
   SELECT v.chunk_id, (halfvec(v.embedding, $10::int, true) <=> $11::text::halfvec)::float8 AS distance
   FROM chunk_vector v
-  WHERE v.tenant_id = $1 AND v.kb_id = $2 AND v.space_id = $4
-    AND v.is_current AND v.access_tags && $5::text[]
+  WHERE v.tenant_id = $1 AND v.kb_id = $2 AND v.space_id = $9
+    AND v.is_current AND v.access_tags && $3::text[]
     -- Keep document filters on the vector scan so iterative HNSW can advance past rejected rows.
     AND EXISTS (
       SELECT 1 FROM chunk c
@@ -187,13 +194,13 @@ WITH lexical_candidates AS (
       JOIN knowledge_base k ON k.tenant_id = c.tenant_id AND k.id = c.kb_id
       JOIN kb_membership m ON m.tenant_id = k.tenant_id AND m.kb_id = k.id
       WHERE c.tenant_id = v.tenant_id AND c.kb_id = v.kb_id AND c.id = v.chunk_id
-        AND m.user_id = $3 AND k.status = 'active' AND k.embedding_space_id = v.space_id
-        AND c.is_current AND NOT c.disabled AND c.access_tags && $5::text[]
+        AND m.user_id = $8 AND k.status = 'active' AND k.embedding_space_id = v.space_id
+        AND c.is_current AND NOT c.disabled AND c.access_tags && $3::text[]
         AND d.deleted_at IS NULL AND d.acl_mode = 'inherit_kb' AND d.current_version_id = c.version_id
         AND dv.status IN ('ready', 'partial')
-        AND (cardinality($7::text[]) = 0 OR c.doc_tags && $7::text[])
-        AND (cardinality($8::text[]) = 0 OR c.doc_mime = ANY($8::text[]))
-        AND ($9::timestamptz IS NULL OR c.doc_updated_at >= $9::timestamptz)
+        AND (cardinality($5::text[]) = 0 OR c.doc_tags && $5::text[])
+        AND (cardinality($6::text[]) = 0 OR c.doc_mime = ANY($6::text[]))
+        AND ($7::timestamptz IS NULL OR c.doc_updated_at >= $7::timestamptz)
       OFFSET 0
     )
   ORDER BY distance LIMIT 50
@@ -221,13 +228,13 @@ FROM fused ORDER BY score DESC, chunk_id LIMIT 100
 type RecallHybridParams struct {
 	TenantID      int64
 	KbID          int64
-	UserID        int64
-	SpaceID       int64
 	PrincipalTags []string
 	Query         string
 	DocTags       []string
 	Mimes         []string
 	UpdatedAfter  pgtype.Timestamptz
+	UserID        int64
+	SpaceID       int64
 	Dimensions    int32
 	Vector        string
 }
@@ -245,13 +252,13 @@ func (q *Queries) RecallHybrid(ctx context.Context, arg RecallHybridParams) ([]R
 	rows, err := q.db.Query(ctx, recallHybrid,
 		arg.TenantID,
 		arg.KbID,
-		arg.UserID,
-		arg.SpaceID,
 		arg.PrincipalTags,
 		arg.Query,
 		arg.DocTags,
 		arg.Mimes,
 		arg.UpdatedAfter,
+		arg.UserID,
+		arg.SpaceID,
 		arg.Dimensions,
 		arg.Vector,
 	)
