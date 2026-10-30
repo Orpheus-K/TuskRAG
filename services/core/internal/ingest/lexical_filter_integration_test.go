@@ -24,11 +24,16 @@ func TestLexicalAdvancesPastRejectedCandidates(t *testing.T) {
 		t.Fatal(err)
 	}
 	vector := testVector(1, 0)
-	// All texts tie on BM25. The first 60 IDs are restricted; another 60 chunks are disabled.
-	for i := 0; i < 120; i++ {
+	// Every rejected group exceeds Top-K and ties with the visible text on BM25.
+	for i := 0; i < 180; i++ {
 		id := insertEvaluationDocument(t, f, space, eval.Document{Key: fmt.Sprintf("hidden-%d", i), Title: "申请", Content: "申请"}, i < 60, vector)
-		if i >= 60 {
+		if i >= 60 && i < 120 {
 			if _, err := f.admin.Exec(f.ctx, `UPDATE chunk SET disabled=true,is_current=false WHERE tenant_id=$1 AND document_id=$2`, f.tenant, id); err != nil {
+				t.Fatal(err)
+			}
+		}
+		if i >= 120 {
+			if _, err := f.admin.Exec(f.ctx, `UPDATE chunk SET access_tags='{}' WHERE tenant_id=$1 AND document_id=$2`, f.tenant, id); err != nil {
 				t.Fatal(err)
 			}
 		}

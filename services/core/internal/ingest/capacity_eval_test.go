@@ -122,7 +122,7 @@ func TestCapacity200K(t *testing.T) {
 	}
 	sort.Float64s(latencies)
 	var chunkBytes, vectorBytes, bm25Bytes, hnswBytes, databaseBytes int64
-	if err := f.admin.QueryRow(ctx, `SELECT pg_total_relation_size('chunk'),pg_total_relation_size('chunk_vector'),pg_relation_size('tuskrag_chunk_bm25_v1'),pg_relation_size($1::regclass),pg_database_size(current_database())`, fmt.Sprintf("tuskrag_chunk_vector_hnsw_s%d", space)).Scan(&chunkBytes, &vectorBytes, &bm25Bytes, &hnswBytes, &databaseBytes); err != nil {
+	if err := f.admin.QueryRow(ctx, `SELECT pg_total_relation_size('chunk'),pg_total_relation_size('chunk_vector'),pg_relation_size('tuskrag_chunk_bm25_v2'),pg_relation_size($1::regclass),pg_database_size(current_database())`, fmt.Sprintf("tuskrag_chunk_vector_hnsw_s%d", space)).Scan(&chunkBytes, &vectorBytes, &bm25Bytes, &hnswBytes, &databaseBytes); err != nil {
 		t.Fatal(err)
 	}
 	writeRealReport(t, directory, fmt.Sprintf("v08-%dk", blocks/1000), struct {

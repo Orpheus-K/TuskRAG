@@ -18,7 +18,7 @@ var (
 	ErrUnsupportedDistance = errors.New("embedding distance is not supported by the index")
 )
 
-const lexicalIndexName = "tuskrag_chunk_bm25_v1"
+const lexicalIndexName = "tuskrag_chunk_bm25_v2"
 
 // catalogReader is implemented by a pgx transaction or connection.
 type catalogReader interface {
@@ -43,10 +43,10 @@ func indexDefinitions(spaceID int64, dimensions int32, distance string) ([]defin
 		{
 			name: lexicalIndexName,
 			ddl: "CREATE INDEX CONCURRENTLY " + lexicalIndexName + " ON public.chunk USING bm25 " +
-				"(id, (search_text::pdb.jieba), tenant_id, kb_id, is_current, access_tags, doc_tags) " +
+				"(id, (search_text::pdb.jieba), tenant_id, kb_id, version_id, is_current, kb_access, access_tags, doc_tags) " +
 				"WITH (key_field = 'id') WHERE is_current",
 			want: "CREATE INDEX " + lexicalIndexName + " ON public.chunk USING bm25 " +
-				"(id, ((search_text)::pdb.jieba), tenant_id, kb_id, is_current, access_tags, doc_tags) " +
+				"(id, ((search_text)::pdb.jieba), tenant_id, kb_id, version_id, is_current, kb_access, access_tags, doc_tags) " +
 				"WITH (key_field=id) WHERE is_current",
 		},
 		{

@@ -328,7 +328,7 @@ func TestIngestWorkerRetriesWhenIndexDisappearsBeforeCommit(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer func() { _ = migrator.Close(context.Background()) }()
-	if _, err := migrator.Exec(f.ctx, `DROP INDEX CONCURRENTLY public.tuskrag_chunk_bm25_v1`); err != nil {
+	if _, err := migrator.Exec(f.ctx, `DROP INDEX CONCURRENTLY public.tuskrag_chunk_bm25_v2`); err != nil {
 		t.Fatal(err)
 	}
 	releaseOnce.Do(func() { close(release) })

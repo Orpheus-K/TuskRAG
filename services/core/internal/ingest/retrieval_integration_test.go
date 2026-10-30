@@ -573,7 +573,7 @@ func checkHybridIndexPlan(t *testing.T, f *fixture, pool *pgxpool.Pool, binding 
 	if err := rows.Err(); err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(plan.String(), "tuskrag_chunk_bm25_v1") ||
+	if !strings.Contains(plan.String(), "tuskrag_chunk_bm25_v2") ||
 		!strings.Contains(plan.String(), fmt.Sprintf("tuskrag_chunk_vector_hnsw_s%d", binding.SpaceID)) {
 		t.Fatalf("hybrid index plan missing: %s", plan.String())
 	}

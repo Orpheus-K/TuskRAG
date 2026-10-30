@@ -61,6 +61,7 @@ type Chunk struct {
 	DocTags       []string
 	DocMime       string
 	DocUpdatedAt  pgtype.Timestamptz
+	KbAccess      pgtype.Bool
 }
 
 type ChunkVector struct {
