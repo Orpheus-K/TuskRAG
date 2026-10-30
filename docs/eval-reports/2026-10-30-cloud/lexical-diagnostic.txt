@@ -1,0 +1,215 @@
+BEGIN
+SET
+1
+SET
+SET
+Subquery Scan on lexical_candidates  (cost=1042.75..1044.30 rows=10 width=16) (actual rows=50 loops=1)
+  Buffers: shared hit=1008 read=448 dirtied=2
+  ->  Limit  (cost=1042.75..1044.20 rows=10 width=20) (actual rows=50 loops=1)
+        Buffers: shared hit=1008 read=448 dirtied=2
+        InitPlan 1
+          ->  Result  (cost=0.60..32.73 rows=1 width=8) (actual rows=1 loops=1)
+                One-Time Filter: ((current_setting('tuskrag.tenant_id'::text))::bigint = 1)
+                Buffers: shared hit=3 read=8 dirtied=2
+                ->  Nested Loop  (cost=0.60..32.73 rows=1 width=8) (actual rows=1 loops=1)
+                      Join Filter: ((dv.document_id = d.id) AND (dv.id = d.current_version_id))
+                      Buffers: shared hit=3 read=8 dirtied=2
+                      ->  Nested Loop  (cost=0.44..24.53 rows=1 width=32) (actual rows=1 loops=1)
+                            Buffers: shared hit=3 read=6 dirtied=2
+                            ->  Index Scan using document_by_kb on document d  (cost=0.14..8.17 rows=1 width=32) (actual rows=1 loops=1)
+                                  Index Cond: ((tenant_id = 1) AND (kb_id = 1))
+                                  Filter: (acl_mode = 'inherit_kb'::text)
+                                  Buffers: shared hit=3 read=2 dirtied=1
+                            ->  Nested Loop  (cost=0.30..16.36 rows=1 width=16) (actual rows=1 loops=1)
+                                  Buffers: shared read=4 dirtied=1
+                                  ->  Index Scan using knowledge_base_tenant_id_id_key on knowledge_base k  (cost=0.15..8.17 rows=1 width=16) (actual rows=1 loops=1)
+                                        Index Cond: ((tenant_id = 1) AND (id = 1))
+                                        Filter: ((embedding_space_id = 1) AND (status = 'active'::text))
+                                        Buffers: shared read=2
+                                  ->  Index Only Scan using kb_membership_by_user on kb_membership m  (cost=0.15..8.17 rows=1 width=16) (actual rows=1 loops=1)
+                                        Index Cond: ((tenant_id = 1) AND (user_id = 1) AND (kb_id = 1))
+                                        Heap Fetches: 1
+                                        Buffers: shared read=2 dirtied=1
+                      ->  Index Scan using document_version_scope_key on document_version dv  (cost=0.15..8.17 rows=1 width=32) (actual rows=1 loops=1)
+                            Index Cond: ((tenant_id = 1) AND (kb_id = 1))
+                            Filter: (status = ANY ('{ready,partial}'::text[]))
+                            Buffers: shared read=2
+        ->  Gather Merge  (cost=1010.02..1011.47 rows=10 width=20) (actual rows=50 loops=1)
+              Workers Planned: 2
+              Workers Launched: 2
+              Buffers: shared hit=1008 read=448 dirtied=2
+              ->  Result  (cost=10.00..10.29 rows=17 width=20) (actual rows=17 loops=3)
+                    One-Time Filter: ((current_setting('tuskrag.tenant_id'::text))::bigint = 1)
+                    Buffers: shared hit=993 read=438
+                    ->  Parallel Custom Scan (ParadeDB Base Scan) on chunk c  (cost=10.00..10.17 rows=17 width=8) (actual rows=17 loops=3)
+                          Table: chunk
+                          Index: tuskrag_chunk_bm25_v2
+                          Segment Count: 4
+                          Heap Fetches: 50
+                          Exec Method: TopKScanExecState
+                          Scores: true
+                             TopK Order By: pdb.score() desc, id asc
+                             TopK Limit: 50
+                             Queries: 1
+                          Tantivy Query: {"boolean":{"must":[{"term":{"field":"kb_access","value":true,"is_datetime":false}},{"with_index":{"query":{"match":{"field":"search_text","value":"差旅报销 条款0","tokenizer":null,"distance":null,"transposition_cost_one":null,"prefix":null,"conjunction_mode":false}}}},{"postgres_expression":{"expr":{"expr_desc":"paradedb.with_index('tuskrag_chunk_bm25_v2'::regclass, paradedb.term_set('version_id'::paradedb.fieldname, $1))"}}},{"term":{"field":"tenant_id","value":1,"is_datetime":false}},"all",{"term":{"field":"kb_id","value":1,"is_datetime":false}}]}}
+                          Buffers: shared hit=993 read=438
+Planning:
+  Buffers: shared hit=1316 read=81
+Planning Time: 504.999 ms
+Execution Time: 673.457 ms
+Subquery Scan on lexical_candidates  (cost=1042.75..1044.30 rows=10 width=16) (actual rows=50 loops=1)
+  Buffers: shared hit=1453
+  ->  Limit  (cost=1042.75..1044.20 rows=10 width=20) (actual rows=50 loops=1)
+        Buffers: shared hit=1453
+        InitPlan 1
+          ->  Result  (cost=0.60..32.73 rows=1 width=8) (actual rows=1 loops=1)
+                One-Time Filter: ((current_setting('tuskrag.tenant_id'::text))::bigint = 1)
+                Buffers: shared hit=8
+                ->  Nested Loop  (cost=0.60..32.73 rows=1 width=8) (actual rows=1 loops=1)
+                      Join Filter: ((dv.document_id = d.id) AND (dv.id = d.current_version_id))
+                      Buffers: shared hit=8
+                      ->  Nested Loop  (cost=0.44..24.53 rows=1 width=32) (actual rows=1 loops=1)
+                            Buffers: shared hit=6
+                            ->  Index Scan using document_by_kb on document d  (cost=0.14..8.17 rows=1 width=32) (actual rows=1 loops=1)
+                                  Index Cond: ((tenant_id = 1) AND (kb_id = 1))
+                                  Filter: (acl_mode = 'inherit_kb'::text)
+                                  Buffers: shared hit=2
+                            ->  Nested Loop  (cost=0.30..16.36 rows=1 width=16) (actual rows=1 loops=1)
+                                  Buffers: shared hit=4
+                                  ->  Index Scan using knowledge_base_tenant_id_id_key on knowledge_base k  (cost=0.15..8.17 rows=1 width=16) (actual rows=1 loops=1)
+                                        Index Cond: ((tenant_id = 1) AND (id = 1))
+                                        Filter: ((embedding_space_id = 1) AND (status = 'active'::text))
+                                        Buffers: shared hit=2
+                                  ->  Index Only Scan using kb_membership_by_user on kb_membership m  (cost=0.15..8.17 rows=1 width=16) (actual rows=1 loops=1)
+                                        Index Cond: ((tenant_id = 1) AND (user_id = 1) AND (kb_id = 1))
+                                        Heap Fetches: 1
+                                        Buffers: shared hit=2
+                      ->  Index Scan using document_version_scope_key on document_version dv  (cost=0.15..8.17 rows=1 width=32) (actual rows=1 loops=1)
+                            Index Cond: ((tenant_id = 1) AND (kb_id = 1))
+                            Filter: (status = ANY ('{ready,partial}'::text[]))
+                            Buffers: shared hit=2
+        ->  Gather Merge  (cost=1010.02..1011.47 rows=10 width=20) (actual rows=50 loops=1)
+              Workers Planned: 2
+              Workers Launched: 2
+              Buffers: shared hit=1453
+              ->  Result  (cost=10.00..10.29 rows=17 width=20) (actual rows=17 loops=3)
+                    One-Time Filter: ((current_setting('tuskrag.tenant_id'::text))::bigint = 1)
+                    Buffers: shared hit=1431
+                    ->  Parallel Custom Scan (ParadeDB Base Scan) on chunk c  (cost=10.00..10.17 rows=17 width=8) (actual rows=17 loops=3)
+                          Table: chunk
+                          Index: tuskrag_chunk_bm25_v2
+                          Segment Count: 4
+                          Heap Fetches: 50
+                          Exec Method: TopKScanExecState
+                          Scores: true
+                             TopK Order By: pdb.score() desc, id asc
+                             TopK Limit: 50
+                             Queries: 1
+                          Tantivy Query: {"boolean":{"must":[{"term":{"field":"kb_access","value":true,"is_datetime":false}},{"with_index":{"query":{"match":{"field":"search_text","value":"差旅报销 条款0","tokenizer":null,"distance":null,"transposition_cost_one":null,"prefix":null,"conjunction_mode":false}}}},{"postgres_expression":{"expr":{"expr_desc":"paradedb.with_index('tuskrag_chunk_bm25_v2'::regclass, paradedb.term_set('version_id'::paradedb.fieldname, $1))"}}},{"term":{"field":"tenant_id","value":1,"is_datetime":false}},"all",{"term":{"field":"kb_id","value":1,"is_datetime":false}}]}}
+                          Buffers: shared hit=1431
+Planning:
+  Buffers: shared hit=159
+Planning Time: 2.188 ms
+Execution Time: 680.820 ms
+SET
+Subquery Scan on lexical_candidates  (cost=42.73..44.10 rows=50 width=16) (actual rows=50 loops=1)
+  Buffers: shared hit=1277
+  ->  Limit  (cost=42.73..43.60 rows=50 width=20) (actual rows=50 loops=1)
+        Buffers: shared hit=1277
+        InitPlan 1
+          ->  Result  (cost=0.60..32.73 rows=1 width=8) (actual rows=1 loops=1)
+                One-Time Filter: ((current_setting('tuskrag.tenant_id'::text))::bigint = 1)
+                Buffers: shared hit=8
+                ->  Nested Loop  (cost=0.60..32.73 rows=1 width=8) (actual rows=1 loops=1)
+                      Join Filter: ((dv.document_id = d.id) AND (dv.id = d.current_version_id))
+                      Buffers: shared hit=8
+                      ->  Nested Loop  (cost=0.44..24.53 rows=1 width=32) (actual rows=1 loops=1)
+                            Buffers: shared hit=6
+                            ->  Index Scan using document_by_kb on document d  (cost=0.14..8.17 rows=1 width=32) (actual rows=1 loops=1)
+                                  Index Cond: ((tenant_id = 1) AND (kb_id = 1))
+                                  Filter: (acl_mode = 'inherit_kb'::text)
+                                  Buffers: shared hit=2
+                            ->  Nested Loop  (cost=0.30..16.36 rows=1 width=16) (actual rows=1 loops=1)
+                                  Buffers: shared hit=4
+                                  ->  Index Scan using knowledge_base_tenant_id_id_key on knowledge_base k  (cost=0.15..8.17 rows=1 width=16) (actual rows=1 loops=1)
+                                        Index Cond: ((tenant_id = 1) AND (id = 1))
+                                        Filter: ((embedding_space_id = 1) AND (status = 'active'::text))
+                                        Buffers: shared hit=2
+                                  ->  Index Only Scan using kb_membership_by_user on kb_membership m  (cost=0.15..8.17 rows=1 width=16) (actual rows=1 loops=1)
+                                        Index Cond: ((tenant_id = 1) AND (user_id = 1) AND (kb_id = 1))
+                                        Heap Fetches: 1
+                                        Buffers: shared hit=2
+                      ->  Index Scan using document_version_scope_key on document_version dv  (cost=0.15..8.17 rows=1 width=32) (actual rows=1 loops=1)
+                            Index Cond: ((tenant_id = 1) AND (kb_id = 1))
+                            Filter: (status = ANY ('{ready,partial}'::text[]))
+                            Buffers: shared hit=2
+        ->  Result  (cost=10.00..10.88 rows=50 width=20) (actual rows=50 loops=1)
+              One-Time Filter: ((current_setting('tuskrag.tenant_id'::text))::bigint = 1)
+              Buffers: shared hit=1277
+              ->  Custom Scan (ParadeDB Base Scan) on chunk c  (cost=10.00..10.50 rows=50 width=8) (actual rows=50 loops=1)
+                    Table: chunk
+                    Index: tuskrag_chunk_bm25_v2
+                    Segment Count: 4
+                    Heap Fetches: 50
+                    Exec Method: TopKScanExecState
+                    Scores: true
+                       TopK Order By: pdb.score() desc, id asc
+                       TopK Limit: 50
+                       Queries: 1
+                    Tantivy Query: {"boolean":{"must":[{"term":{"field":"kb_access","value":true,"is_datetime":false}},{"with_index":{"query":{"match":{"field":"search_text","value":"差旅报销 条款0","tokenizer":null,"distance":null,"transposition_cost_one":null,"prefix":null,"conjunction_mode":false}}}},{"postgres_expression":{"expr":{"expr_desc":"paradedb.with_index('tuskrag_chunk_bm25_v2'::regclass, paradedb.term_set('version_id'::paradedb.fieldname, $1))"}}},{"term":{"field":"tenant_id","value":1,"is_datetime":false}},"all",{"term":{"field":"kb_id","value":1,"is_datetime":false}}]}}
+                    Buffers: shared hit=1277
+Planning:
+  Buffers: shared hit=159
+Planning Time: 1.883 ms
+Execution Time: 198.500 ms
+Subquery Scan on lexical_candidates  (cost=42.73..44.10 rows=50 width=16) (actual rows=50 loops=1)
+  Buffers: shared hit=1273 read=4
+  ->  Limit  (cost=42.73..43.60 rows=50 width=20) (actual rows=50 loops=1)
+        Buffers: shared hit=1273 read=4
+        InitPlan 1
+          ->  Result  (cost=0.60..32.73 rows=1 width=8) (actual rows=1 loops=1)
+                One-Time Filter: ((current_setting('tuskrag.tenant_id'::text))::bigint = 1)
+                Buffers: shared hit=8
+                ->  Nested Loop  (cost=0.60..32.73 rows=1 width=8) (actual rows=1 loops=1)
+                      Join Filter: ((dv.document_id = d.id) AND (dv.id = d.current_version_id))
+                      Buffers: shared hit=8
+                      ->  Nested Loop  (cost=0.44..24.53 rows=1 width=32) (actual rows=1 loops=1)
+                            Buffers: shared hit=6
+                            ->  Index Scan using document_by_kb on document d  (cost=0.14..8.17 rows=1 width=32) (actual rows=1 loops=1)
+                                  Index Cond: ((tenant_id = 1) AND (kb_id = 1))
+                                  Filter: (acl_mode = 'inherit_kb'::text)
+                                  Buffers: shared hit=2
+                            ->  Nested Loop  (cost=0.30..16.36 rows=1 width=16) (actual rows=1 loops=1)
+                                  Buffers: shared hit=4
+                                  ->  Index Scan using knowledge_base_tenant_id_id_key on knowledge_base k  (cost=0.15..8.17 rows=1 width=16) (actual rows=1 loops=1)
+                                        Index Cond: ((tenant_id = 1) AND (id = 1))
+                                        Filter: ((embedding_space_id = 1) AND (status = 'active'::text))
+                                        Buffers: shared hit=2
+                                  ->  Index Only Scan using kb_membership_by_user on kb_membership m  (cost=0.15..8.17 rows=1 width=16) (actual rows=1 loops=1)
+                                        Index Cond: ((tenant_id = 1) AND (user_id = 1) AND (kb_id = 1))
+                                        Heap Fetches: 1
+                                        Buffers: shared hit=2
+                      ->  Index Scan using document_version_scope_key on document_version dv  (cost=0.15..8.17 rows=1 width=32) (actual rows=1 loops=1)
+                            Index Cond: ((tenant_id = 1) AND (kb_id = 1))
+                            Filter: (status = ANY ('{ready,partial}'::text[]))
+                            Buffers: shared hit=2
+        ->  Result  (cost=10.00..10.88 rows=50 width=20) (actual rows=50 loops=1)
+              One-Time Filter: ((current_setting('tuskrag.tenant_id'::text))::bigint = 1)
+              Buffers: shared hit=1273 read=4
+              ->  Custom Scan (ParadeDB Base Scan) on chunk c  (cost=10.00..10.50 rows=50 width=8) (actual rows=50 loops=1)
+                    Table: chunk
+                    Index: tuskrag_chunk_bm25_v2
+                    Segment Count: 4
+                    Heap Fetches: 50
+                    Exec Method: TopKScanExecState
+                    Scores: true
+                       TopK Order By: pdb.score() desc, id asc
+                       TopK Limit: 50
+                       Queries: 1
+                    Tantivy Query: {"boolean":{"must":[{"term":{"field":"kb_access","value":true,"is_datetime":false}},{"with_index":{"query":{"match":{"field":"search_text","value":"差旅报销 条款0","tokenizer":null,"distance":null,"transposition_cost_one":null,"prefix":null,"conjunction_mode":false}}}},{"postgres_expression":{"expr":{"expr_desc":"paradedb.with_index('tuskrag_chunk_bm25_v2'::regclass, paradedb.term_set('version_id'::paradedb.fieldname, $1))"}}},{"term":{"field":"tenant_id","value":1,"is_datetime":false}},"all",{"term":{"field":"kb_id","value":1,"is_datetime":false}}]}}
+                    Buffers: shared hit=1273 read=4
+Planning:
+  Buffers: shared hit=159
+Planning Time: 4.786 ms
+Execution Time: 182.233 ms
+ROLLBACK

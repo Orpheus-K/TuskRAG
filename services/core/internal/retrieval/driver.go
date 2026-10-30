@@ -140,6 +140,13 @@ func (d *Driver) Recall(ctx context.Context, actor Actor, kbID int64, binding Bi
 	if err := indexing.Check(ctx, tx, binding.SpaceID, binding.Dimensions, binding.Distance); err != nil {
 		return nil, err
 	}
+	// pg_search's ephemeral parallel workers reload the Jieba dictionary on every
+	// query. Keep native Top-K on the pooled backend to reuse its tokenizer cache.
+	if d.compatibility == nil {
+		if _, err := tx.Exec(ctx, "SET LOCAL max_parallel_workers_per_gather = 0"); err != nil {
+			return nil, fmt.Errorf("configure lexical execution: %w", err)
+		}
+	}
 	for _, setting := range []string{"SET LOCAL hnsw.ef_search = 100", "SET LOCAL hnsw.iterative_scan = relaxed_order"} {
 		if _, err := tx.Exec(ctx, setting); err != nil {
 			return nil, fmt.Errorf("configure retrieval transaction: %w", err)
