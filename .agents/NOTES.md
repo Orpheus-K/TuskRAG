@@ -23,7 +23,7 @@
 
 - 首发为客户内网私有化；项目自身许可已按所有者授权选择 MIT；pg_search AGPL 法务意见及完整传递依赖盘点尚未取得，见 [A03](../docs/11-架构决策记录.md#a03) 和[许可清单](../deploy/licenses/README.md)。
 - 当前目录已初始化 Git，私有远端为 `Orpheus-K/TuskRAG`；本机部分可执行工具不能访问项目目录，使用 `E:/agent-project/.tools/tuskrag-work/frontend` 构建并同步源文件。SSH 别名 `legacy-test-host` 已验证连接 `legacy-host.invalid`。用户授权在该旧实例测试；本轮独立目录为 `<deployment-path>`。
-- 本轮本机 PostgreSQL 容器、Docker 临时数据和两块合计 10 GiB 的临时盘已清理；保留评测报告。后续容量测试只在云端独立容器执行。10 月 30 日最终容量测试已完成，随机测试库数量为 0、无容量进程、磁盘约 15 GiB 可用。归档后 SSH 在握手阶段被远端关闭；专用 PG 容器停止状态尚未确认，恢复连接后只核验本轮容器。
+- 本轮本机 PostgreSQL 容器、Docker 临时数据和两块合计 10 GiB 的临时盘已清理；保留评测报告。后续容量测试只在云端独立容器执行。10 月 30 日最终容量测试已完成，随机测试库数量为 0、无容量进程、磁盘约 15 GiB 可用。归档后 SSH 曾短暂中断；恢复后已停止专用 PG 容器并确认 `exited`，报告保留，其他应用未改动。
 
 ## 下一步
 
