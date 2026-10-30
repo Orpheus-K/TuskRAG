@@ -1,5 +1,7 @@
 # 许可证盘点（未完成）
 
+2026-10-30 从腾讯云本轮 PostgreSQL 运行镜像补录 [142 个 Debian 包及版本](postgres-runtime-debian.tsv)和 [139 份 copyright 普通文件的 SHA-256](postgres-runtime-copyright-sha256.txt)。命令为容器内 `dpkg-query -W` 与 `find /usr/share/doc -name copyright -type f -exec sha256sum {} +`。该镜像使用仓库 Dockerfile 的固定上游摘要，镜像 ID 为 `sha256:ee9344e5fb03711272fead35ba7244cc9ce4b5018a09fd34720b5ca00d5e36e0`。这些是操作系统运行包的可追溯元数据，不覆盖手动复制的 PostgreSQL 扩展、Python wheel 内置组件或源码提供义务，也不替代法务意见。
+
 2026-10-29 增量盘点：刷新 [Go 运行依赖](go-runtime.csv)，补充 [前端生产及开发依赖](frontend-all.json) 与 [锁文件、Python 安装元数据、许可原文 SHA-256 清单](inventory.json)。复现元数据清单：`node scripts/license-inventory.mjs <parser-site-packages>`；前端使用 `pnpm licenses list --json`。元数据来自已安装包，不等于已审核的交付 SBOM；项目自有代码已根据所有者授权采用 MIT（根目录 LICENSE）；pg_search 仍保留 AGPL-3.0，法务结论待取得。
 
 | 组件 | 版本 | 许可证 | 原文 |

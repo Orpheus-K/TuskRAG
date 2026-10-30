@@ -1,0 +1,17 @@
+{
+  "Blocks": 200000,
+  "Dimensions": 1024,
+  "VectorPrototypes": 256,
+  "Queries": 100,
+  "InsertSeconds": 18.97617561,
+  "IndexSeconds": 66.315314533,
+  "P50MS": 51.926,
+  "P95MS": 84.978,
+  "ChunkTotalBytes": 363962368,
+  "VectorTotalBytes": 856727552,
+  "BM25Bytes": 9584640,
+  "HNSWBytes": 265404416,
+  "DatabaseBytes": 1231886003,
+  "UnauthorizedEvidence": 0,
+  "Distribution": "256 deterministic normalized sine vectors reused across synthetic blocks; excludes model latency"
+}

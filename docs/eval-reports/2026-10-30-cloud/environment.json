@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-30",
+  "host": "Tencent Cloud old instance",
+  "cpus": 2,
+  "host_memory_mib": 3399,
+  "postgres_memory_limit_mib": 1536,
+  "go_memory_limit": "512MiB",
+  "postgres": "17.9",
+  "pg_search": "0.22.6",
+  "pgvector": "0.8.1",
+  "image_id": "sha256:ee9344e5fb03711272fead35ba7244cc9ce4b5018a09fd34720b5ca00d5e36e0",
+  "native_sql_commit": "14a07bc390a409abe7f04a0f935da461202b208b",
+  "final_recall_commit": "5c9b17f011cc66c959182a9e5f743ad83e5bab8d",
+  "binaries": {
+    "index_serial_sha256": "aa872e9f31b44b75427729f3ced9682bf1f66fb7c5efccbaba7c48408bb3e0ef",
+    "index_v2_sha256": "038d5041a4a625140c6836e35c48c2169a67f9cabc248a38840bcf7373b6b1e9"
+  },
+  "execution": "Cloud-only isolated PostgreSQL; local compilation only",
+  "capacity_test": "TestCapacity200K",
+  "blocks": [
+    200000,
+    1000000
+  ],
+  "warmup_queries": 5,
+  "measured_queries": 100,
+  "model_calls": false,
+  "notes": [
+    "index-v2 binary predates the extra access-tag regression; serial binary includes it",
+    "V2 million-block index creation overlapped four diagnostic lexical queries; final serial run has no overlapping diagnostic workload",
+    "LATERAL million-block run interrupted; excluded from complete results",
+    "diagnostic-before-200k process was paused twice for plan inspection; its elapsed time and latency are not a clean comparison baseline"
+  ]
+}

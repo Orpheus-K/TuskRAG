@@ -53,4 +53,3 @@ tuskrag eval compare baseline.json current.json
 ```
 
 `expected` 必须引用清单中的文档 key。重复题号、重复或未知期望文档、未知字段、空行、截断记录、单行超过 1 MiB 或总输入超过 16 MiB 均显式失败；不保存部分导入结果。导入后的 `dataset.json` 继续使用现有 `eval run/compare` 命令。
-

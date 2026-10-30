@@ -1,0 +1,129 @@
+=== RUN   TestLexicalAdvancesPastRejectedCandidates
+2026/10/30 17:38:38 OK   00001_initial.sql (22.6ms)
+2026/10/30 17:38:38 OK   00002_job_contract.sql (6.55ms)
+2026/10/30 17:38:38 OK   00003_kb_membership.sql (13.07ms)
+2026/10/30 17:38:38 OK   00004_audit_member_details.sql (2.58ms)
+2026/10/30 17:38:38 OK   00005_local_identity.sql (12.96ms)
+2026/10/30 17:38:38 OK   00006_provider_credentials.sql (2.59ms)
+2026/10/30 17:38:38 OK   00007_idempotency.sql (5.53ms)
+2026/10/30 17:38:38 OK   00008_documents.sql (13.93ms)
+2026/10/30 17:38:38 OK   00009_parse_artifacts.sql (5.26ms)
+2026/10/30 17:38:38 OK   00010_index_storage.sql (17.66ms)
+2026/10/30 17:38:38 OK   00011_ingest_plan.sql (5.09ms)
+2026/10/30 17:38:38 OK   00012_audit_context.sql (4.25ms)
+2026/10/30 17:38:38 OK   00013_current_version_guard.sql (3.24ms)
+2026/10/30 17:38:38 OK   00014_qualify_version_guards.sql (2.36ms)
+2026/10/30 17:38:38 OK   00015_table_header_confirmation.sql (9.7ms)
+2026/10/30 17:38:38 OK   00016_document_version_identity.sql (3.67ms)
+2026/10/30 17:38:38 OK   00017_ingest_job_history_index.sql (2.45ms)
+2026/10/30 17:38:38 OK   00018_parse_report.sql (2.44ms)
+2026/10/30 17:38:38 OK   00019_lexical_prefilter.sql (7.86ms)
+2026/10/30 17:38:38 goose: successfully migrated database to version: 19
+--- PASS: TestLexicalAdvancesPastRejectedCandidates (3.64s)
+=== RUN   TestHybridRetrievalFromPublishedVersion
+2026/10/30 17:38:42 OK   00001_initial.sql (22.25ms)
+2026/10/30 17:38:42 OK   00002_job_contract.sql (6.59ms)
+2026/10/30 17:38:42 OK   00003_kb_membership.sql (12.71ms)
+2026/10/30 17:38:42 OK   00004_audit_member_details.sql (2.38ms)
+2026/10/30 17:38:42 OK   00005_local_identity.sql (11.35ms)
+2026/10/30 17:38:42 OK   00006_provider_credentials.sql (2.91ms)
+2026/10/30 17:38:42 OK   00007_idempotency.sql (8.64ms)
+2026/10/30 17:38:42 OK   00008_documents.sql (16.48ms)
+2026/10/30 17:38:42 OK   00009_parse_artifacts.sql (6.29ms)
+2026/10/30 17:38:42 OK   00010_index_storage.sql (19.08ms)
+2026/10/30 17:38:42 OK   00011_ingest_plan.sql (5.65ms)
+2026/10/30 17:38:42 OK   00012_audit_context.sql (3.2ms)
+2026/10/30 17:38:42 OK   00013_current_version_guard.sql (3.65ms)
+2026/10/30 17:38:42 OK   00014_qualify_version_guards.sql (2.31ms)
+2026/10/30 17:38:42 OK   00015_table_header_confirmation.sql (2.75ms)
+2026/10/30 17:38:42 OK   00016_document_version_identity.sql (2.96ms)
+2026/10/30 17:38:42 OK   00017_ingest_job_history_index.sql (2.7ms)
+2026/10/30 17:38:42 OK   00018_parse_report.sql (2.97ms)
+2026/10/30 17:38:42 OK   00019_lexical_prefilter.sql (6.17ms)
+2026/10/30 17:38:42 goose: successfully migrated database to version: 19
+--- PASS: TestHybridRetrievalFromPublishedVersion (3.22s)
+=== RUN   TestSyntheticZHEvaluation
+2026/10/30 17:38:45 OK   00001_initial.sql (24.36ms)
+2026/10/30 17:38:45 OK   00002_job_contract.sql (6.67ms)
+2026/10/30 17:38:45 OK   00003_kb_membership.sql (12.28ms)
+2026/10/30 17:38:45 OK   00004_audit_member_details.sql (2.16ms)
+2026/10/30 17:38:45 OK   00005_local_identity.sql (7.32ms)
+2026/10/30 17:38:45 OK   00006_provider_credentials.sql (2.08ms)
+2026/10/30 17:38:45 OK   00007_idempotency.sql (5.1ms)
+2026/10/30 17:38:45 OK   00008_documents.sql (14.69ms)
+2026/10/30 17:38:45 OK   00009_parse_artifacts.sql (5.01ms)
+2026/10/30 17:38:45 OK   00010_index_storage.sql (18.77ms)
+2026/10/30 17:38:45 OK   00011_ingest_plan.sql (5.92ms)
+2026/10/30 17:38:45 OK   00012_audit_context.sql (2.98ms)
+2026/10/30 17:38:45 OK   00013_current_version_guard.sql (3.33ms)
+2026/10/30 17:38:45 OK   00014_qualify_version_guards.sql (2.4ms)
+2026/10/30 17:38:45 OK   00015_table_header_confirmation.sql (2.55ms)
+2026/10/30 17:38:45 OK   00016_document_version_identity.sql (3.06ms)
+2026/10/30 17:38:45 OK   00017_ingest_job_history_index.sql (2.53ms)
+2026/10/30 17:38:45 OK   00018_parse_report.sql (4.7ms)
+2026/10/30 17:38:45 OK   00019_lexical_prefilter.sql (5.59ms)
+2026/10/30 17:38:45 goose: successfully migrated database to version: 19
+=== RUN   TestSyntheticZHEvaluation/lexical
+    synthetic_eval_integration_test.go:124: lexical: &{RecallAt20:0.9814814814814815 HitAt5:0.9814814814814815 MRRAt10:0.9598765432098765 NDCGAt10:0.9631137975723982} unauthorized=0
+=== RUN   TestSyntheticZHEvaluation/vector
+    synthetic_eval_integration_test.go:124: vector: &{RecallAt20:1 HitAt5:0.7962962962962963 MRRAt10:0.6135802469135802 NDCGAt10:0.6895377411966663} unauthorized=0
+=== RUN   TestSyntheticZHEvaluation/rrf
+    synthetic_eval_integration_test.go:124: rrf: &{RecallAt20:1 HitAt5:0.9814814814814815 MRRAt10:0.791872427983539 NDCGAt10:0.8356961350398011} unauthorized=0
+=== RUN   TestSyntheticZHEvaluation/rerank
+    synthetic_eval_integration_test.go:124: rerank: &{RecallAt20:1 HitAt5:0.9814814814814815 MRRAt10:0.9248971193415637 NDCGAt10:0.940767739523921} unauthorized=0
+--- PASS: TestSyntheticZHEvaluation (10.96s)
+    --- PASS: TestSyntheticZHEvaluation/lexical (2.30s)
+    --- PASS: TestSyntheticZHEvaluation/vector (2.00s)
+    --- PASS: TestSyntheticZHEvaluation/rrf (2.17s)
+    --- PASS: TestSyntheticZHEvaluation/rerank (2.40s)
+PASS
+=== RUN   TestCapacity200K
+2026/10/30 17:38:56 OK   00001_initial.sql (24.49ms)
+2026/10/30 17:38:56 OK   00002_job_contract.sql (10.91ms)
+2026/10/30 17:38:56 OK   00003_kb_membership.sql (13.25ms)
+2026/10/30 17:38:56 OK   00004_audit_member_details.sql (2.45ms)
+2026/10/30 17:38:56 OK   00005_local_identity.sql (7.74ms)
+2026/10/30 17:38:56 OK   00006_provider_credentials.sql (2.43ms)
+2026/10/30 17:38:56 OK   00007_idempotency.sql (5.53ms)
+2026/10/30 17:38:56 OK   00008_documents.sql (14.51ms)
+2026/10/30 17:38:56 OK   00009_parse_artifacts.sql (5.92ms)
+2026/10/30 17:38:56 OK   00010_index_storage.sql (18.24ms)
+2026/10/30 17:38:56 OK   00011_ingest_plan.sql (5.94ms)
+2026/10/30 17:38:56 OK   00012_audit_context.sql (3.24ms)
+2026/10/30 17:38:56 OK   00013_current_version_guard.sql (3.71ms)
+2026/10/30 17:38:56 OK   00014_qualify_version_guards.sql (2.5ms)
+2026/10/30 17:38:56 OK   00015_table_header_confirmation.sql (2.81ms)
+2026/10/30 17:38:56 OK   00016_document_version_identity.sql (3.17ms)
+2026/10/30 17:38:56 OK   00017_ingest_job_history_index.sql (2.38ms)
+2026/10/30 17:38:56 OK   00018_parse_report.sql (2.45ms)
+2026/10/30 17:38:56 OK   00019_lexical_prefilter.sql (5.97ms)
+2026/10/30 17:38:56 goose: successfully migrated database to version: 19
+    capacity_eval_test.go:85: 200000 chunks inserted in 19.0s
+    capacity_eval_test.go:91: indexes built in 66.3s
+--- PASS: TestCapacity200K (106.10s)
+PASS
+=== RUN   TestCapacity200K
+2026/10/30 17:40:52 OK   00001_initial.sql (26.19ms)
+2026/10/30 17:40:52 OK   00002_job_contract.sql (7.91ms)
+2026/10/30 17:40:52 OK   00003_kb_membership.sql (13.35ms)
+2026/10/30 17:40:52 OK   00004_audit_member_details.sql (2.77ms)
+2026/10/30 17:40:52 OK   00005_local_identity.sql (8.2ms)
+2026/10/30 17:40:52 OK   00006_provider_credentials.sql (2.45ms)
+2026/10/30 17:40:52 OK   00007_idempotency.sql (5.29ms)
+2026/10/30 17:40:52 OK   00008_documents.sql (14.92ms)
+2026/10/30 17:40:52 OK   00009_parse_artifacts.sql (5.91ms)
+2026/10/30 17:40:52 OK   00010_index_storage.sql (19.25ms)
+2026/10/30 17:40:52 OK   00011_ingest_plan.sql (7.28ms)
+2026/10/30 17:40:52 OK   00012_audit_context.sql (8.24ms)
+2026/10/30 17:40:52 OK   00013_current_version_guard.sql (3.82ms)
+2026/10/30 17:40:52 OK   00014_qualify_version_guards.sql (2.38ms)
+2026/10/30 17:40:52 OK   00015_table_header_confirmation.sql (2.81ms)
+2026/10/30 17:40:52 OK   00016_document_version_identity.sql (3.3ms)
+2026/10/30 17:40:52 OK   00017_ingest_job_history_index.sql (2.35ms)
+2026/10/30 17:40:52 OK   00018_parse_report.sql (2.25ms)
+2026/10/30 17:40:52 OK   00019_lexical_prefilter.sql (5.96ms)
+2026/10/30 17:40:52 goose: successfully migrated database to version: 19
+    capacity_eval_test.go:85: 1000000 chunks inserted in 152.7s
+    capacity_eval_test.go:91: indexes built in 440.7s
+--- PASS: TestCapacity200K (697.25s)
+PASS
