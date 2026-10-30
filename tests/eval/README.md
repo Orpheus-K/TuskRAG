@@ -41,3 +41,16 @@ tuskrag eval compare baseline.json current.json
 - E3：分别设置 `TUSKRAG_REAL_EVAL_CHUNKS=structured`、`structured-no-heading`、`fixed`、`fixed-heading`。结构化方案使用实际原生 Markdown 解析器、规整器和 BuildPlan（父块上限 512、子块目标 32–64、硬上限 128、重叠上限 16 tokens）；固定方案按同一计数器切 64-token 窗口，重叠上限 16 tokens。无标题方案仅移除检索和嵌入输入的标题路径。合成夹具允许进程内调用解析函数，不证明生产沙箱或 T01。
 - E4：设置 `TUSKRAG_REAL_EVAL_LEXICAL=tsvector`，按同一 gse v0.80.3 简体词典生成文档与查询词元，通过实际 GIN/ts_rank_cd SQL 替换词法召回；复用向量、RRF、权限复核和重排。此构造器仅用于显式消融实验，未提供不依赖 pg_search 的完整生产部署路径，不作为 V03 全部通过的证据。
 - V08：单独设置 `TUSKRAG_CAPACITY_EVAL=200000` 与输出目录，执行 `go test -race -p 1 -count=1 -timeout 45m -run '^TestCapacity200K$' -v ./internal/ingest`。200000 块、1024 维、256 个确定性正弦向量循环分配；记录插入/建索引耗时、100 次 SQL 召回 p50/p95 和存储大小。不得用于模型准确率证明。需预留独立测试磁盘，并单独采集 PostgreSQL 内存。
+# JSONL 题目导入
+
+`tuskrag eval import manifest.json questions.jsonl dataset.json` 将文档清单和逐行题目转换为 `eval run` 使用的数据集，拒绝覆盖已有输出。清单包含 `version`、`documents`，不包含题目；文档记录仍使用 `key/title/content`。
+
+每行是一个题目对象，例如：
+
+```json
+{"id":"q1","question":"如何申请？","expected":["policy"],"answerable":true,"tags":["语义改写"]}
+{"id":"q2","question":"没有记载的问题？","expected":[],"answerable":false,"tags":["无答案"]}
+```
+
+`expected` 必须引用清单中的文档 key。重复题号、重复或未知期望文档、未知字段、空行、截断记录、单行超过 1 MiB 或总输入超过 16 MiB 均显式失败；不保存部分导入结果。导入后的 `dataset.json` 继续使用现有 `eval run/compare` 命令。
+

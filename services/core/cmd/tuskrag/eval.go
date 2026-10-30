@@ -35,6 +35,9 @@ func readEvalJSON(path string, target any) (resultErr error) {
 }
 
 func runEval(ctx context.Context, args []string) error {
+	if len(args) == 4 && args[0] == "import" {
+		return importEvalQuestions(args[1], args[2], args[3])
+	}
 	if len(args) == 3 && args[0] == "compare" {
 		var before, after eval.RunReport
 		if err := readEvalJSON(args[1], &before); err != nil {
@@ -46,7 +49,7 @@ func runEval(ctx context.Context, args []string) error {
 		return eval.Compare(before, after)
 	}
 	if len(args) != 5 || args[0] != "run" {
-		return errors.New("usage: tuskrag eval run <dataset.json> <config.json> <lexical|vector|rrf|rerank> <report.json> | eval compare <baseline.json> <current.json>")
+		return errors.New("usage: tuskrag eval import <manifest.json> <questions.jsonl> <dataset.json> | eval run <dataset.json> <config.json> <lexical|vector|rrf|rerank> <report.json> | eval compare <baseline.json> <current.json>")
 	}
 	var dataset eval.Dataset
 	var config eval.RunConfig
@@ -99,4 +102,29 @@ func runEval(ctx context.Context, args []string) error {
 		return fmt.Errorf("evaluation failed; partial report saved: %w", runErr)
 	}
 	return nil
+}
+
+func importEvalQuestions(manifestPath, questionsPath, outputPath string) error {
+	var manifest eval.Dataset
+	if err := readEvalJSON(manifestPath, &manifest); err != nil {
+		return err
+	}
+	input, err := os.Open(questionsPath)
+	if err != nil {
+		return err
+	}
+	dataset, importErr := eval.ImportQuestions(manifest, input)
+	if err := errors.Join(importErr, input.Close()); err != nil {
+		return err
+	}
+	data, err := json.MarshalIndent(dataset, "", "  ")
+	if err != nil {
+		return err
+	}
+	output, err := os.OpenFile(outputPath, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
+	if err != nil {
+		return err
+	}
+	_, writeErr := output.Write(append(data, '\n'))
+	return errors.Join(writeErr, output.Close())
 }
