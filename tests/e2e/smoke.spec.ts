@@ -759,6 +759,7 @@ test("keeps the document list usable if the preview module fails to load", async
   page,
 }) => {
   await page.route("**/src/DocumentPreview.tsx*", (route) => route.abort());
+  await page.route("**/assets/DocumentPreview-*.js", (route) => route.abort());
   await page.route("**/api/health/ready", (route) =>
     route.fulfill({ json: { status: "ok" } }),
   );
