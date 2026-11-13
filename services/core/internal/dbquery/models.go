@@ -8,6 +8,16 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type AnswerEvalReport struct {
+	TenantID  int64
+	KbID      int64
+	Digest    string
+	Source    string
+	Report    []byte
+	CreatedBy int64
+	CreatedAt pgtype.Timestamptz
+}
+
 type AnswerFeedback struct {
 	TenantID   int64
 	MessageID  string

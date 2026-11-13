@@ -392,8 +392,99 @@ const answerRoute = createRoute({
     );
   },
 });
+const answerEvalRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "kb/$kbId/answer-evaluation",
+  validateSearch: (search: Record<string, unknown>) => {
+    const cursor = search.cursor ?? "",
+      digest = search.digest ?? "",
+      row = search.row ?? 0;
+    if (
+      typeof cursor !== "string" ||
+      typeof digest !== "string" ||
+      !/^([0-9a-f]{64})?$/.test(cursor) ||
+      !/^([0-9a-f]{64})?$/.test(digest) ||
+      typeof row !== "number" ||
+      !Number.isSafeInteger(row) ||
+      row < 0 ||
+      row > 499
+    )
+      throw new Error("invalid answer evaluation address");
+    return { cursor, digest, row };
+  },
+  errorComponent: InvalidAddress,
+  component: () => {
+    const identity = useContext(IdentityContext);
+    const { kbId } = answerEvalRoute.useParams();
+    const search = answerEvalRoute.useSearch();
+    const navigate = answerEvalRoute.useNavigate();
+    const id = Number(kbId);
+    if (!identity) throw new Error("authenticated identity is required");
+    if (!/^[1-9]\d*$/.test(kbId) || !Number.isSafeInteger(id))
+      return <InvalidAddress />;
+    return (
+      <AnswerEvaluation
+        key={`${identity.tenant_id}:${identity.user_id}:${id}`}
+        identity={identity}
+        id={id}
+        cursor={search.cursor}
+        digest={search.digest}
+        rowPage={search.row}
+        onSelect={(digest) => {
+          void navigate({ search: { cursor: "", digest, row: 0 } });
+        }}
+      />
+    );
+  },
+});
+const answerEvalCompareRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "kb/$kbId/answer-evaluation/compare",
+  errorComponent: InvalidAddress,
+  validateSearch: (search: Record<string, unknown>) => {
+    const baseline = search.baseline ?? "",
+      current = search.current ?? "",
+      cursor = search.cursor ?? "",
+      offset = search.offset ?? 0;
+    if (
+      typeof baseline !== "string" ||
+      typeof current !== "string" ||
+      typeof cursor !== "string" ||
+      ![baseline, current, cursor].every((v) => /^([0-9a-f]{64})?$/.test(v)) ||
+      typeof offset !== "number" ||
+      !Number.isSafeInteger(offset) ||
+      offset < 0 ||
+      offset > 10000
+    )
+      throw new Error("invalid answer comparison address");
+    return { baseline, current, cursor, offset };
+  },
+  component: () => {
+    const identity = useContext(IdentityContext);
+    const { kbId } = answerEvalCompareRoute.useParams();
+    const selection = answerEvalCompareRoute.useSearch();
+    const navigate = answerEvalCompareRoute.useNavigate();
+    const id = Number(kbId);
+    if (!identity) throw new Error("authenticated identity is required");
+    if (!/^[1-9]\d*$/.test(kbId) || !Number.isSafeInteger(id))
+      return <InvalidAddress />;
+    return (
+      <AnswerEvaluationCompare
+        key={`${identity.tenant_id}:${identity.user_id}:${id}`}
+        identity={identity}
+        id={id}
+        selection={selection}
+        onChange={(search) => {
+          void navigate({ search: (previous) => ({ ...previous, ...search }) });
+        }}
+      />
+    );
+  },
+});
 const routeTree = rootRoute.addChildren([
   answerRoute,
+  answerEvalRoute,
+  answerEvalCompareRoute,
   rebuildRoute,
   runCompareRoute,
   historyRoute,
@@ -417,6 +508,8 @@ declare module "@tanstack/react-router" {
   }
 }
 
+import { AnswerEvaluation } from "./AnswerEvaluation";
+import { AnswerEvaluationCompare } from "./AnswerEvaluationCompare";
 import { AnswerPage } from "./Answer";
 import { EvaluationHistory } from "./EvaluationHistory";
 import { EvaluationRun } from "./EvaluationRun";

@@ -164,6 +164,10 @@ func run() (resultErr error) {
 	if err != nil {
 		return err
 	}
+	answerReports, err := eval.NewAnswerReportStore(pool)
+	if err != nil {
+		return err
+	}
 	evalSets, err := eval.NewSetStore(pool)
 	if err != nil {
 		return err
@@ -186,9 +190,10 @@ func run() (resultErr error) {
 	}
 	app := httpapi.New(httpapi.Dependencies{
 		Answers: answers, ChatModels: catalog, Conversations: conversations,
-		Rebuilds: rebuilds,
-		Reports:  reports,
-		EvalSets: evalSets,
+		Rebuilds:      rebuilds,
+		Reports:       reports,
+		AnswerReports: answerReports,
+		EvalSets:      evalSets,
 		EvalRuns: evalRuns,
 		Identity: identities, Knowledge: knowledgeBases, Config: knowledgeBases, Documents: documents, Jobs: jobControl, Reader: knowledgeBases, Models: catalog, Search: search, InsecureLocalCookies: cfg.InsecureLocalCookies,
 		Check: func(ctx context.Context) error {

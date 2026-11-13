@@ -86,6 +86,7 @@ type Dependencies struct {
 	ChatModels           ChatCatalog
 	Rebuilds             RebuildService
 	Reports              ReportService
+	AnswerReports        AnswerReportService
 	EvalSets             EvalSetService
 	EvalRuns             EvalRunService
 	Check                func(context.Context) error
@@ -105,6 +106,13 @@ type ReportService interface {
 	List(context.Context, retrieval.Actor, int64, string, int32) (eval.ReportPage, error)
 	Import(context.Context, retrieval.Actor, int64, eval.RunReport) (eval.StoredReport, error)
 	Get(context.Context, retrieval.Actor, int64, string) (eval.StoredReport, error)
+}
+
+type AnswerReportService interface {
+	Compare(context.Context, retrieval.Actor, int64, string, string, int32, int32) (eval.AnswerReportComparisonView, error)
+	List(context.Context, retrieval.Actor, int64, string, int32) (eval.AnswerReportPage, error)
+	Import(context.Context, retrieval.Actor, int64, eval.AnswerReport) (eval.StoredAnswerReport, error)
+	Get(context.Context, retrieval.Actor, int64, string) (eval.StoredAnswerReport, error)
 }
 
 func New(deps Dependencies) API {

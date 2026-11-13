@@ -2,6 +2,14 @@
 
 ## 当前快照（2026-11-13）
 
+- **M2 E6 生成评测（Answer Evaluation）存储、API、契约与控制台闭环完成**：
+  - **数据与存储**：新增迁移 [00028_answer_eval_report.sql](../services/core/internal/db/migrations/00028_answer_eval_report.sql)（`answer_eval_report` 表 + RLS 隔离 + `tuskrag_app` 权限）、`sqlc` 查询 [answer_eval_report.sql](../services/core/queries/answer_eval_report.sql) 及领域存储 [answer_store.go](../services/core/internal/eval/answer_store.go)（`Import` / `Get` / `List` / `Compare`）。
+  - **接口与契约**：在 [answer_eval_reports.go](../services/core/internal/httpapi/answer_eval_reports.go) 开放 `/api/v1/kbs/{kb}/answer-eval-reports`、`/answer-eval-reports/{digest}` 与 `/answer-eval-report-comparison`，同步导出 [openapi.json](../contracts/openapi.json) 并生成 [api-client](../packages/api-client/src/answer_eval.ts)。
+  - **控制台**：新增 [AnswerEvaluation.tsx](../apps/web/src/AnswerEvaluation.tsx)（导入 E6 JSON、报告分页、指标与逐题详情）和 [AnswerEvaluationCompare.tsx](../apps/web/src/AnswerEvaluationCompare.tsx)（基线/当前对比、门禁状态与逐题差异），并在 [Evaluation.tsx](../apps/web/src/Evaluation.tsx) 与 [router.tsx](../apps/web/src/router.tsx) 接入 `/kb/$kbId/answer-evaluation` 及 `/compare` 路由。
+  - **实测证据**：
+    - 本地：`go vet ./...`、`go test -p 1 -count=1 ./internal/eval ./internal/httpapi ./internal/kb ./cmd/tuskrag`、`pnpm typecheck`、`pnpm test:web`（14 文件 115 项，含新增 `AnswerEvaluation.test.tsx`）与 `pnpm build:web` 全部通过。
+  - **未运行项 / 下一步**：配置 `TUSKRAG_TEST_CHAT_CONFIG` 真实模型凭据后补跑真实大模型 E6 消融与 TTFT p95 延迟基线，核对 M1/M2 退出条件。
+
 - **R20 清理任务（`purge`）可见与手动重试闭环完成**：
   - **后端与契约**：在 [jobs.sql](../services/core/queries/jobs.sql) 与 [documents.sql](../services/core/queries/documents.sql) 新增 `LatestPurgeJob`、`ListKBJobsForPurge`、`LockDocumentForPurgeControl`、`LockDocumentVersionForPurgeRetry`；在 [document_jobs.go](../services/core/internal/kb/document_jobs.go) 与 [job_control.go](../services/core/internal/httpapi/job_control.go) 开放 `GET /api/v1/kbs/{kb}/purge-jobs`（editor/admin/owner 可见、viewer 403、非成员 404），并扩展 `GET /api/v1/jobs/{job}`（返回 `kind`）及 `POST /api/v1/jobs/{job}:retry` 支持 `purge` 死信手动重入队（保留历史尝试与 `purging`/`superseded` 状态，并发防重放、审计 `job.retry`）。同步更新 [openapi.json](../contracts/openapi.json) 与 [api-client](../packages/api-client/src/index.ts)。
   - **控制台**：在 [Knowledge.tsx](../apps/web/src/Knowledge.tsx) 知识库详情页新增“清理任务”列表与“重试清理”按钮（`viewer` 隐藏，进行中自动轮询，删除文档后即时刷新）。

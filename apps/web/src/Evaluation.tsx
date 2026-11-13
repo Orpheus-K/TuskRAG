@@ -205,6 +205,14 @@ export function Evaluation({
       >
         管理评测集
       </Link>
+      <Link
+        className="ml-4 inline-block text-sm underline"
+        to="/kb/$kbId/answer-evaluation"
+        params={{ kbId: String(id) }}
+        search={{ cursor: "", digest: "", row: 0 }}
+      >
+        生成评测
+      </Link>
       <p className="text-sm text-muted-foreground">
         查看 CLI
         评测报告。导入报告不代表服务端执行或验证了模型质量；从评测集页面可启动后台运行。

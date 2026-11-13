@@ -251,6 +251,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/kbs/{kb}/answer-eval-report-comparison": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 kbs by kb answer eval report comparison */
+        get: operations["get-api-v1-kbs-by-kb-answer-eval-report-comparison"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kbs/{kb}/answer-eval-reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 kbs by kb answer eval reports */
+        get: operations["get-api-v1-kbs-by-kb-answer-eval-reports"];
+        put?: never;
+        post: operations["import-answer-eval-report"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kbs/{kb}/answer-eval-reports/{digest}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 kbs by kb answer eval reports by digest */
+        get: operations["get-api-v1-kbs-by-kb-answer-eval-reports-by-digest"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/kbs/{kb}/config": {
         parameters: {
             query?: never;
@@ -624,6 +675,11 @@ export interface components {
         "Answer-feedbackResponse": {
             status: string;
         };
+        AnswerAssemblyReport: {
+            /** Format: int64 */
+            context_budget_tokens: number;
+            parent_backtrack: boolean;
+        };
         AnswerError: {
             code: string;
             message: string;
@@ -643,6 +699,154 @@ export interface components {
             title: string;
             /** Format: int64 */
             version_id: number;
+        };
+        AnswerJudgeConfig: {
+            /** Format: int64 */
+            chat_model_id: number;
+            model_label: string;
+            prompt_version?: string;
+        };
+        AnswerMetricDelta: {
+            /** Format: double */
+            citation_support_rate: number | null;
+            /** Format: double */
+            deterministic_pass_rate: number | null;
+            /** Format: double */
+            evidence_hit_rate: number | null;
+            /** Format: double */
+            false_refusal_rate: number | null;
+            /** Format: double */
+            refusal_correct_rate: number | null;
+            /** Format: double */
+            source_integrity_rate: number;
+            /** Format: double */
+            unsupported_rate: number | null;
+            /** Format: double */
+            valid_citation_rate: number;
+        };
+        AnswerMetrics: {
+            /** Format: double */
+            citation_support_rate: number | null;
+            /** Format: double */
+            deterministic_pass_rate: number | null;
+            /** Format: double */
+            evidence_hit_rate: number | null;
+            /** Format: double */
+            false_refusal_rate: number | null;
+            /** Format: double */
+            refusal_correct_rate: number | null;
+            /** Format: double */
+            source_integrity_rate: number;
+            /** Format: double */
+            unsupported_rate: number | null;
+            /** Format: double */
+            valid_citation_rate: number;
+        };
+        AnswerReport: {
+            assembly: components["schemas"]["AnswerAssemblyReport"];
+            config_sha256: string;
+            dataset_sha256: string;
+            dataset_version: string;
+            judge?: components["schemas"]["AnswerJudgeConfig"];
+            latency_ms_p50_p95: {
+                [key: string]: number[];
+            };
+            model_kind: string;
+            model_label: string;
+            prompt_version: string;
+            rows: components["schemas"]["AnswerRow"][] | null;
+            status: string;
+            summary: components["schemas"]["AnswerSummary"];
+            /** Format: int64 */
+            unauthorized_evidence: number;
+        };
+        AnswerReportComparisonView: {
+            baseline: components["schemas"]["AnswerReportListItem"];
+            current: components["schemas"]["AnswerReportListItem"];
+            delta: components["schemas"]["AnswerMetricDelta"];
+            /** @enum {string} */
+            gate: "passed" | "regressed";
+            /** Format: int32 */
+            limit: number;
+            /** Format: int32 */
+            offset: number;
+            rows: components["schemas"]["AnswerRowComparison"][] | null;
+            /** Format: int64 */
+            total: number;
+        };
+        AnswerReportListItem: {
+            assembly: components["schemas"]["AnswerAssemblyReport"];
+            /** Format: date-time */
+            created_at: string;
+            dataset_version: string;
+            digest: string;
+            judge?: components["schemas"]["AnswerJudgeConfig"];
+            model_kind: string;
+            model_label: string;
+            prompt_version: string;
+            source: string;
+            summary: components["schemas"]["AnswerSummary"];
+        };
+        AnswerReportPage: {
+            items: components["schemas"]["AnswerReportListItem"][] | null;
+            next_cursor: string | null;
+        };
+        AnswerRow: {
+            answerable: boolean;
+            /** Format: int64 */
+            citation_count: number;
+            degraded: string[] | null;
+            deterministic_pass: boolean | null;
+            evidence_chunk_counts: number[] | null;
+            evidence_documents: number[] | null;
+            evidence_hit: boolean | null;
+            evidence_ids: string[] | null;
+            id: string;
+            /** Format: int64 */
+            invalid_citations: number;
+            /** Format: int64 */
+            judge_claims?: number;
+            /** Format: int64 */
+            judge_unsupported?: number;
+            outcome: string;
+            source_integrity: boolean;
+            timings_ms: {
+                [key: string]: number;
+            };
+            valid_citation: boolean;
+        };
+        AnswerRowComparison: {
+            answerable: boolean;
+            /** Format: int64 */
+            baseline_citation_count: number;
+            /** Format: int64 */
+            baseline_invalid_citations: number;
+            baseline_outcome: string;
+            baseline_source_integrity: boolean;
+            baseline_valid_citation: boolean;
+            /** Format: int64 */
+            current_citation_count: number;
+            /** Format: int64 */
+            current_invalid_citations: number;
+            current_outcome: string;
+            current_source_integrity: boolean;
+            current_valid_citation: boolean;
+            id: string;
+        };
+        AnswerSummary: {
+            /** Format: int64 */
+            answerable_cases: number;
+            /** Format: int64 */
+            cases: number;
+            /** Format: int64 */
+            deterministic_cases: number;
+            /** Format: int64 */
+            judged_claims: number;
+            metrics: components["schemas"]["AnswerMetrics"];
+            /** Format: int64 */
+            supported_claims: number;
+            /** Format: int64 */
+            unanswerable_cases: number;
         };
         CancelRebuildOutputBody: {
             /** @enum {string} */
@@ -1272,6 +1476,13 @@ export interface components {
             id: number;
             /** Format: int64 */
             job_id: number;
+        };
+        StoredAnswerReport: {
+            /** Format: date-time */
+            created_at: string;
+            digest: string;
+            report: components["schemas"]["AnswerReport"];
+            source: string;
         };
         StoredReport: {
             /** Format: date-time */
@@ -2044,6 +2255,145 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-kbs-by-kb-answer-eval-report-comparison": {
+        parameters: {
+            query: {
+                baseline: string;
+                current: string;
+                offset?: number;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                kb: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnswerReportComparisonView"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-kbs-by-kb-answer-eval-reports": {
+        parameters: {
+            query?: {
+                cursor?: string;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                kb: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnswerReportPage"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "import-answer-eval-report": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+            };
+            path: {
+                kb: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AnswerReport"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StoredAnswerReport"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-kbs-by-kb-answer-eval-reports-by-digest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                kb: number;
+                digest: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StoredAnswerReport"];
+                };
             };
             /** @description Error */
             default: {

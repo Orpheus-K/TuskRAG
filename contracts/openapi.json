@@ -13,6 +13,23 @@
         ],
         "type": "object"
       },
+      "AnswerAssemblyReport": {
+        "additionalProperties": false,
+        "properties": {
+          "context_budget_tokens": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "parent_backtrack": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "parent_backtrack",
+          "context_budget_tokens"
+        ],
+        "type": "object"
+      },
       "AnswerError": {
         "additionalProperties": false,
         "properties": {
@@ -88,6 +105,571 @@
           "section_id",
           "heading_path",
           "pages"
+        ],
+        "type": "object"
+      },
+      "AnswerJudgeConfig": {
+        "additionalProperties": false,
+        "properties": {
+          "chat_model_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "model_label": {
+            "type": "string"
+          },
+          "prompt_version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "chat_model_id",
+          "model_label"
+        ],
+        "type": "object"
+      },
+      "AnswerMetricDelta": {
+        "additionalProperties": false,
+        "properties": {
+          "citation_support_rate": {
+            "format": "double",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "deterministic_pass_rate": {
+            "format": "double",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "evidence_hit_rate": {
+            "format": "double",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "false_refusal_rate": {
+            "format": "double",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "refusal_correct_rate": {
+            "format": "double",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "source_integrity_rate": {
+            "format": "double",
+            "type": "number"
+          },
+          "unsupported_rate": {
+            "format": "double",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "valid_citation_rate": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "valid_citation_rate",
+          "source_integrity_rate",
+          "evidence_hit_rate",
+          "deterministic_pass_rate",
+          "refusal_correct_rate",
+          "false_refusal_rate",
+          "unsupported_rate",
+          "citation_support_rate"
+        ],
+        "type": "object"
+      },
+      "AnswerMetrics": {
+        "additionalProperties": false,
+        "properties": {
+          "citation_support_rate": {
+            "format": "double",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "deterministic_pass_rate": {
+            "format": "double",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "evidence_hit_rate": {
+            "format": "double",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "false_refusal_rate": {
+            "format": "double",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "refusal_correct_rate": {
+            "format": "double",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "source_integrity_rate": {
+            "format": "double",
+            "type": "number"
+          },
+          "unsupported_rate": {
+            "format": "double",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "valid_citation_rate": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "valid_citation_rate",
+          "source_integrity_rate",
+          "evidence_hit_rate",
+          "deterministic_pass_rate",
+          "refusal_correct_rate",
+          "false_refusal_rate",
+          "unsupported_rate",
+          "citation_support_rate"
+        ],
+        "type": "object"
+      },
+      "AnswerReport": {
+        "additionalProperties": false,
+        "properties": {
+          "assembly": {
+            "$ref": "#/components/schemas/AnswerAssemblyReport"
+          },
+          "config_sha256": {
+            "type": "string"
+          },
+          "dataset_sha256": {
+            "type": "string"
+          },
+          "dataset_version": {
+            "type": "string"
+          },
+          "judge": {
+            "$ref": "#/components/schemas/AnswerJudgeConfig"
+          },
+          "latency_ms_p50_p95": {
+            "additionalProperties": {
+              "items": {
+                "format": "double",
+                "type": "number"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            "type": "object"
+          },
+          "model_kind": {
+            "type": "string"
+          },
+          "model_label": {
+            "type": "string"
+          },
+          "prompt_version": {
+            "type": "string"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/AnswerRow"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/AnswerSummary"
+          },
+          "unauthorized_evidence": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "dataset_version",
+          "dataset_sha256",
+          "config_sha256",
+          "model_label",
+          "model_kind",
+          "prompt_version",
+          "assembly",
+          "status",
+          "summary",
+          "unauthorized_evidence",
+          "rows",
+          "latency_ms_p50_p95"
+        ],
+        "type": "object"
+      },
+      "AnswerReportComparisonView": {
+        "additionalProperties": false,
+        "properties": {
+          "baseline": {
+            "$ref": "#/components/schemas/AnswerReportListItem"
+          },
+          "current": {
+            "$ref": "#/components/schemas/AnswerReportListItem"
+          },
+          "delta": {
+            "$ref": "#/components/schemas/AnswerMetricDelta"
+          },
+          "gate": {
+            "enum": [
+              "passed",
+              "regressed"
+            ],
+            "type": "string"
+          },
+          "limit": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "offset": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/AnswerRowComparison"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "total": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "gate",
+          "baseline",
+          "current",
+          "delta",
+          "total",
+          "offset",
+          "limit",
+          "rows"
+        ],
+        "type": "object"
+      },
+      "AnswerReportListItem": {
+        "additionalProperties": false,
+        "properties": {
+          "assembly": {
+            "$ref": "#/components/schemas/AnswerAssemblyReport"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "dataset_version": {
+            "type": "string"
+          },
+          "digest": {
+            "type": "string"
+          },
+          "judge": {
+            "$ref": "#/components/schemas/AnswerJudgeConfig"
+          },
+          "model_kind": {
+            "type": "string"
+          },
+          "model_label": {
+            "type": "string"
+          },
+          "prompt_version": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/AnswerSummary"
+          }
+        },
+        "required": [
+          "digest",
+          "source",
+          "created_at",
+          "dataset_version",
+          "model_label",
+          "model_kind",
+          "prompt_version",
+          "assembly",
+          "summary"
+        ],
+        "type": "object"
+      },
+      "AnswerReportPage": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AnswerReportListItem"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "next_cursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "type": "object"
+      },
+      "AnswerRow": {
+        "additionalProperties": false,
+        "properties": {
+          "answerable": {
+            "type": "boolean"
+          },
+          "citation_count": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "degraded": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "deterministic_pass": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "evidence_chunk_counts": {
+            "items": {
+              "format": "int64",
+              "type": "integer"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "evidence_documents": {
+            "items": {
+              "format": "int64",
+              "type": "integer"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "evidence_hit": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "evidence_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "invalid_citations": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "judge_claims": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "judge_unsupported": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "source_integrity": {
+            "type": "boolean"
+          },
+          "timings_ms": {
+            "additionalProperties": {
+              "format": "double",
+              "type": "number"
+            },
+            "type": "object"
+          },
+          "valid_citation": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "answerable",
+          "outcome",
+          "valid_citation",
+          "source_integrity",
+          "evidence_hit",
+          "deterministic_pass",
+          "evidence_ids",
+          "evidence_chunk_counts",
+          "evidence_documents",
+          "degraded",
+          "citation_count",
+          "invalid_citations",
+          "timings_ms"
+        ],
+        "type": "object"
+      },
+      "AnswerRowComparison": {
+        "additionalProperties": false,
+        "properties": {
+          "answerable": {
+            "type": "boolean"
+          },
+          "baseline_citation_count": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "baseline_invalid_citations": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "baseline_outcome": {
+            "type": "string"
+          },
+          "baseline_source_integrity": {
+            "type": "boolean"
+          },
+          "baseline_valid_citation": {
+            "type": "boolean"
+          },
+          "current_citation_count": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "current_invalid_citations": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "current_outcome": {
+            "type": "string"
+          },
+          "current_source_integrity": {
+            "type": "boolean"
+          },
+          "current_valid_citation": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "answerable",
+          "baseline_outcome",
+          "current_outcome",
+          "baseline_valid_citation",
+          "current_valid_citation",
+          "baseline_source_integrity",
+          "current_source_integrity",
+          "baseline_citation_count",
+          "current_citation_count",
+          "baseline_invalid_citations",
+          "current_invalid_citations"
+        ],
+        "type": "object"
+      },
+      "AnswerSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "answerable_cases": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "cases": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "deterministic_cases": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "judged_claims": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "metrics": {
+            "$ref": "#/components/schemas/AnswerMetrics"
+          },
+          "supported_claims": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "unanswerable_cases": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "cases",
+          "answerable_cases",
+          "unanswerable_cases",
+          "deterministic_cases",
+          "judged_claims",
+          "supported_claims",
+          "metrics"
         ],
         "type": "object"
       },
@@ -2489,6 +3071,31 @@
         ],
         "type": "object"
       },
+      "StoredAnswerReport": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "digest": {
+            "type": "string"
+          },
+          "report": {
+            "$ref": "#/components/schemas/AnswerReport"
+          },
+          "source": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "digest",
+          "source",
+          "created_at",
+          "report"
+        ],
+        "type": "object"
+      },
       "StoredReport": {
         "additionalProperties": false,
         "properties": {
@@ -3888,6 +4495,275 @@
           }
         ],
         "summary": "Get API v1 kbs by kb"
+      }
+    },
+    "/api/v1/kbs/{kb}/answer-eval-report-comparison": {
+      "get": {
+        "operationId": "get-api-v1-kbs-by-kb-answer-eval-report-comparison",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "baseline",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "current",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "default": 0,
+              "format": "int32",
+              "maximum": 10000,
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 20,
+              "format": "int32",
+              "maximum": 50,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnswerReportComparisonView"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Get API v1 kbs by kb answer eval report comparison"
+      }
+    },
+    "/api/v1/kbs/{kb}/answer-eval-reports": {
+      "get": {
+        "operationId": "get-api-v1-kbs-by-kb-answer-eval-reports",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "pattern": "^([0-9a-f]{64})?$",
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 10,
+              "format": "int32",
+              "maximum": 10,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnswerReportPage"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Get API v1 kbs by kb answer eval reports"
+      },
+      "post": {
+        "operationId": "import-answer-eval-report",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnswerReport"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoredAnswerReport"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/api/v1/kbs/{kb}/answer-eval-reports/{digest}": {
+      "get": {
+        "operationId": "get-api-v1-kbs-by-kb-answer-eval-reports-by-digest",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "digest",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoredAnswerReport"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Get API v1 kbs by kb answer eval reports by digest"
       }
     },
     "/api/v1/kbs/{kb}/config": {

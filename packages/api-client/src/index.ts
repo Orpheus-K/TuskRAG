@@ -1,6 +1,7 @@
 import type { components, paths } from "./schema";
 
 export * from "./answer";
+export * from "./answer_eval";
 
 export type Identity = components["schemas"]["IdentityBody"];
 export type Login = components["schemas"]["LoginInputBody"];
