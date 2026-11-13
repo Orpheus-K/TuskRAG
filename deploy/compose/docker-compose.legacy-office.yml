@@ -1,0 +1,20 @@
+# Optional overlay for legacy Office (.doc/.ppt/.xls) conversion sidecar.
+# Usage:
+#   docker compose -f docker-compose.standard.yml -f docker-compose.legacy-office.yml up -d
+services:
+  legacy-office:
+    image: ${LEGACY_OFFICE_IMAGE:-linuxserver/libreoffice:latest}
+    restart: unless-stopped
+    network_mode: "none"
+    read_only: true
+    tmpfs:
+      - /tmp:size=512m,mode=1777
+    volumes:
+      - legacy_office_io:/io
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+volumes:
+  legacy_office_io:

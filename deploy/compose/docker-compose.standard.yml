@@ -1,0 +1,103 @@
+services:
+  postgres:
+    build:
+      context: ../postgres
+    image: ${TUSKRAG_POSTGRES_IMAGE:-tuskrag-postgres:17-0.8.1-0.22.6}
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-tuskrag}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      TUSKRAG_APP_PASSWORD: ${TUSKRAG_APP_PASSWORD:?TUSKRAG_APP_PASSWORD is required}
+      TUSKRAG_MIGRATOR_PASSWORD: ${TUSKRAG_MIGRATOR_PASSWORD:?TUSKRAG_MIGRATOR_PASSWORD is required}
+    command:
+      - postgres
+      - -c
+      - shared_buffers=${PG_SHARED_BUFFERS:-4GB}
+      - -c
+      - effective_cache_size=${PG_EFFECTIVE_CACHE_SIZE:-10GB}
+      - -c
+      - work_mem=32MB
+      - -c
+      - maintenance_work_mem=1GB
+      - -c
+      - max_connections=120
+      - -c
+      - jit=off
+      - -c
+      - wal_compression=on
+      - -c
+      - shared_preload_libraries=${PG_SHARED_PRELOAD:-pg_search}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-tuskrag}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  tuskrag-migrate:
+    build:
+      context: ../..
+      dockerfile: deploy/Dockerfile
+    image: ${TUSKRAG_IMAGE:-tuskrag:latest}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      TUSKRAG_ROLE: migrate
+      TUSKRAG_DATABASE_URL: postgres://tuskrag_migrator:${TUSKRAG_MIGRATOR_PASSWORD}@postgres:5432/${POSTGRES_DB:-tuskrag}?sslmode=disable
+    restart: "no"
+
+  tuskrag-api:
+    image: ${TUSKRAG_IMAGE:-tuskrag:latest}
+    restart: unless-stopped
+    depends_on:
+      tuskrag-migrate:
+        condition: service_completed_successfully
+    environment:
+      TUSKRAG_ROLE: api
+      TUSKRAG_LISTEN: 0.0.0.0:8080
+      TUSKRAG_DATABASE_URL: postgres://tuskrag_app:${TUSKRAG_APP_PASSWORD}@postgres:5432/${POSTGRES_DB:-tuskrag}?sslmode=disable
+      TUSKRAG_MASTER_KEY_FILE: /run/secrets/tuskrag-master-key
+      TUSKRAG_METRICS_TOKEN: ${TUSKRAG_METRICS_TOKEN:-}
+      TUSKRAG_LEXICAL_DRIVER: ${TUSKRAG_LEXICAL_DRIVER:-auto}
+      GOMEMLIMIT: ${TUSKRAG_API_GOMEMLIMIT:-2048MiB}
+    ports:
+      - "${TUSKRAG_PORT:-8080}:8080"
+    read_only: true
+    tmpfs:
+      - /tmp:size=256m,mode=1777
+    volumes:
+      - storage:/var/lib/tuskrag/storage
+      - ${TUSKRAG_MASTER_KEY_HOST_PATH:-./secrets/master.key}:/run/secrets/tuskrag-master-key:ro
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/api/health/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+  tuskrag-worker:
+    image: ${TUSKRAG_IMAGE:-tuskrag:latest}
+    restart: unless-stopped
+    depends_on:
+      tuskrag-migrate:
+        condition: service_completed_successfully
+    environment:
+      TUSKRAG_ROLE: worker
+      TUSKRAG_DATABASE_URL: postgres://tuskrag_app:${TUSKRAG_APP_PASSWORD}@postgres:5432/${POSTGRES_DB:-tuskrag}?sslmode=disable
+      TUSKRAG_WORKER_TENANTS: ${TUSKRAG_WORKER_TENANTS:-1}
+      TUSKRAG_MASTER_KEY_FILE: /run/secrets/tuskrag-master-key
+      TUSKRAG_LEXICAL_DRIVER: ${TUSKRAG_LEXICAL_DRIVER:-auto}
+      GOMEMLIMIT: ${TUSKRAG_WORKER_GOMEMLIMIT:-2048MiB}
+    read_only: true
+    tmpfs:
+      - /tmp:size=256m,mode=1777
+      - /var/lib/tuskrag/tmp:size=1024m,mode=1770
+    volumes:
+      - storage:/var/lib/tuskrag/storage
+      - ${TUSKRAG_MASTER_KEY_HOST_PATH:-./secrets/master.key}:/run/secrets/tuskrag-master-key:ro
+
+volumes:
+  pgdata:
+  storage:

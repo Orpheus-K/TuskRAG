@@ -62,6 +62,10 @@ func NewVault(key []byte) (*Vault, error) {
 	return &result, nil
 }
 
+func (v *Vault) KeyID() string {
+	return v.keyID
+}
+
 func (v *Vault) Seal(ctx context.Context, tenantID, providerID int64, plaintext []byte) (Encrypted, error) {
 	if err := ctx.Err(); err != nil {
 		return Encrypted{}, err

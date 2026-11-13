@@ -203,7 +203,9 @@ func New(deps Dependencies) API {
 		mux.HandleFunc("/mcp", apiNotFound)
 	}
 	mux.HandleFunc("/mcp/", apiNotFound)
-	return API{Handler: withTrace(withSPA(mux)), OpenAPI: api.OpenAPI()}
+	metrics := &metricsRecorder{}
+	mux.HandleFunc("/metrics", metrics.handler(deps))
+	return API{Handler: withTrace(metrics.middleware(withSPA(mux))), OpenAPI: api.OpenAPI()}
 }
 
 func OpenAPIJSON() ([]byte, error) {
@@ -226,7 +228,7 @@ func serveSPA(api http.Handler, assets fs.FS) http.Handler {
 	files := http.FileServer(http.FS(assets))
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		cleanPath := path.Clean(r.URL.Path)
-		if cleanPath == "/api" || strings.HasPrefix(cleanPath, "/api/") || cleanPath == "/mcp" || strings.HasPrefix(cleanPath, "/mcp/") {
+		if cleanPath == "/api" || strings.HasPrefix(cleanPath, "/api/") || cleanPath == "/mcp" || strings.HasPrefix(cleanPath, "/mcp/") || cleanPath == "/metrics" {
 			api.ServeHTTP(w, r)
 			return
 		}

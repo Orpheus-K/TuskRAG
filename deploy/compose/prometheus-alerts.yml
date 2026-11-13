@@ -1,0 +1,31 @@
+groups:
+  - name: tuskrag-core
+    rules:
+      - alert: TuskRAGReadinessFailed
+        expr: tuskrag_ready == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "TuskRAG readiness check failing"
+          description: "Check PostgreSQL connectivity, schema version, and parser readiness."
+
+      - alert: TuskRAGHigh5xxRate
+        expr: |
+          sum(rate(tuskrag_http_requests_total{status_class="5xx"}[5m]))
+          / clamp_min(sum(rate(tuskrag_http_requests_total[5m])), 1) > 0.02
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "TuskRAG 5xx rate above 2%"
+          description: "Inspect JSON logs and /api/health/ready for dependency errors."
+
+      - alert: TuskRAGHighMemoryUsage
+        expr: tuskrag_go_mem_sys_bytes > 1610612736
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "TuskRAG Go memory sys above 1.5 GiB"
+          description: "Review GOMEMLIMIT and active SSE/worker concurrency."
