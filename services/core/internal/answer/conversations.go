@@ -410,11 +410,15 @@ func (s *Conversations) saveEvent(ctx context.Context, a retrieval.Actor, id int
 		for _, e := range event.Retrieval.Evidence {
 			cids := e.ChunkIDs
 			if len(cids) == 0 {
-				chunk, err := strconv.ParseInt(strings.TrimPrefix(e.ID, "c_"), 10, 64)
-				if err != nil {
-					return err
+				if strings.HasPrefix(e.ID, "s_") {
+					cids = []int64{0}
+				} else {
+					chunk, err := strconv.ParseInt(strings.TrimPrefix(e.ID, "c_"), 10, 64)
+					if err != nil {
+						return err
+					}
+					cids = []int64{chunk}
 				}
-				cids = []int64{chunk}
 			}
 			refs = append(refs, storedEvidence{
 				N:          e.N,

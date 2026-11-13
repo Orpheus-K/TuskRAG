@@ -34,6 +34,23 @@ func (q *Queries) CountPlanSections(ctx context.Context, arg CountPlanSectionsPa
 	return column_1, err
 }
 
+const getKnowledgeBaseSectionSummaryEnabled = `-- name: GetKnowledgeBaseSectionSummaryEnabled :one
+SELECT section_summary_enabled FROM knowledge_base
+WHERE tenant_id = $1 AND id = $2
+`
+
+type GetKnowledgeBaseSectionSummaryEnabledParams struct {
+	TenantID int64
+	KbID     int64
+}
+
+func (q *Queries) GetKnowledgeBaseSectionSummaryEnabled(ctx context.Context, arg GetKnowledgeBaseSectionSummaryEnabledParams) (bool, error) {
+	row := q.db.QueryRow(ctx, getKnowledgeBaseSectionSummaryEnabled, arg.TenantID, arg.KbID)
+	var section_summary_enabled bool
+	err := row.Scan(&section_summary_enabled)
+	return section_summary_enabled, err
+}
+
 const insertIngestPlan = `-- name: InsertIngestPlan :exec
 INSERT INTO ingest_plan (tenant_id, kb_id, document_id, version_id, embedding_space_id,
                          config_revision, plan_sha256, section_count, chunk_count)
@@ -114,13 +131,13 @@ func (q *Queries) InsertPlanChunks(ctx context.Context, arg InsertPlanChunksPara
 
 const insertPlanSections = `-- name: InsertPlanSections :execrows
 INSERT INTO section (id, tenant_id, kb_id, document_id, version_id, parent_section_id,
-                     ordinal, level, heading, heading_path, page_start, page_end, body_md, token_count)
+                     ordinal, level, heading, heading_path, page_start, page_end, body_md, token_count, summary)
 OVERRIDING SYSTEM VALUE
 SELECT item.id, $1, $2, $3, $4, item.parent_id,
-       item.ordinal, item.level, item.heading, item.heading_path, item.page_start, item.page_end, item.body_md, item.token_count
+       item.ordinal, item.level, item.heading, item.heading_path, item.page_start, item.page_end, item.body_md, item.token_count, item.summary
 FROM jsonb_to_recordset($5::jsonb) AS item(
   id bigint, parent_id bigint, ordinal integer, level smallint, heading text, heading_path text[],
-  page_start integer, page_end integer, body_md text, token_count integer
+  page_start integer, page_end integer, body_md text, token_count integer, summary text
 )
 ORDER BY item.ordinal
 `

@@ -16,7 +16,7 @@ import (
 //go:embed migrations/*.sql
 var migrations embed.FS
 
-const SchemaVersion int64 = 34
+const SchemaVersion int64 = 35
 
 func Migrate(ctx context.Context, databaseURL string) (result error) {
 	config, err := pgx.ParseConfig(databaseURL)

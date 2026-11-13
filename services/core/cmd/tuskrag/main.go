@@ -177,6 +177,7 @@ func run() (resultErr error) {
 	if err != nil {
 		return err
 	}
+	answers.Tools = mcpserver.NewExecutor(mcpserver.Dependencies{Search: search, Knowledge: knowledgeBases, Reader: knowledgeBases})
 	reports, err := eval.NewReportStore(pool)
 	if err != nil {
 		return err

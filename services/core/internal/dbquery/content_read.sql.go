@@ -204,7 +204,7 @@ func (q *Queries) ListNeighborChunks(ctx context.Context, arg ListNeighborChunks
 }
 
 const listReadableSections = `-- name: ListReadableSections :many
-SELECT s.id, s.parent_section_id, s.ordinal, s.level, s.page_start, s.page_end,
+SELECT s.id, s.parent_section_id, s.ordinal, s.level, s.page_start, s.page_end, s.summary,
   octet_length(s.heading)::integer AS heading_bytes,
   octet_length(array_to_string(s.heading_path, ''))::integer AS path_bytes,
   (CASE WHEN octet_length(s.heading) <= 8192 THEN s.heading ELSE '' END)::text AS heading,
@@ -232,6 +232,7 @@ type ListReadableSectionsRow struct {
 	Level           int16
 	PageStart       pgtype.Int4
 	PageEnd         pgtype.Int4
+	Summary         pgtype.Text
 	HeadingBytes    int32
 	PathBytes       int32
 	Heading         string
@@ -261,6 +262,7 @@ func (q *Queries) ListReadableSections(ctx context.Context, arg ListReadableSect
 			&i.Level,
 			&i.PageStart,
 			&i.PageEnd,
+			&i.Summary,
 			&i.HeadingBytes,
 			&i.PathBytes,
 			&i.Heading,

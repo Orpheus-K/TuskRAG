@@ -58,6 +58,7 @@ type SectionReferenceBody struct {
 	Heading     string   `json:"heading"`
 	HeadingPath []string `json:"heading_path" nullable:"false"`
 	Pages       []int32  `json:"pages" nullable:"true"`
+	Summary     *string  `json:"summary,omitempty"`
 }
 
 type DocumentContentsOutput struct {
@@ -140,7 +141,7 @@ func registerDocumentReader(api huma.API, deps Dependencies) {
 
 func sectionReferenceBody(section kb.SectionReference) SectionReferenceBody {
 	result := SectionReferenceBody{ID: section.ID, ParentID: section.ParentID, Ordinal: section.Ordinal, Level: section.Level,
-		Heading: section.Heading, HeadingPath: append([]string{}, section.HeadingPath...)}
+		Heading: section.Heading, HeadingPath: append([]string{}, section.HeadingPath...), Summary: section.Summary}
 	if section.PageStart != nil && section.PageEnd != nil {
 		result.Pages = []int32{*section.PageStart, *section.PageEnd}
 	}

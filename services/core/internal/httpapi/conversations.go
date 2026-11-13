@@ -35,6 +35,7 @@ type ConversationMessageInput struct {
 	CSRF string `header:"X-CSRF-Token" required:"true"`
 	Body struct {
 		Question string `json:"question" minLength:"1" maxLength:"4096"`
+		Mode     string `json:"mode,omitempty" enum:"standard,agentic"`
 	}
 }
 type AnswerFeedbackInput struct {
@@ -81,6 +82,13 @@ func registerConversations(api huma.API, deps Dependencies) {
 	registerAnswerStream(api, deps, huma.Operation{OperationID: "conversation-answer", Method: http.MethodPost, Path: "/conversations/{id}/messages", MaxBodyBytes: 16 * 1024, BodyReadTimeout: 10 * time.Second}, func(ctx context.Context, a retrieval.Actor, in *ConversationMessageInput, emit func(answer.Event) error) error {
 		if deps.Conversations == nil {
 			return models.ErrRuntimeUnavailable
+		}
+		if in.Body.Mode != "" {
+			if withMode, ok := deps.Conversations.(interface {
+				StreamWithMode(context.Context, retrieval.Actor, int64, string, string, func(answer.Event) error) error
+			}); ok {
+				return withMode.StreamWithMode(ctx, a, in.ID, in.Body.Question, in.Body.Mode, emit)
+			}
 		}
 		return deps.Conversations.Stream(ctx, a, in.ID, in.Body.Question, emit)
 	})

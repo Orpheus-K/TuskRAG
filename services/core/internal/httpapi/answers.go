@@ -86,7 +86,7 @@ func registerAnswerStream[I any](api huma.API, deps Dependencies, operation huma
 		next(ctx)
 	})
 	sse.Register(streamAPI, operation, map[string]any{
-		"retrieval": answer.RetrievalEvent{}, "delta": answer.Delta{}, "citations": answer.Citations{}, "done": answer.Done{}, "error": AnswerError{},
+		"retrieval": answer.RetrievalEvent{}, "step": answer.StepEvent{}, "delta": answer.Delta{}, "citations": answer.Citations{}, "done": answer.Done{}, "error": AnswerError{},
 	}, func(ctx context.Context, in *I, send sse.Sender) {
 		ctx, cancel := context.WithTimeout(ctx, 120*time.Second)
 		defer cancel()
@@ -150,6 +150,8 @@ func registerAnswerStream[I any](api huma.API, deps Dependencies, operation huma
 				switch {
 				case event.Retrieval != nil:
 					err = send.Data(*event.Retrieval)
+				case event.Step != nil:
+					err = send.Data(*event.Step)
 				case event.Delta != nil:
 					err = send.Data(*event.Delta)
 				case event.Citations != nil:

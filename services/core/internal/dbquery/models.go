@@ -343,15 +343,16 @@ type KbRetrievalConfigRevision struct {
 }
 
 type KnowledgeBase struct {
-	ID               int64
-	TenantID         int64
-	Name             string
-	EmbeddingSpaceID int64
-	PendingSpaceID   pgtype.Int8
-	ConfigRevision   int32
-	EgressPolicy     string
-	Status           string
-	CreatedAt        pgtype.Timestamptz
+	ID                    int64
+	TenantID              int64
+	Name                  string
+	EmbeddingSpaceID      int64
+	PendingSpaceID        pgtype.Int8
+	ConfigRevision        int32
+	EgressPolicy          string
+	Status                string
+	CreatedAt             pgtype.Timestamptz
+	SectionSummaryEnabled bool
 }
 
 type LocalAccount struct {

@@ -25,6 +25,7 @@ type Request struct {
 	KnowledgeBaseID int64  `json:"kb_id" minimum:"1"`
 	ModelID         int64  `json:"model_id" minimum:"1"`
 	Question        string `json:"question" minLength:"1" maxLength:"4096"`
+	Mode            string `json:"mode,omitempty" enum:"standard,agentic"`
 }
 type AnswerEvidence struct {
 	N           int      `json:"n"`
@@ -60,11 +61,26 @@ type Done struct {
 	Usage         *models.ChatUsage `json:"usage,omitempty"`
 	PromptVersion string            `json:"prompt_version"`
 }
+type StepEvent struct {
+	Step        int    `json:"step"`
+	Tool        string `json:"tool"`
+	ArgsSummary string `json:"args_summary"`
+	ResultCount int    `json:"result_count"`
+}
 type Event struct {
 	Retrieval *RetrievalEvent
+	Step      *StepEvent
 	Delta     *Delta
 	Citations *Citations
 	Done      *Done
+}
+type AgentTools interface {
+	ExecuteTool(ctx context.Context, actor retrieval.Actor, allowedKBs []int64, name string, rawArgs json.RawMessage) (any, error)
+}
+type AgentLimits struct {
+	MaxSteps          int
+	MaxDuration       time.Duration
+	MaxEvidenceTokens int
 }
 type Searcher interface {
 	Search(context.Context, retrieval.Actor, retrieval.Request) (retrieval.Result, error)
@@ -86,6 +102,8 @@ type Service struct {
 	Audit         Audit
 	CountTokens   retrieval.TokenCounter
 	Assembly      AssemblyOptions
+	Tools         AgentTools
+	Agent         AgentLimits
 	CheckInterval time.Duration
 	pool          *pgxpool.Pool
 	loadSections  sectionLoader
@@ -177,6 +195,9 @@ func (s *Service) stream(ctx context.Context, actor retrieval.Actor, request Req
 	question := request.Question
 	if options.question != "" {
 		question = options.question
+	}
+	if request.Mode == "agentic" {
+		return s.streamAgentic(ctx, actor, request, question, options, emit)
 	}
 	found, err := s.Search.Search(ctx, actor, retrieval.Request{KnowledgeBaseID: request.KnowledgeBaseID, Query: question, Limit: 0})
 	if err != nil {

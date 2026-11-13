@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -73,6 +74,7 @@ func (s *PlanStage) Stage(ctx context.Context, job jobs.ClaimedJob, plan Prepare
 		SectionCount: int32(len(plan.Sections)), ChunkCount: int32(len(plan.Chunks))}
 	var sectionIDs, chunkIDs []int64
 	var result StagedPlan
+	var summaryEnabled bool
 	err = s.queue.WithLease(ctx, job.Lease, func(ctx context.Context, tx jobs.EffectsTx) error {
 		queries := dbquery.New(tx)
 		if err := verifyClaimedIngestJob(ctx, queries, job); err != nil {
@@ -103,6 +105,12 @@ func (s *PlanStage) Stage(ctx context.Context, job jobs.ClaimedJob, plan Prepare
 		if !validReservedIDs(sectionIDs, len(plan.Sections)) || !validReservedIDs(chunkIDs, len(plan.Chunks)) {
 			return ErrPlanCorrupt
 		}
+		summaryEnabled, err = queries.GetKnowledgeBaseSectionSummaryEnabled(ctx, dbquery.GetKnowledgeBaseSectionSummaryEnabledParams{
+			TenantID: job.Lease.TenantID, KbID: ids.KBID,
+		})
+		if err != nil {
+			return fmt.Errorf("read kb section summary setting: %w", err)
+		}
 		return nil
 	})
 	if err != nil {
@@ -112,7 +120,7 @@ func (s *PlanStage) Stage(ctx context.Context, job jobs.ClaimedJob, plan Prepare
 		result.Identity = identity
 		return result, nil
 	}
-	sections, err := encodePlanSections(ctx, plan.Sections, sectionIDs)
+	sections, err := encodePlanSections(ctx, plan.Sections, sectionIDs, summaryEnabled)
 	if err != nil {
 		return StagedPlan{}, err
 	}
@@ -306,6 +314,7 @@ type sectionPlanRow struct {
 	PageEnd     int32    `json:"page_end"`
 	Body        string   `json:"body_md"`
 	TokenCount  int32    `json:"token_count"`
+	Summary     *string  `json:"summary,omitempty"`
 }
 
 type chunkPlanRow struct {
@@ -321,7 +330,19 @@ type chunkPlanRow struct {
 	TokenCount    int32  `json:"token_count"`
 }
 
-func encodePlanSections(ctx context.Context, sections []PreparedSection, ids []int64) ([]byte, error) {
+func summarizeSectionBody(body string) *string {
+	clean := strings.Join(strings.Fields(strings.TrimSpace(body)), " ")
+	if clean == "" {
+		return nil
+	}
+	runes := []rune(clean)
+	if len(runes) > 240 {
+		clean = string(runes[:237]) + "..."
+	}
+	return &clean
+}
+
+func encodePlanSections(ctx context.Context, sections []PreparedSection, ids []int64, summaryEnabled bool) ([]byte, error) {
 	return encodePlanRows(ctx, len(sections), func(index int) any {
 		section := sections[index]
 		var parent *int64
@@ -333,9 +354,13 @@ func encodePlanSections(ctx context.Context, sections []PreparedSection, ids []i
 		if path == nil {
 			path = []string{}
 		}
+		var summary *string
+		if summaryEnabled {
+			summary = summarizeSectionBody(section.BodyMarkdown)
+		}
 		return sectionPlanRow{ID: ids[index], ParentID: parent, Ordinal: index + 1, Level: section.Level,
 			Heading: section.Heading, HeadingPath: path, PageStart: section.PageStart, PageEnd: section.PageEnd,
-			Body: section.BodyMarkdown, TokenCount: section.TokenCount}
+			Body: section.BodyMarkdown, TokenCount: section.TokenCount, Summary: summary}
 	})
 }
 

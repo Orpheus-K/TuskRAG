@@ -24,15 +24,19 @@ SELECT nextval('section_id_seq')::bigint AS id FROM generate_series(1, sqlc.arg(
 -- name: ReserveChunkIDs :many
 SELECT nextval('chunk_id_seq')::bigint AS id FROM generate_series(1, sqlc.arg(item_count)::integer);
 
+-- name: GetKnowledgeBaseSectionSummaryEnabled :one
+SELECT section_summary_enabled FROM knowledge_base
+WHERE tenant_id = sqlc.arg(tenant_id) AND id = sqlc.arg(kb_id);
+
 -- name: InsertPlanSections :execrows
 INSERT INTO section (id, tenant_id, kb_id, document_id, version_id, parent_section_id,
-                     ordinal, level, heading, heading_path, page_start, page_end, body_md, token_count)
+                     ordinal, level, heading, heading_path, page_start, page_end, body_md, token_count, summary)
 OVERRIDING SYSTEM VALUE
 SELECT item.id, sqlc.arg(tenant_id), sqlc.arg(kb_id), sqlc.arg(document_id), sqlc.arg(version_id), item.parent_id,
-       item.ordinal, item.level, item.heading, item.heading_path, item.page_start, item.page_end, item.body_md, item.token_count
+       item.ordinal, item.level, item.heading, item.heading_path, item.page_start, item.page_end, item.body_md, item.token_count, item.summary
 FROM jsonb_to_recordset(sqlc.arg(items)::jsonb) AS item(
   id bigint, parent_id bigint, ordinal integer, level smallint, heading text, heading_path text[],
-  page_start integer, page_end integer, body_md text, token_count integer
+  page_start integer, page_end integer, body_md text, token_count integer, summary text
 )
 ORDER BY item.ordinal;
 

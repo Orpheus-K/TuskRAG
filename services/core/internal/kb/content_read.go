@@ -29,6 +29,7 @@ type SectionReference struct {
 	HeadingPath []string
 	PageStart   *int32
 	PageEnd     *int32
+	Summary     *string
 }
 
 type DocumentContents struct {
@@ -115,6 +116,10 @@ func (s *Service) DocumentContents(ctx context.Context, actor Actor, documentID 
 			row.HeadingBytes, row.PathBytes, row.PageStart, row.PageEnd, doc.Mime == "application/pdf")
 		if err != nil {
 			return DocumentContents{}, err
+		}
+		if row.Summary.Valid && row.Summary.String != "" {
+			v := row.Summary.String
+			ref.Summary = &v
 		}
 		total += int(row.HeadingBytes + row.PathBytes)
 		if total > maxReadBytes {

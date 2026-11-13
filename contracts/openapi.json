@@ -1171,6 +1171,13 @@
       "ConversationMessageInputBody": {
         "additionalProperties": false,
         "properties": {
+          "mode": {
+            "enum": [
+              "standard",
+              "agentic"
+            ],
+            "type": "string"
+          },
           "question": {
             "maxLength": 4096,
             "minLength": 1,
@@ -2924,6 +2931,13 @@
             "minimum": 1,
             "type": "integer"
           },
+          "mode": {
+            "enum": [
+              "standard",
+              "agentic"
+            ],
+            "type": "string"
+          },
           "model_id": {
             "format": "int64",
             "minimum": 1,
@@ -3632,6 +3646,9 @@
               "integer",
               "null"
             ]
+          },
+          "summary": {
+            "type": "string"
           }
         },
         "required": [
@@ -3850,6 +3867,32 @@
         "required": [
           "id",
           "job_id"
+        ],
+        "type": "object"
+      },
+      "StepEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "args_summary": {
+            "type": "string"
+          },
+          "result_count": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "step": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "tool": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "step",
+          "tool",
+          "args_summary",
+          "result_count"
         ],
         "type": "object"
       },
@@ -5289,6 +5332,39 @@
                         ],
                         "title": "Event retrieval",
                         "type": "object"
+                      },
+                      {
+                        "properties": {
+                          "data": {
+                            "$ref": "#/components/schemas/StepEvent"
+                          },
+                          "event": {
+                            "const": "step",
+                            "description": "The event name.",
+                            "type": "string"
+                          },
+                          "id": {
+                            "description": "The event ID.",
+                            "oneOf": [
+                              {
+                                "type": "integer"
+                              },
+                              {
+                                "type": "string"
+                              }
+                            ]
+                          },
+                          "retry": {
+                            "description": "The retry time in milliseconds.",
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "data",
+                          "event"
+                        ],
+                        "title": "Event step",
+                        "type": "object"
                       }
                     ]
                   },
@@ -6095,6 +6171,39 @@
                           "event"
                         ],
                         "title": "Event retrieval",
+                        "type": "object"
+                      },
+                      {
+                        "properties": {
+                          "data": {
+                            "$ref": "#/components/schemas/StepEvent"
+                          },
+                          "event": {
+                            "const": "step",
+                            "description": "The event name.",
+                            "type": "string"
+                          },
+                          "id": {
+                            "description": "The event ID.",
+                            "oneOf": [
+                              {
+                                "type": "integer"
+                              },
+                              {
+                                "type": "string"
+                              }
+                            ]
+                          },
+                          "retry": {
+                            "description": "The retry time in milliseconds.",
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "data",
+                          "event"
+                        ],
+                        "title": "Event step",
                         "type": "object"
                       }
                     ]

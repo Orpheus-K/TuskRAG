@@ -47,7 +47,7 @@ WHERE c.tenant_id=sqlc.arg(tenant_id) AND c.kb_id=sqlc.arg(kb_id)
 ORDER BY c.id LIMIT 10001 FOR SHARE OF c;
 
 -- name: ListReadableSections :many
-SELECT s.id, s.parent_section_id, s.ordinal, s.level, s.page_start, s.page_end,
+SELECT s.id, s.parent_section_id, s.ordinal, s.level, s.page_start, s.page_end, s.summary,
   octet_length(s.heading)::integer AS heading_bytes,
   octet_length(array_to_string(s.heading_path, ''))::integer AS path_bytes,
   (CASE WHEN octet_length(s.heading) <= 8192 THEN s.heading ELSE '' END)::text AS heading,
