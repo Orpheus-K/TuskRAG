@@ -1,0 +1,9 @@
+Linux 5.15.0-186-generic x86_64
+ldd (Ubuntu GLIBC 2.35-0ubuntu3.15) 2.35
+{"tool": "tuskrag-parse", "version": "0.5.0", "schema_version": "1.0.0", "drivers": {"csv": "python-stdlib-3.13", "docx": "python-docx-1.2.0", "xlsx": "python-calamine-0.9.0+openpyxl-3.1.5", "pdf": "pdfplumber-0.11.10+pypdfium2-5.14.0"}}
+bubblewrap 0.9.0
+252eb94d317a4c20958e5b6fc1afb338f3253edf04976528a09f303dbb4a47e2  <test-directory>
+5ac9bb646ccbfc4e77c4f690cd4d3f9ddfefdbe91f468d70cc8274b5ec2622ed  <test-directory>
+ab08e367e1e8ead94ee9e9795138dca38558b1cf02ce965863ce2824ae8ad318  <test-directory>
+c6347eaced49ac0141996f46bba3b089e5e6ea4408bc1c43bab9f2d05dd094e1  <test-directory>
+4d6c71db380bb69d19a09501bd5caec92e46bf54c7f505805e75687daf783939  <test-directory>

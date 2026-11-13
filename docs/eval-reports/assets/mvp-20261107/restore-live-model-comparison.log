@@ -1,0 +1,15 @@
+{"restored_queries":12,"identical_queries":1,"conversation_and_feedback":"identical"}
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: live model search changed; full comparison retained
+    at file://<deployment-path>:204:3 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '=='
+}
+
+Node.js v22.18.0

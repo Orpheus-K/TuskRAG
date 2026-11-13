@@ -1,0 +1,15 @@
+=== RUN   TestServeStopsWorkerWhenListenerFails
+--- PASS: TestServeStopsWorkerWhenListenerFails (0.00s)
+=== RUN   TestServeStopsWhenWorkerFails
+--- PASS: TestServeStopsWhenWorkerFails (0.00s)
+=== RUN   TestServeStopsOnCancellation
+--- PASS: TestServeStopsOnCancellation (0.00s)
+=== RUN   TestRunWorkerPreservesFailures
+--- PASS: TestRunWorkerPreservesFailures (0.00s)
+=== RUN   TestWrappedWorkerCancellation
+--- PASS: TestWrappedWorkerCancellation (0.00s)
+=== RUN   TestServeWrappedCancellation
+--- PASS: TestServeWrappedCancellation (0.00s)
+=== RUN   TestServePreservesJoinedCleanupFailure
+--- PASS: TestServePreservesJoinedCleanupFailure (0.00s)
+PASS

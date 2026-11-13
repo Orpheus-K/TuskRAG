@@ -1,0 +1,43 @@
+{
+  "dataset": "cross-page-pdf-v1",
+  "model": "gemini-3.8-flash-high",
+  "prompt_version": "grounded-v3",
+  "document": {
+    "source": "services/parser/tests/fixtures/pdf/policy-cross-page.pdf",
+    "document_id": 9,
+    "version_id": 9,
+    "sha256": "fa8c7f3ec7aa6059e789c7a6100cbfafddfb47aba48960c73276a15b2a255db7",
+    "bytes": 20840
+  },
+  "kb_id": 2,
+  "pass": true,
+  "outcome": "answered",
+  "cited_pages": [
+    1,
+    2
+  ],
+  "source_integrity": true,
+  "source_mismatches": [],
+  "invalid_citations": 0,
+  "degraded": [],
+  "duration_ms": 11407,
+  "first_delta_ms": 11262,
+  "citations": [
+    {
+      "id": "c_36",
+      "section_id": 14,
+      "pages": [
+        2,
+        2
+      ]
+    },
+    {
+      "id": "c_33",
+      "section_id": 13,
+      "pages": [
+        1,
+        1
+      ]
+    }
+  ]
+}

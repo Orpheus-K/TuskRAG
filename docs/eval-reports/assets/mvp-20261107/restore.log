@@ -1,0 +1,6 @@
+database.dump: OK
+originals.tar.gz: OK
+database-version.txt: OK
+storage-verification.jsonl: OK
+{"tenant_id":1,"verified_versions":8,"verified_bytes":69816}
+Restore verified; keep service stopped until ownership, master key and retrieval checks pass: /var/lib/tuskrag-mvp-restored-20261107/files

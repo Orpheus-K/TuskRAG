@@ -1,0 +1,34 @@
+=== RUN   TestWorkerProcess
+2026/11/07 04:38:33 OK   00001_initial.sql (28.21ms)
+2026/11/07 04:38:33 OK   00002_job_contract.sql (15.22ms)
+2026/11/07 04:38:33 OK   00003_kb_membership.sql (15.35ms)
+2026/11/07 04:38:33 OK   00004_audit_member_details.sql (3.08ms)
+2026/11/07 04:38:33 OK   00005_local_identity.sql (10.11ms)
+2026/11/07 04:38:33 OK   00006_provider_credentials.sql (5.61ms)
+2026/11/07 04:38:33 OK   00007_idempotency.sql (6.94ms)
+2026/11/07 04:38:33 OK   00008_documents.sql (24.57ms)
+2026/11/07 04:38:33 OK   00009_parse_artifacts.sql (7.2ms)
+2026/11/07 04:38:33 OK   00010_index_storage.sql (25.58ms)
+2026/11/07 04:38:33 OK   00011_ingest_plan.sql (8.94ms)
+2026/11/07 04:38:33 OK   00012_audit_context.sql (7.53ms)
+2026/11/07 04:38:33 OK   00013_current_version_guard.sql (5.25ms)
+2026/11/07 04:38:33 OK   00014_qualify_version_guards.sql (4.4ms)
+2026/11/07 04:38:33 OK   00015_table_header_confirmation.sql (5.12ms)
+2026/11/07 04:38:33 OK   00016_document_version_identity.sql (4.21ms)
+2026/11/07 04:38:33 OK   00017_ingest_job_history_index.sql (4.36ms)
+2026/11/07 04:38:33 OK   00018_parse_report.sql (3.31ms)
+2026/11/07 04:38:33 OK   00019_lexical_prefilter.sql (6.02ms)
+2026/11/07 04:38:33 OK   00020_retrieval_config.sql (10.84ms)
+2026/11/07 04:38:33 OK   00021_eval_report.sql (8.67ms)
+2026/11/07 04:38:33 OK   00022_eval_set.sql (13.67ms)
+2026/11/07 04:38:33 OK   00023_eval_run.sql (11.71ms)
+2026/11/07 04:38:33 OK   00024_eval_run_result.sql (7.42ms)
+2026/11/07 04:38:33 OK   00025_embedding_rebuild.sql (10.34ms)
+2026/11/07 04:38:33 OK   00026_chat_model.sql (10.62ms)
+2026/11/07 04:38:33 OK   00027_conversations.sql (21.08ms)
+2026/11/07 04:38:33 goose: successfully migrated database to version: 27
+    worker_linux_integration_test.go:416: cited answer: 7 evidence, validated source, upstream cancellation
+    worker_linux_integration_test.go:416: saved conversation: two turns, rewrite, history reload and feedback passed
+    worker_linux_integration_test.go:416: production API/all worker rebuild: covered_chunks=16 success+stable_replay+cancel passed
+--- PASS: TestWorkerProcess (75.18s)
+PASS

@@ -1,0 +1,78 @@
+{
+  "dataset": "project-documents-qa-v1",
+  "fixture_sha256": "5792011877cd86829e2a3b7d6e0aae53305c86f412b5ffc34c82ce0b0aa87e82",
+  "cases": [
+    {
+      "id": "architecture-processes",
+      "candidates": 30,
+      "candidates_sha256": "91c583168fa5310f9a40ef57792b37b2d12271a1e096a2440fe32f6cb9152b1a",
+      "identical": true
+    },
+    {
+      "id": "parser-process",
+      "candidates": 30,
+      "candidates_sha256": "d9d2aa821c45407680c9e1b06dd7356b1e7c58494df97701a69708397266fb65",
+      "identical": true
+    },
+    {
+      "id": "account-lock",
+      "candidates": 30,
+      "candidates_sha256": "53b68851bd1306b65b2ac5e0b7a617b31824151d36a67147892df35739b781ed",
+      "identical": true
+    },
+    {
+      "id": "session-expiry",
+      "candidates": 30,
+      "candidates_sha256": "dbaa7070a59622083a81f02dab326be28730d9d4ab5f311f816f8694aaa7d119",
+      "identical": true
+    },
+    {
+      "id": "admin-access",
+      "candidates": 30,
+      "candidates_sha256": "6b0d988e610f44557ad1fbe802ef8440944f7123942620b31bb461b2c4b0cae3",
+      "identical": true
+    },
+    {
+      "id": "external-https",
+      "candidates": 30,
+      "candidates_sha256": "b78bb95019e27463ac2fc09832a34ffa42247d2be8e6fc5ee326733248d882ed",
+      "identical": true
+    },
+    {
+      "id": "answer-timeout",
+      "candidates": 30,
+      "candidates_sha256": "4da7913603620b8627b2921167b64daf8c2247c478cd01856f839b6270f57fbe",
+      "identical": true
+    },
+    {
+      "id": "rewrite-failure",
+      "candidates": 30,
+      "candidates_sha256": "aa9c3a6619931e13315154220918c491c7d6a28d3e59e201bbb9a0a11bd77750",
+      "identical": true
+    },
+    {
+      "id": "upload-limit",
+      "candidates": 30,
+      "candidates_sha256": "cd8e3d9a8f132a0b20c53fab0b0857b214faf5732942f9b6b19f9e2ff219c8f4",
+      "identical": true
+    },
+    {
+      "id": "scan-support",
+      "candidates": 30,
+      "candidates_sha256": "61b242466f7cc88f2f3e644546aef3a568f53070ce7f1aa01f4621643e38eb58",
+      "identical": true
+    },
+    {
+      "id": "missing-revenue",
+      "candidates": 30,
+      "candidates_sha256": "cd892e4db893a4ede49939678e884ad12ef289ec4225cc23aedb3505590138d5",
+      "identical": true
+    },
+    {
+      "id": "missing-private-key",
+      "candidates": 30,
+      "candidates_sha256": "eb9552d9b491c42fcfb634bdab4cb53d91794457dd7258924a6b678b767ea00e",
+      "identical": true
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+=== RUN   TestCatalogEncryptsCredentialsAndEnforcesAdministrator
+--- PASS: TestCatalogEncryptsCredentialsAndEnforcesAdministrator (0.83s)
+PASS

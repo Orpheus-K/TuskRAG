@@ -1,0 +1,5 @@
+database.dump: OK
+originals.tar.gz: OK
+database-version.txt: OK
+storage-verification.jsonl: OK
+restore database must be empty

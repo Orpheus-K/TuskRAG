@@ -19,3 +19,4 @@ services/core/internal/httpapi/web/
 *.key
 *.pem
 *secret*.tmp
+docs/cloud-test-*.md

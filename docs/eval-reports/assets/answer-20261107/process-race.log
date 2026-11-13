@@ -1,0 +1,32 @@
+=== RUN   TestWorkerProcess
+2026/11/07 03:14:59 OK   00001_initial.sql (27.8ms)
+2026/11/07 03:14:59 OK   00002_job_contract.sql (8.14ms)
+2026/11/07 03:14:59 OK   00003_kb_membership.sql (15.56ms)
+2026/11/07 03:14:59 OK   00004_audit_member_details.sql (3.81ms)
+2026/11/07 03:14:59 OK   00005_local_identity.sql (11.14ms)
+2026/11/07 03:14:59 OK   00006_provider_credentials.sql (3.78ms)
+2026/11/07 03:14:59 OK   00007_idempotency.sql (8.18ms)
+2026/11/07 03:14:59 OK   00008_documents.sql (19.81ms)
+2026/11/07 03:14:59 OK   00009_parse_artifacts.sql (8.08ms)
+2026/11/07 03:14:59 OK   00010_index_storage.sql (25.7ms)
+2026/11/07 03:14:59 OK   00011_ingest_plan.sql (9.86ms)
+2026/11/07 03:14:59 OK   00012_audit_context.sql (4.09ms)
+2026/11/07 03:14:59 OK   00013_current_version_guard.sql (5.97ms)
+2026/11/07 03:14:59 OK   00014_qualify_version_guards.sql (4.02ms)
+2026/11/07 03:14:59 OK   00015_table_header_confirmation.sql (4.95ms)
+2026/11/07 03:14:59 OK   00016_document_version_identity.sql (4.01ms)
+2026/11/07 03:14:59 OK   00017_ingest_job_history_index.sql (2.82ms)
+2026/11/07 03:14:59 OK   00018_parse_report.sql (3.9ms)
+2026/11/07 03:14:59 OK   00019_lexical_prefilter.sql (6.42ms)
+2026/11/07 03:14:59 OK   00020_retrieval_config.sql (8.92ms)
+2026/11/07 03:14:59 OK   00021_eval_report.sql (7.22ms)
+2026/11/07 03:14:59 OK   00022_eval_set.sql (14.84ms)
+2026/11/07 03:14:59 OK   00023_eval_run.sql (10.61ms)
+2026/11/07 03:14:59 OK   00024_eval_run_result.sql (7.72ms)
+2026/11/07 03:14:59 OK   00025_embedding_rebuild.sql (10.06ms)
+2026/11/07 03:14:59 OK   00026_chat_model.sql (8.08ms)
+2026/11/07 03:14:59 goose: successfully migrated database to version: 26
+    worker_linux_integration_test.go:416: cited answer: 7 evidence, validated source, upstream cancellation
+    worker_linux_integration_test.go:416: production API/all worker rebuild: covered_chunks=16 success+stable_replay+cancel passed
+--- PASS: TestWorkerProcess (73.28s)
+PASS

@@ -1,0 +1,41 @@
+=== RUN   TestIngestCancellationRequiresDomainEffects
+--- PASS: TestIngestCancellationRequiresDomainEffects (0.08s)
+=== RUN   TestConcurrentRecoveryAppliesEffectsOnce
+--- PASS: TestConcurrentRecoveryAppliesEffectsOnce (0.11s)
+=== RUN   TestDeduplicationAndTransactionalEnqueue
+--- PASS: TestDeduplicationAndTransactionalEnqueue (0.07s)
+=== RUN   TestConcurrentClaimsAndStaleCompletion
+--- PASS: TestConcurrentClaimsAndStaleCompletion (0.11s)
+=== RUN   TestExpiryDuringEffectsRollsBack
+--- PASS: TestExpiryDuringEffectsRollsBack (0.07s)
+=== RUN   TestCheckpointAndFailureEffectsAreFenced
+--- PASS: TestCheckpointAndFailureEffectsAreFenced (0.09s)
+=== RUN   TestRetryDeadLetterAndCancellation
+--- PASS: TestRetryDeadLetterAndCancellation (0.14s)
+=== RUN   TestKilledClaimantCanBeRecovered
+--- PASS: TestKilledClaimantCanBeRecovered (0.11s)
+=== RUN   TestClaimChild
+    store_integration_test.go:527: subprocess helper
+--- SKIP: TestClaimChild (0.00s)
+=== RUN   TestRollbackClosedConnectionAfterCancellation
+--- PASS: TestRollbackClosedConnectionAfterCancellation (0.08s)
+=== RUN   TestWorkerRecoversExhaustedLease
+--- PASS: TestWorkerRecoversExhaustedLease (0.11s)
+=== RUN   TestWorkerStopsInFlightJobWhenListenerDisconnects
+--- PASS: TestWorkerStopsInFlightJobWhenListenerDisconnects (0.09s)
+=== RUN   TestWorkerCompletesEffectsAndRecordsFailure
+--- PASS: TestWorkerCompletesEffectsAndRecordsFailure (0.14s)
+=== RUN   TestWorkerRecordsFailureFromCompletionEffects
+--- PASS: TestWorkerRecordsFailureFromCompletionEffects (0.13s)
+=== RUN   TestWorkerSchedulesTenantsAndLeavesUnsupportedJobs
+--- PASS: TestWorkerSchedulesTenantsAndLeavesUnsupportedJobs (0.15s)
+=== RUN   TestWorkerVerifiesCancellationNotifications
+--- PASS: TestWorkerVerifiesCancellationNotifications (0.10s)
+=== RUN   TestWorkerRenewsAndStopsWhenLeaseIsReclaimed
+--- PASS: TestWorkerRenewsAndStopsWhenLeaseIsReclaimed (0.70s)
+=== RUN   TestWorkerProcessCrashAndRecovery
+--- PASS: TestWorkerProcessCrashAndRecovery (0.19s)
+=== RUN   TestWorkerProcessChild
+    worker_integration_test.go:515: subprocess helper
+--- SKIP: TestWorkerProcessChild (0.00s)
+PASS

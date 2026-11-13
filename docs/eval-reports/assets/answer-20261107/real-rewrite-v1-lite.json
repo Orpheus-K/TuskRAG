@@ -1,0 +1,36 @@
+{
+  "Version": "rewrite-v1",
+  "Model": "gemini-3.5-flash-lite",
+  "Rows": [
+    {
+      "id": "city-followup",
+      "Before": false,
+      "After": true,
+      "Degraded": false,
+      "duration_ms": 1512
+    },
+    {
+      "id": "document-followup",
+      "Before": false,
+      "After": true,
+      "Degraded": false,
+      "duration_ms": 994
+    },
+    {
+      "id": "independent",
+      "Before": true,
+      "After": true,
+      "Degraded": false,
+      "duration_ms": 1508
+    },
+    {
+      "id": "history-injection",
+      "Before": false,
+      "After": true,
+      "Degraded": false,
+      "duration_ms": 1496
+    }
+  ],
+  "Before": 1,
+  "After": 4
+}

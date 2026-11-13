@@ -1,0 +1,17 @@
+=== RUN   TestNativeTextSandboxMatchesBaseline
+=== RUN   TestNativeTextSandboxMatchesBaseline/policy.md
+=== RUN   TestNativeTextSandboxMatchesBaseline/encoding.md
+=== RUN   TestNativeTextSandboxMatchesBaseline/script.md
+=== RUN   TestNativeTextSandboxMatchesBaseline/policy.txt
+=== RUN   TestNativeTextSandboxMatchesBaseline/unsupported
+=== RUN   TestNativeTextSandboxMatchesBaseline/limit
+=== RUN   TestNativeTextSandboxMatchesBaseline/invalid_utf8
+--- PASS: TestNativeTextSandboxMatchesBaseline (4.52s)
+    --- PASS: TestNativeTextSandboxMatchesBaseline/policy.md (1.08s)
+    --- PASS: TestNativeTextSandboxMatchesBaseline/encoding.md (1.07s)
+    --- PASS: TestNativeTextSandboxMatchesBaseline/script.md (1.07s)
+    --- PASS: TestNativeTextSandboxMatchesBaseline/policy.txt (1.07s)
+    --- PASS: TestNativeTextSandboxMatchesBaseline/unsupported (0.07s)
+    --- PASS: TestNativeTextSandboxMatchesBaseline/limit (0.07s)
+    --- PASS: TestNativeTextSandboxMatchesBaseline/invalid_utf8 (0.07s)
+PASS

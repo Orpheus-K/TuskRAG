@@ -1,0 +1,3 @@
+=== RUN   TestVerifyStoragePostgres
+--- PASS: TestVerifyStoragePostgres (1.26s)
+PASS

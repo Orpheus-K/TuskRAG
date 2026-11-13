@@ -1,0 +1,15 @@
+=== RUN   TestRestoredProjectRecall
+    restore_integration_test.go:117: architecture-processes: 30 identical candidates
+    restore_integration_test.go:117: parser-process: 30 identical candidates
+    restore_integration_test.go:117: account-lock: 30 identical candidates
+    restore_integration_test.go:117: session-expiry: 30 identical candidates
+    restore_integration_test.go:117: admin-access: 30 identical candidates
+    restore_integration_test.go:117: external-https: 30 identical candidates
+    restore_integration_test.go:117: answer-timeout: 30 identical candidates
+    restore_integration_test.go:117: rewrite-failure: 30 identical candidates
+    restore_integration_test.go:117: upload-limit: 30 identical candidates
+    restore_integration_test.go:117: scan-support: 30 identical candidates
+    restore_integration_test.go:117: missing-revenue: 30 identical candidates
+    restore_integration_test.go:117: missing-private-key: 30 identical candidates
+--- PASS: TestRestoredProjectRecall (1.39s)
+PASS
