@@ -145,6 +145,15 @@ type Document struct {
 	CreatedAt        pgtype.Timestamptz
 }
 
+type DocumentAcl struct {
+	TenantID    int64
+	KbID        int64
+	DocumentID  int64
+	SubjectType string
+	SubjectID   int64
+	CreatedAt   pgtype.Timestamptz
+}
+
 type DocumentVersion struct {
 	ID                     int64
 	TenantID               int64
@@ -385,4 +394,19 @@ type Tenant struct {
 	Name            string
 	CreatedAt       pgtype.Timestamptz
 	EgressPolicyMax string
+}
+
+type UserGroup struct {
+	ID        int64
+	TenantID  int64
+	Name      string
+	Source    string
+	CreatedAt pgtype.Timestamptz
+}
+
+type UserGroupMember struct {
+	TenantID  int64
+	GroupID   int64
+	UserID    int64
+	CreatedAt pgtype.Timestamptz
 }

@@ -243,6 +243,7 @@ func registerWorkspace(api huma.API, deps Dependencies) {
 	registerConversations(protected, deps)
 	registerKnowledgeConfig(protected, deps)
 	registerKnowledgeMembers(protected, deps)
+	registerGovernanceACL(protected, deps)
 	registerEvalReports(protected, deps)
 	registerAnswerEvalReports(protected, deps)
 	registerEvalSets(protected, deps)

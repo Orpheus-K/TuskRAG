@@ -17,6 +17,7 @@ import {
 import { Button } from "@tuskrag/ui/button";
 import { type FormEvent, useRef, useState } from "react";
 import type { PreviewTarget } from "./DocumentPreview";
+import { DocumentACLButton, UserGroupsPanel } from "./DocumentACL";
 import { KnowledgeConfigPanel } from "./KnowledgeConfig";
 import { KnowledgeMembersPanel } from "./KnowledgeMembers";
 import { Preview } from "./Preview";
@@ -427,6 +428,7 @@ export function KnowledgeDetail({
       </h1>
       <KnowledgeConfigPanel identity={identity} base={base.data} />
       <KnowledgeMembersPanel identity={identity} base={base.data} />
+      <UserGroupsPanel identity={identity} />
       {(base.data.role === "owner" || base.data.role === "admin") && (
         <Link
           className="mt-4 mr-5 inline-block text-sm underline"
@@ -824,6 +826,13 @@ export function KnowledgeDetail({
                   >
                     {deleting === item.id ? "正在删除" : "删除文档"}
                   </Button>
+                  <DocumentACLButton
+                    identity={identity}
+                    kbId={id}
+                    documentId={item.id}
+                    documentTitle={item.title}
+                    role={base.data.role}
+                  />
                 </div>
               )}
             </li>

@@ -92,7 +92,7 @@ func setup(t *testing.T) *fixture {
 		if _, err := admin.Exec(cleanupCtx, `UPDATE document SET current_version_id = NULL WHERE tenant_id = ANY($1)`, []int64{f.tenantA, f.tenantB}); err != nil {
 			t.Errorf("clear current versions: %v", err)
 		}
-		for _, table := range []string{"idempotency_record", "audit_log", "kb_membership", "job", "document_version", "document", "knowledge_base", "embedding_space", "model_provider", "app_user"} {
+		for _, table := range []string{"document_acl", "user_group_member", "user_group", "idempotency_record", "audit_log", "kb_membership", "job", "document_version", "document", "knowledge_base", "embedding_space", "model_provider", "app_user"} {
 			if _, err := admin.Exec(cleanupCtx, "DELETE FROM "+table+" WHERE tenant_id = ANY($1)", []int64{f.tenantA, f.tenantB}); err != nil {
 				t.Errorf("clean %s: %v", table, err)
 			}

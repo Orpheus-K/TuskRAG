@@ -343,9 +343,18 @@ LEFT JOIN LATERAL (
   ORDER BY id DESC LIMIT 1
 ) latest_job ON true
 WHERE d.tenant_id = $1 AND d.kb_id = $2
-  AND d.id > $3 AND d.deleted_at IS NULL AND d.acl_mode = 'inherit_kb'
+  AND d.id > $3 AND d.deleted_at IS NULL
+  AND (d.acl_mode = 'inherit_kb' OR EXISTS (
+    SELECT 1 FROM document_acl a
+    WHERE a.tenant_id = d.tenant_id AND a.kb_id = d.kb_id AND a.document_id = d.id
+      AND (a.subject_type = 'user' AND a.subject_id = $4
+        OR a.subject_type = 'group' AND a.subject_id IN (
+          SELECT gm.group_id FROM user_group_member gm
+          WHERE gm.tenant_id = d.tenant_id AND gm.user_id = $4
+        ))
+  ))
 ORDER BY d.id
-LIMIT $4
+LIMIT $5
 FOR SHARE OF d
 `
 
@@ -353,6 +362,7 @@ type ListVisibleDocumentsParams struct {
 	TenantID   int64
 	KbID       int64
 	AfterID    int64
+	UserID     int64
 	FetchLimit int32
 }
 
@@ -379,6 +389,7 @@ func (q *Queries) ListVisibleDocuments(ctx context.Context, arg ListVisibleDocum
 		arg.TenantID,
 		arg.KbID,
 		arg.AfterID,
+		arg.UserID,
 		arg.FetchLimit,
 	)
 	if err != nil {

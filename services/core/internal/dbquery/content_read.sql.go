@@ -182,7 +182,7 @@ func (q *Queries) ListReadableSections(ctx context.Context, arg ListReadableSect
 }
 
 const lockReadableChunks = `-- name: LockReadableChunks :many
-SELECT c.section_id, (c.is_current AND NOT c.disabled AND c.access_tags && ARRAY['kb:' || c.kb_id::text || ':all'])::boolean AS allowed
+SELECT c.section_id, (c.is_current AND NOT c.disabled)::boolean AS allowed
 FROM chunk c
 WHERE c.tenant_id=$1 AND c.kb_id=$2
   AND c.document_id=$3 AND c.version_id=$4
@@ -230,7 +230,16 @@ const lockReadableDocument = `-- name: LockReadableDocument :one
 SELECT d.id, d.kb_id, d.title, d.mime, d.current_version_id
 FROM document d
 WHERE d.tenant_id=$1 AND d.id=$2
-  AND d.deleted_at IS NULL AND d.acl_mode='inherit_kb'
+  AND d.deleted_at IS NULL
+  AND (d.acl_mode='inherit_kb' OR EXISTS (
+    SELECT 1 FROM document_acl a
+    WHERE a.tenant_id = d.tenant_id AND a.kb_id = d.kb_id AND a.document_id = d.id
+      AND (a.subject_type = 'user' AND a.subject_id = $3
+        OR a.subject_type = 'group' AND a.subject_id IN (
+          SELECT gm.group_id FROM user_group_member gm
+          WHERE gm.tenant_id = d.tenant_id AND gm.user_id = $3
+        ))
+  ))
   AND EXISTS (SELECT 1 FROM kb_membership m WHERE m.tenant_id=d.tenant_id AND m.kb_id=d.kb_id AND m.user_id=$3)
 FOR SHARE OF d
 `

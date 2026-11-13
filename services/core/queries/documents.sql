@@ -93,7 +93,16 @@ LEFT JOIN LATERAL (
   ORDER BY id DESC LIMIT 1
 ) latest_job ON true
 WHERE d.tenant_id = sqlc.arg(tenant_id) AND d.kb_id = sqlc.arg(kb_id)
-  AND d.id > sqlc.arg(after_id) AND d.deleted_at IS NULL AND d.acl_mode = 'inherit_kb'
+  AND d.id > sqlc.arg(after_id) AND d.deleted_at IS NULL
+  AND (d.acl_mode = 'inherit_kb' OR EXISTS (
+    SELECT 1 FROM document_acl a
+    WHERE a.tenant_id = d.tenant_id AND a.kb_id = d.kb_id AND a.document_id = d.id
+      AND (a.subject_type = 'user' AND a.subject_id = sqlc.arg(user_id)
+        OR a.subject_type = 'group' AND a.subject_id IN (
+          SELECT gm.group_id FROM user_group_member gm
+          WHERE gm.tenant_id = d.tenant_id AND gm.user_id = sqlc.arg(user_id)
+        ))
+  ))
 ORDER BY d.id
 LIMIT sqlc.arg(fetch_limit)
 FOR SHARE OF d;

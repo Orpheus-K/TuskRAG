@@ -2,6 +2,14 @@
 
 ## 当前快照（2026-11-13）
 
+- **M3-2 用户组与文档级 ACL（`inherit_kb` / `restricted`）及即时撤权闭环完成（R13、T08、T09）**：
+  - **数据与检索**：新增迁移 [00029_user_groups_and_document_acl.sql](../services/core/internal/db/migrations/00029_user_groups_and_document_acl.sql)（`user_group`、`user_group_member`、`document_acl` + RLS + `tuskrag_app` 权限，[db.go](../services/core/internal/db/db.go) `SchemaVersion = 29`）；在 [groups_and_acl.sql](../services/core/queries/groups_and_acl.sql) 新增用户组/文档 ACL 查询与 `acl_refresh` 任务入队及 `chunk`/`chunk_vector.access_tags` 刷新；更新 [retrieval.sql](../services/core/queries/retrieval.sql)、[retrieval_compatibility.sql](../services/core/queries/retrieval_compatibility.sql)、[content_read.sql](../services/core/queries/content_read.sql)、[documents.sql](../services/core/queries/documents.sql) 与 [driver.go](../services/core/internal/retrieval/driver.go)（`PrincipalTags` 含 `u:<user>` 与 `g:<group>`，检索与出库复核均校验实时 `document_acl` 与 `user_group_member`）。
+  - **服务、接口与控制台**：新增 [acl.go](../services/core/internal/kb/acl.go) 与 [httpapi/acl.go](../services/core/internal/httpapi/acl.go)（`/api/v1/groups`、`/groups/{group}/members`、`/kbs/{kb}/documents/{doc}/acl`，同步导出 [openapi.json](../contracts/openapi.json) 与 [acl.ts](../packages/api-client/src/acl.ts)）；新增 [DocumentACL.tsx](../apps/web/src/DocumentACL.tsx) 并在 [Knowledge.tsx](../apps/web/src/Knowledge.tsx) 挂载用户组管理与文档权限编辑（仅 `admin`/`owner` 可编辑文档 ACL）。
+  - **实测证据**：
+    - 本地：`go vet ./...`、`go test -p 1 -count=1 ./internal/kb ./internal/retrieval ./internal/answer ./internal/httpapi ./cmd/tuskrag`、`pnpm typecheck`、`pnpm test:web`（16 文件 119 项，含新增 `DocumentACL.test.tsx`）与 `pnpm build:web` 全部通过。
+    - 云端 `test-host.invalid`（隔离 `tuskrag-postgres:verify` PG17）：29 项迁移全绿、`TestUserGroupsAndDocumentACLPostgres`（0.12s，覆盖 T08 授权隔离与 T09 移出用户组即时撤权）、`TestMembersAndEgressPolicyPostgres`（0.08s）、`retrieval.test` 全包与 `answer.test` 全包全部 PASS；`<db-port>_IS_CLEAN`、`CGROUP_IS_CLEAN`。
+  - **下一步**：推进 M3-3（API Key 管理、范围鉴权、限速与月度 Token 配额）。
+
 - **M3-1 知识库成员管理与出域策略配置闭环完成（R13、R16）**：
   - **后端与契约**：在 [knowledge_bases.sql](../services/core/queries/knowledge_bases.sql) 与 [service.go](../services/core/internal/kb/service.go) 新增 `ListMembers`、`ListTenantUsers`、`SetEgressPolicy`（含 `owner` 鉴权、租户 `egress_policy_max` 约束与审计）；在 [members.go](../services/core/internal/httpapi/members.go) 与 [workspace.go](../services/core/internal/httpapi/workspace.go) 开放 `/api/v1/tenant/users`、`/api/v1/kbs/{kb}/members`（`GET`/`PUT`/`DELETE`，映射 `last_owner` 409）与 `/api/v1/kbs/{kb}/egress-policy`（`PUT`），同步导出 [openapi.json](../contracts/openapi.json) 与 [members.ts](../packages/api-client/src/members.ts)。
   - **控制台**：新增 [KnowledgeMembers.tsx](../apps/web/src/KnowledgeMembers.tsx) 并在 [Knowledge.tsx](../apps/web/src/Knowledge.tsx) 挂载（仅 `owner` 可见），支持知识库出域策略更新、成员角色修改、移除（含 `last_owner` 提示）与添加租户用户。

@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 	"unicode"
@@ -176,11 +175,16 @@ func loadSectionSnapshots(ctx context.Context, pool *pgxpool.Pool, actor retriev
 		}
 		return nil, fmt.Errorf("lock context assembly binding: %w", err)
 	}
+	principal, err := retrieval.PrincipalTags(ctx, q, actor.TenantID, kbID, actor.UserID)
+	if err != nil {
+		return nil, err
+	}
 	rows, err := q.ListSectionChunksForAnswer(ctx, dbquery.ListSectionChunksForAnswerParams{
 		TenantID:      actor.TenantID,
 		KbID:          kbID,
+		UserID:        actor.UserID,
 		SectionIds:    sectionIDs,
-		PrincipalTags: []string{"kb:" + strconv.FormatInt(kbID, 10) + ":all"},
+		PrincipalTags: principal,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("list section chunks: %w", err)

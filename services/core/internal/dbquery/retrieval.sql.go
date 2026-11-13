@@ -131,7 +131,17 @@ JOIN section s ON s.tenant_id = c.tenant_id AND s.kb_id = c.kb_id
   AND s.document_id = c.document_id AND s.version_id = c.version_id AND s.id = c.section_id
 WHERE c.tenant_id = $2 AND c.kb_id = $3
   AND c.section_id = ANY($4::bigint[])
-  AND d.deleted_at IS NULL AND d.acl_mode = 'inherit_kb' AND d.current_version_id = c.version_id
+  AND d.deleted_at IS NULL
+  AND (d.acl_mode = 'inherit_kb' OR EXISTS (
+    SELECT 1 FROM document_acl a
+    WHERE a.tenant_id = d.tenant_id AND a.kb_id = d.kb_id AND a.document_id = d.id
+      AND (a.subject_type = 'user' AND a.subject_id = $5
+        OR a.subject_type = 'group' AND a.subject_id IN (
+          SELECT gm.group_id FROM user_group_member gm
+          WHERE gm.tenant_id = d.tenant_id AND gm.user_id = $5
+        ))
+  ))
+  AND d.current_version_id = c.version_id
   AND dv.status IN ('ready', 'partial')
 ORDER BY c.section_id, c.ordinal
 FOR SHARE OF c, d, dv, s
@@ -142,6 +152,7 @@ type ListSectionChunksForAnswerParams struct {
 	TenantID      int64
 	KbID          int64
 	SectionIds    []int64
+	UserID        int64
 }
 
 type ListSectionChunksForAnswerRow struct {
@@ -168,6 +179,7 @@ func (q *Queries) ListSectionChunksForAnswer(ctx context.Context, arg ListSectio
 		arg.TenantID,
 		arg.KbID,
 		arg.SectionIds,
+		arg.UserID,
 	)
 	if err != nil {
 		return nil, err
@@ -245,7 +257,7 @@ WITH lexical_candidates AS (
   SELECT c.id AS chunk_id, paradedb.score(c.id)::float8 AS raw_score
   FROM chunk c
   WHERE c.tenant_id = $1 AND c.kb_id = $2
-    AND c.is_current AND c.kb_access
+    AND c.is_current
     AND c.search_text ||| $3::text
     -- Build the authorized current-version set once, before BM25 Top-K.
     -- Chunk foreign keys bind each version to its document and knowledge base.
@@ -258,7 +270,17 @@ WITH lexical_candidates AS (
         AND dv.document_id = d.id AND dv.id = d.current_version_id
       WHERE k.tenant_id = $1 AND k.id = $2
         AND m.user_id = $4 AND k.status = 'active' AND k.embedding_space_id = $5
-        AND d.deleted_at IS NULL AND d.acl_mode = 'inherit_kb' AND dv.status IN ('ready', 'partial')
+        AND d.deleted_at IS NULL
+        AND (d.acl_mode = 'inherit_kb' OR EXISTS (
+          SELECT 1 FROM document_acl a
+          WHERE a.tenant_id = d.tenant_id AND a.kb_id = d.kb_id AND a.document_id = d.id
+            AND (a.subject_type = 'user' AND a.subject_id = $4
+              OR a.subject_type = 'group' AND a.subject_id IN (
+                SELECT gm.group_id FROM user_group_member gm
+                WHERE gm.tenant_id = d.tenant_id AND gm.user_id = $4
+              ))
+        ))
+        AND dv.status IN ('ready', 'partial')
         AND (cardinality($6::text[]) = 0 OR d.tags && $6::text[])
         AND (cardinality($7::text[]) = 0 OR d.mime = ANY($7::text[]))
         AND ($8::timestamptz IS NULL OR dv.created_at >= $8::timestamptz)
@@ -280,7 +302,17 @@ WITH lexical_candidates AS (
       WHERE c.tenant_id = v.tenant_id AND c.kb_id = v.kb_id AND c.id = v.chunk_id
         AND m.user_id = $4 AND k.status = 'active' AND k.embedding_space_id = v.space_id
         AND c.is_current AND NOT c.disabled AND c.access_tags && $11::text[]
-        AND d.deleted_at IS NULL AND d.acl_mode = 'inherit_kb' AND d.current_version_id = c.version_id
+        AND d.deleted_at IS NULL
+        AND (d.acl_mode = 'inherit_kb' OR EXISTS (
+          SELECT 1 FROM document_acl a
+          WHERE a.tenant_id = d.tenant_id AND a.kb_id = d.kb_id AND a.document_id = d.id
+            AND (a.subject_type = 'user' AND a.subject_id = $4
+              OR a.subject_type = 'group' AND a.subject_id IN (
+                SELECT gm.group_id FROM user_group_member gm
+                WHERE gm.tenant_id = d.tenant_id AND gm.user_id = $4
+              ))
+        ))
+        AND d.current_version_id = c.version_id
         AND dv.status IN ('ready', 'partial')
         AND (cardinality($6::text[]) = 0 OR c.doc_tags && $6::text[])
         AND (cardinality($7::text[]) = 0 OR c.doc_mime = ANY($7::text[]))
@@ -383,11 +415,21 @@ JOIN section s ON s.tenant_id = c.tenant_id AND s.kb_id = c.kb_id AND s.document
 WHERE c.tenant_id = $1 AND c.kb_id = $2
   AND c.id = ANY($3::bigint[])
   AND c.is_current AND NOT c.disabled AND c.access_tags && $4::text[]
-  AND d.deleted_at IS NULL AND d.acl_mode = 'inherit_kb' AND d.current_version_id = c.version_id
+  AND d.deleted_at IS NULL
+  AND (d.acl_mode = 'inherit_kb' OR EXISTS (
+    SELECT 1 FROM document_acl a
+    WHERE a.tenant_id = d.tenant_id AND a.kb_id = d.kb_id AND a.document_id = d.id
+      AND (a.subject_type = 'user' AND a.subject_id = $5
+        OR a.subject_type = 'group' AND a.subject_id IN (
+          SELECT gm.group_id FROM user_group_member gm
+          WHERE gm.tenant_id = d.tenant_id AND gm.user_id = $5
+        ))
+  ))
+  AND d.current_version_id = c.version_id
   AND dv.status IN ('ready', 'partial')
-  AND (cardinality($5::text[]) = 0 OR d.tags && $5::text[])
-  AND (cardinality($6::text[]) = 0 OR d.mime = ANY($6::text[]))
-  AND ($7::timestamptz IS NULL OR dv.created_at >= $7::timestamptz)
+  AND (cardinality($6::text[]) = 0 OR d.tags && $6::text[])
+  AND (cardinality($7::text[]) = 0 OR d.mime = ANY($7::text[]))
+  AND ($8::timestamptz IS NULL OR dv.created_at >= $8::timestamptz)
 ORDER BY c.id FOR SHARE OF c, d, dv, s
 `
 
@@ -396,6 +438,7 @@ type RecheckSearchEvidenceParams struct {
 	KbID          int64
 	ChunkIds      []int64
 	PrincipalTags []string
+	UserID        int64
 	DocTags       []string
 	Mimes         []string
 	UpdatedAfter  pgtype.Timestamptz
@@ -423,6 +466,7 @@ func (q *Queries) RecheckSearchEvidence(ctx context.Context, arg RecheckSearchEv
 		arg.KbID,
 		arg.ChunkIds,
 		arg.PrincipalTags,
+		arg.UserID,
 		arg.DocTags,
 		arg.Mimes,
 		arg.UpdatedAfter,

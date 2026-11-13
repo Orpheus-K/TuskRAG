@@ -235,7 +235,11 @@ func readConversation(ctx context.Context, q *dbquery.Queries, a retrieval.Actor
 			}
 		}
 	}
-	evidence, err := q.RecheckSearchEvidence(ctx, dbquery.RecheckSearchEvidenceParams{TenantID: a.TenantID, KbID: c.KbID, ChunkIds: ids, PrincipalTags: []string{"kb:" + strconv.FormatInt(c.KbID, 10) + ":all"}, DocTags: []string{}, Mimes: []string{}})
+	principal, err := retrieval.PrincipalTags(ctx, q, a.TenantID, c.KbID, a.UserID)
+	if err != nil {
+		return nil, nil, err
+	}
+	evidence, err := q.RecheckSearchEvidence(ctx, dbquery.RecheckSearchEvidenceParams{TenantID: a.TenantID, KbID: c.KbID, UserID: a.UserID, ChunkIds: ids, PrincipalTags: principal, DocTags: []string{}, Mimes: []string{}})
 	if err != nil {
 		return nil, nil, err
 	}
@@ -496,7 +500,11 @@ func checkConversationSources(ctx context.Context, q *dbquery.Queries, a retriev
 			}
 		}
 	}
-	found, err := q.RecheckSearchEvidence(ctx, dbquery.RecheckSearchEvidenceParams{TenantID: a.TenantID, KbID: c.KbID, ChunkIds: ids, PrincipalTags: []string{"kb:" + strconv.FormatInt(c.KbID, 10) + ":all"}, DocTags: []string{}, Mimes: []string{}})
+	principal, err := retrieval.PrincipalTags(ctx, q, a.TenantID, c.KbID, a.UserID)
+	if err != nil {
+		return err
+	}
+	found, err := q.RecheckSearchEvidence(ctx, dbquery.RecheckSearchEvidenceParams{TenantID: a.TenantID, KbID: c.KbID, UserID: a.UserID, ChunkIds: ids, PrincipalTags: principal, DocTags: []string{}, Mimes: []string{}})
 	if err != nil {
 		return err
 	}

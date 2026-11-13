@@ -48,7 +48,7 @@ func (s *Service) ListDocuments(ctx context.Context, actor Actor, kbID, after in
 		return DocumentPage{}, fmt.Errorf("lock document membership: %w", err)
 	}
 	rows, err := queries.ListVisibleDocuments(ctx, dbquery.ListVisibleDocumentsParams{
-		TenantID: actor.TenantID, KbID: kbID, AfterID: after, FetchLimit: limit + 1,
+		TenantID: actor.TenantID, KbID: kbID, UserID: actor.UserID, AfterID: after, FetchLimit: limit + 1,
 	})
 	if err != nil {
 		return DocumentPage{}, fmt.Errorf("list documents: %w", err)

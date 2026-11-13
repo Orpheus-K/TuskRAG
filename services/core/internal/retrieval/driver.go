@@ -102,6 +102,20 @@ func (d *Driver) Binding(ctx context.Context, actor Actor, kbID int64) (_ Bindin
 	return Binding{SpaceID: row.EmbeddingSpaceID, Revision: row.ConfigRevision, Dimensions: row.Dims, Distance: row.Distance, Normalized: row.Normalized}, nil
 }
 
+// PrincipalTags builds the principal access tag list for a tenant user in a knowledge base.
+func PrincipalTags(ctx context.Context, q *dbquery.Queries, tenantID, kbID, userID int64) ([]string, error) {
+	groupIDs, err := q.ListUserGroupIDs(ctx, dbquery.ListUserGroupIDsParams{TenantID: tenantID, UserID: userID})
+	if err != nil {
+		return nil, fmt.Errorf("list user groups: %w", err)
+	}
+	tags := make([]string, 0, 2+len(groupIDs))
+	tags = append(tags, "kb:"+strconv.FormatInt(kbID, 10)+":all", "u:"+strconv.FormatInt(userID, 10))
+	for _, gid := range groupIDs {
+		tags = append(tags, "g:"+strconv.FormatInt(gid, 10))
+	}
+	return tags, nil
+}
+
 // Recall returns authorized hybrid candidates after rechecking current access.
 // The caller supplies a query vector from the bound embedding space.
 func (d *Driver) Recall(ctx context.Context, actor Actor, kbID int64, binding Binding, query string, vector []float32, filters Filters, limit int) (_ []Candidate, resultErr error) {
@@ -125,12 +139,15 @@ func (d *Driver) Recall(ctx context.Context, actor Actor, kbID int64, binding Bi
 	if filters.UpdatedAfter != nil {
 		updatedAfter = pgtype.Timestamptz{Time: filters.UpdatedAfter.UTC(), Valid: true}
 	}
-	principal := []string{"kb:" + strconv.FormatInt(kbID, 10) + ":all"}
 	tx, queries, err := d.begin(ctx, actor, kbID)
 	if err != nil {
 		return nil, err
 	}
 	defer rollback(tx, &resultErr)
+	principal, err := PrincipalTags(ctx, queries, actor.TenantID, kbID, actor.UserID)
+	if err != nil {
+		return nil, err
+	}
 	row, err := queries.GetSearchBinding(ctx, dbquery.GetSearchBindingParams{TenantID: actor.TenantID, KbID: kbID, UserID: actor.UserID})
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, ErrNotFound
@@ -206,7 +223,7 @@ func (d *Driver) recheck(ctx context.Context, actor Actor, kbID int64, binding B
 		ids = append(ids, item.ChunkID)
 	}
 	visible, err := queries.RecheckSearchEvidence(ctx, dbquery.RecheckSearchEvidenceParams{
-		TenantID: actor.TenantID, KbID: kbID, ChunkIds: ids, PrincipalTags: principal,
+		TenantID: actor.TenantID, KbID: kbID, UserID: actor.UserID, ChunkIds: ids, PrincipalTags: principal,
 		DocTags: tags, Mimes: mimes, UpdatedAfter: updatedAfter,
 	})
 	if err != nil {

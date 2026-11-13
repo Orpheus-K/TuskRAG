@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"slices"
-	"strconv"
 
 	"github.com/jackc/pgx/v5"
 	"tuskrag.local/core/internal/dbquery"
@@ -32,7 +31,11 @@ func (d *Driver) AuthorizeEvidence(ctx context.Context, actor Actor, kbID int64,
 	for i, e := range evidence {
 		ids[i] = e.ChunkID
 	}
-	rows, err := q.RecheckSearchEvidence(ctx, dbquery.RecheckSearchEvidenceParams{TenantID: actor.TenantID, KbID: kbID, ChunkIds: ids, PrincipalTags: []string{"kb:" + strconv.FormatInt(kbID, 10) + ":all"}, DocTags: []string{}, Mimes: []string{}})
+	principal, err := PrincipalTags(ctx, q, actor.TenantID, kbID, actor.UserID)
+	if err != nil {
+		return models.EgressScope{}, err
+	}
+	rows, err := q.RecheckSearchEvidence(ctx, dbquery.RecheckSearchEvidenceParams{TenantID: actor.TenantID, KbID: kbID, UserID: actor.UserID, ChunkIds: ids, PrincipalTags: principal, DocTags: []string{}, Mimes: []string{}})
 	if err != nil {
 		return models.EgressScope{}, err
 	}

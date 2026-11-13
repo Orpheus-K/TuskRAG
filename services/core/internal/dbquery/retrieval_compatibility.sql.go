@@ -23,7 +23,17 @@ WITH lexical_candidates AS (
   WHERE c.tenant_id = $2 AND c.kb_id = $3
     AND m.user_id = $4 AND k.status = 'active' AND k.embedding_space_id = $5
     AND c.is_current AND NOT c.disabled AND c.access_tags && $6::text[]
-    AND d.deleted_at IS NULL AND d.acl_mode = 'inherit_kb' AND d.current_version_id = c.version_id
+    AND d.deleted_at IS NULL
+    AND (d.acl_mode = 'inherit_kb' OR EXISTS (
+      SELECT 1 FROM document_acl a
+      WHERE a.tenant_id = d.tenant_id AND a.kb_id = d.kb_id AND a.document_id = d.id
+        AND (a.subject_type = 'user' AND a.subject_id = $4
+          OR a.subject_type = 'group' AND a.subject_id IN (
+            SELECT gm.group_id FROM user_group_member gm
+            WHERE gm.tenant_id = d.tenant_id AND gm.user_id = $4
+          ))
+    ))
+    AND d.current_version_id = c.version_id
     AND dv.status IN ('ready', 'partial') AND c.lexical_tokens @@ to_tsquery('simple', $1::text)
     AND (cardinality($7::text[]) = 0 OR c.doc_tags && $7::text[])
     AND (cardinality($8::text[]) = 0 OR c.doc_mime = ANY($8::text[]))
@@ -45,7 +55,17 @@ WITH lexical_candidates AS (
       WHERE c.tenant_id = v.tenant_id AND c.kb_id = v.kb_id AND c.id = v.chunk_id
         AND m.user_id = $4 AND k.status = 'active' AND k.embedding_space_id = v.space_id
         AND c.is_current AND NOT c.disabled AND c.access_tags && $6::text[]
-        AND d.deleted_at IS NULL AND d.acl_mode = 'inherit_kb' AND d.current_version_id = c.version_id
+        AND d.deleted_at IS NULL
+        AND (d.acl_mode = 'inherit_kb' OR EXISTS (
+          SELECT 1 FROM document_acl a
+          WHERE a.tenant_id = d.tenant_id AND a.kb_id = d.kb_id AND a.document_id = d.id
+            AND (a.subject_type = 'user' AND a.subject_id = $4
+              OR a.subject_type = 'group' AND a.subject_id IN (
+                SELECT gm.group_id FROM user_group_member gm
+                WHERE gm.tenant_id = d.tenant_id AND gm.user_id = $4
+              ))
+        ))
+        AND d.current_version_id = c.version_id
         AND dv.status IN ('ready', 'partial')
         AND (cardinality($7::text[]) = 0 OR c.doc_tags && $7::text[])
         AND (cardinality($8::text[]) = 0 OR c.doc_mime = ANY($8::text[]))

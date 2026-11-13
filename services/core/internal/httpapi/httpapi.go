@@ -51,6 +51,14 @@ type KnowledgeService interface {
 	RemoveMember(context.Context, kb.Actor, int64, int64) error
 	ListTenantUsers(context.Context, kb.Actor) ([]kb.TenantUser, error)
 	SetEgressPolicy(context.Context, kb.Actor, int64, models.EgressPolicy) (kb.KnowledgeBase, error)
+	ListGroups(context.Context, kb.Actor) ([]kb.UserGroup, error)
+	CreateGroup(context.Context, kb.Actor, string) (kb.UserGroup, error)
+	DeleteGroup(context.Context, kb.Actor, int64) error
+	ListGroupMembers(context.Context, kb.Actor, int64) ([]kb.GroupMember, error)
+	AddGroupMember(context.Context, kb.Actor, int64, int64) error
+	RemoveGroupMember(context.Context, kb.Actor, int64, int64) error
+	GetDocumentACL(context.Context, kb.Actor, int64, int64) (kb.DocumentACL, error)
+	SetDocumentACL(context.Context, kb.Actor, int64, int64, kb.ACLMode, []kb.ACLSubject) (kb.DocumentACL, error)
 }
 
 type DocumentService interface {
