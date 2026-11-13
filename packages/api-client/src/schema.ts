@@ -369,6 +369,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/chunks/{chunk}/neighbors": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get-chunk-neighbors"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/conversations": {
         parameters: {
             query?: never;
@@ -695,6 +711,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["upload-document-version"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kbs/{kb}/documents:import-url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["import-document-url"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1338,6 +1370,11 @@ export interface components {
             /** Format: int64 */
             total_tokens: number;
         };
+        ChunkNeighborsOutputBody: {
+            chunks: components["schemas"]["NeighborChunkBody"][];
+            document: components["schemas"]["ContentDocumentBody"];
+            section: components["schemas"]["SectionReferenceBody"];
+        };
         Citation: {
             evidence_id: string;
             /** Format: int64 */
@@ -1371,6 +1408,8 @@ export interface components {
             messages: components["schemas"]["SavedMessage"][];
         };
         ConversationMessageInputBody: {
+            /** @enum {string} */
+            mode?: "standard" | "agentic";
             question: string;
         };
         ConversationPage: {
@@ -1602,6 +1641,10 @@ export interface components {
             /** Format: int64 */
             user_id: number;
         };
+        ImportURLInputBody: {
+            title?: string;
+            url: string;
+        };
         JobBody: {
             /** Format: int32 */
             attempts: number;
@@ -1673,6 +1716,18 @@ export interface components {
             id: number;
             locality: string;
             name: string;
+        };
+        NeighborChunkBody: {
+            content: string;
+            /** Format: int64 */
+            id: number;
+            is_target: boolean;
+            kind: string;
+            /** Format: int32 */
+            ordinal: number;
+            pages: number[] | null;
+            /** Format: int32 */
+            token_count: number;
         };
         NewChatModel: {
             api_key?: string;
@@ -1814,6 +1869,8 @@ export interface components {
         Request: {
             /** Format: int64 */
             kb_id: number;
+            /** @enum {string} */
+            mode?: "standard" | "agentic";
             /** Format: int64 */
             model_id: number;
             question: string;
@@ -1990,6 +2047,7 @@ export interface components {
             pages: number[] | null;
             /** Format: int64 */
             parent_id: number | null;
+            summary?: string;
         };
         SetBinding: {
             /** Format: int32 */
@@ -2044,6 +2102,14 @@ export interface components {
             id: number;
             /** Format: int64 */
             job_id: number;
+        };
+        StepEvent: {
+            args_summary: string;
+            /** Format: int64 */
+            result_count: number;
+            /** Format: int64 */
+            step: number;
+            tool: string;
         };
         StoredAnswerReport: {
             /** Format: date-time */
@@ -2811,6 +2877,17 @@ export interface operations {
                         id?: number | string;
                         /** @description The retry time in milliseconds. */
                         retry?: number;
+                    } | {
+                        data: components["schemas"]["StepEvent"];
+                        /**
+                         * @description The event name.
+                         * @constant
+                         */
+                        event: "step";
+                        /** @description The event ID. */
+                        id?: number | string;
+                        /** @description The retry time in milliseconds. */
+                        retry?: number;
                     })[];
                 };
             };
@@ -3112,6 +3189,40 @@ export interface operations {
             };
         };
     };
+    "get-chunk-neighbors": {
+        parameters: {
+            query?: {
+                before?: number;
+                after?: number;
+            };
+            header?: never;
+            path: {
+                chunk: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChunkNeighborsOutputBody"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
     "create-conversation": {
         parameters: {
             query?: never;
@@ -3252,6 +3363,17 @@ export interface operations {
                          * @constant
                          */
                         event: "retrieval";
+                        /** @description The event ID. */
+                        id?: number | string;
+                        /** @description The retry time in milliseconds. */
+                        retry?: number;
+                    } | {
+                        data: components["schemas"]["StepEvent"];
+                        /**
+                         * @description The event name.
+                         * @constant
+                         */
+                        event: "step";
                         /** @description The event ID. */
                         id?: number | string;
                         /** @description The retry time in milliseconds. */
@@ -4132,6 +4254,47 @@ export interface operations {
                     /** Format: binary */
                     file: string;
                 };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadedDocumentBody"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "import-document-url": {
+        parameters: {
+            query?: {
+                allow_duplicate?: boolean;
+                confirm_first_row_headers?: boolean;
+            };
+            header: {
+                "X-CSRF-Token": string;
+                "Idempotency-Key"?: string;
+            };
+            path: {
+                kb: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImportURLInputBody"];
             };
         };
         responses: {

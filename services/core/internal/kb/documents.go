@@ -78,7 +78,10 @@ func (s *DocumentService) Upload(ctx context.Context, actor Actor, request Uploa
 		return UploadedDocument{}, ErrInvalidRequest
 	}
 	switch request.MIME {
-	case "text/csv", "text/markdown", "text/plain", "application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+	case "text/csv", "text/markdown", "text/plain", "text/html", "application/xhtml+xml", "application/pdf",
+		"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+		"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+		"application/vnd.openxmlformats-officedocument.presentationml.presentation":
 	default:
 		return UploadedDocument{}, ErrUnsupportedMIME
 	}

@@ -6,7 +6,9 @@ from pathlib import Path
 import docx
 
 from tuskrag_parser import SCHEMA_VERSION, __version__
+from tuskrag_parser.html_parser import HTML_DRIVER
 from tuskrag_parser.pdf_parser import PDF_DRIVER
+from tuskrag_parser.pptx_parser import PPTX_DRIVER
 from tuskrag_parser.xlsx_parser import XLSX_DRIVER
 
 
@@ -25,6 +27,8 @@ def test_version_is_machine_readable() -> None:
             "csv": f"python-stdlib-{sys.version_info.major}.{sys.version_info.minor}",
             "docx": f"python-docx-{docx.__version__}",
             "xlsx": XLSX_DRIVER,
+            "pptx": PPTX_DRIVER,
+            "html": HTML_DRIVER,
             "pdf": PDF_DRIVER,
         },
     }

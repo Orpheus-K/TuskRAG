@@ -74,6 +74,7 @@ func registerDocumentUpload(api huma.API, deps Dependencies) {
 		return uploadDocumentForm(ctx, deps.Documents, &input.RawBody, kb.UploadRequest{KBID: input.ID, DocumentID: input.DocumentID,
 			IdempotencyKey: input.IdempotencyKey, AllowDuplicate: input.AllowDuplicate, ConfirmFirstRowHeaders: input.ConfirmFirstRowHeaders})
 	})
+	registerURLImport(api, deps)
 }
 
 func documentUploadBody() *huma.RequestBody {
@@ -241,6 +242,12 @@ func documentMIME(title string) string {
 		return "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 	case ".xlsx":
 		return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+	case ".pptx":
+		return "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+	case ".html", ".htm":
+		return "text/html"
+	case ".xhtml":
+		return "application/xhtml+xml"
 	default:
 		return ""
 	}

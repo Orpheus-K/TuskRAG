@@ -34,6 +34,7 @@ type Page struct {
 	TableCount    int32    `json:"table_count"`
 	ImageCoverage *float64 `json:"image_coverage" nullable:"true"`
 	Reasons       []Reason `json:"reasons" nullable:"false"`
+	VLMUsed       bool     `json:"vlm_used,omitempty"`
 }
 
 type Heading struct {
@@ -53,6 +54,8 @@ type Report struct {
 	Pages             []Page    `json:"pages" nullable:"false"`
 	Headings          []Heading `json:"headings" nullable:"false"`
 	HeadingsTruncated bool      `json:"headings_truncated"`
+	VLMPages          []int64   `json:"vlm_pages,omitempty"`
+	VLMTokens         int       `json:"vlm_tokens,omitempty"`
 }
 
 func Decode(data []byte) (Report, error) {
