@@ -48,6 +48,7 @@ export function AnswerPage({
   const [cursor, setCursor] = useState(0),
     [question, setQuestion] = useState(""),
     [model, setModel] = useState(0),
+    [mode, setMode] = useState<"standard" | "agentic">("standard"),
     [state, setState] = useState<AnswerState>(emptyAnswer),
     [preview, setPreview] = useState<PreviewTarget | null>(null);
   const active = useRef<AbortController | null>(null),
@@ -163,6 +164,11 @@ export function AnswerPage({
             return;
           }
           setState((previous) => {
+            if (event.event === "step")
+              return {
+                ...previous,
+                steps: [...(previous.steps ?? []), event.data],
+              };
             if (event.event === "retrieval")
               return {
                 ...previous,
@@ -179,6 +185,7 @@ export function AnswerPage({
             return { ...previous, phase: "complete", done: event.data };
           });
         },
+        mode === "agentic" ? "agentic" : undefined,
       );
       if (activeConversation.current === selected) setQuestion("");
     } catch (error) {
@@ -427,6 +434,21 @@ export function AnswerPage({
                       {item.name} · {item.model}
                     </option>
                   ))}
+                </select>
+              </label>
+              <label className="block space-y-2 text-sm font-medium">
+                <span>问答模式</span>
+                <select
+                  aria-label="问答模式"
+                  className={answerInputClass}
+                  value={mode}
+                  disabled={running}
+                  onChange={(event) =>
+                    setMode(event.target.value as "standard" | "agentic")
+                  }
+                >
+                  <option value="standard">标准模式 (Standard)</option>
+                  <option value="agentic">Agentic 多步推理</option>
                 </select>
               </label>
               {models.isError && (

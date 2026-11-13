@@ -136,6 +136,29 @@ export function APIKeysPage({ identity }: { identity: Identity }) {
         </div>
       )}
 
+      <section className="space-y-2 rounded-xl border p-5 text-sm">
+        <h2 className="font-semibold">Agent 接入（MCP Streamable HTTP）</h2>
+        <p className="text-xs text-muted-foreground">
+          签发包含 <code>mcp</code> 权限的 API Key 后，可在 Claude Desktop / Cursor / Windsurf 等客户端接入只读知识库工具（<code>search</code>、<code>list_documents</code>、<code>get_toc</code>、<code>read_section</code>、<code>get_neighbors</code>）。
+        </p>
+        <pre className="overflow-x-auto rounded-md bg-muted/60 p-3 font-mono text-xs">
+          {JSON.stringify(
+            {
+              mcpServers: {
+                tuskrag: {
+                  url: `${typeof window !== "undefined" ? window.location.origin : "https://your-tuskrag-host"}/mcp`,
+                  headers: {
+                    Authorization: `Bearer ${createdSecret ?? "<YOUR_API_KEY>"}`,
+                  },
+                },
+              },
+            },
+            null,
+            2,
+          )}
+        </pre>
+      </section>
+
       <form
         onSubmit={handleSubmit}
         className="space-y-4 rounded-xl border p-5 text-sm"

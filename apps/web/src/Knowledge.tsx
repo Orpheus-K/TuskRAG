@@ -5,6 +5,7 @@ import {
   deleteDocument,
   getKnowledgeBase,
   type Identity,
+  importDocumentURL,
   listDocuments,
   listEmbeddingSpaces,
   listPurgeJobs,
@@ -94,6 +95,11 @@ export function KnowledgeDetail({
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [uploadMessage, setUploadMessage] = useState("");
+  const [importURL, setImportURL] = useState("");
+  const [importTitle, setImportTitle] = useState("");
+  const [importingURL, setImportingURL] = useState(false);
+  const [importError, setImportError] = useState("");
+  const [importMessage, setImportMessage] = useState("");
   const [deleting, setDeleting] = useState<number | null>(null);
   const [deleteMessage, setDeleteMessage] = useState("");
   const [deleteError, setDeleteError] = useState("");
@@ -593,10 +599,11 @@ export function KnowledgeDetail({
         </section>
       )}
       {base.data.status === "active" && base.data.role !== "viewer" && (
-        <form
-          className="mt-8 space-y-3 rounded-xl border p-5"
-          onSubmit={submitUpload}
-        >
+        <>
+          <form
+            className="mt-8 space-y-3 rounded-xl border p-5"
+            onSubmit={submitUpload}
+          >
           <label
             className="block text-sm font-medium"
             htmlFor="document-upload"
@@ -610,7 +617,7 @@ export function KnowledgeDetail({
             ref={uploadInput}
             className="block w-full text-sm"
             type="file"
-            accept=".csv,.md,.markdown,.txt,.docx,.xlsx,.pdf"
+            accept=".csv,.md,.markdown,.txt,.docx,.xlsx,.pptx,.html,.htm,.pdf"
             disabled={uploading}
             onChange={(event) => {
               setFile(event.currentTarget.files?.[0] ?? null);
@@ -621,7 +628,7 @@ export function KnowledgeDetail({
             }}
           />
           <p className="text-sm text-muted-foreground">
-            支持 CSV、Markdown、TXT、DOCX、XLSX、数字 PDF，单文件不超过 200
+            支持 CSV、Markdown、TXT、DOCX、XLSX、PPTX、HTML、PDF，单文件不超过 200
             MiB。上传后进入处理队列。
           </p>
           {versionTarget && (
@@ -696,6 +703,79 @@ export function KnowledgeDetail({
             </Button>
           )}
         </form>
+        <form
+          className="mt-4 space-y-3 rounded-xl border p-5"
+          onSubmit={async (event) => {
+            event.preventDefault();
+            if (!importURL.trim() || importingURL) return;
+            setImportingURL(true);
+            setImportError("");
+            setImportMessage("");
+            try {
+              const key = crypto.randomUUID();
+              const res = await importDocumentURL(
+                id,
+                importURL,
+                importTitle,
+                identity.csrf_token,
+                key,
+                allowDuplicate,
+              );
+              setImportURL("");
+              setImportTitle("");
+              setImportMessage(`已抓取并入队：${res.title}`);
+              await queryClient.invalidateQueries({
+                queryKey: ["documents", identity.tenant_id, identity.user_id, id],
+              });
+            } catch (err) {
+              setImportError(
+                err instanceof ApiError && err.status === 403
+                  ? "目标地址被安全策略拦截（禁止内网/本机地址）。"
+                  : "URL 导入失败，请检查链接或格式后重试。",
+              );
+            } finally {
+              setImportingURL(false);
+            }
+          }}
+        >
+          <p className="text-sm font-medium">从 URL 导入网页或文档</p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <input
+              aria-label="导入 URL"
+              type="url"
+              required
+              placeholder="https://example.com/guide.html"
+              className="block w-full rounded-md border bg-background px-3 py-2 text-sm"
+              value={importURL}
+              disabled={importingURL}
+              onChange={(e) => setImportURL(e.target.value)}
+            />
+            <input
+              aria-label="文档标题（可选）"
+              type="text"
+              maxLength={200}
+              placeholder="标题（可选，默认从 URL 推导）"
+              className="block w-full rounded-md border bg-background px-3 py-2 text-sm"
+              value={importTitle}
+              disabled={importingURL}
+              onChange={(e) => setImportTitle(e.target.value)}
+            />
+          </div>
+          {importError && (
+            <p role="alert" className="text-sm">
+              {importError}
+            </p>
+          )}
+          {importMessage && (
+            <p role="status" className="text-sm">
+              {importMessage}
+            </p>
+          )}
+          <Button type="submit" variant="outline" disabled={!importURL.trim() || importingURL}>
+            {importingURL ? "正在导入" : "URL 导入"}
+          </Button>
+        </form>
+        </>
       )}
       <h2 className="mt-10 text-lg font-medium">文档</h2>
       {deleteMessage && (

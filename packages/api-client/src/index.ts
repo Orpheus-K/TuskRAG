@@ -875,6 +875,39 @@ export async function uploadDocument(
   );
 }
 
+export async function importDocumentURL(
+  id: number,
+  url: string,
+  title: string | undefined,
+  csrf: string,
+  idempotencyKey: string,
+  allowDuplicate = false,
+): Promise<UploadedDocument> {
+  if (!isPositiveInteger(id) || !url.trim() || !idempotencyKey) {
+    throw new Error("invalid document url import");
+  }
+  const params = new URLSearchParams();
+  if (allowDuplicate) params.set("allow_duplicate", "true");
+  const suffix = params.size > 0 ? `?${params.toString()}` : "";
+  const response = await checked(
+    await fetch(`/api/v1/kbs/${id}/documents:import-url${suffix}`, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": csrf,
+        "Idempotency-Key": idempotencyKey,
+      },
+      body: JSON.stringify(title?.trim() ? { url: url.trim(), title: title.trim() } : { url: url.trim() }),
+    }),
+  );
+  const value: unknown = await response.json();
+  if (!isUploadedDocument(value)) {
+    throw new Error("invalid document url import response");
+  }
+  return value;
+}
+
 export async function uploadDocumentVersion(
   id: number,
   documentId: number,

@@ -1,6 +1,16 @@
 # 接续项目迭代
 
-## 当前快照（2026-11-13）
+## 当前快照（2026-11-14）
+
+- **M4（解析增强与 Agent 接入：M4-1 ~ M4-5）完成（R03、R09、R22、T02、T03、T11、T19、V03、V07、V14、E5、E7）**：
+  - **M4-1（`2554bd2`）**：兼容词汇检索驱动自动检测（`pg_search` / `tsvector` GIN 回退）与 `V03` 驱动契约测试。
+  - **M4-2（`03bccbc`）**：MCP Streamable HTTP 服务端（`/mcp`）、邻居块回溯工具 `get_chunk_neighbors`、`T11` / `V14` MCP 与 REST 权限一致性验证（云端隔离 PG17 `TestMCPRESTConsistencyPostgres` `PASS`，`1.75s`）。
+  - **M4-3（`ece2d92`）**：Agentic QA 模式（`mode=agentic`、`step` SSE 事件、6 步 / 30s / 20k token 硬上限与 `truncated` 显式截断）与可选节摘要（迁移 [00035_kb_section_summary.sql](../services/core/internal/db/migrations/00035_kb_section_summary.sql)，`SchemaVersion = 35`）。
+  - **M4-4（`4aa6a27`、`c16dded`）**：Python 解析器新增 PPTX / HTML 解析与 `tuskrag-parse render`（Windows 非 PDF 套件 `86 passed`，云端 Ubuntu `test-host.invalid` `.venv` 运行 `test_pptx_html_render.py` / `test_cli.py` / `test_pdf.py` `24 passed in 6.24s`，含 `V07` 恶意样本）；Go 侧新增 `models/vlm.go`、`ingest/vlm_reparse.go`、`kb/url_import.go` 与 `httpapi/url_import.go`（`POST /api/v1/kbs/{kb}/documents:import-url` + SSRF 防护）。
+  - **M4-5（本轮收尾）**：同步 OpenAPI 与 `@tuskrag/api-client`（`step` SSE、`mode` 参数、`importDocumentURL`）；控制台接入 `APIKeys.tsx` MCP Streamable HTTP 配置片段、`Answer.tsx` / `AnswerView.tsx` Agentic 模式切换与步骤时间线、`Knowledge.tsx` `.pptx/.html/.htm` 上传与 URL 导入表单；补充评测与验证记录 [E5 报告](../docs/eval-reports/2026-11-14-e5-vlm-reparse-and-parsers.md) 与 [E7 报告](../docs/eval-reports/2026-11-14-e7-agentic-and-mcp.md)。
+  - **未运行项**：真实外部 VLM 扫描件消融（`E5`）与真实多跳题集 `standard` vs `agentic` 大模型消融（`E7`）待配置真实 VLM/LLM 推理配额后补跑；本地 Windows `biome` 因系统退出码 `0xC0000142` 无法启动。
+
+## 前序快照（2026-11-13）
 
 - **M3（企业治理与权限安全：M3-1 ~ M3-5）全部闭环完成（R12—R16、T08—T10、T20、V04—V06、V11）**：
   - **M3-5 通用 OIDC SSO（Authorization Code + PKCE）与禁用本地登录闭环**：

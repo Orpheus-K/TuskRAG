@@ -340,3 +340,29 @@ it("rejects unknown and mismatched citation events", async () => {
     ),
   ).rejects.toThrow("invalid citations");
 });
+
+it("supports agentic mode and renders retrieval step timeline", async () => {
+  let capturedMode: unknown;
+  const stepEvent = event("step", {
+    step: 1,
+    tool: "search_kb",
+    args_summary: "query=申请期限",
+    result_count: 1,
+  });
+  setup(async (init) => {
+    const body = JSON.parse(String(init?.body ?? "{}")) as { mode?: unknown };
+    capturedMode = body.mode;
+    return response(stepEvent + retrieval + delta + citations + done);
+  });
+  fireEvent.change(await screen.findByLabelText("问答模式"), {
+    target: { value: "agentic" },
+  });
+  fireEvent.change(screen.getByLabelText("你的问题"), {
+    target: { value: "申请期限是几天？" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "提问" }));
+  await screen.findByLabelText("Agentic 检索步骤");
+  expect(capturedMode).toBe("agentic");
+  expect(screen.getByText(/search_kb/)).toBeTruthy();
+  expect(screen.getByText(/query=申请期限/)).toBeTruthy();
+});

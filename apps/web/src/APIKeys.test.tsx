@@ -125,6 +125,8 @@ describe("APIKeysPage", () => {
       expect(
         screen.getByText("tsk_ZxYv9876_0123456789abcdef0123456789abcdef"),
       ).toBeTruthy();
+      expect(screen.getByText(/Agent 接入（MCP Streamable HTTP）/)).toBeTruthy();
+      expect(screen.getByText(/"mcpServers"/)).toBeTruthy();
     });
   });
 });

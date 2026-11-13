@@ -11,7 +11,9 @@ export type ConversationDetail = components["schemas"]["ConversationDetail"];
 export type ConversationPage = components["schemas"]["ConversationPage"];
 export type SavedMessage = components["schemas"]["SavedMessage"];
 export type AnswerFeedback = components["schemas"]["Feedback"];
+export type AnswerStep = components["schemas"]["StepEvent"];
 export type AnswerEvent =
+  | { event: "step"; data: AnswerStep }
   | { event: "retrieval"; data: components["schemas"]["RetrievalEvent"] }
   | { event: "delta"; data: components["schemas"]["Delta"] }
   | { event: "citations"; data: components["schemas"]["Citations"] }
@@ -113,6 +115,23 @@ export function decodeAnswerEvent(event: string, v: unknown): AnswerEvent {
       },
     };
   }
+  if (
+    event === "step" &&
+    positive(v.step) &&
+    typeof v.tool === "string" &&
+    typeof v.args_summary === "string" &&
+    nonnegative(v.result_count)
+  ) {
+    return {
+      event,
+      data: {
+        step: v.step,
+        tool: v.tool,
+        args_summary: v.args_summary,
+        result_count: v.result_count,
+      },
+    };
+  }
   if (event === "delta" && typeof v.text === "string" && v.text.length <= 65536)
     return { event, data: { text: v.text } };
   if (
@@ -191,11 +210,12 @@ export async function streamConversation(
   csrf: string,
   signal: AbortSignal,
   onEvent: (event: AnswerEvent) => void,
+  mode?: "standard" | "agentic",
 ): Promise<void> {
   if (!positive(id)) throw new Error("invalid conversation");
   return streamAnswerAt(
     `/api/v1/conversations/${id}/messages`,
-    { question },
+    mode ? { question, mode } : { question },
     csrf,
     signal,
     onEvent,
@@ -234,7 +254,9 @@ async function streamAnswerAt(
     if (!data) return false;
     const parsed: unknown = JSON.parse(data);
     const event = decodeAnswerEvent(eventName, parsed);
-    if (event.event === "retrieval") {
+    if (event.event === "step") {
+      if (phase !== "start") throw new Error("unexpected step");
+    } else if (event.event === "retrieval") {
       if (phase !== "start") throw new Error("unexpected retrieval");
       evidence = event.data.evidence;
       phase = "stream";

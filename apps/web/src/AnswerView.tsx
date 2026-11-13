@@ -3,6 +3,7 @@ import {
   type AnswerDone,
   type AnswerEvidence,
   type AnswerFeedback,
+  type AnswerStep,
   type Identity,
   putAnswerFeedback,
 } from "@tuskrag/api-client";
@@ -13,6 +14,7 @@ export type AnswerState = {
   phase: "idle" | "loading" | "complete" | "cancelled" | "error";
   question?: string;
   text: string;
+  steps?: AnswerStep[];
   evidence: AnswerEvidence[];
   cited: number[];
   degraded: string[];
@@ -22,6 +24,7 @@ export type AnswerState = {
 export const emptyAnswer: AnswerState = {
   phase: "idle",
   text: "",
+  steps: [],
   evidence: [],
   cited: [],
   degraded: [],
@@ -58,7 +61,9 @@ export function AnswerView({
         {state.phase === "loading"
           ? state.text
             ? "正在生成回答"
-            : "正在查找依据"
+            : state.steps && state.steps.length > 0
+              ? `Agentic 检索中（第 ${state.steps.length} 步）`
+              : "正在查找依据"
           : state.phase === "cancelled"
             ? "已停止，未保存不完整回答。"
             : state.done?.outcome === "refused"
@@ -77,6 +82,18 @@ export function AnswerView({
           {state.degraded.includes("rewrite") &&
             "追问改写失败，已使用原问题检索。"}
         </p>
+      )}
+      {state.steps && state.steps.length > 0 && (
+        <ol
+          aria-label="Agentic 检索步骤"
+          className="space-y-1 rounded-md bg-muted/40 px-3 py-2 text-xs text-muted-foreground"
+        >
+          {state.steps.map((s) => (
+            <li key={s.step}>
+              #{s.step} <code>{s.tool}</code>（{s.args_summary}）→ {s.result_count} 条结果
+            </li>
+          ))}
+        </ol>
       )}
       <div className="whitespace-pre-wrap break-words leading-7">
         {[...state.text.matchAll(/(\[\d+\])|([^[]+|\[)/g)].map((match) => {
