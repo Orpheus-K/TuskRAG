@@ -18,7 +18,22 @@ var (
 	ErrUnsupportedDistance = errors.New("embedding distance is not supported by the index")
 )
 
-const lexicalIndexName = "tuskrag_chunk_bm25_v2"
+const (
+	lexicalIndexName       = "tuskrag_chunk_bm25_v2"
+	compatLexicalIndexName = "tuskrag_chunk_lexical_gin_v1"
+)
+
+// DetectPGSearch reports whether the ParadeDB pg_search extension is installed.
+func DetectPGSearch(ctx context.Context, catalog catalogReader) (bool, error) {
+	if ctx == nil || catalog == nil {
+		return false, errors.New("context and index catalog are required")
+	}
+	var installed bool
+	if err := catalog.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM pg_catalog.pg_extension WHERE extname = 'pg_search')`).Scan(&installed); err != nil {
+		return false, fmt.Errorf("detect pg_search extension: %w", err)
+	}
+	return installed, nil
+}
 
 // catalogReader is implemented by a pgx transaction or connection.
 type catalogReader interface {
@@ -32,23 +47,35 @@ type definition struct {
 }
 
 func indexDefinitions(spaceID int64, dimensions int32, distance string) ([]definition, error) {
+	return indexDefinitionsWithMode(spaceID, dimensions, distance, false)
+}
+
+func indexDefinitionsWithMode(spaceID int64, dimensions int32, distance string, compatLexical bool) ([]definition, error) {
 	if spaceID <= 0 || dimensions < 64 || dimensions > 4000 {
 		return nil, errors.New("invalid embedding space or dimensions")
 	}
 	if distance != "cosine" {
 		return nil, ErrUnsupportedDistance
 	}
+	lexicalDef := definition{
+		name: lexicalIndexName,
+		ddl: "CREATE INDEX CONCURRENTLY " + lexicalIndexName + " ON public.chunk USING bm25 " +
+			"(id, (search_text::pdb.jieba), tenant_id, kb_id, version_id, is_current, kb_access, access_tags, doc_tags) " +
+			"WITH (key_field = 'id') WHERE is_current",
+		want: "CREATE INDEX " + lexicalIndexName + " ON public.chunk USING bm25 " +
+			"(id, ((search_text)::pdb.jieba), tenant_id, kb_id, version_id, is_current, kb_access, access_tags, doc_tags) " +
+			"WITH (key_field=id) WHERE is_current",
+	}
+	if compatLexical {
+		lexicalDef = definition{
+			name: compatLexicalIndexName,
+			ddl:  "CREATE INDEX CONCURRENTLY " + compatLexicalIndexName + " ON public.chunk USING gin (lexical_tokens) WHERE is_current",
+			want: "CREATE INDEX " + compatLexicalIndexName + " ON public.chunk USING gin (lexical_tokens) WHERE is_current",
+		}
+	}
 	vectorName := fmt.Sprintf("tuskrag_chunk_vector_hnsw_s%d", spaceID)
 	return []definition{
-		{
-			name: lexicalIndexName,
-			ddl: "CREATE INDEX CONCURRENTLY " + lexicalIndexName + " ON public.chunk USING bm25 " +
-				"(id, (search_text::pdb.jieba), tenant_id, kb_id, version_id, is_current, kb_access, access_tags, doc_tags) " +
-				"WITH (key_field = 'id') WHERE is_current",
-			want: "CREATE INDEX " + lexicalIndexName + " ON public.chunk USING bm25 " +
-				"(id, ((search_text)::pdb.jieba), tenant_id, kb_id, version_id, is_current, kb_access, access_tags, doc_tags) " +
-				"WITH (key_field=id) WHERE is_current",
-		},
+		lexicalDef,
 		{
 			name: vectorName,
 			ddl: fmt.Sprintf("CREATE INDEX CONCURRENTLY %s ON public.chunk_vector USING hnsw "+
@@ -64,10 +91,16 @@ func indexDefinitions(spaceID int64, dimensions int32, distance string) ([]defin
 // Check requires an explicit transaction and holds a shared provisioning lock
 // until it ends. The caller must validate tenant visibility and the profile.
 func Check(ctx context.Context, catalog dbquery.DBTX, spaceID int64, dimensions int32, distance string) error {
+	return CheckWithMode(ctx, catalog, spaceID, dimensions, distance, false)
+}
+
+// CheckWithMode checks either the pg_search BM25 index or the compatible tsvector GIN index,
+// along with the embedding space's HNSW vector index.
+func CheckWithMode(ctx context.Context, catalog dbquery.DBTX, spaceID int64, dimensions int32, distance string, compatLexical bool) error {
 	if ctx == nil || catalog == nil {
 		return errors.New("context and index catalog are required")
 	}
-	definitions, err := indexDefinitions(spaceID, dimensions, distance)
+	definitions, err := indexDefinitionsWithMode(spaceID, dimensions, distance, compatLexical)
 	if err != nil {
 		return err
 	}

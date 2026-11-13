@@ -65,6 +65,11 @@ type Service struct {
 	slots   chan struct{}
 }
 
+type LexicalDriverStatus struct {
+	Driver   string   `json:"driver"`
+	Degraded []string `json:"degraded,omitempty"`
+}
+
 func NewService(pool *pgxpool.Pool, vault *secrets.Vault, count TokenCounter) (*Service, error) {
 	if count == nil {
 		return nil, errors.New("query token counter is required")
@@ -78,6 +83,55 @@ func NewService(pool *pgxpool.Pool, vault *secrets.Vault, count TokenCounter) (*
 		return nil, err
 	}
 	return &Service{driver: driver, pool: pool, catalog: catalog, count: count, slots: make(chan struct{}, 8)}, nil
+}
+
+// NewServiceWithMode selects the lexical driver ("auto", "pg_search", or "compat")
+// and returns the active driver status and any capability degradations.
+func NewServiceWithMode(ctx context.Context, pool *pgxpool.Pool, vault *secrets.Vault, count TokenCounter, mode string) (*Service, LexicalDriverStatus, error) {
+	service, err := NewService(pool, vault, count)
+	if err != nil {
+		return nil, LexicalDriverStatus{}, err
+	}
+	switch strings.TrimSpace(mode) {
+	case "", "auto":
+		hasPGSearch, err := indexing.DetectPGSearch(ctx, pool)
+		if err != nil {
+			return nil, LexicalDriverStatus{}, err
+		}
+		if hasPGSearch {
+			return service, LexicalDriverStatus{Driver: "pg_search"}, nil
+		}
+		compat, err := NewCompatibilityTokenizer()
+		if err != nil {
+			return nil, LexicalDriverStatus{}, fmt.Errorf("init compatible lexical tokenizer: %w", err)
+		}
+		service.driver.compatibility = compat
+		return service, LexicalDriverStatus{
+			Driver:   "compat",
+			Degraded: []string{"bm25_idf_disabled", "using_tsvector_gse"},
+		}, nil
+	case "pg_search":
+		hasPGSearch, err := indexing.DetectPGSearch(ctx, pool)
+		if err != nil {
+			return nil, LexicalDriverStatus{}, err
+		}
+		if !hasPGSearch {
+			return nil, LexicalDriverStatus{}, errors.New("pg_search extension is required when TUSKRAG_LEXICAL_DRIVER=pg_search")
+		}
+		return service, LexicalDriverStatus{Driver: "pg_search"}, nil
+	case "compat":
+		compat, err := NewCompatibilityTokenizer()
+		if err != nil {
+			return nil, LexicalDriverStatus{}, fmt.Errorf("init compatible lexical tokenizer: %w", err)
+		}
+		service.driver.compatibility = compat
+		return service, LexicalDriverStatus{
+			Driver:   "compat",
+			Degraded: []string{"bm25_idf_disabled", "using_tsvector_gse"},
+		}, nil
+	default:
+		return nil, LexicalDriverStatus{}, fmt.Errorf("unsupported lexical driver mode %q", mode)
+	}
 }
 
 // Search rechecks all evidence after model calls, including debug candidates.

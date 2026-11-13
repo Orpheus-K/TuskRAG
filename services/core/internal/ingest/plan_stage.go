@@ -13,6 +13,7 @@ import (
 
 	"tuskrag.local/core/internal/dbquery"
 	"tuskrag.local/core/internal/jobs"
+	"tuskrag.local/core/internal/tokenizer"
 )
 
 var ErrPlanCorrupt = errors.New("staged ingest plan is incomplete or inconsistent")
@@ -38,13 +39,20 @@ type StagedPlan struct {
 	Reused   bool
 }
 
-type PlanStage struct{ queue *jobs.Store }
+type PlanStage struct {
+	queue   *jobs.Store
+	lexical *tokenizer.LexicalTokenizer
+}
 
 func NewPlanStage(queue *jobs.Store) (*PlanStage, error) {
 	if queue == nil {
 		return nil, errors.New("job store is required")
 	}
-	return &PlanStage{queue: queue}, nil
+	lexical, err := tokenizer.NewLexicalTokenizer()
+	if err != nil {
+		return nil, fmt.Errorf("init lexical tokenizer: %w", err)
+	}
+	return &PlanStage{queue: queue, lexical: lexical}, nil
 }
 
 // Stage atomically writes non-current sections and chunks, without publishing
@@ -108,7 +116,7 @@ func (s *PlanStage) Stage(ctx context.Context, job jobs.ClaimedJob, plan Prepare
 	if err != nil {
 		return StagedPlan{}, err
 	}
-	chunks, err := encodePlanChunks(ctx, plan.Chunks, sectionIDs, chunkIDs)
+	chunks, err := encodePlanChunks(ctx, s.lexical, plan.Chunks, sectionIDs, chunkIDs)
 	if err != nil {
 		return StagedPlan{}, err
 	}
@@ -301,15 +309,16 @@ type sectionPlanRow struct {
 }
 
 type chunkPlanRow struct {
-	ID         int64  `json:"id"`
-	SectionID  int64  `json:"section_id"`
-	Ordinal    int    `json:"ordinal"`
-	Kind       string `json:"kind"`
-	Content    string `json:"content"`
-	SearchText string `json:"search_text"`
-	PageStart  int32  `json:"page_start"`
-	PageEnd    int32  `json:"page_end"`
-	TokenCount int32  `json:"token_count"`
+	ID            int64  `json:"id"`
+	SectionID     int64  `json:"section_id"`
+	Ordinal       int    `json:"ordinal"`
+	Kind          string `json:"kind"`
+	Content       string `json:"content"`
+	SearchText    string `json:"search_text"`
+	LexicalTokens string `json:"lexical_tokens,omitempty"`
+	PageStart     int32  `json:"page_start"`
+	PageEnd       int32  `json:"page_end"`
+	TokenCount    int32  `json:"token_count"`
 }
 
 func encodePlanSections(ctx context.Context, sections []PreparedSection, ids []int64) ([]byte, error) {
@@ -330,12 +339,16 @@ func encodePlanSections(ctx context.Context, sections []PreparedSection, ids []i
 	})
 }
 
-func encodePlanChunks(ctx context.Context, chunks []PreparedChunk, sectionIDs, chunkIDs []int64) ([]byte, error) {
+func encodePlanChunks(ctx context.Context, lexical *tokenizer.LexicalTokenizer, chunks []PreparedChunk, sectionIDs, chunkIDs []int64) ([]byte, error) {
 	return encodePlanRows(ctx, len(chunks), func(index int) any {
 		chunk := chunks[index]
+		var tokens string
+		if lexical != nil {
+			tokens = lexical.TSVectorText(chunk.SearchText)
+		}
 		return chunkPlanRow{ID: chunkIDs[index], SectionID: sectionIDs[chunk.SectionIndex], Ordinal: index + 1,
-			Kind: chunk.Kind, Content: chunk.Content, SearchText: chunk.SearchText, PageStart: chunk.PageStart,
-			PageEnd: chunk.PageEnd, TokenCount: chunk.TokenCount}
+			Kind: chunk.Kind, Content: chunk.Content, SearchText: chunk.SearchText, LexicalTokens: tokens,
+			PageStart: chunk.PageStart, PageEnd: chunk.PageEnd, TokenCount: chunk.TokenCount}
 	})
 }
 

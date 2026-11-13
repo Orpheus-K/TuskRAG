@@ -23,6 +23,7 @@ type Config struct {
 	InsecureLocalCookies bool
 	MasterKeyFile        string
 	StorageDirectory     string
+	LexicalDriver        string
 }
 
 func Load() (Config, error) {
@@ -37,6 +38,12 @@ func Load() (Config, error) {
 		ParserTempDir:    os.Getenv("TUSKRAG_PARSER_TEMP_DIR"),
 		MasterKeyFile:    os.Getenv("TUSKRAG_MASTER_KEY_FILE"),
 		StorageDirectory: os.Getenv("TUSKRAG_STORAGE_DIR"),
+		LexicalDriver:    strings.TrimSpace(os.Getenv("TUSKRAG_LEXICAL_DRIVER")),
+	}
+	switch c.LexicalDriver {
+	case "", "auto", "pg_search", "compat":
+	default:
+		return Config{}, fmt.Errorf("unsupported TUSKRAG_LEXICAL_DRIVER %q", c.LexicalDriver)
 	}
 	if c.Role == "" {
 		return Config{}, errors.New("TUSKRAG_ROLE is required")

@@ -158,7 +158,7 @@ func (d *Driver) Recall(ctx context.Context, actor Actor, kbID int64, binding Bi
 	if binding != (Binding{SpaceID: row.EmbeddingSpaceID, Revision: row.ConfigRevision, Dimensions: row.Dims, Distance: row.Distance, Normalized: row.Normalized}) {
 		return nil, ErrBindingChanged
 	}
-	if err := indexing.Check(ctx, tx, binding.SpaceID, binding.Dimensions, binding.Distance); err != nil {
+	if err := indexing.CheckWithMode(ctx, tx, binding.SpaceID, binding.Dimensions, binding.Distance, d.compatibility != nil); err != nil {
 		return nil, err
 	}
 	// pg_search's ephemeral parallel workers reload the Jieba dictionary on every

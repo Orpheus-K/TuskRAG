@@ -147,14 +147,22 @@ func run() (resultErr error) {
 		if err != nil {
 			return fmt.Errorf("load master key: %w", err)
 		}
+		identities.SetVault(vault)
 	}
 	catalog, err := models.NewCatalog(pool, vault)
 	if err != nil {
 		return err
 	}
-	search, err := retrieval.NewService(pool, vault, counter.Count)
+	lexicalCtx, lexicalCancel := context.WithTimeout(ctx, 5*time.Second)
+	search, lexicalStatus, err := retrieval.NewServiceWithMode(lexicalCtx, pool, vault, counter.Count, cfg.LexicalDriver)
+	lexicalCancel()
 	if err != nil {
 		return err
+	}
+	if lexicalStatus.Driver == "compat" {
+		slog.Warn("using compatible lexical driver (pg_search unavailable)", "driver", lexicalStatus.Driver, "degraded", lexicalStatus.Degraded)
+	} else {
+		slog.Info("lexical driver ready", "driver", lexicalStatus.Driver)
 	}
 	answers, err := answer.NewService(pool, vault, search, counter.Count)
 	if err != nil {

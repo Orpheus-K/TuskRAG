@@ -61,7 +61,11 @@ func Provision(ctx context.Context, databaseURL string, tenantID, spaceID int64)
 	if err != nil {
 		return err
 	}
-	definitions, err := indexDefinitions(spaceID, profile.Dims, profile.Distance)
+	pgSearchAvailable, err := DetectPGSearch(ctx, conn)
+	if err != nil {
+		return err
+	}
+	definitions, err := indexDefinitionsWithMode(spaceID, profile.Dims, profile.Distance, !pgSearchAvailable)
 	if err != nil {
 		return err
 	}
