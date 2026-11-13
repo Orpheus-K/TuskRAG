@@ -17,6 +17,8 @@ export type EvalComparison = components["schemas"]["ReportComparison"];
 export type EvalRow = components["schemas"]["RunRow"];
 export type Document = components["schemas"]["DocumentBody"];
 export type DocumentPage = components["schemas"]["DocumentListOutputBody"];
+export type PurgeJob = components["schemas"]["PurgeJobBody"];
+export type PurgeJobPage = { items: PurgeJob[]; next_cursor: number | null };
 export type UploadedDocument = components["schemas"]["UploadedDocumentBody"];
 export type EmbeddingSpace = components["schemas"]["EmbeddingSpaceBody"];
 export type NewEmbeddingSpace =
@@ -782,6 +784,66 @@ export async function listDocuments(
         data.items.length === 0))
   ) {
     throw new Error("invalid document list");
+  }
+  return { items: data.items, next_cursor: data.next_cursor };
+}
+
+function isPurgeJob(value: unknown): value is PurgeJob {
+  return (
+    isRecord(value) &&
+    isPositiveInteger(value.id) &&
+    isPositiveInteger(value.kb_id) &&
+    isPositiveInteger(value.document_id) &&
+    isPositiveInteger(value.version_id) &&
+    (value.document_title === null || typeof value.document_title === "string") &&
+    typeof value.document_deleted === "boolean" &&
+    [
+      "queued",
+      "running",
+      "succeeded",
+      "failed",
+      "dead",
+      "cancelled",
+    ].includes(String(value.status)) &&
+    typeof value.attempts === "number" &&
+    Number.isSafeInteger(value.attempts) &&
+    value.attempts >= 0 &&
+    typeof value.max_attempts === "number" &&
+    Number.isSafeInteger(value.max_attempts) &&
+    value.max_attempts >= 1 &&
+    (value.failure_code === null || typeof value.failure_code === "string") &&
+    typeof value.retryable === "boolean" &&
+    typeof value.created_at === "string" &&
+    (value.finished_at === null || typeof value.finished_at === "string")
+  );
+}
+
+export async function listPurgeJobs(
+  id: number,
+  cursor: number,
+  signal: AbortSignal,
+): Promise<PurgeJobPage> {
+  if (!isPositiveInteger(id) || !Number.isSafeInteger(cursor) || cursor < 0) {
+    throw new Error("invalid purge job page");
+  }
+  const params = new URLSearchParams({ cursor: String(cursor) });
+  const response = await checked(
+    await fetch(`/api/v1/kbs/${id}/purge-jobs?${params}`, {
+      signal,
+      credentials: "same-origin",
+    }),
+  );
+  const data: unknown = await response.json();
+  if (
+    !isRecord(data) ||
+    !Array.isArray(data.items) ||
+    !data.items.every(isPurgeJob) ||
+    (data.next_cursor !== null &&
+      (!isPositiveInteger(data.next_cursor) ||
+        (cursor > 0 && data.next_cursor >= cursor) ||
+        data.items.length === 0))
+  ) {
+    throw new Error("invalid purge job list");
   }
   return { items: data.items, next_cursor: data.next_cursor };
 }

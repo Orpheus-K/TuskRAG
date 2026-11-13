@@ -131,3 +131,19 @@ UPDATE document_version SET status = 'failed', failure_code = 'cancelled', failu
 WHERE tenant_id = sqlc.arg(tenant_id) AND kb_id = sqlc.arg(kb_id)
   AND document_id = sqlc.arg(document_id) AND id = sqlc.arg(version_id)
   AND status IN ('queued', 'parsing', 'embedding', 'indexing');
+
+-- name: LockDocumentForPurgeControl :one
+SELECT (d.deleted_at IS NOT NULL)::boolean AS deleted
+FROM document d JOIN kb_membership m ON m.tenant_id = d.tenant_id AND m.kb_id = d.kb_id
+WHERE d.tenant_id = sqlc.arg(tenant_id) AND d.kb_id = sqlc.arg(kb_id)
+  AND d.id = sqlc.arg(document_id) AND m.user_id = sqlc.arg(user_id)
+  AND d.acl_mode = 'inherit_kb'
+FOR UPDATE OF d;
+
+-- name: LockDocumentVersionForPurgeRetry :one
+SELECT v.status,
+       (EXISTS (SELECT 1 FROM document d WHERE d.tenant_id = v.tenant_id AND d.kb_id = v.kb_id AND d.id = v.document_id AND d.current_version_id = v.id))::boolean AS is_current
+FROM document_version v
+WHERE v.tenant_id = sqlc.arg(tenant_id) AND v.kb_id = sqlc.arg(kb_id)
+  AND v.document_id = sqlc.arg(document_id) AND v.id = sqlc.arg(version_id)
+FOR UPDATE OF v;

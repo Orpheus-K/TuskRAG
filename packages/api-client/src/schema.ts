@@ -487,6 +487,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/kbs/{kb}/purge-jobs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list-purge-jobs"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/kbs/{kb}/rebuilds": {
         parameters: {
             query?: never;
@@ -883,6 +899,8 @@ export interface components {
             id: number;
             /** Format: int64 */
             kb_id: number;
+            /** @enum {string} */
+            kind: "ingest" | "purge";
             /** Format: int32 */
             max_attempts: number;
             retryable: boolean;
@@ -945,6 +963,35 @@ export interface components {
             expand_parent?: boolean;
             rerank?: boolean;
             reranker?: components["schemas"]["RerankOptions"];
+        };
+        PurgeJobBody: {
+            /** Format: int32 */
+            attempts: number;
+            /** Format: date-time */
+            created_at: string;
+            document_deleted: boolean;
+            /** Format: int64 */
+            document_id: number;
+            document_title: string | null;
+            failure_code: string | null;
+            /** Format: date-time */
+            finished_at: string | null;
+            /** Format: int64 */
+            id: number;
+            /** Format: int64 */
+            kb_id: number;
+            /** Format: int32 */
+            max_attempts: number;
+            retryable: boolean;
+            /** @enum {string} */
+            status: "queued" | "running" | "succeeded" | "failed" | "dead" | "cancelled";
+            /** Format: int64 */
+            version_id: number;
+        };
+        PurgeJobListOutputBody: {
+            items: components["schemas"]["PurgeJobBody"][] | null;
+            /** Format: int64 */
+            next_cursor: number | null;
         };
         PutKnowledgeConfigInputBody: {
             retrieval: components["schemas"]["RetrievalConfig"];
@@ -2716,6 +2763,40 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StoredSet"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "list-purge-jobs": {
+        parameters: {
+            query?: {
+                cursor?: number;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                kb: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PurgeJobListOutputBody"];
                 };
             };
             /** @description Error */

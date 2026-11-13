@@ -415,6 +415,34 @@ func (q *Queries) ListVisibleDocuments(ctx context.Context, arg ListVisibleDocum
 	return items, nil
 }
 
+const lockDocumentForPurgeControl = `-- name: LockDocumentForPurgeControl :one
+SELECT (d.deleted_at IS NOT NULL)::boolean AS deleted
+FROM document d JOIN kb_membership m ON m.tenant_id = d.tenant_id AND m.kb_id = d.kb_id
+WHERE d.tenant_id = $1 AND d.kb_id = $2
+  AND d.id = $3 AND m.user_id = $4
+  AND d.acl_mode = 'inherit_kb'
+FOR UPDATE OF d
+`
+
+type LockDocumentForPurgeControlParams struct {
+	TenantID   int64
+	KbID       int64
+	DocumentID int64
+	UserID     int64
+}
+
+func (q *Queries) LockDocumentForPurgeControl(ctx context.Context, arg LockDocumentForPurgeControlParams) (bool, error) {
+	row := q.db.QueryRow(ctx, lockDocumentForPurgeControl,
+		arg.TenantID,
+		arg.KbID,
+		arg.DocumentID,
+		arg.UserID,
+	)
+	var deleted bool
+	err := row.Scan(&deleted)
+	return deleted, err
+}
+
 const lockDocumentVersionForCancel = `-- name: LockDocumentVersionForCancel :one
 SELECT v.id FROM document_version v JOIN document d
   ON d.tenant_id = v.tenant_id AND d.kb_id = v.kb_id AND d.id = v.document_id
@@ -442,6 +470,39 @@ func (q *Queries) LockDocumentVersionForCancel(ctx context.Context, arg LockDocu
 	var id int64
 	err := row.Scan(&id)
 	return id, err
+}
+
+const lockDocumentVersionForPurgeRetry = `-- name: LockDocumentVersionForPurgeRetry :one
+SELECT v.status,
+       (EXISTS (SELECT 1 FROM document d WHERE d.tenant_id = v.tenant_id AND d.kb_id = v.kb_id AND d.id = v.document_id AND d.current_version_id = v.id))::boolean AS is_current
+FROM document_version v
+WHERE v.tenant_id = $1 AND v.kb_id = $2
+  AND v.document_id = $3 AND v.id = $4
+FOR UPDATE OF v
+`
+
+type LockDocumentVersionForPurgeRetryParams struct {
+	TenantID   int64
+	KbID       int64
+	DocumentID int64
+	VersionID  int64
+}
+
+type LockDocumentVersionForPurgeRetryRow struct {
+	Status    string
+	IsCurrent bool
+}
+
+func (q *Queries) LockDocumentVersionForPurgeRetry(ctx context.Context, arg LockDocumentVersionForPurgeRetryParams) (LockDocumentVersionForPurgeRetryRow, error) {
+	row := q.db.QueryRow(ctx, lockDocumentVersionForPurgeRetry,
+		arg.TenantID,
+		arg.KbID,
+		arg.DocumentID,
+		arg.VersionID,
+	)
+	var i LockDocumentVersionForPurgeRetryRow
+	err := row.Scan(&i.Status, &i.IsCurrent)
+	return i, err
 }
 
 const lockDocumentVersionForRetry = `-- name: LockDocumentVersionForRetry :one

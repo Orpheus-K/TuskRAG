@@ -222,3 +222,100 @@ func TestDocumentJobRetryRechecksRevokedEditor(t *testing.T) {
 		t.Fatalf("revoked retry changed state=%s history=%d err=%v", state, history, err)
 	}
 }
+
+func TestPurgeJobVisibilityRetryPermissionsAndHistory(t *testing.T) {
+	f := setup(t)
+	base := f.create(t)
+	service, _, _ := documentFixture(t, f)
+	owner, viewer := f.actor(f.owner), f.actor(f.other)
+	if err := f.service.SetMember(f.ctx, owner, base.ID, f.other, Viewer); err != nil {
+		t.Fatal(err)
+	}
+	document, err := service.Upload(f.ctx, owner, UploadRequest{KBID: base.ID, Title: "purge-target.md", MIME: "text/markdown", Content: strings.NewReader("# 清理测试\n")})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := service.Delete(f.ctx, owner, base.ID, document.DocumentID); err != nil {
+		t.Fatal(err)
+	}
+	var purgeID int64
+	if err := f.admin.QueryRow(f.ctx, `UPDATE job SET status='dead', attempts=max_attempts, last_error=$3, finished_at=clock_timestamp()
+		WHERE tenant_id=$1 AND kind='purge' AND dedupe_key=$2 RETURNING id`,
+		f.tenantA, fmt.Sprintf("version:%d", document.VersionID), string(jobs.StorageUnavailable)).Scan(&purgeID); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := f.admin.Exec(f.ctx, `UPDATE document_version SET status='purging' WHERE tenant_id=$1 AND id=$2`, f.tenantA, document.VersionID); err != nil {
+		t.Fatal(err)
+	}
+	for _, check := range []struct {
+		actor Actor
+		want  error
+	}{{viewer, ErrForbidden}, {f.actor(f.third), ErrNotFound}, {Actor{TenantID: f.tenantB, UserID: f.foreignUser}, ErrNotFound}} {
+		if _, err := service.ListPurgeJobs(f.ctx, check.actor, base.ID, 0, 20); !errors.Is(err, check.want) {
+			t.Fatalf("purge list access: got=%v want=%v", err, check.want)
+		}
+		if _, err := service.GetJob(f.ctx, check.actor, purgeID); !errors.Is(err, check.want) {
+			t.Fatalf("purge get access: got=%v want=%v", err, check.want)
+		}
+		if _, err := service.RetryJob(f.ctx, check.actor, purgeID); !errors.Is(err, check.want) {
+			t.Fatalf("purge retry access: got=%v want=%v", err, check.want)
+		}
+	}
+	page, err := service.ListPurgeJobs(f.ctx, owner, base.ID, 0, 20)
+	if err != nil || len(page.Items) != 1 || page.Items[0].ID != purgeID || !page.Items[0].DocumentDeleted || !page.Items[0].Retryable {
+		t.Fatalf("purge list: %+v err=%v", page, err)
+	}
+	job, err := service.GetJob(f.ctx, owner, purgeID)
+	if err != nil || job.Kind != string(jobs.Purge) || !job.Retryable || job.Status != "dead" {
+		t.Fatalf("purge get: %+v err=%v", job, err)
+	}
+	start := make(chan struct{})
+	type outcome struct {
+		id  int64
+		err error
+	}
+	results := make(chan outcome, 2)
+	var group sync.WaitGroup
+	for range 2 {
+		group.Go(func() {
+			<-start
+			id, err := service.RetryJob(f.ctx, owner, purgeID)
+			results <- outcome{id, err}
+		})
+	}
+	close(start)
+	group.Wait()
+	close(results)
+	var created int64
+	var successes, conflicts int
+	for result := range results {
+		switch {
+		case result.err == nil:
+			successes++
+			created = result.id
+		case errors.Is(result.err, ErrJobNotRetryable):
+			conflicts++
+		default:
+			t.Fatalf("concurrent purge retry: %v", result.err)
+		}
+	}
+	if successes != 1 || conflicts != 1 || created <= purgeID {
+		t.Fatalf("concurrent purge retry successes=%d conflicts=%d created=%d", successes, conflicts, created)
+	}
+	var versionStatus, oldStatus, newStatus string
+	var history, auditCount int
+	if err := f.admin.QueryRow(f.ctx, `SELECT
+		(SELECT status FROM document_version WHERE tenant_id=$1 AND id=$2),
+		(SELECT status FROM job WHERE tenant_id=$1 AND id=$3),
+		(SELECT status FROM job WHERE tenant_id=$1 AND id=$4),
+		(SELECT count(*) FROM job WHERE tenant_id=$1 AND kind='purge' AND dedupe_key=$5),
+		(SELECT count(*) FROM audit_log WHERE tenant_id=$1 AND action='job.retry' AND object_id=$4 AND result='allow')`,
+		f.tenantA, document.VersionID, purgeID, created, fmt.Sprintf("version:%d", document.VersionID)).
+		Scan(&versionStatus, &oldStatus, &newStatus, &history, &auditCount); err != nil || versionStatus != "purging" || oldStatus != "dead" || newStatus != "queued" || history != 2 || auditCount != 1 {
+		t.Fatalf("purge retry state version=%s old=%s new=%s history=%d audit=%d err=%v", versionStatus, oldStatus, newStatus, history, auditCount, err)
+	}
+	afterPage, err := service.ListPurgeJobs(f.ctx, owner, base.ID, 0, 20)
+	if err != nil || len(afterPage.Items) != 2 || afterPage.Items[0].ID != created || afterPage.Items[0].Retryable || afterPage.Items[1].ID != purgeID || afterPage.Items[1].Retryable {
+		t.Fatalf("purge list after retry: %+v err=%v", afterPage, err)
+	}
+}

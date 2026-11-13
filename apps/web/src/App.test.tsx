@@ -720,3 +720,84 @@ it("distinguishes no matches from a model failure", async () => {
   await screen.findByText("嵌入模型暂不可用，请稍后重试。");
   expect(screen.queryByText("未找到匹配内容。")).toBeNull();
 });
+
+it("shows purge jobs and retries dead purge jobs for editors", async () => {
+  window.history.replaceState(null, "", "/kb/5/documents");
+  let retried = false;
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (input: RequestInfo | URL, options?: RequestInit) => {
+      const url = String(input);
+      if (url === "/api/health/ready")
+        return { ok: true, json: async () => ({ status: "ok" }) };
+      if (url === "/api/v1/me")
+        return {
+          ok: true,
+          json: async () => ({ tenant_id: 1, user_id: 2, csrf_token: "csrf" }),
+        };
+      if (url === "/api/v1/embedding-spaces")
+        return { ok: true, json: async () => ({ items: [] }) };
+      if (url === "/api/v1/kbs/5")
+        return {
+          ok: true,
+          json: async () => ({
+            id: 5,
+            name: "员工手册",
+            embedding_space_id: 3,
+            config_revision: 1,
+            egress_policy: "deny",
+            status: "active",
+            role: "editor",
+            created_at: "2026-10-28T00:00:00Z",
+          }),
+        };
+      if (url === "/api/v1/kbs/5/documents?cursor=0")
+        return {
+          ok: true,
+          json: async () => ({ items: [], next_cursor: null }),
+        };
+      if (url === "/api/v1/kbs/5/purge-jobs?cursor=0")
+        return {
+          ok: true,
+          json: async () => ({
+            items: [
+              {
+                id: retried ? 19 : 18,
+                kb_id: 5,
+                document_id: 7,
+                version_id: 9,
+                document_title: "过期制度.pdf",
+                document_deleted: true,
+                status: retried ? "queued" : "dead",
+                attempts: retried ? 0 : 3,
+                max_attempts: 3,
+                failure_code: retried ? null : "storage_unavailable",
+                retryable: !retried,
+                created_at: "2026-11-13T00:00:00Z",
+                finished_at: retried ? null : "2026-11-13T00:01:00Z",
+              },
+            ],
+            next_cursor: null,
+          }),
+        };
+      if (url === "/api/v1/jobs/18:retry" && options?.method === "POST") {
+        retried = true;
+        return {
+          ok: true,
+          json: async () => ({ job_id: 19, status: "queued" }),
+        };
+      }
+      throw new Error(`unexpected request: ${url}`);
+    }),
+  );
+  mount();
+  await screen.findByRole("heading", { name: "清理任务" });
+  await screen.findByText("过期制度.pdf");
+  expect(screen.getByText("已删除")).toBeTruthy();
+  expect(screen.getByText("状态：等待人工重试（尝试 3/3）")).toBeTruthy();
+  expect(screen.getByText("失败原因：文件存储暂不可用")).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "重试清理" }));
+  await screen.findByText("已重新排队清理 过期制度.pdf，等待后台处理。");
+  await screen.findByText("状态：等待清理（尝试 0/3）");
+  expect(screen.queryByRole("button", { name: "重试清理" })).toBeNull();
+});

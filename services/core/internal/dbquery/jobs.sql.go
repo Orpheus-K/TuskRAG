@@ -250,6 +250,116 @@ func (q *Queries) LatestIngestJob(ctx context.Context, arg LatestIngestJobParams
 	return id, err
 }
 
+const latestPurgeJob = `-- name: LatestPurgeJob :one
+SELECT id FROM job
+WHERE tenant_id = $1 AND kind = 'purge' AND dedupe_key = $2
+ORDER BY id DESC LIMIT 1
+`
+
+type LatestPurgeJobParams struct {
+	TenantID  int64
+	DedupeKey pgtype.Text
+}
+
+func (q *Queries) LatestPurgeJob(ctx context.Context, arg LatestPurgeJobParams) (int64, error) {
+	row := q.db.QueryRow(ctx, latestPurgeJob, arg.TenantID, arg.DedupeKey)
+	var id int64
+	err := row.Scan(&id)
+	return id, err
+}
+
+const listKBJobsForPurge = `-- name: ListKBJobsForPurge :many
+SELECT j.id, j.dedupe_key, j.payload, j.status, j.attempts, j.max_attempts, j.last_error, j.created_at, j.finished_at,
+       d.title AS document_title,
+       (d.id IS NOT NULL AND d.deleted_at IS NOT NULL)::boolean AS document_deleted,
+       v.id AS version_row_id,
+       COALESCE(v.status, '')::text AS version_status,
+       (d.current_version_id IS NOT NULL AND v.id IS NOT NULL AND d.current_version_id = v.id)::boolean AS version_is_current,
+       NOT EXISTS (
+         SELECT 1 FROM job newer
+         WHERE newer.tenant_id = j.tenant_id AND newer.kind = 'purge'
+           AND newer.dedupe_key = j.dedupe_key AND newer.id > j.id
+       )::boolean AS is_latest
+FROM job j
+LEFT JOIN document d
+  ON d.tenant_id = j.tenant_id AND d.kb_id = $1 AND d.id::text = j.payload->>'document_id'
+LEFT JOIN document_version v
+  ON v.tenant_id = j.tenant_id AND v.kb_id = $1 AND v.document_id = d.id AND v.id::text = j.payload->>'version_id'
+WHERE j.tenant_id = $2
+  AND j.kind = 'purge'
+  AND j.payload @> jsonb_build_object('kb_id', $1::bigint)
+  AND (d.id IS NULL OR d.acl_mode = 'inherit_kb')
+  AND ($3::bigint = 0 OR j.id < $3::bigint)
+ORDER BY j.id DESC
+LIMIT $4
+`
+
+type ListKBJobsForPurgeParams struct {
+	KbID       int64
+	TenantID   int64
+	BeforeID   int64
+	FetchLimit int32
+}
+
+type ListKBJobsForPurgeRow struct {
+	ID               int64
+	DedupeKey        pgtype.Text
+	Payload          []byte
+	Status           string
+	Attempts         int32
+	MaxAttempts      int32
+	LastError        pgtype.Text
+	CreatedAt        pgtype.Timestamptz
+	FinishedAt       pgtype.Timestamptz
+	DocumentTitle    pgtype.Text
+	DocumentDeleted  bool
+	VersionRowID     pgtype.Int8
+	VersionStatus    string
+	VersionIsCurrent bool
+	IsLatest         pgtype.Bool
+}
+
+func (q *Queries) ListKBJobsForPurge(ctx context.Context, arg ListKBJobsForPurgeParams) ([]ListKBJobsForPurgeRow, error) {
+	rows, err := q.db.Query(ctx, listKBJobsForPurge,
+		arg.KbID,
+		arg.TenantID,
+		arg.BeforeID,
+		arg.FetchLimit,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListKBJobsForPurgeRow
+	for rows.Next() {
+		var i ListKBJobsForPurgeRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.DedupeKey,
+			&i.Payload,
+			&i.Status,
+			&i.Attempts,
+			&i.MaxAttempts,
+			&i.LastError,
+			&i.CreatedAt,
+			&i.FinishedAt,
+			&i.DocumentTitle,
+			&i.DocumentDeleted,
+			&i.VersionRowID,
+			&i.VersionStatus,
+			&i.VersionIsCurrent,
+			&i.IsLatest,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listenJobCancelled = `-- name: ListenJobCancelled :exec
 LISTEN tuskrag_job_cancelled
 `

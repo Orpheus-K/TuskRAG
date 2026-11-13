@@ -133,3 +133,33 @@ LISTEN tuskrag_job_ready;
 
 -- name: ListenJobCancelled :exec
 LISTEN tuskrag_job_cancelled;
+
+-- name: LatestPurgeJob :one
+SELECT id FROM job
+WHERE tenant_id = sqlc.arg(tenant_id) AND kind = 'purge' AND dedupe_key = sqlc.arg(dedupe_key)
+ORDER BY id DESC LIMIT 1;
+
+-- name: ListKBJobsForPurge :many
+SELECT j.id, j.dedupe_key, j.payload, j.status, j.attempts, j.max_attempts, j.last_error, j.created_at, j.finished_at,
+       d.title AS document_title,
+       (d.id IS NOT NULL AND d.deleted_at IS NOT NULL)::boolean AS document_deleted,
+       v.id AS version_row_id,
+       COALESCE(v.status, '')::text AS version_status,
+       (d.current_version_id IS NOT NULL AND v.id IS NOT NULL AND d.current_version_id = v.id)::boolean AS version_is_current,
+       NOT EXISTS (
+         SELECT 1 FROM job newer
+         WHERE newer.tenant_id = j.tenant_id AND newer.kind = 'purge'
+           AND newer.dedupe_key = j.dedupe_key AND newer.id > j.id
+       )::boolean AS is_latest
+FROM job j
+LEFT JOIN document d
+  ON d.tenant_id = j.tenant_id AND d.kb_id = sqlc.arg(kb_id) AND d.id::text = j.payload->>'document_id'
+LEFT JOIN document_version v
+  ON v.tenant_id = j.tenant_id AND v.kb_id = sqlc.arg(kb_id) AND v.document_id = d.id AND v.id::text = j.payload->>'version_id'
+WHERE j.tenant_id = sqlc.arg(tenant_id)
+  AND j.kind = 'purge'
+  AND j.payload @> jsonb_build_object('kb_id', sqlc.arg(kb_id)::bigint)
+  AND (d.id IS NULL OR d.acl_mode = 'inherit_kb')
+  AND (sqlc.arg(before_id)::bigint = 0 OR j.id < sqlc.arg(before_id)::bigint)
+ORDER BY j.id DESC
+LIMIT sqlc.arg(fetch_limit);

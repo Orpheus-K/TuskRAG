@@ -2,6 +2,13 @@
 
 ## 当前快照（2026-11-13）
 
+- **R20 清理任务（`purge`）可见与手动重试闭环完成**：
+  - **后端与契约**：在 [jobs.sql](../services/core/queries/jobs.sql) 与 [documents.sql](../services/core/queries/documents.sql) 新增 `LatestPurgeJob`、`ListKBJobsForPurge`、`LockDocumentForPurgeControl`、`LockDocumentVersionForPurgeRetry`；在 [document_jobs.go](../services/core/internal/kb/document_jobs.go) 与 [job_control.go](../services/core/internal/httpapi/job_control.go) 开放 `GET /api/v1/kbs/{kb}/purge-jobs`（editor/admin/owner 可见、viewer 403、非成员 404），并扩展 `GET /api/v1/jobs/{job}`（返回 `kind`）及 `POST /api/v1/jobs/{job}:retry` 支持 `purge` 死信手动重入队（保留历史尝试与 `purging`/`superseded` 状态，并发防重放、审计 `job.retry`）。同步更新 [openapi.json](../contracts/openapi.json) 与 [api-client](../packages/api-client/src/index.ts)。
+  - **控制台**：在 [Knowledge.tsx](../apps/web/src/Knowledge.tsx) 知识库详情页新增“清理任务”列表与“重试清理”按钮（`viewer` 隐藏，进行中自动轮询，删除文档后即时刷新）。
+  - **实测证据**：
+    - 本地：`go vet ./...`、`go test -p 1 -count=1 ./internal/httpapi ./internal/kb ./cmd/tuskrag`、`pnpm typecheck`、`pnpm test:web`（13 文件 113 项，含新增 `purge` UI 用例）与 `pnpm build:web` 全部通过。
+  - **下一步**：前端评测页接入生成指标（M2）、配置 `TUSKRAG_TEST_CHAT_CONFIG` 补跑真实大模型 E6 消融与首 token p95 延迟基线，或核对 M1/M2 退出条件。
+
 - **云端宿主机 (test-host.invalid) 零影响隔离验证与测试全绿**：
 严格隔离于 `<test-directory>`，容器映射 `127.0.0.1:<db-port>:5432`，限定 `--memory=1024m --cpus=1.5`，Bubblewrap 专用 AppArmor，动态 Cgroup v2 自动回收，`nice -n 10 ionice -c2 -n7`，`GOMAXPROCS=2` 单包顺序执行
   - **实测通过项 (`ALL_CLOUD_TESTS_PASSED`)**：

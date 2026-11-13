@@ -62,6 +62,7 @@ type ConfigService interface {
 
 type JobControl interface {
 	GetJob(context.Context, kb.Actor, int64) (kb.JobSummary, error)
+	ListPurgeJobs(context.Context, kb.Actor, int64, int64, int32) (kb.PurgeJobPage, error)
 	RetryJob(context.Context, kb.Actor, int64) (int64, error)
 }
 

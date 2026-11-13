@@ -7,6 +7,7 @@ import {
   type Identity,
   listDocuments,
   listEmbeddingSpaces,
+  listPurgeJobs,
   retryJob,
   type SearchOptions,
   searchKnowledgeBase,
@@ -58,6 +59,15 @@ const failures: Record<string, string> = {
   lease_expired: "处理多次中断",
 };
 
+const purgeStatuses: Record<string, string> = {
+  queued: "等待清理",
+  running: "正在清理",
+  succeeded: "已清理",
+  failed: "清理失败",
+  dead: "等待人工重试",
+  cancelled: "已取消",
+};
+
 function statusIs(error: unknown, status: number): boolean {
   return error instanceof ApiError && error.status === status;
 }
@@ -88,6 +98,10 @@ export function KnowledgeDetail({
   const [retrying, setRetrying] = useState<number | null>(null);
   const [retryMessage, setRetryMessage] = useState("");
   const [retryError, setRetryError] = useState("");
+  const [purgeCursor, setPurgeCursor] = useState(0);
+  const [retryingPurge, setRetryingPurge] = useState<number | null>(null);
+  const [purgeMessage, setPurgeMessage] = useState("");
+  const [purgeError, setPurgeError] = useState("");
   const [preview, setPreview] = useState<PreviewTarget | null>(null);
   const [searchText, setSearchText] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");
@@ -149,11 +163,33 @@ export function KnowledgeDetail({
     gcTime: 0,
     refetchOnWindowFocus: false,
   });
+  const purgeJobs = useQuery({
+    queryKey: [
+      "purge-jobs",
+      identity.tenant_id,
+      identity.user_id,
+      id,
+      purgeCursor,
+    ],
+    queryFn: ({ signal }) => listPurgeJobs(id, purgeCursor, signal),
+    enabled:
+      base.data !== undefined && base.data.role !== "viewer" && !base.isError,
+    retry: false,
+    gcTime: 0,
+    refetchInterval: (query) =>
+      query.state.status !== "error" &&
+      query.state.data?.items.some((item) =>
+        ["queued", "running"].includes(item.status),
+      )
+        ? 3000
+        : false,
+  });
 
   function returnToLogin() {
     queryClient.removeQueries({ queryKey: ["knowledge-base"] });
     queryClient.removeQueries({ queryKey: ["knowledge-bases"] });
     queryClient.removeQueries({ queryKey: ["documents"] });
+    queryClient.removeQueries({ queryKey: ["purge-jobs"] });
     queryClient.removeQueries({ queryKey: ["search"] });
     queryClient.removeQueries({ queryKey: ["document-contents"] });
     queryClient.removeQueries({ queryKey: ["document-section"] });
@@ -270,6 +306,7 @@ export function KnowledgeDetail({
       }
       setDeleteMessage(`已移除 ${title}，后台正在清理原文件。`);
       void queryClient.invalidateQueries({ queryKey: ["documents"] });
+      void queryClient.invalidateQueries({ queryKey: ["purge-jobs"] });
     } catch (cause) {
       if (statusIs(cause, 401)) {
         returnToLogin();
@@ -302,6 +339,27 @@ export function KnowledgeDetail({
       setRetryError("重试未确认，请刷新文档列表查看当前状态。");
     } finally {
       setRetrying(null);
+    }
+  }
+
+  async function retryPurgeJob(jobId: number, label: string) {
+    if (retryingPurge !== null || deleting !== null || uploading) return;
+    setRetryingPurge(jobId);
+    setPurgeMessage("");
+    setPurgeError("");
+    try {
+      await retryJob(jobId, identity.csrf_token);
+      setPurgeMessage(`已重新排队清理 ${label}，等待后台处理。`);
+      await queryClient.invalidateQueries({ queryKey: ["purge-jobs"] });
+    } catch (cause) {
+      if (statusIs(cause, 401)) {
+        returnToLogin();
+        return;
+      }
+      void queryClient.invalidateQueries({ queryKey: ["purge-jobs"] });
+      setPurgeError("清理重试未确认，请刷新清理任务列表查看当前状态。");
+    } finally {
+      setRetryingPurge(null);
     }
   }
 
@@ -819,6 +877,121 @@ export function KnowledgeDetail({
           </Link>
         )}
       </nav>
+      {base.data.role !== "viewer" && (
+        <section className="mt-8 border-t pt-6" aria-label="清理任务">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 className="text-lg font-medium">清理任务</h2>
+            <span className="text-xs text-muted-foreground">
+              展示已删除文档与被替代版本的后台清理状态
+            </span>
+          </div>
+          {purgeMessage && (
+            <p className="mt-2 text-sm text-muted-foreground" role="status">
+              {purgeMessage}
+            </p>
+          )}
+          {purgeError && (
+            <p className="mt-2 text-sm text-destructive" role="alert">
+              {purgeError}
+            </p>
+          )}
+          {purgeJobs.isPending ? (
+            <p className="mt-3 text-sm text-muted-foreground" role="status">
+              正在加载清理任务
+            </p>
+          ) : purgeJobs.isError ? (
+            <p className="mt-3 text-sm text-destructive" role="alert">
+              无法加载清理任务。
+            </p>
+          ) : purgeJobs.data.items.length === 0 ? (
+            <p className="mt-3 rounded-xl border border-dashed p-5 text-sm text-muted-foreground">
+              {purgeCursor === 0 ? "暂无清理任务。" : "此页没有更多清理任务。"}
+            </p>
+          ) : (
+            <ul className="mt-3 divide-y rounded-xl border">
+              {purgeJobs.data.items.map((item) => {
+                const label =
+                  item.document_title ?? `文档 #${item.document_id}`;
+                return (
+                  <li
+                    className="flex flex-wrap items-center justify-between gap-3 p-4"
+                    key={item.id}
+                  >
+                    <div className="min-w-0 space-y-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-medium break-words">
+                          {label}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          版本 #{item.version_id}
+                        </span>
+                        {item.document_deleted && (
+                          <span className="rounded border px-1.5 py-0.5 text-xs text-muted-foreground">
+                            已删除
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        状态：{purgeStatuses[item.status] ?? item.status}（尝试{" "}
+                        {item.attempts}/{item.max_attempts}）
+                      </p>
+                      {item.failure_code && (
+                        <p className="text-sm text-muted-foreground">
+                          失败原因：
+                          {failures[item.failure_code] ?? item.failure_code}
+                        </p>
+                      )}
+                    </div>
+                    {base.data.status === "active" && item.retryable && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        disabled={
+                          retryingPurge !== null ||
+                          deleting !== null ||
+                          uploading
+                        }
+                        onClick={() => void retryPurgeJob(item.id, label)}
+                      >
+                        {retryingPurge === item.id
+                          ? "正在重新排队"
+                          : "重试清理"}
+                      </Button>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+          {(purgeCursor > 0 || purgeJobs.data?.next_cursor !== null) && (
+            <nav className="mt-3 flex gap-4 text-sm" aria-label="清理任务分页">
+              {purgeCursor > 0 && (
+                <button
+                  type="button"
+                  className="underline"
+                  onClick={() => setPurgeCursor(0)}
+                >
+                  返回第一页
+                </button>
+              )}
+              {purgeJobs.data?.next_cursor !== null &&
+                purgeJobs.data?.next_cursor !== undefined && (
+                  <button
+                    type="button"
+                    className="underline"
+                    onClick={() => {
+                      const next = purgeJobs.data?.next_cursor;
+                      if (next !== null && next !== undefined)
+                        setPurgeCursor(next);
+                    }}
+                  >
+                    下一页
+                  </button>
+                )}
+            </nav>
+          )}
+        </section>
+      )}
     </section>
   );
 }
