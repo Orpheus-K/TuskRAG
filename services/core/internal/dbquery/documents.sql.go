@@ -426,6 +426,122 @@ func (q *Queries) ListVisibleDocuments(ctx context.Context, arg ListVisibleDocum
 	return items, nil
 }
 
+const listVisibleDocumentsFiltered = `-- name: ListVisibleDocumentsFiltered :many
+SELECT d.id, d.title, d.mime, d.current_version_id, COALESCE(current_version.status, '')::text AS current_status,
+       v.id AS latest_version_id, v.status AS latest_status, v.byte_size,
+       v.failure_code, v.created_at AS latest_created_at, COALESCE(latest_job.id, 0)::bigint AS latest_job_id,
+       COALESCE(latest_job.status, '')::text AS latest_job_status, latest_job.last_error AS latest_job_error,
+       COALESCE(latest_job.payload = jsonb_build_object('kb_id', d.kb_id, 'document_id', d.id, 'version_id', v.id), false)::boolean AS latest_job_matches,
+       k.status AS kb_status
+FROM document d
+JOIN knowledge_base k ON k.tenant_id = d.tenant_id AND k.id = d.kb_id
+LEFT JOIN document_version current_version
+  ON current_version.tenant_id = d.tenant_id AND current_version.document_id = d.id AND current_version.id = d.current_version_id
+LEFT JOIN LATERAL (
+  SELECT id, status, byte_size, failure_code, created_at
+  FROM document_version
+  WHERE tenant_id = d.tenant_id AND kb_id = d.kb_id AND document_id = d.id
+  ORDER BY id DESC LIMIT 1
+) v ON true
+LEFT JOIN LATERAL (
+  SELECT id, status, last_error, payload FROM job
+  WHERE tenant_id = d.tenant_id AND kind = 'ingest'
+    AND dedupe_key = 'document-version:' || v.id::text
+  ORDER BY id DESC LIMIT 1
+) latest_job ON true
+WHERE d.tenant_id = $1 AND d.kb_id = $2
+  AND d.id > $3 AND d.deleted_at IS NULL
+  AND (d.acl_mode = 'inherit_kb' OR EXISTS (
+    SELECT 1 FROM document_acl a
+    WHERE a.tenant_id = d.tenant_id AND a.kb_id = d.kb_id AND a.document_id = d.id
+      AND (a.subject_type = 'user' AND a.subject_id = $4
+        OR a.subject_type = 'group' AND a.subject_id IN (
+          SELECT gm.group_id FROM user_group_member gm
+          WHERE gm.tenant_id = d.tenant_id AND gm.user_id = $4
+        ))
+  ))
+  AND ($5::text = '' OR d.title ILIKE '%' || $5::text || '%')
+  AND (cardinality($6::text[]) = 0 OR d.tags && $6::text[])
+  AND ($7::text = '' OR v.status = $7::text)
+ORDER BY d.id
+LIMIT $8
+FOR SHARE OF d
+`
+
+type ListVisibleDocumentsFilteredParams struct {
+	TenantID   int64
+	KbID       int64
+	AfterID    int64
+	UserID     int64
+	Query      string
+	Tags       []string
+	Status     string
+	FetchLimit int32
+}
+
+type ListVisibleDocumentsFilteredRow struct {
+	ID               int64
+	Title            string
+	Mime             string
+	CurrentVersionID pgtype.Int8
+	CurrentStatus    string
+	LatestVersionID  int64
+	LatestStatus     string
+	ByteSize         int64
+	FailureCode      pgtype.Text
+	LatestCreatedAt  pgtype.Timestamptz
+	LatestJobID      int64
+	LatestJobStatus  string
+	LatestJobError   pgtype.Text
+	LatestJobMatches bool
+	KbStatus         string
+}
+
+func (q *Queries) ListVisibleDocumentsFiltered(ctx context.Context, arg ListVisibleDocumentsFilteredParams) ([]ListVisibleDocumentsFilteredRow, error) {
+	rows, err := q.db.Query(ctx, listVisibleDocumentsFiltered,
+		arg.TenantID,
+		arg.KbID,
+		arg.AfterID,
+		arg.UserID,
+		arg.Query,
+		arg.Tags,
+		arg.Status,
+		arg.FetchLimit,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListVisibleDocumentsFilteredRow
+	for rows.Next() {
+		var i ListVisibleDocumentsFilteredRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Mime,
+			&i.CurrentVersionID,
+			&i.CurrentStatus,
+			&i.LatestVersionID,
+			&i.LatestStatus,
+			&i.ByteSize,
+			&i.FailureCode,
+			&i.LatestCreatedAt,
+			&i.LatestJobID,
+			&i.LatestJobStatus,
+			&i.LatestJobError,
+			&i.LatestJobMatches,
+			&i.KbStatus,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const lockDocumentForPurgeControl = `-- name: LockDocumentForPurgeControl :one
 SELECT (d.deleted_at IS NOT NULL)::boolean AS deleted
 FROM document d JOIN kb_membership m ON m.tenant_id = d.tenant_id AND m.kb_id = d.kb_id

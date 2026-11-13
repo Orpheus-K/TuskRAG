@@ -74,3 +74,18 @@ FOR SHARE OF s;
 -- name: AuditContentRead :exec
 INSERT INTO audit_log (tenant_id, actor_user_id, action, object_type, object_id, result)
 VALUES (sqlc.arg(tenant_id), sqlc.arg(user_id), sqlc.arg(action), sqlc.arg(object_type), sqlc.arg(object_id), sqlc.arg(result));
+
+-- name: GetChunkLocation :one
+SELECT document_id, section_id, ordinal, version_id
+FROM chunk
+WHERE tenant_id = sqlc.arg(tenant_id) AND id = sqlc.arg(chunk_id);
+
+-- name: ListNeighborChunks :many
+SELECT c.id, c.ordinal, c.kind, c.content, c.page_start, c.page_end, c.token_count
+FROM chunk c
+WHERE c.tenant_id = sqlc.arg(tenant_id) AND c.kb_id = sqlc.arg(kb_id)
+  AND c.document_id = sqlc.arg(document_id) AND c.version_id = sqlc.arg(version_id)
+  AND c.ordinal BETWEEN sqlc.arg(min_ordinal) AND sqlc.arg(max_ordinal)
+  AND c.is_current AND NOT c.disabled
+ORDER BY c.ordinal
+FOR SHARE OF c;

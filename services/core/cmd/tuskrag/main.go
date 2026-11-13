@@ -21,6 +21,7 @@ import (
 	"tuskrag.local/core/internal/identity"
 	"tuskrag.local/core/internal/jobs"
 	"tuskrag.local/core/internal/kb"
+	"tuskrag.local/core/internal/mcpserver"
 	"tuskrag.local/core/internal/models"
 	"tuskrag.local/core/internal/retrieval"
 	"tuskrag.local/core/internal/secrets"
@@ -52,6 +53,14 @@ func run() (resultErr error) {
 	}
 	if len(os.Args) == 2 && os.Args[1] == "openapi" {
 		doc, err := httpapi.OpenAPIJSON()
+		if err != nil {
+			return err
+		}
+		_, err = os.Stdout.Write(doc)
+		return err
+	}
+	if len(os.Args) == 2 && os.Args[1] == "mcp-tools" {
+		doc, err := mcpserver.ToolsJSON()
 		if err != nil {
 			return err
 		}

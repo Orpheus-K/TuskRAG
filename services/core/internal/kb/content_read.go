@@ -32,6 +32,7 @@ type SectionReference struct {
 }
 
 type DocumentContents struct {
+	KbID       int64
 	DocumentID int64
 	VersionID  int64
 	Title      string
@@ -40,12 +41,33 @@ type DocumentContents struct {
 }
 
 type SectionContent struct {
+	KbID       int64
 	DocumentID int64
 	VersionID  int64
 	Title      string
 	Section    SectionReference
 	Markdown   string
 	TokenCount int32
+}
+
+type NeighborChunk struct {
+	ID         int64
+	Ordinal    int32
+	Kind       string
+	Content    string
+	PageStart  *int32
+	PageEnd    *int32
+	TokenCount int32
+	IsTarget   bool
+}
+
+type ChunkNeighbors struct {
+	KbID       int64
+	DocumentID int64
+	VersionID  int64
+	Title      string
+	Section    SectionReference
+	Chunks     []NeighborChunk
 }
 
 type readableDocument struct {
@@ -81,7 +103,7 @@ func (s *Service) DocumentContents(ctx context.Context, actor Actor, documentID 
 	if err != nil {
 		return DocumentContents{}, fmt.Errorf("list document sections: %w", err)
 	}
-	result := DocumentContents{DocumentID: doc.ID, VersionID: doc.VersionID, Title: doc.Title, Sections: make([]SectionReference, 0, min(len(rows), int(limit)))}
+	result := DocumentContents{KbID: doc.KbID, DocumentID: doc.ID, VersionID: doc.VersionID, Title: doc.Title, Sections: make([]SectionReference, 0, min(len(rows), int(limit)))}
 	if len(rows) > int(limit) {
 		rows = rows[:limit]
 		last := rows[len(rows)-1].Ordinal
@@ -166,7 +188,92 @@ func (s *Service) ReadSection(ctx context.Context, actor Actor, sectionID int64)
 	if err := tx.Commit(ctx); err != nil {
 		return SectionContent{}, fmt.Errorf("commit section read: %w", err)
 	}
-	return SectionContent{DocumentID: doc.ID, VersionID: doc.VersionID, Title: doc.Title, Section: ref, Markdown: row.BodyMd, TokenCount: row.TokenCount}, nil
+	return SectionContent{KbID: doc.KbID, DocumentID: doc.ID, VersionID: doc.VersionID, Title: doc.Title, Section: ref, Markdown: row.BodyMd, TokenCount: row.TokenCount}, nil
+}
+
+// GetChunkNeighbors returns bounded neighboring chunks for a visible current chunk.
+func (s *Service) GetChunkNeighbors(ctx context.Context, actor Actor, chunkID int64, before, after int32) (_ ChunkNeighbors, resultErr error) {
+	if chunkID <= 0 || before < 0 || before > 10 || after < 0 || after > 10 {
+		return ChunkNeighbors{}, ErrInvalidRequest
+	}
+	tx, queries, err := s.begin(ctx, actor)
+	if err != nil {
+		return ChunkNeighbors{}, err
+	}
+	defer rollback(tx, &resultErr)
+	loc, err := queries.GetChunkLocation(ctx, dbquery.GetChunkLocationParams{TenantID: actor.TenantID, ChunkID: chunkID})
+	if errors.Is(err, pgx.ErrNoRows) {
+		return ChunkNeighbors{}, denyContentRead(ctx, tx, queries, actor, "chunk.neighbors", "chunk", chunkID)
+	}
+	if err != nil {
+		return ChunkNeighbors{}, fmt.Errorf("find chunk location: %w", err)
+	}
+	doc, err := lockReadableDocument(ctx, queries, actor, loc.DocumentID)
+	if errors.Is(err, ErrNotFound) || doc.VersionID != loc.VersionID {
+		return ChunkNeighbors{}, denyContentRead(ctx, tx, queries, actor, "chunk.neighbors", "chunk", chunkID)
+	}
+	if err != nil {
+		return ChunkNeighbors{}, fmt.Errorf("lock chunk document: %w", err)
+	}
+	if _, err := lockReadableChunks(ctx, queries, actor.TenantID, doc); errors.Is(err, ErrNotFound) {
+		return ChunkNeighbors{}, denyContentRead(ctx, tx, queries, actor, "chunk.neighbors", "chunk", chunkID)
+	} else if err != nil {
+		return ChunkNeighbors{}, err
+	}
+	secRow, err := queries.LockReadableSection(ctx, dbquery.LockReadableSectionParams{
+		TenantID: actor.TenantID, KbID: doc.KbID, DocumentID: doc.ID, VersionID: doc.VersionID, SectionID: loc.SectionID,
+	})
+	if errors.Is(err, pgx.ErrNoRows) {
+		return ChunkNeighbors{}, denyContentRead(ctx, tx, queries, actor, "chunk.neighbors", "chunk", chunkID)
+	}
+	if err != nil {
+		return ChunkNeighbors{}, fmt.Errorf("lock neighbor section: %w", err)
+	}
+	ref, err := makeSectionReference(secRow.ID, secRow.ParentSectionID, secRow.Ordinal, secRow.Level, secRow.Heading, secRow.HeadingPath,
+		secRow.HeadingBytes, secRow.PathBytes, secRow.PageStart, secRow.PageEnd, doc.Mime == "application/pdf")
+	if err != nil {
+		return ChunkNeighbors{}, err
+	}
+	minOrdinal := max(1, loc.Ordinal-before)
+	maxOrdinal := loc.Ordinal + after
+	rows, err := queries.ListNeighborChunks(ctx, dbquery.ListNeighborChunksParams{
+		TenantID: actor.TenantID, KbID: doc.KbID, DocumentID: doc.ID, VersionID: doc.VersionID,
+		MinOrdinal: minOrdinal, MaxOrdinal: maxOrdinal,
+	})
+	if err != nil {
+		return ChunkNeighbors{}, fmt.Errorf("list neighbor chunks: %w", err)
+	}
+	chunks := make([]NeighborChunk, 0, len(rows))
+	var totalBytes int
+	var foundTarget bool
+	for _, row := range rows {
+		totalBytes += len(row.Content)
+		if totalBytes > maxReadBytes {
+			return ChunkNeighbors{}, ErrContentLimit
+		}
+		item := NeighborChunk{
+			ID: row.ID, Ordinal: row.Ordinal, Kind: row.Kind, Content: row.Content,
+			TokenCount: row.TokenCount, IsTarget: row.ID == chunkID,
+		}
+		if item.IsTarget {
+			foundTarget = true
+		}
+		if doc.Mime == "application/pdf" && row.PageStart.Valid && row.PageEnd.Valid {
+			ps, pe := row.PageStart.Int32, row.PageEnd.Int32
+			item.PageStart, item.PageEnd = &ps, &pe
+		}
+		chunks = append(chunks, item)
+	}
+	if !foundTarget {
+		return ChunkNeighbors{}, denyContentRead(ctx, tx, queries, actor, "chunk.neighbors", "chunk", chunkID)
+	}
+	if err := auditContentRead(ctx, queries, actor, "chunk.neighbors", "chunk", chunkID, "allow"); err != nil {
+		return ChunkNeighbors{}, err
+	}
+	if err := tx.Commit(ctx); err != nil {
+		return ChunkNeighbors{}, fmt.Errorf("commit neighbor chunks: %w", err)
+	}
+	return ChunkNeighbors{KbID: doc.KbID, DocumentID: doc.ID, VersionID: doc.VersionID, Title: doc.Title, Section: ref, Chunks: chunks}, nil
 }
 
 func lockReadableDocument(ctx context.Context, queries *dbquery.Queries, actor Actor, documentID int64) (readableDocument, error) {

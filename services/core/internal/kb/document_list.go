@@ -30,8 +30,19 @@ type DocumentPage struct {
 	NextAfter *int64
 }
 
-// ListDocuments returns only documents inheriting access from the knowledge base.
-func (s *Service) ListDocuments(ctx context.Context, actor Actor, kbID, after int64, limit int32) (_ DocumentPage, resultErr error) {
+type DocumentFilter struct {
+	Query  string
+	Tags   []string
+	Status string
+}
+
+// ListDocuments returns only documents visible to the actor in the knowledge base.
+func (s *Service) ListDocuments(ctx context.Context, actor Actor, kbID, after int64, limit int32) (DocumentPage, error) {
+	return s.ListDocumentsFiltered(ctx, actor, kbID, after, limit, DocumentFilter{})
+}
+
+// ListDocumentsFiltered returns visible documents in the knowledge base matching optional filters.
+func (s *Service) ListDocumentsFiltered(ctx context.Context, actor Actor, kbID, after int64, limit int32, filter DocumentFilter) (_ DocumentPage, resultErr error) {
 	if kbID <= 0 || after < 0 || limit < 1 || limit > 100 {
 		return DocumentPage{}, ErrInvalidRequest
 	}
@@ -47,8 +58,13 @@ func (s *Service) ListDocuments(ctx context.Context, actor Actor, kbID, after in
 	if err != nil {
 		return DocumentPage{}, fmt.Errorf("lock document membership: %w", err)
 	}
-	rows, err := queries.ListVisibleDocuments(ctx, dbquery.ListVisibleDocumentsParams{
+	tags := filter.Tags
+	if tags == nil {
+		tags = []string{}
+	}
+	rows, err := queries.ListVisibleDocumentsFiltered(ctx, dbquery.ListVisibleDocumentsFilteredParams{
 		TenantID: actor.TenantID, KbID: kbID, UserID: actor.UserID, AfterID: after, FetchLimit: limit + 1,
+		Query: filter.Query, Tags: tags, Status: filter.Status,
 	})
 	if err != nil {
 		return DocumentPage{}, fmt.Errorf("list documents: %w", err)

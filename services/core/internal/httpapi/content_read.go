@@ -20,6 +20,30 @@ type SectionInput struct {
 	SectionID int64 `path:"section" minimum:"1"`
 }
 
+type ChunkNeighborsInput struct {
+	ChunkID int64 `path:"chunk" minimum:"1"`
+	Before  int32 `query:"before" minimum:"0" maximum:"10" default:"1"`
+	After   int32 `query:"after" minimum:"0" maximum:"10" default:"1"`
+}
+
+type NeighborChunkBody struct {
+	ID         int64  `json:"id"`
+	Ordinal    int32  `json:"ordinal"`
+	Kind       string `json:"kind"`
+	Content    string `json:"content"`
+	Pages      []int32 `json:"pages" nullable:"true"`
+	TokenCount int32  `json:"token_count"`
+	IsTarget   bool   `json:"is_target"`
+}
+
+type ChunkNeighborsOutput struct {
+	Body struct {
+		Document ContentDocumentBody  `json:"document"`
+		Section  SectionReferenceBody `json:"section"`
+		Chunks   []NeighborChunkBody  `json:"chunks" nullable:"false"`
+	}
+}
+
 type ContentDocumentBody struct {
 	ID        int64  `json:"id"`
 	VersionID int64  `json:"version_id"`
@@ -85,6 +109,31 @@ func registerDocumentReader(api huma.API, deps Dependencies) {
 			output.Body.Document = ContentDocumentBody{ID: result.DocumentID, VersionID: result.VersionID, Title: result.Title}
 			output.Body.Section = sectionReferenceBody(result.Section)
 			output.Body.Markdown, output.Body.TokenCount = result.Markdown, result.TokenCount
+			return output, nil
+		})
+	huma.Register(api, huma.Operation{OperationID: "get-chunk-neighbors", Method: http.MethodGet, Path: "/chunks/{chunk}/neighbors"},
+		func(ctx context.Context, input *ChunkNeighborsInput) (*ChunkNeighborsOutput, error) {
+			if deps.Reader == nil {
+				return nil, statusError(ctx, http.StatusServiceUnavailable, "dependency_unavailable", "document reader unavailable", true)
+			}
+			result, err := deps.Reader.GetChunkNeighbors(ctx, currentActor(ctx), input.ChunkID, input.Before, input.After)
+			if err != nil {
+				return nil, contentReadError(ctx, "read chunk neighbors", err)
+			}
+			output := &ChunkNeighborsOutput{}
+			output.Body.Document = ContentDocumentBody{ID: result.DocumentID, VersionID: result.VersionID, Title: result.Title}
+			output.Body.Section = sectionReferenceBody(result.Section)
+			output.Body.Chunks = make([]NeighborChunkBody, 0, len(result.Chunks))
+			for _, ch := range result.Chunks {
+				var pages []int32
+				if ch.PageStart != nil && ch.PageEnd != nil {
+					pages = []int32{*ch.PageStart, *ch.PageEnd}
+				}
+				output.Body.Chunks = append(output.Body.Chunks, NeighborChunkBody{
+					ID: ch.ID, Ordinal: ch.Ordinal, Kind: ch.Kind, Content: ch.Content,
+					Pages: pages, TokenCount: ch.TokenCount, IsTarget: ch.IsTarget,
+				})
+			}
 			return output, nil
 		})
 }

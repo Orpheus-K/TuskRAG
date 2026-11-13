@@ -62,6 +62,36 @@ func (q *Queries) CountReadableSections(ctx context.Context, arg CountReadableSe
 	return column_1, err
 }
 
+const getChunkLocation = `-- name: GetChunkLocation :one
+SELECT document_id, section_id, ordinal, version_id
+FROM chunk
+WHERE tenant_id = $1 AND id = $2
+`
+
+type GetChunkLocationParams struct {
+	TenantID int64
+	ChunkID  int64
+}
+
+type GetChunkLocationRow struct {
+	DocumentID int64
+	SectionID  int64
+	Ordinal    int32
+	VersionID  int64
+}
+
+func (q *Queries) GetChunkLocation(ctx context.Context, arg GetChunkLocationParams) (GetChunkLocationRow, error) {
+	row := q.db.QueryRow(ctx, getChunkLocation, arg.TenantID, arg.ChunkID)
+	var i GetChunkLocationRow
+	err := row.Scan(
+		&i.DocumentID,
+		&i.SectionID,
+		&i.Ordinal,
+		&i.VersionID,
+	)
+	return i, err
+}
+
 const getReadablePlan = `-- name: GetReadablePlan :one
 SELECT section_count, chunk_count FROM ingest_plan
 WHERE tenant_id=$1 AND kb_id=$2
@@ -106,6 +136,71 @@ func (q *Queries) GetSectionDocument(ctx context.Context, arg GetSectionDocument
 	var document_id int64
 	err := row.Scan(&document_id)
 	return document_id, err
+}
+
+const listNeighborChunks = `-- name: ListNeighborChunks :many
+SELECT c.id, c.ordinal, c.kind, c.content, c.page_start, c.page_end, c.token_count
+FROM chunk c
+WHERE c.tenant_id = $1 AND c.kb_id = $2
+  AND c.document_id = $3 AND c.version_id = $4
+  AND c.ordinal BETWEEN $5 AND $6
+  AND c.is_current AND NOT c.disabled
+ORDER BY c.ordinal
+FOR SHARE OF c
+`
+
+type ListNeighborChunksParams struct {
+	TenantID   int64
+	KbID       int64
+	DocumentID int64
+	VersionID  int64
+	MinOrdinal int32
+	MaxOrdinal int32
+}
+
+type ListNeighborChunksRow struct {
+	ID         int64
+	Ordinal    int32
+	Kind       string
+	Content    string
+	PageStart  pgtype.Int4
+	PageEnd    pgtype.Int4
+	TokenCount int32
+}
+
+func (q *Queries) ListNeighborChunks(ctx context.Context, arg ListNeighborChunksParams) ([]ListNeighborChunksRow, error) {
+	rows, err := q.db.Query(ctx, listNeighborChunks,
+		arg.TenantID,
+		arg.KbID,
+		arg.DocumentID,
+		arg.VersionID,
+		arg.MinOrdinal,
+		arg.MaxOrdinal,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListNeighborChunksRow
+	for rows.Next() {
+		var i ListNeighborChunksRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Ordinal,
+			&i.Kind,
+			&i.Content,
+			&i.PageStart,
+			&i.PageEnd,
+			&i.TokenCount,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const listReadableSections = `-- name: ListReadableSections :many

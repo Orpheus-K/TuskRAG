@@ -16,6 +16,7 @@ import (
 	"tuskrag.local/core/internal/eval"
 	"tuskrag.local/core/internal/identity"
 	"tuskrag.local/core/internal/kb"
+	"tuskrag.local/core/internal/mcpserver"
 	"tuskrag.local/core/internal/models"
 	"tuskrag.local/core/internal/retrieval"
 )
@@ -52,6 +53,7 @@ type KnowledgeService interface {
 	List(context.Context, kb.Actor) ([]kb.KnowledgeBase, error)
 	Get(context.Context, kb.Actor, int64) (kb.KnowledgeBase, error)
 	ListDocuments(context.Context, kb.Actor, int64, int64, int32) (kb.DocumentPage, error)
+	ListDocumentsFiltered(context.Context, kb.Actor, int64, int64, int32, kb.DocumentFilter) (kb.DocumentPage, error)
 	Archive(context.Context, kb.Actor, int64) error
 	ListMembers(context.Context, kb.Actor, int64) ([]kb.Member, error)
 	SetMember(context.Context, kb.Actor, int64, int64, kb.Role) error
@@ -89,6 +91,7 @@ type JobControl interface {
 type DocumentReader interface {
 	DocumentContents(context.Context, kb.Actor, int64, int32, int32) (kb.DocumentContents, error)
 	ReadSection(context.Context, kb.Actor, int64) (kb.SectionContent, error)
+	GetChunkNeighbors(context.Context, kb.Actor, int64, int32, int32) (kb.ChunkNeighbors, error)
 }
 
 type ModelCatalog interface {
@@ -188,7 +191,17 @@ func New(deps Dependencies) API {
 	registerWorkspace(api, deps)
 	mux.HandleFunc("/api", apiNotFound)
 	mux.HandleFunc("/api/", apiNotFound)
-	mux.HandleFunc("/mcp", apiNotFound)
+	if deps.APIKeys != nil {
+		mcpHandler := mcpserver.NewServer(mcpserver.Dependencies{
+			APIKeys:   deps.APIKeys,
+			Knowledge: deps.Knowledge,
+			Reader:    deps.Reader,
+			Search:    deps.Search,
+		})
+		mux.Handle("/mcp", mcpHandler)
+	} else {
+		mux.HandleFunc("/mcp", apiNotFound)
+	}
 	mux.HandleFunc("/mcp/", apiNotFound)
 	return API{Handler: withTrace(withSPA(mux)), OpenAPI: api.OpenAPI()}
 }

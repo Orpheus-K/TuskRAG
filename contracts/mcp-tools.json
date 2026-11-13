@@ -1,0 +1,176 @@
+{
+  "schema_version": "1.0",
+  "tools": [
+    {
+      "name": "search",
+      "description": "Hybrid search across authorized knowledge bases; returns ranked evidence with citations.",
+      "inputSchema": {
+        "properties": {
+          "filters": {
+            "properties": {
+              "doc_tags": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "mimes": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "updated_after": {
+                "format": "date-time",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "kb_ids": {
+            "description": "Optional knowledge base IDs; defaults to all authorized knowledge bases in scope.",
+            "items": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "query": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "top_k": {
+            "default": 8,
+            "maximum": 30,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_documents",
+      "description": "List visible documents in a knowledge base with optional title, tag, and status filters.",
+      "inputSchema": {
+        "properties": {
+          "kb_id": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "page": {
+            "description": "Cursor document ID from previous page (0 for first page).",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "query": {
+            "maxLength": 200,
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "partial",
+              "failed",
+              "queued",
+              "parsing",
+              "embedding",
+              "indexing"
+            ],
+            "type": "string"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "kb_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_toc",
+      "description": "Return the table of contents (sections, headings, page ranges) for a visible document.",
+      "inputSchema": {
+        "properties": {
+          "cursor": {
+            "default": 0,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "document_id": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "limit": {
+            "default": 30,
+            "maximum": 50,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "document_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "read_section",
+      "description": "Read the full Markdown content and citation metadata of a document section.",
+      "inputSchema": {
+        "properties": {
+          "max_tokens": {
+            "maximum": 20000,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "section_id": {
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "section_id"
+        ],
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_neighbors",
+      "description": "Read neighboring chunks before and after a target chunk with citation metadata.",
+      "inputSchema": {
+        "properties": {
+          "after": {
+            "default": 1,
+            "maximum": 10,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "before": {
+            "default": 1,
+            "maximum": 10,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "chunk_id": {
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "chunk_id"
+        ],
+        "type": "object"
+      }
+    }
+  ]
+}

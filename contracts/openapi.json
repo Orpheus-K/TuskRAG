@@ -1035,6 +1035,29 @@
         ],
         "type": "object"
       },
+      "ChunkNeighborsOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "chunks": {
+            "items": {
+              "$ref": "#/components/schemas/NeighborChunkBody"
+            },
+            "type": "array"
+          },
+          "document": {
+            "$ref": "#/components/schemas/ContentDocumentBody"
+          },
+          "section": {
+            "$ref": "#/components/schemas/SectionReferenceBody"
+          }
+        },
+        "required": [
+          "document",
+          "section",
+          "chunks"
+        ],
+        "type": "object"
+      },
       "Citation": {
         "additionalProperties": false,
         "properties": {
@@ -2328,6 +2351,52 @@
           "locality",
           "has_credential",
           "created_at"
+        ],
+        "type": "object"
+      },
+      "NeighborChunkBody": {
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "is_target": {
+            "type": "boolean"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "ordinal": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "pages": {
+            "items": {
+              "format": "int32",
+              "type": "integer"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "token_count": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "ordinal",
+          "kind",
+          "content",
+          "pages",
+          "token_count",
+          "is_target"
         ],
         "type": "object"
       },
@@ -5655,6 +5724,74 @@
           }
         ],
         "summary": "Get API v1 chat models"
+      }
+    },
+    "/api/v1/chunks/{chunk}/neighbors": {
+      "get": {
+        "operationId": "get-chunk-neighbors",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "chunk",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "before",
+            "schema": {
+              "default": 1,
+              "format": "int32",
+              "maximum": 10,
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "after",
+            "schema": {
+              "default": 1,
+              "format": "int32",
+              "maximum": 10,
+              "minimum": 0,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChunkNeighborsOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
       }
     },
     "/api/v1/conversations": {

@@ -31,6 +31,15 @@ func (testDocumentReader) ReadSection(_ context.Context, actor kb.Actor, section
 	}, Markdown: "正文", TokenCount: 2}, nil
 }
 
+func (testDocumentReader) GetChunkNeighbors(_ context.Context, actor kb.Actor, chunkID int64, before, after int32) (kb.ChunkNeighbors, error) {
+	if actor.TenantID != 1 || actor.UserID != 2 || chunkID != 10 {
+		return kb.ChunkNeighbors{}, kb.ErrNotFound
+	}
+	return kb.ChunkNeighbors{DocumentID: 7, VersionID: 8, Title: "制度.pdf", Section: kb.SectionReference{
+		ID: 9, Ordinal: 1, Level: 1, Heading: "标题", HeadingPath: []string{"标题"},
+	}, Chunks: []kb.NeighborChunk{{ID: 10, Ordinal: 1, Kind: "text", Content: "正文", TokenCount: 2, IsTarget: true}}}, nil
+}
+
 func TestDocumentReaderUsesSessionAndReturnsCurrentReferences(t *testing.T) {
 	app := New(Dependencies{Identity: uploadTestIdentity{}, Reader: testDocumentReader{}, InsecureLocalCookies: true})
 	request := authenticatedUploadRequest(nil)

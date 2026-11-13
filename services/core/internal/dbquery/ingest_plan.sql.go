@@ -71,17 +71,19 @@ func (q *Queries) InsertIngestPlan(ctx context.Context, arg InsertIngestPlanPara
 
 const insertPlanChunks = `-- name: InsertPlanChunks :execrows
 INSERT INTO chunk (id, tenant_id, kb_id, document_id, version_id, section_id, ordinal, kind,
-                   content, search_text, page_start, page_end, token_count,
+                   content, search_text, lexical_tokens, page_start, page_end, token_count,
                    is_current, disabled, access_tags, doc_tags, doc_mime, doc_updated_at)
 OVERRIDING SYSTEM VALUE
 SELECT item.id, v.tenant_id, v.kb_id, v.document_id, v.id, item.section_id, item.ordinal, item.kind,
-       item.content, item.search_text, item.page_start, item.page_end, item.token_count,
+       item.content, item.search_text,
+       CASE WHEN NULLIF(item.lexical_tokens, '') IS NULL THEN NULL ELSE to_tsvector('simple', item.lexical_tokens) END,
+       item.page_start, item.page_end, item.token_count,
        false, false, ARRAY['kb:' || v.kb_id::text || ':all'], d.tags, d.mime, v.created_at
 FROM document_version v
 JOIN document d ON d.tenant_id = v.tenant_id AND d.kb_id = v.kb_id AND d.id = v.document_id
 CROSS JOIN jsonb_to_recordset($1::jsonb) AS item(
   id bigint, section_id bigint, ordinal integer, kind text, content text, search_text text,
-  page_start integer, page_end integer, token_count integer
+  lexical_tokens text, page_start integer, page_end integer, token_count integer
 )
 WHERE v.tenant_id = $2 AND v.kb_id = $3
   AND v.document_id = $4 AND v.id = $5
