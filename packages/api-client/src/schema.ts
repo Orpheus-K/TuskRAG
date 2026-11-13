@@ -72,6 +72,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/auth-policy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["update-auth-policy"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/chat-models": {
         parameters: {
             query?: never;
@@ -149,6 +165,39 @@ export interface paths {
         put?: never;
         post: operations["test-model-provider"];
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/oidc-providers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 admin oidc providers */
+        get: operations["get-api-v1-admin-oidc-providers"];
+        put?: never;
+        post: operations["create-oidc-provider"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/oidc-providers/{provider}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["delete-oidc-provider"];
         options?: never;
         head?: never;
         patch?: never;
@@ -246,6 +295,57 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["logout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/oidc/callback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 auth oidc callback */
+        get: operations["get-api-v1-auth-oidc-callback"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/oidc/providers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 auth oidc providers */
+        get: operations["get-api-v1-auth-oidc-providers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/oidc/{provider}/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 auth oidc by provider start */
+        get: operations["get-api-v1-auth-oidc-by-provider-start"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1324,6 +1424,15 @@ export interface components {
             locality: "internal" | "external";
             name: string;
         };
+        CreateOIDCProviderInputBody: {
+            client_id: string;
+            client_secret?: string;
+            enabled?: boolean;
+            group_claim?: string;
+            issuer_url: string;
+            name: string;
+            scopes?: string;
+        };
         DeleteDocumentOutputBody: {
             /** @enum {string} */
             status: "deleting";
@@ -1449,8 +1558,14 @@ export interface components {
         "Get-admin-model-providersResponse": {
             items: components["schemas"]["ModelProviderBody"][];
         };
+        "Get-admin-oidc-providersResponse": {
+            items: components["schemas"]["OIDCProviderBody"][];
+        };
         "Get-api-keysResponse": {
             items: components["schemas"]["APIKeyBody"][];
+        };
+        "Get-api-v1-auth-oidc-by-provider-startResponse": {
+            authorize_url: string;
         };
         "Get-chat-modelsResponse": {
             items: components["schemas"]["ChatModel"][];
@@ -1574,6 +1689,21 @@ export interface components {
             model_id: number;
             title: string;
         };
+        OIDCProviderBody: {
+            client_id: string;
+            /** Format: date-time */
+            created_at: string;
+            enabled: boolean;
+            group_claim: string;
+            has_client_secret: boolean;
+            /** Format: int64 */
+            id: number;
+            issuer_url: string;
+            name: string;
+            scopes: string;
+            /** Format: int64 */
+            tenant_id: number;
+        };
         OptionsStruct: {
             debug?: boolean;
             expand_parent?: boolean;
@@ -1587,6 +1717,11 @@ export interface components {
             reachable: boolean;
             /** Format: int64 */
             status_code: number;
+        };
+        PublicOIDCProviderBody: {
+            /** Format: int64 */
+            id: number;
+            name: string;
         };
         PurgeJobBody: {
             /** Format: int32 */
@@ -1943,6 +2078,10 @@ export interface components {
             /** Format: int64 */
             UnanswerableCases: number;
         };
+        TenantAuthPolicyBody: {
+            disable_local_login: boolean;
+            providers: components["schemas"]["PublicOIDCProviderBody"][];
+        };
         TenantEgressPolicyBody: {
             /** @enum {string} */
             egress_policy_max: "deny" | "internal_only" | "allow";
@@ -1963,6 +2102,12 @@ export interface components {
             timings_ms: {
                 [key: string]: number;
             };
+        };
+        "Update-auth-policyResponse": {
+            disable_local_login: boolean;
+        };
+        UpdateAuthPolicyInputBody: {
+            disable_local_login: boolean;
         };
         UpdateModelProviderInputBody: {
             api_key?: string;
@@ -2120,6 +2265,41 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "update-auth-policy": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateAuthPolicyInputBody"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Update-auth-policyResponse"];
+                };
             };
             /** @description Error */
             default: {
@@ -2384,6 +2564,101 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["ProviderConnectivityBody"];
                 };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-admin-oidc-providers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Get-admin-oidc-providersResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "create-oidc-provider": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateOIDCProviderInputBody"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OIDCProviderBody"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "delete-oidc-provider": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+            };
+            path: {
+                provider: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Error */
             default: {
@@ -2699,6 +2974,103 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-auth-oidc-callback": {
+        parameters: {
+            query?: {
+                state?: string;
+                code?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    Location?: string;
+                    "Set-Cookie"?: string;
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-auth-oidc-providers": {
+        parameters: {
+            query?: {
+                tenant_id?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TenantAuthPolicyBody"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-auth-oidc-by-provider-start": {
+        parameters: {
+            query?: {
+                tenant_id?: number;
+                redirect_uri?: string;
+            };
+            header?: never;
+            path: {
+                provider: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Get-api-v1-auth-oidc-by-provider-startResponse"];
+                };
             };
             /** @description Error */
             default: {

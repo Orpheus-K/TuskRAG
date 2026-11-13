@@ -3,14 +3,17 @@ import { Link, Outlet } from "@tanstack/react-router";
 import {
   ApiError,
   getIdentity,
+  getPublicOIDCProviders,
   getReadiness,
   type Identity,
   listKnowledgeBases,
   login,
   logout,
+  startOIDCLogin,
+  type TenantAuthPolicy,
 } from "@tuskrag/api-client";
 import { Button } from "@tuskrag/ui/button";
-import { createContext, type FormEvent, useState } from "react";
+import { createContext, type FormEvent, useEffect, useState } from "react";
 import { ChatModels } from "./ChatModels";
 import { Setup } from "./Setup";
 
@@ -29,6 +32,36 @@ function messageFor(error: unknown): string {
 function LoginForm({ onLogin }: { onLogin: (identity: Identity) => void }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [tenantInput, setTenantInput] = useState("");
+  const [authPolicy, setAuthPolicy] = useState<TenantAuthPolicy | null>(null);
+
+  useEffect(() => {
+    const tid = Number(tenantInput);
+    if (!Number.isSafeInteger(tid) || tid <= 0) {
+      setAuthPolicy(null);
+      return;
+    }
+    const controller = new AbortController();
+    void getPublicOIDCProviders(controller.signal, tid)
+      .then((res) => setAuthPolicy(res))
+      .catch(() => setAuthPolicy(null));
+    return () => controller.abort();
+  }, [tenantInput]);
+
+  async function onSSO(providerId: number) {
+    const tid = Number(tenantInput);
+    if (!Number.isSafeInteger(tid) || tid <= 0) return;
+    setBusy(true);
+    setError("");
+    try {
+      const redirectUri = `${window.location.origin}/api/v1/auth/oidc/callback`;
+      const authorizeUrl = await startOIDCLogin(providerId, tid, redirectUri);
+      window.location.assign(authorizeUrl);
+    } catch (cause) {
+      setError(messageFor(cause));
+      setBusy(false);
+    }
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -86,9 +119,34 @@ function LoginForm({ onLogin }: { onLogin: (identity: Identity) => void }) {
             step="1"
             inputMode="numeric"
             autoComplete="off"
+            value={tenantInput}
+            onChange={(e) => setTenantInput(e.target.value)}
             required
           />
         </div>
+        {authPolicy && Array.isArray(authPolicy.providers) && authPolicy.providers.length > 0 ? (
+          <div className="space-y-2 border-b pb-4">
+            <p className="text-xs text-muted-foreground">企业单点登录（OIDC）</p>
+            <div className="flex flex-wrap gap-2">
+              {authPolicy.providers.map((p) => (
+                <Button
+                  key={p.id}
+                  type="button"
+                  variant="outline"
+                  disabled={busy}
+                  onClick={() => void onSSO(p.id)}
+                >
+                  使用 {p.name} 登录
+                </Button>
+              ))}
+            </div>
+          </div>
+        ) : null}
+        {authPolicy?.disable_local_login ? (
+          <p className="text-sm text-muted-foreground">
+            该租户已禁用本地密码登录，请使用上方企业 SSO 登录。
+          </p>
+        ) : null}
         <div className="space-y-2">
           <label className="text-sm font-medium" htmlFor="login">
             账号

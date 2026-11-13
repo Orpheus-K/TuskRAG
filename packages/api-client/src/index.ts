@@ -6,6 +6,7 @@ export * from "./answer";
 export * from "./apikeys";
 export * from "./answer_eval";
 export * from "./members";
+export * from "./oidc";
 
 export type Identity = components["schemas"]["IdentityBody"];
 export type Login = components["schemas"]["LoginInputBody"];

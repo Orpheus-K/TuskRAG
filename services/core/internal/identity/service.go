@@ -19,11 +19,13 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"tuskrag.local/core/internal/dbquery"
+	"tuskrag.local/core/internal/secrets"
 )
 
 var (
-	ErrUnauthenticated = errors.New("invalid credentials or session")
-	ErrTenantExists    = errors.New("tenant name already exists")
+	ErrUnauthenticated    = errors.New("invalid credentials or session")
+	ErrTenantExists       = errors.New("tenant name already exists")
+	ErrLocalLoginDisabled = errors.New("local login is disabled for this tenant")
 )
 
 type Principal struct {
@@ -54,6 +56,7 @@ type Service struct {
 	hasher *PasswordHasher
 	config SessionConfig
 	dummy  string
+	vault  *secrets.Vault
 }
 
 func NewService(pool *pgxpool.Pool, hasher *PasswordHasher, config SessionConfig) (*Service, error) {
@@ -130,6 +133,17 @@ func (s *Service) Login(ctx context.Context, tenantID int64, login string, passw
 	tenantExists, err := queries.IdentityTenantExists(ctx, tenantID)
 	if err != nil {
 		return Session{}, fmt.Errorf("check login tenant: %w", err)
+	}
+	if tenantExists {
+		policy, err := queries.GetTenantAuthPolicy(ctx, tenantID)
+		if err != nil {
+			return Session{}, fmt.Errorf("check tenant auth policy: %w", err)
+		}
+		if policy.DisableLocalLogin && policy.HasEnabledOidc {
+			_ = audit(ctx, queries, Principal{TenantID: tenantID}, "auth.login.local_disabled", 0, "deny")
+			_ = tx.Commit(ctx)
+			return Session{}, ErrLocalLoginDisabled
+		}
 	}
 	row, lookupErr := queries.LookupLocalAccount(ctx, dbquery.LookupLocalAccountParams{TenantID: tenantID, Login: login})
 	if lookupErr != nil && !errors.Is(lookupErr, pgx.ErrNoRows) {

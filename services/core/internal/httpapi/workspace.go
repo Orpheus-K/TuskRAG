@@ -129,6 +129,9 @@ func registerWorkspace(api huma.API, deps Dependencies) {
 		if errors.Is(err, identity.ErrUnauthenticated) {
 			return nil, statusError(ctx, http.StatusUnauthorized, "unauthenticated", "invalid credentials", false)
 		}
+		if errors.Is(err, identity.ErrLocalLoginDisabled) {
+			return nil, statusError(ctx, http.StatusForbidden, "local_login_disabled", "local login is disabled for this tenant", false)
+		}
 		if err != nil {
 			return nil, operationError(ctx, "login", err)
 		}
@@ -247,6 +250,7 @@ func registerWorkspace(api huma.API, deps Dependencies) {
 	registerGovernanceACL(protected, deps)
 	registerAPIKeys(protected, deps)
 	registerAuditAndTenantPolicy(protected, deps)
+	registerOIDC(api, protected, deps)
 	registerEvalReports(protected, deps)
 	registerAnswerEvalReports(protected, deps)
 	registerEvalSets(protected, deps)

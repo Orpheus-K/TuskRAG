@@ -387,6 +387,42 @@ type ModelProvider struct {
 	ApiKeyCiphertext []byte
 }
 
+type OidcAuthState struct {
+	State        string
+	TenantID     int64
+	ProviderID   int64
+	CodeVerifier string
+	Nonce        string
+	RedirectUri  string
+	ExpiresAt    pgtype.Timestamptz
+	CreatedAt    pgtype.Timestamptz
+}
+
+type OidcIdentity struct {
+	TenantID    int64
+	ProviderID  int64
+	Issuer      string
+	Subject     string
+	UserID      int64
+	CreatedAt   pgtype.Timestamptz
+	LastLoginAt pgtype.Timestamptz
+}
+
+type OidcProvider struct {
+	ID                     int64
+	TenantID               int64
+	Name                   string
+	IssuerUrl              string
+	ClientID               string
+	ClientSecretID         pgtype.Text
+	ClientSecretNonce      []byte
+	ClientSecretCiphertext []byte
+	Scopes                 string
+	GroupClaim             string
+	Enabled                bool
+	CreatedAt              pgtype.Timestamptz
+}
+
 type ParseArtifact struct {
 	TenantID       int64
 	KbID           int64
@@ -417,10 +453,11 @@ type Section struct {
 }
 
 type Tenant struct {
-	ID              int64
-	Name            string
-	CreatedAt       pgtype.Timestamptz
-	EgressPolicyMax string
+	ID                int64
+	Name              string
+	CreatedAt         pgtype.Timestamptz
+	EgressPolicyMax   string
+	DisableLocalLogin bool
 }
 
 type UserGroup struct {

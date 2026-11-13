@@ -4,21 +4,27 @@ import {
   ApiError,
   type AuditLogEntry,
   createModelProvider,
+  createOIDCProvider,
   deleteModelProvider,
+  deleteOIDCProvider,
   exportAuditLogs,
+  getPublicOIDCProviders,
   getTenantEgressPolicy,
   type Identity,
   listAuditLogs,
   listModelProviders,
+  listOIDCProviders,
   type ModelProvider,
+  type OIDCProvider,
   type ProviderConnectivity,
   testModelProvider,
+  updateAuthPolicy,
   updateModelProvider,
   updateTenantEgressPolicy,
 } from "@tuskrag/api-client";
 
 export function AdminGovernancePage({ identity }: { identity: Identity }) {
-  const [tab, setTab] = useState<"audit" | "providers" | "egress">("audit");
+  const [tab, setTab] = useState<"audit" | "providers" | "egress" | "sso">("audit");
   const [error, setError] = useState("");
   const [forbidden, setForbidden] = useState(false);
 
@@ -40,6 +46,15 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
   // Tenant egress policy
   const [egressMax, setEgressMax] = useState<"deny" | "internal_only" | "allow">("deny");
   const [egressSaved, setEgressSaved] = useState(false);
+
+  // OIDC SSO
+  const [oidcProviders, setOidcProviders] = useState<OIDCProvider[]>([]);
+  const [disableLocalLogin, setDisableLocalLogin] = useState(false);
+  const [oidcName, setOidcName] = useState("");
+  const [oidcIssuer, setOidcIssuer] = useState("");
+  const [oidcClientId, setOidcClientId] = useState("");
+  const [oidcClientSecret, setOidcClientSecret] = useState("");
+  const [oidcGroupClaim, setOidcGroupClaim] = useState("groups");
 
   const handleErr = useCallback((cause: unknown) => {
     if (cause instanceof ApiError && cause.status === 403) {
@@ -89,11 +104,27 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
     }
   }, [handleErr]);
 
+  const loadSSO = useCallback(async () => {
+    setError("");
+    const controller = new AbortController();
+    try {
+      const [items, pub] = await Promise.all([
+        listOIDCProviders(controller.signal),
+        getPublicOIDCProviders(controller.signal, identity.tenant_id),
+      ]);
+      setOidcProviders(items);
+      setDisableLocalLogin(pub.disable_local_login);
+    } catch (cause) {
+      handleErr(cause);
+    }
+  }, [identity.tenant_id, handleErr]);
+
   useEffect(() => {
     if (tab === "audit") void loadLogs();
     if (tab === "providers") void loadProviders();
     if (tab === "egress") void loadEgress();
-  }, [tab, loadLogs, loadProviders, loadEgress]);
+    if (tab === "sso") void loadSSO();
+  }, [tab, loadLogs, loadProviders, loadEgress, loadSSO]);
 
   async function onExport(format: "jsonl" | "csv") {
     setError("");
@@ -216,6 +247,13 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
           onClick={() => setTab("egress")}
         >
           租户出域上限
+        </button>
+        <button
+          type="button"
+          className={`rounded-md px-3 py-1.5 text-sm font-medium ${tab === "sso" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+          onClick={() => setTab("sso")}
+        >
+          身份源（OIDC）
         </button>
       </div>
 
@@ -452,6 +490,133 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
           </button>
           {egressSaved ? <p className="text-xs text-emerald-700">已更新租户出域上限。</p> : null}
         </form>
+      ) : null}
+
+      {!forbidden && tab === "sso" ? (
+        <div className="mt-6 space-y-6">
+          <div className="flex items-center justify-between rounded-md border border-border p-4">
+            <div>
+              <div className="font-medium">禁用本地密码登录</div>
+              <p className="text-xs text-muted-foreground">
+                启用后仅允许通过已启用的 OIDC 身份源登录（需至少保留一个已启用的 OIDC 提供方）。
+              </p>
+            </div>
+            <button
+              type="button"
+              className="h-9 rounded-md border border-border px-4 text-sm font-medium"
+              onClick={() => {
+                void (async () => {
+                  setError("");
+                  try {
+                    const res = await updateAuthPolicy(identity.csrf_token, !disableLocalLogin);
+                    setDisableLocalLogin(res.disable_local_login);
+                  } catch (cause) {
+                    handleErr(cause);
+                  }
+                })();
+              }}
+            >
+              {disableLocalLogin ? "已禁用本地登录（点击恢复）" : "已允许本地登录（点击禁用）"}
+            </button>
+          </div>
+
+          <form
+            className="grid gap-3 rounded-md border border-border p-4 sm:grid-cols-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              void (async () => {
+                setError("");
+                try {
+                  await createOIDCProvider(identity.csrf_token, {
+                    name: oidcName.trim(),
+                    issuer_url: oidcIssuer.trim(),
+                    client_id: oidcClientId.trim(),
+                    ...(oidcClientSecret.trim() ? { client_secret: oidcClientSecret.trim() } : {}),
+                    group_claim: oidcGroupClaim.trim() || "groups",
+                    enabled: true,
+                  });
+                  setOidcName("");
+                  setOidcIssuer("");
+                  setOidcClientId("");
+                  setOidcClientSecret("");
+                  await loadSSO();
+                } catch (cause) {
+                  handleErr(cause);
+                }
+              })();
+            }}
+          >
+            <input
+              className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+              placeholder="身份源名称（如 Corp SSO）"
+              value={oidcName}
+              onChange={(e) => setOidcName(e.target.value)}
+              required
+            />
+            <input
+              className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+              placeholder="Issuer URL（https://idp.example.com）"
+              value={oidcIssuer}
+              onChange={(e) => setOidcIssuer(e.target.value)}
+              required
+            />
+            <input
+              className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+              placeholder="Client ID"
+              value={oidcClientId}
+              onChange={(e) => setOidcClientId(e.target.value)}
+              required
+            />
+            <input
+              className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+              type="password"
+              placeholder="Client Secret（PKCE 公开客户端可留空）"
+              value={oidcClientSecret}
+              onChange={(e) => setOidcClientSecret(e.target.value)}
+            />
+            <input
+              className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+              placeholder="组声明字段（默认 groups）"
+              value={oidcGroupClaim}
+              onChange={(e) => setOidcGroupClaim(e.target.value)}
+            />
+            <button type="submit" className="h-9 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">
+              添加 OIDC 身份源
+            </button>
+          </form>
+
+          <div className="space-y-2">
+            {oidcProviders.map((p) => (
+              <div key={p.id} className="flex items-center justify-between rounded-md border border-border p-4">
+                <div>
+                  <div className="font-medium">
+                    {p.name} <span className="ml-2 rounded bg-muted px-2 py-0.5 text-xs">claim: {p.group_claim}</span>
+                  </div>
+                  <div className="mt-1 font-mono text-xs text-muted-foreground">
+                    {p.issuer_url} · client: {p.client_id}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  className="h-8 rounded-md border border-destructive/40 px-3 text-xs text-destructive"
+                  onClick={() => {
+                    void (async () => {
+                      setError("");
+                      try {
+                        await deleteOIDCProvider(identity.csrf_token, p.id);
+                        await loadSSO();
+                      } catch (cause) {
+                        handleErr(cause);
+                      }
+                    })();
+                  }}
+                >
+                  删除
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
       ) : null}
     </section>
   );

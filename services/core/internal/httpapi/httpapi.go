@@ -111,6 +111,16 @@ type AuditService interface {
 	UpdateTenantEgressPolicy(context.Context, identity.Principal, string) (string, error)
 }
 
+type OIDCService interface {
+	GetTenantAuthPolicy(context.Context, int64) (identity.TenantAuthPolicy, error)
+	SetDisableLocalLogin(context.Context, identity.Principal, bool) (bool, error)
+	ListOIDCProviders(context.Context, identity.Principal) ([]identity.OIDCProvider, error)
+	CreateOIDCProvider(context.Context, identity.Principal, identity.CreateOIDCProviderRequest) (identity.OIDCProvider, error)
+	DeleteOIDCProvider(context.Context, identity.Principal, int64) error
+	StartOIDCLogin(context.Context, int64, int64, string) (string, error)
+	CompleteOIDCLogin(context.Context, string, string) (identity.Session, error)
+}
+
 type SearchService interface {
 	Search(context.Context, retrieval.Actor, retrieval.Request) (retrieval.Result, error)
 }
@@ -128,6 +138,7 @@ type Dependencies struct {
 	Identity             IdentityService
 	APIKeys              APIKeyService
 	Audit                AuditService
+	OIDC                 OIDCService
 	Knowledge            KnowledgeService
 	Config               ConfigService
 	Documents            DocumentService
