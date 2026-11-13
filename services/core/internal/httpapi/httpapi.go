@@ -40,6 +40,13 @@ type IdentityService interface {
 	Logout(context.Context, string) error
 }
 
+type APIKeyService interface {
+	CreateAPIKey(context.Context, identity.Principal, identity.CreateAPIKeyRequest) (identity.CreatedAPIKey, error)
+	ListAPIKeys(context.Context, identity.Principal) ([]identity.APIKey, error)
+	RevokeAPIKey(context.Context, identity.Principal, int64) error
+	AuthenticateAPIKey(context.Context, string, string) (identity.AuthenticatedAPIKey, error)
+}
+
 type KnowledgeService interface {
 	Create(context.Context, kb.Actor, kb.CreateRequest) (kb.KnowledgeBase, error)
 	List(context.Context, kb.Actor) ([]kb.KnowledgeBase, error)
@@ -104,6 +111,7 @@ type Dependencies struct {
 	EvalRuns             EvalRunService
 	Check                func(context.Context) error
 	Identity             IdentityService
+	APIKeys              APIKeyService
 	Knowledge            KnowledgeService
 	Config               ConfigService
 	Documents            DocumentService

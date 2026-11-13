@@ -2,6 +2,7 @@ import type { components, paths } from "./schema";
 
 export * from "./acl";
 export * from "./answer";
+export * from "./apikeys";
 export * from "./answer_eval";
 export * from "./members";
 

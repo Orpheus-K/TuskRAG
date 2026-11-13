@@ -47,11 +47,38 @@ type AnswerMessage struct {
 	Deadline          pgtype.Timestamptz
 }
 
+type ApiKey struct {
+	ID                int64
+	TenantID          int64
+	UserID            int64
+	Name              string
+	Prefix            string
+	SecretHash        []byte
+	KbIds             []int64
+	Actions           []string
+	IpAllowlist       []string
+	RateLimitRpm      int32
+	MonthlyTokenQuota int64
+	ExpiresAt         pgtype.Timestamptz
+	RevokedAt         pgtype.Timestamptz
+	LastUsedAt        pgtype.Timestamptz
+	CreatedAt         pgtype.Timestamptz
+}
+
+type ApiKeyUsageMonthly struct {
+	TenantID   int64
+	ApiKeyID   int64
+	MonthKey   string
+	TokensUsed int64
+	UpdatedAt  pgtype.Timestamptz
+}
+
 type AppUser struct {
 	ID          int64
 	TenantID    int64
 	DisplayName string
 	CreatedAt   pgtype.Timestamptz
+	Disabled    bool
 }
 
 type AuditLog struct {

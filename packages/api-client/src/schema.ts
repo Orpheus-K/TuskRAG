@@ -87,6 +87,39 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/api-keys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 API keys */
+        get: operations["get-api-v1-api-keys"];
+        put?: never;
+        post: operations["create-api-key"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/api-keys/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["revoke-api-key"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/login": {
         parameters: {
             query?: never;
@@ -827,6 +860,29 @@ export interface components {
             /** @enum {string} */
             type: "user" | "group";
         };
+        APIKeyBody: {
+            actions: string[];
+            /** Format: date-time */
+            created_at: string;
+            /** Format: date-time */
+            expires_at?: string;
+            /** Format: int64 */
+            id: number;
+            ip_allowlist: string[];
+            kb_ids: number[];
+            /** Format: date-time */
+            last_used_at?: string;
+            /** Format: int64 */
+            month_tokens_used: number;
+            /** Format: int64 */
+            monthly_token_quota: number;
+            name: string;
+            prefix: string;
+            /** Format: int32 */
+            rate_limit_rpm: number;
+            /** Format: date-time */
+            revoked_at?: string;
+        };
         "Answer-feedbackResponse": {
             status: string;
         };
@@ -1102,6 +1158,22 @@ export interface components {
             /** Format: int64 */
             next_cursor: number | null;
         };
+        CreateAPIKeyInputBody: {
+            actions: string[] | null;
+            /** Format: date-time */
+            expires_at?: string;
+            ip_allowlist?: string[] | null;
+            kb_ids?: number[] | null;
+            /** Format: int64 */
+            monthly_token_quota?: number;
+            name: string;
+            /** Format: int32 */
+            rate_limit_rpm?: number;
+        };
+        CreateAPIKeyOutputBody: {
+            key: components["schemas"]["APIKeyBody"];
+            plaintext: string;
+        };
         CreateEmbeddingSpaceInputBody: {
             api_key?: string;
             base_url: string;
@@ -1243,6 +1315,9 @@ export interface components {
             doc_tags?: string[] | null;
             mimes?: string[] | null;
             updated_after?: string;
+        };
+        "Get-api-keysResponse": {
+            items: components["schemas"]["APIKeyBody"][];
         };
         "Get-chat-modelsResponse": {
             items: components["schemas"]["ChatModel"][];
@@ -1999,6 +2074,101 @@ export interface operations {
                         retry?: number;
                     })[];
                 };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-api-keys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Get-api-keysResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "create-api-key": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateAPIKeyInputBody"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateAPIKeyOutputBody"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "revoke-api-key": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+            };
+            path: {
+                key: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Error */
             default: {

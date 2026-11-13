@@ -182,13 +182,21 @@ export function Workspace({ identity }: { identity: Identity }) {
             查看你有权访问的知识库。
           </p>
         </div>
-        <Button
-          variant="outline"
-          onClick={() => void signOut()}
-          disabled={loggingOut}
-        >
-          {loggingOut ? "正在退出" : "退出登录"}
-        </Button>
+        <div className="flex items-center gap-3">
+          <Link
+            className="inline-flex h-9 items-center justify-center rounded-md border border-border bg-background px-4 py-2 text-sm font-medium shadow-sm hover:bg-muted"
+            to="/api-keys"
+          >
+            API Key 管理
+          </Link>
+          <Button
+            variant="outline"
+            onClick={() => void signOut()}
+            disabled={loggingOut}
+          >
+            {loggingOut ? "正在退出" : "退出登录"}
+          </Button>
+        </div>
       </div>
       {error && (
         <p className="mt-5 text-sm text-muted-foreground" role="alert">

@@ -481,7 +481,18 @@ const answerEvalCompareRoute = createRoute({
     );
   },
 });
+const apiKeysRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "api-keys",
+  component: () => {
+    const identity = useContext(IdentityContext);
+    if (!identity) throw new Error("authenticated identity is required");
+    return <APIKeysPage identity={identity} />;
+  },
+});
+
 const routeTree = rootRoute.addChildren([
+  apiKeysRoute,
   answerRoute,
   answerEvalRoute,
   answerEvalCompareRoute,
@@ -509,6 +520,7 @@ declare module "@tanstack/react-router" {
 }
 
 import { AnswerEvaluation } from "./AnswerEvaluation";
+import { APIKeysPage } from "./APIKeys";
 import { AnswerEvaluationCompare } from "./AnswerEvaluationCompare";
 import { AnswerPage } from "./Answer";
 import { EvaluationHistory } from "./EvaluationHistory";

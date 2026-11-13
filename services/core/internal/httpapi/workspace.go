@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/danielgtaylor/huma/v2"
@@ -244,6 +245,7 @@ func registerWorkspace(api huma.API, deps Dependencies) {
 	registerKnowledgeConfig(protected, deps)
 	registerKnowledgeMembers(protected, deps)
 	registerGovernanceACL(protected, deps)
+	registerAPIKeys(protected, deps)
 	registerEvalReports(protected, deps)
 	registerAnswerEvalReports(protected, deps)
 	registerEvalSets(protected, deps)
@@ -260,6 +262,45 @@ func requireSession(api huma.API, deps Dependencies) func(huma.Context, func(hum
 			return
 		}
 		req, _ := humago.Unwrap(ctx)
+		if auth := req.Header.Get("Authorization"); strings.HasPrefix(auth, "Bearer ") {
+			rawKey := strings.TrimSpace(strings.TrimPrefix(auth, "Bearer "))
+			keySvc := resolveAPIKeyService(deps)
+			if keySvc == nil {
+				_ = huma.WriteErr(api, ctx, http.StatusServiceUnavailable, "api key service unavailable")
+				return
+			}
+			authKey, err := keySvc.AuthenticateAPIKey(ctx.Context(), rawKey, clientIP(req))
+			switch {
+			case errors.Is(err, identity.ErrUnauthenticated):
+				_ = huma.WriteErr(api, ctx, http.StatusUnauthorized, "authentication required")
+				return
+			case errors.Is(err, identity.ErrAPIKeyForbidden):
+				_ = huma.WriteErr(api, ctx, http.StatusForbidden, "api key forbidden")
+				return
+			case errors.Is(err, identity.ErrAPIKeyRateLimited):
+				ctx.SetHeader("Retry-After", "60")
+				_ = huma.WriteErr(api, ctx, http.StatusTooManyRequests, "rate limit exceeded")
+				return
+			case errors.Is(err, identity.ErrAPIKeyQuotaExceeded):
+				ctx.SetHeader("X-Quota-Type", "monthly_tokens")
+				_ = huma.WriteErr(api, ctx, http.StatusTooManyRequests, "monthly token quota exceeded")
+				return
+			case err != nil:
+				slog.Error("authenticate api key", "trace_id", ctx.Context().Value(traceKey{}), "error", err)
+				_ = huma.WriteErr(api, ctx, http.StatusServiceUnavailable, "identity unavailable")
+				return
+			}
+			kbID, action, allowedPath := requestScopeForAPIKey(ctx.Method(), req.URL.Path)
+			if !allowedPath || !identity.AuthorizeAPIKeyScope(authKey, kbID, action) {
+				_ = huma.WriteErr(api, ctx, http.StatusForbidden, "api key scope denied")
+				return
+			}
+			if req.Header.Get("X-CSRF-Token") == "" {
+				req.Header.Set("X-CSRF-Token", "api-key")
+			}
+			next(huma.WithValue(ctx, sessionKey{}, requestSession{session: identity.Session{Principal: authKey.Principal}}))
+			return
+		}
 		cookie, err := req.Cookie(cookieName(deps.InsecureLocalCookies))
 		if err != nil {
 			if err := huma.WriteErr(api, ctx, http.StatusUnauthorized, "authentication required"); err != nil {
