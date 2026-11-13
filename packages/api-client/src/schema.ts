@@ -38,6 +38,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/audit-logs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 admin audit logs */
+        get: operations["get-api-v1-admin-audit-logs"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/audit-logs/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 admin audit logs export */
+        get: operations["get-api-v1-admin-audit-logs-export"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/chat-models": {
         parameters: {
             query?: never;
@@ -65,6 +99,72 @@ export interface paths {
         get: operations["get-api-v1-admin-embedding-spaces"];
         put?: never;
         post: operations["create-embedding-space"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/model-providers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 admin model providers */
+        get: operations["get-api-v1-admin-model-providers"];
+        put?: never;
+        post: operations["create-model-provider"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/model-providers/{provider}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["update-model-provider"];
+        post?: never;
+        delete: operations["delete-model-provider"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/model-providers/{provider}/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["test-model-provider"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/tenant-egress": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 admin tenant egress */
+        get: operations["get-api-v1-admin-tenant-egress"];
+        put: operations["update-tenant-egress"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1059,6 +1159,26 @@ export interface components {
             /** Format: int64 */
             unanswerable_cases: number;
         };
+        AuditLogEntryBody: {
+            action: string;
+            actor_name: string;
+            /** Format: int64 */
+            actor_user_id: number;
+            /** Format: date-time */
+            created_at: string;
+            details: unknown;
+            /** Format: int64 */
+            id: number;
+            new_role?: string;
+            /** Format: int64 */
+            object_id: number;
+            object_type: string;
+            result: string;
+            /** Format: int64 */
+            target_user_id?: number;
+            /** Format: int64 */
+            tenant_id: number;
+        };
         CancelRebuildOutputBody: {
             /** @enum {string} */
             status: "cancelled";
@@ -1197,6 +1317,13 @@ export interface components {
             embedding_space_id: number;
             name: string;
         };
+        CreateModelProviderInputBody: {
+            api_key?: string;
+            base_url: string;
+            /** @enum {string} */
+            locality: "internal" | "external";
+            name: string;
+        };
         DeleteDocumentOutputBody: {
             /** @enum {string} */
             status: "deleting";
@@ -1316,6 +1443,12 @@ export interface components {
             mimes?: string[] | null;
             updated_after?: string;
         };
+        "Get-admin-audit-logsResponse": {
+            items: components["schemas"]["AuditLogEntryBody"][];
+        };
+        "Get-admin-model-providersResponse": {
+            items: components["schemas"]["ModelProviderBody"][];
+        };
         "Get-api-keysResponse": {
             items: components["schemas"]["APIKeyBody"][];
         };
@@ -1416,6 +1549,16 @@ export interface components {
             /** Format: double */
             RecallAt20: number;
         };
+        ModelProviderBody: {
+            base_url: string;
+            /** Format: date-time */
+            created_at: string;
+            has_credential: boolean;
+            /** Format: int64 */
+            id: number;
+            locality: string;
+            name: string;
+        };
         NewChatModel: {
             api_key?: string;
             base_url: string;
@@ -1436,6 +1579,14 @@ export interface components {
             expand_parent?: boolean;
             rerank?: boolean;
             reranker?: components["schemas"]["RerankOptions"];
+        };
+        ProviderConnectivityBody: {
+            /** Format: int64 */
+            latency_ms: number;
+            message: string;
+            reachable: boolean;
+            /** Format: int64 */
+            status_code: number;
         };
         PurgeJobBody: {
             /** Format: int32 */
@@ -1792,6 +1943,10 @@ export interface components {
             /** Format: int64 */
             UnanswerableCases: number;
         };
+        TenantEgressPolicyBody: {
+            /** @enum {string} */
+            egress_policy_max: "deny" | "internal_only" | "allow";
+        };
         TenantUserBody: {
             /** Format: date-time */
             created_at: string;
@@ -1808,6 +1963,13 @@ export interface components {
             timings_ms: {
                 [key: string]: number;
             };
+        };
+        UpdateModelProviderInputBody: {
+            api_key?: string;
+            base_url: string;
+            /** @enum {string} */
+            locality: "internal" | "external";
+            name: string;
         };
         UploadedDocumentBody: {
             /** Format: int64 */
@@ -1885,6 +2047,79 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["HealthBody"];
                 };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-admin-audit-logs": {
+        parameters: {
+            query?: {
+                action?: string;
+                actor_user_id?: number;
+                object_type?: string;
+                result?: string;
+                from?: string;
+                to?: string;
+                before_id?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Get-admin-audit-logsResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-admin-audit-logs-export": {
+        parameters: {
+            query?: {
+                action?: string;
+                actor_user_id?: number;
+                object_type?: string;
+                result?: string;
+                from?: string;
+                to?: string;
+                format?: "jsonl" | "csv";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Error */
             default: {
@@ -1983,6 +2218,235 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EmbeddingSpaceBody"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-admin-model-providers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Get-admin-model-providersResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "create-model-provider": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateModelProviderInputBody"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelProviderBody"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "update-model-provider": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+            };
+            path: {
+                provider: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateModelProviderInputBody"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelProviderBody"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "delete-model-provider": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+            };
+            path: {
+                provider: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "test-model-provider": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+            };
+            path: {
+                provider: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProviderConnectivityBody"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-admin-tenant-egress": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TenantEgressPolicyBody"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "update-tenant-egress": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TenantEgressPolicyBody"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TenantEgressPolicyBody"];
                 };
             };
             /** @description Error */

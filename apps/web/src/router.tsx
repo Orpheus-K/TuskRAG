@@ -490,8 +490,18 @@ const apiKeysRoute = createRoute({
     return <APIKeysPage identity={identity} />;
   },
 });
+const adminRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "admin",
+  component: () => {
+    const identity = useContext(IdentityContext);
+    if (!identity) throw new Error("authenticated identity is required");
+    return <AdminGovernancePage identity={identity} />;
+  },
+});
 
 const routeTree = rootRoute.addChildren([
+  adminRoute,
   apiKeysRoute,
   answerRoute,
   answerEvalRoute,
@@ -519,6 +529,7 @@ declare module "@tanstack/react-router" {
   }
 }
 
+import { AdminGovernancePage } from "./AdminGovernance";
 import { AnswerEvaluation } from "./AnswerEvaluation";
 import { APIKeysPage } from "./APIKeys";
 import { AnswerEvaluationCompare } from "./AnswerEvaluationCompare";

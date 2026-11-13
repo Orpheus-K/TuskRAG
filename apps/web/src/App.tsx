@@ -185,6 +185,12 @@ export function Workspace({ identity }: { identity: Identity }) {
         <div className="flex items-center gap-3">
           <Link
             className="inline-flex h-9 items-center justify-center rounded-md border border-border bg-background px-4 py-2 text-sm font-medium shadow-sm hover:bg-muted"
+            to="/admin"
+          >
+            平台治理
+          </Link>
+          <Link
+            className="inline-flex h-9 items-center justify-center rounded-md border border-border bg-background px-4 py-2 text-sm font-medium shadow-sm hover:bg-muted"
             to="/api-keys"
           >
             API Key 管理

@@ -75,6 +75,25 @@ func (q *Queries) AuditModelAction(ctx context.Context, arg AuditModelActionPara
 	return err
 }
 
+const countModelProviderReferences = `-- name: CountModelProviderReferences :one
+SELECT (
+  (SELECT count(*) FROM embedding_space e WHERE e.tenant_id = $1 AND e.provider_id = $2) +
+  (SELECT count(*) FROM chat_model c WHERE c.tenant_id = $1 AND c.provider_id = $2)
+)::bigint AS ref_count
+`
+
+type CountModelProviderReferencesParams struct {
+	TenantID   int64
+	ProviderID int64
+}
+
+func (q *Queries) CountModelProviderReferences(ctx context.Context, arg CountModelProviderReferencesParams) (int64, error) {
+	row := q.db.QueryRow(ctx, countModelProviderReferences, arg.TenantID, arg.ProviderID)
+	var ref_count int64
+	err := row.Scan(&ref_count)
+	return ref_count, err
+}
+
 const createEmbeddingSpace = `-- name: CreateEmbeddingSpace :one
 INSERT INTO embedding_space (tenant_id, provider_id, model, dims, normalized, distance)
 VALUES ($1, $2, $3, $4, $5, $6)
@@ -128,6 +147,62 @@ func (q *Queries) CreateModelProvider(ctx context.Context, arg CreateModelProvid
 	return id, err
 }
 
+const deleteModelProvider = `-- name: DeleteModelProvider :execrows
+DELETE FROM model_provider
+WHERE tenant_id = $1 AND id = $2
+`
+
+type DeleteModelProviderParams struct {
+	TenantID   int64
+	ProviderID int64
+}
+
+func (q *Queries) DeleteModelProvider(ctx context.Context, arg DeleteModelProviderParams) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteModelProvider, arg.TenantID, arg.ProviderID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
+
+const getModelProvider = `-- name: GetModelProvider :one
+SELECT id, name, base_url, locality, api_key_id, api_key_nonce, api_key_ciphertext, created_at
+FROM model_provider
+WHERE tenant_id = $1 AND id = $2
+`
+
+type GetModelProviderParams struct {
+	TenantID   int64
+	ProviderID int64
+}
+
+type GetModelProviderRow struct {
+	ID               int64
+	Name             string
+	BaseUrl          string
+	Locality         string
+	ApiKeyID         pgtype.Text
+	ApiKeyNonce      []byte
+	ApiKeyCiphertext []byte
+	CreatedAt        pgtype.Timestamptz
+}
+
+func (q *Queries) GetModelProvider(ctx context.Context, arg GetModelProviderParams) (GetModelProviderRow, error) {
+	row := q.db.QueryRow(ctx, getModelProvider, arg.TenantID, arg.ProviderID)
+	var i GetModelProviderRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.BaseUrl,
+		&i.Locality,
+		&i.ApiKeyID,
+		&i.ApiKeyNonce,
+		&i.ApiKeyCiphertext,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const listEmbeddingSpaces = `-- name: ListEmbeddingSpaces :many
 SELECT s.id, s.provider_id, p.name AS provider_name, p.base_url, p.locality, s.model, s.dims, s.normalized, s.distance,
   (p.api_key_ciphertext IS NOT NULL)::boolean AS has_credential
@@ -168,6 +243,49 @@ func (q *Queries) ListEmbeddingSpaces(ctx context.Context, tenantID int64) ([]Li
 			&i.Normalized,
 			&i.Distance,
 			&i.HasCredential,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listModelProviders = `-- name: ListModelProviders :many
+SELECT id, name, base_url, locality, (api_key_ciphertext IS NOT NULL)::boolean AS has_credential, created_at
+FROM model_provider
+WHERE tenant_id = $1
+ORDER BY id
+`
+
+type ListModelProvidersRow struct {
+	ID            int64
+	Name          string
+	BaseUrl       string
+	Locality      string
+	HasCredential bool
+	CreatedAt     pgtype.Timestamptz
+}
+
+func (q *Queries) ListModelProviders(ctx context.Context, tenantID int64) ([]ListModelProvidersRow, error) {
+	rows, err := q.db.Query(ctx, listModelProviders, tenantID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListModelProvidersRow
+	for rows.Next() {
+		var i ListModelProvidersRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.BaseUrl,
+			&i.Locality,
+			&i.HasCredential,
+			&i.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -297,4 +415,32 @@ func (q *Queries) SetModelProviderCredential(ctx context.Context, arg SetModelPr
 		arg.ProviderID,
 	)
 	return err
+}
+
+const updateModelProvider = `-- name: UpdateModelProvider :execrows
+UPDATE model_provider
+SET name = $1, base_url = $2, locality = $3
+WHERE tenant_id = $4 AND id = $5
+`
+
+type UpdateModelProviderParams struct {
+	Name       string
+	BaseUrl    string
+	Locality   string
+	TenantID   int64
+	ProviderID int64
+}
+
+func (q *Queries) UpdateModelProvider(ctx context.Context, arg UpdateModelProviderParams) (int64, error) {
+	result, err := q.db.Exec(ctx, updateModelProvider,
+		arg.Name,
+		arg.BaseUrl,
+		arg.Locality,
+		arg.TenantID,
+		arg.ProviderID,
+	)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
 }

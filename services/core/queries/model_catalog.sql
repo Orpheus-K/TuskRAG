@@ -44,3 +44,29 @@ FROM app_user u
 JOIN knowledge_base k ON k.tenant_id = u.tenant_id AND k.id = sqlc.arg(kb_id)
 JOIN model_provider p ON p.tenant_id = u.tenant_id AND p.id = sqlc.arg(provider_id)
 WHERE u.tenant_id = sqlc.arg(tenant_id) AND u.id = sqlc.arg(user_id);
+
+-- name: ListModelProviders :many
+SELECT id, name, base_url, locality, (api_key_ciphertext IS NOT NULL)::boolean AS has_credential, created_at
+FROM model_provider
+WHERE tenant_id = sqlc.arg(tenant_id)
+ORDER BY id;
+
+-- name: GetModelProvider :one
+SELECT id, name, base_url, locality, api_key_id, api_key_nonce, api_key_ciphertext, created_at
+FROM model_provider
+WHERE tenant_id = sqlc.arg(tenant_id) AND id = sqlc.arg(provider_id);
+
+-- name: UpdateModelProvider :execrows
+UPDATE model_provider
+SET name = sqlc.arg(name), base_url = sqlc.arg(base_url), locality = sqlc.arg(locality)
+WHERE tenant_id = sqlc.arg(tenant_id) AND id = sqlc.arg(provider_id);
+
+-- name: DeleteModelProvider :execrows
+DELETE FROM model_provider
+WHERE tenant_id = sqlc.arg(tenant_id) AND id = sqlc.arg(provider_id);
+
+-- name: CountModelProviderReferences :one
+SELECT (
+  (SELECT count(*) FROM embedding_space e WHERE e.tenant_id = sqlc.arg(tenant_id) AND e.provider_id = sqlc.arg(provider_id)) +
+  (SELECT count(*) FROM chat_model c WHERE c.tenant_id = sqlc.arg(tenant_id) AND c.provider_id = sqlc.arg(provider_id))
+)::bigint AS ref_count;

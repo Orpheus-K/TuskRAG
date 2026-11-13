@@ -2,6 +2,14 @@
 
 ## 当前快照（2026-11-13）
 
+- **M3-4 审计日志检索导出、模型供应商 CRUD/连通性测试与租户出域上限闭环完成（R15、R16）**：
+  - **数据与服务**：新增迁移 [00031_audit_log_index.sql](../services/core/internal/db/migrations/00031_audit_log_index.sql)（`audit_log` 租户时间/动作索引，[db.go](../services/core/internal/db/db.go) `SchemaVersion = 31`）；新增 [audit_logs.sql](../services/core/queries/audit_logs.sql) 与 [identity/audit.go](../services/core/internal/identity/audit.go)（管理员审计日志多维分页检索、JSONL/CSV 导出并写 `audit.export` 自审计、租户 `egress_policy_max` 读写并审计）；扩展 [model_catalog.sql](../services/core/queries/model_catalog.sql) 与 [models/providers.go](../services/core/internal/models/providers.go)（模型供应商列表、创建、更新、引用保护删除与 `/models` 5s 连通性探测）。
+  - **接口、契约与控制台**：新增 [httpapi/audit.go](../services/core/internal/httpapi/audit.go) 与扩展 [httpapi/models.go](../services/core/internal/httpapi/models.go)（`/api/v1/admin/audit-logs`、`/admin/audit-logs/export`、`/admin/tenant-egress`、`/admin/model-providers` 及 `/test`），同步更新 [openapi.json](../contracts/openapi.json) 与 [admin.ts](../packages/api-client/src/admin.ts)；新增 [AdminGovernance.tsx](../apps/web/src/AdminGovernance.tsx)（路由 `/admin`）。
+  - **实测证据**：
+    - 本地：`go vet ./...`、`go test -p 1 -count=1 ./internal/identity ./internal/models ./internal/httpapi ./cmd/tuskrag`、`pnpm typecheck`、`pnpm test:web`（18 文件 121 项，含 `AdminGovernance.test.tsx`）与 `pnpm build:web` 全部通过（注：本地 Windows `biome` 仍因系统退出码 `3221225794` 无法启动）。
+    - 云端 `test-host.invalid`（隔离 `tuskrag-postgres:verify` PG17）：31 项迁移全绿、`TestAuditLogsAndTenantEgressPolicyPostgres`（0.15s）与 `TestModelProviderCRUDAndConnectivityPostgres`（0.15s）PASS；`<db-port>_IS_CLEAN`、`CGROUP_IS_CLEAN`。
+  - **下一步**：推进 M3-5（通用 OIDC Authorization Code + PKCE、`sub`+`iss` 映射、组声明同步、禁用本地登录开关及 M3 退出并发/安全回归 T08—T10、T20、V04—V06、V11）。
+
 - **M3-3 API Key 管理、Bearer 鉴权、限速与月度 Token 配额闭环完成（R14、T10、V06）**：
   - **数据与服务**：新增迁移 [00030_api_keys.sql](../services/core/internal/db/migrations/00030_api_keys.sql)（`app_user.disabled`、`api_key`、`api_key_usage_monthly`、`resolve_api_key_tenant` + RLS + `tuskrag_app` 权限，[db.go](../services/core/internal/db/db.go) `SchemaVersion = 30`）；新增 [api_keys.sql](../services/core/queries/api_keys.sql) 与 [apikey.go](../services/core/internal/identity/apikey.go)（`tsk_<8>_<32>` 生成与 SHA-256 哈希、KB/动作范围校验、CIDR IP 白名单、滑动窗口 RPM 限速、月度 Token 配额与吊销）。
   - **接口、契约与控制台**：在 [httpapi/apikeys.go](../services/core/internal/httpapi/apikeys.go) 与 [workspace.go](../services/core/internal/httpapi/workspace.go) 开放 `/api/v1/api-keys`（`GET`/`POST`/`DELETE`）及 Bearer `tsk_` 鉴权（401/403/429 + `Retry-After: 60` / `X-Quota-Type: monthly_tokens`，并修复 Bearer 请求免除 Cookie CSRF 头绑定）；同步更新 [openapi.json](../contracts/openapi.json) 与 [apikeys.ts](../packages/api-client/src/apikeys.ts)；新增 [APIKeys.tsx](../apps/web/src/APIKeys.tsx)（路由 `/api-keys`，含新建明文一次性复制、用量进度与吊销）。

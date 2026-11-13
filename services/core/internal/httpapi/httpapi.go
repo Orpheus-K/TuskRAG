@@ -96,6 +96,21 @@ type ModelCatalog interface {
 	ListSpaces(context.Context, int64, int64) ([]models.Space, error)
 }
 
+type ModelProviderCatalog interface {
+	ListProviders(context.Context, int64, int64) ([]models.ProviderRecord, error)
+	CreateProvider(context.Context, int64, int64, models.ProviderInput) (models.ProviderRecord, error)
+	UpdateProvider(context.Context, int64, int64, int64, models.ProviderInput) (models.ProviderRecord, error)
+	DeleteProvider(context.Context, int64, int64, int64) error
+	TestProviderConnectivity(context.Context, int64, int64, int64) (models.ProviderConnectivityResult, error)
+}
+
+type AuditService interface {
+	ListAuditLogs(context.Context, identity.Principal, identity.AuditLogFilter) ([]identity.AuditLogEntry, error)
+	ExportAuditLogs(context.Context, identity.Principal, identity.AuditLogFilter, string) ([]byte, string, error)
+	GetTenantEgressPolicy(context.Context, identity.Principal) (string, error)
+	UpdateTenantEgressPolicy(context.Context, identity.Principal, string) (string, error)
+}
+
 type SearchService interface {
 	Search(context.Context, retrieval.Actor, retrieval.Request) (retrieval.Result, error)
 }
@@ -112,12 +127,14 @@ type Dependencies struct {
 	Check                func(context.Context) error
 	Identity             IdentityService
 	APIKeys              APIKeyService
+	Audit                AuditService
 	Knowledge            KnowledgeService
 	Config               ConfigService
 	Documents            DocumentService
 	Jobs                 JobControl
 	Reader               DocumentReader
 	Models               ModelCatalog
+	ModelProviders       ModelProviderCatalog
 	Search               SearchService
 	InsecureLocalCookies bool
 }
