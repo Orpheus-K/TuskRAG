@@ -212,6 +212,84 @@ func (q *Queries) GetVisibleKnowledgeBase(ctx context.Context, arg GetVisibleKno
 	return i, err
 }
 
+const listKnowledgeBaseMembers = `-- name: ListKnowledgeBaseMembers :many
+SELECT m.user_id, u.display_name, m.role, m.created_at
+FROM kb_membership m
+JOIN app_user u ON u.tenant_id = m.tenant_id AND u.id = m.user_id
+WHERE m.tenant_id = $1 AND m.kb_id = $2
+ORDER BY m.user_id
+`
+
+type ListKnowledgeBaseMembersParams struct {
+	TenantID int64
+	KbID     int64
+}
+
+type ListKnowledgeBaseMembersRow struct {
+	UserID      int64
+	DisplayName string
+	Role        string
+	CreatedAt   pgtype.Timestamptz
+}
+
+func (q *Queries) ListKnowledgeBaseMembers(ctx context.Context, arg ListKnowledgeBaseMembersParams) ([]ListKnowledgeBaseMembersRow, error) {
+	rows, err := q.db.Query(ctx, listKnowledgeBaseMembers, arg.TenantID, arg.KbID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListKnowledgeBaseMembersRow
+	for rows.Next() {
+		var i ListKnowledgeBaseMembersRow
+		if err := rows.Scan(
+			&i.UserID,
+			&i.DisplayName,
+			&i.Role,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listTenantUsers = `-- name: ListTenantUsers :many
+SELECT id, display_name, created_at
+FROM app_user
+WHERE tenant_id = $1
+ORDER BY id
+`
+
+type ListTenantUsersRow struct {
+	ID          int64
+	DisplayName string
+	CreatedAt   pgtype.Timestamptz
+}
+
+func (q *Queries) ListTenantUsers(ctx context.Context, tenantID int64) ([]ListTenantUsersRow, error) {
+	rows, err := q.db.Query(ctx, listTenantUsers, tenantID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListTenantUsersRow
+	for rows.Next() {
+		var i ListTenantUsersRow
+		if err := rows.Scan(&i.ID, &i.DisplayName, &i.CreatedAt); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listVisibleKnowledgeBases = `-- name: ListVisibleKnowledgeBases :many
 SELECT k.id, k.tenant_id, k.name, k.embedding_space_id, k.config_revision, k.egress_policy, k.status, k.created_at, m.role
 FROM knowledge_base k JOIN kb_membership m ON m.tenant_id = k.tenant_id AND m.kb_id = k.id
@@ -357,6 +435,46 @@ func (q *Queries) ResolveEmbeddingScope(ctx context.Context, arg ResolveEmbeddin
 		&i.KbID,
 		&i.EgressPolicy,
 		&i.EgressPolicyMax,
+	)
+	return i, err
+}
+
+const setKnowledgeBaseEgressPolicy = `-- name: SetKnowledgeBaseEgressPolicy :one
+UPDATE knowledge_base
+SET egress_policy = $1
+WHERE tenant_id = $2 AND id = $3 AND status = 'active'
+RETURNING id, tenant_id, name, embedding_space_id, config_revision, egress_policy, status, created_at
+`
+
+type SetKnowledgeBaseEgressPolicyParams struct {
+	EgressPolicy string
+	TenantID     int64
+	KbID         int64
+}
+
+type SetKnowledgeBaseEgressPolicyRow struct {
+	ID               int64
+	TenantID         int64
+	Name             string
+	EmbeddingSpaceID int64
+	ConfigRevision   int32
+	EgressPolicy     string
+	Status           string
+	CreatedAt        pgtype.Timestamptz
+}
+
+func (q *Queries) SetKnowledgeBaseEgressPolicy(ctx context.Context, arg SetKnowledgeBaseEgressPolicyParams) (SetKnowledgeBaseEgressPolicyRow, error) {
+	row := q.db.QueryRow(ctx, setKnowledgeBaseEgressPolicy, arg.EgressPolicy, arg.TenantID, arg.KbID)
+	var i SetKnowledgeBaseEgressPolicyRow
+	err := row.Scan(
+		&i.ID,
+		&i.TenantID,
+		&i.Name,
+		&i.EmbeddingSpaceID,
+		&i.ConfigRevision,
+		&i.EgressPolicy,
+		&i.Status,
+		&i.CreatedAt,
 	)
 	return i, err
 }

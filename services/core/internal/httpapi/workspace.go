@@ -242,6 +242,7 @@ func registerWorkspace(api huma.API, deps Dependencies) {
 	registerAnswers(protected, deps)
 	registerConversations(protected, deps)
 	registerKnowledgeConfig(protected, deps)
+	registerKnowledgeMembers(protected, deps)
 	registerEvalReports(protected, deps)
 	registerAnswerEvalReports(protected, deps)
 	registerEvalSets(protected, deps)
@@ -336,6 +337,8 @@ func knowledgeError(ctx context.Context, action string, err error) error {
 		return statusError(ctx, http.StatusConflict, "knowledge_base_archived", "knowledge base is archived", false)
 	case errors.Is(err, kb.ErrInvalidRequest):
 		return statusError(ctx, http.StatusBadRequest, "invalid_request", "invalid knowledge base request", false)
+	case errors.Is(err, kb.ErrLastOwner):
+		return statusError(ctx, http.StatusConflict, "last_owner", "knowledge base must retain an owner", false)
 	case errors.Is(err, models.ErrEgressDenied):
 		return statusError(ctx, http.StatusUnprocessableEntity, "egress_denied", "tenant egress policy denies this setting", false)
 	default:

@@ -18,6 +18,7 @@ import { Button } from "@tuskrag/ui/button";
 import { type FormEvent, useRef, useState } from "react";
 import type { PreviewTarget } from "./DocumentPreview";
 import { KnowledgeConfigPanel } from "./KnowledgeConfig";
+import { KnowledgeMembersPanel } from "./KnowledgeMembers";
 import { Preview } from "./Preview";
 import { SearchTrace } from "./SearchTrace";
 
@@ -425,6 +426,7 @@ export function KnowledgeDetail({
         {base.data.name}
       </h1>
       <KnowledgeConfigPanel identity={identity} base={base.data} />
+      <KnowledgeMembersPanel identity={identity} base={base.data} />
       {(base.data.role === "owner" || base.data.role === "admin") && (
         <Link
           className="mt-4 mr-5 inline-block text-sm underline"

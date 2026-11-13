@@ -46,6 +46,11 @@ type KnowledgeService interface {
 	Get(context.Context, kb.Actor, int64) (kb.KnowledgeBase, error)
 	ListDocuments(context.Context, kb.Actor, int64, int64, int32) (kb.DocumentPage, error)
 	Archive(context.Context, kb.Actor, int64) error
+	ListMembers(context.Context, kb.Actor, int64) ([]kb.Member, error)
+	SetMember(context.Context, kb.Actor, int64, int64, kb.Role) error
+	RemoveMember(context.Context, kb.Actor, int64, int64) error
+	ListTenantUsers(context.Context, kb.Actor) ([]kb.TenantUser, error)
+	SetEgressPolicy(context.Context, kb.Actor, int64, models.EgressPolicy) (kb.KnowledgeBase, error)
 }
 
 type DocumentService interface {

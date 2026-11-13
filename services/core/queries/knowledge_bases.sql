@@ -66,3 +66,22 @@ DELETE FROM kb_membership WHERE tenant_id = sqlc.arg(tenant_id) AND kb_id = sqlc
 
 -- name: ArchiveKnowledgeBase :exec
 UPDATE knowledge_base SET status = 'archived' WHERE tenant_id = sqlc.arg(tenant_id) AND id = sqlc.arg(kb_id);
+
+-- name: ListKnowledgeBaseMembers :many
+SELECT m.user_id, u.display_name, m.role, m.created_at
+FROM kb_membership m
+JOIN app_user u ON u.tenant_id = m.tenant_id AND u.id = m.user_id
+WHERE m.tenant_id = sqlc.arg(tenant_id) AND m.kb_id = sqlc.arg(kb_id)
+ORDER BY m.user_id;
+
+-- name: ListTenantUsers :many
+SELECT id, display_name, created_at
+FROM app_user
+WHERE tenant_id = sqlc.arg(tenant_id)
+ORDER BY id;
+
+-- name: SetKnowledgeBaseEgressPolicy :one
+UPDATE knowledge_base
+SET egress_policy = sqlc.arg(egress_policy)
+WHERE tenant_id = sqlc.arg(tenant_id) AND id = sqlc.arg(kb_id) AND status = 'active'
+RETURNING id, tenant_id, name, embedding_space_id, config_revision, egress_policy, status, created_at;

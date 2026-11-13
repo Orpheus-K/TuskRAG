@@ -62,6 +62,19 @@ type CreateRequest struct {
 	IdempotencyKey   string
 }
 
+type Member struct {
+	UserID      int64
+	DisplayName string
+	Role        Role
+	CreatedAt   time.Time
+}
+
+type TenantUser struct {
+	ID          int64
+	DisplayName string
+	CreatedAt   time.Time
+}
+
 type Service struct{ pool *pgxpool.Pool }
 
 func NewService(pool *pgxpool.Pool) (*Service, error) {
@@ -304,9 +317,125 @@ func (s *Service) Archive(ctx context.Context, actor Actor, kbID int64) (resultE
 
 func (s *Service) SetMember(ctx context.Context, actor Actor, kbID, userID int64, role Role) error {
 	if !validRole(role) {
-		return errors.New("invalid knowledge base role")
+		return ErrInvalidRequest
 	}
 	return s.changeMember(ctx, actor, kbID, userID, &role)
+}
+
+func (s *Service) ListMembers(ctx context.Context, actor Actor, kbID int64) (_ []Member, resultErr error) {
+	if kbID <= 0 {
+		return nil, ErrInvalidRequest
+	}
+	tx, queries, err := s.begin(ctx, actor)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback(tx, &resultErr)
+	if err := requireOwner(ctx, queries, actor, kbID); err != nil {
+		if errors.Is(err, ErrNotFound) || errors.Is(err, ErrForbidden) {
+			return nil, deny(ctx, tx, queries, actor, kbID, 0, "", "kb.member.list", err)
+		}
+		return nil, err
+	}
+	rows, err := queries.ListKnowledgeBaseMembers(ctx, dbquery.ListKnowledgeBaseMembersParams{TenantID: actor.TenantID, KbID: kbID})
+	if err != nil {
+		return nil, fmt.Errorf("list knowledge base members: %w", err)
+	}
+	members := make([]Member, 0, len(rows))
+	for _, row := range rows {
+		members = append(members, Member{
+			UserID:      row.UserID,
+			DisplayName: row.DisplayName,
+			Role:        Role(row.Role),
+			CreatedAt:   row.CreatedAt.Time,
+		})
+	}
+	if err := tx.Commit(ctx); err != nil {
+		return nil, fmt.Errorf("commit knowledge base member listing: %w", err)
+	}
+	return members, nil
+}
+
+func (s *Service) ListTenantUsers(ctx context.Context, actor Actor) (_ []TenantUser, resultErr error) {
+	tx, queries, err := s.begin(ctx, actor)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback(tx, &resultErr)
+	exists, err := queries.UserExists(ctx, dbquery.UserExistsParams{TenantID: actor.TenantID, UserID: actor.UserID})
+	if err != nil {
+		return nil, fmt.Errorf("check actor: %w", err)
+	}
+	if !exists {
+		return nil, ErrNotFound
+	}
+	rows, err := queries.ListTenantUsers(ctx, actor.TenantID)
+	if err != nil {
+		return nil, fmt.Errorf("list tenant users: %w", err)
+	}
+	users := make([]TenantUser, 0, len(rows))
+	for _, row := range rows {
+		users = append(users, TenantUser{
+			ID:          row.ID,
+			DisplayName: row.DisplayName,
+			CreatedAt:   row.CreatedAt.Time,
+		})
+	}
+	if err := tx.Commit(ctx); err != nil {
+		return nil, fmt.Errorf("commit tenant user listing: %w", err)
+	}
+	return users, nil
+}
+
+func (s *Service) SetEgressPolicy(ctx context.Context, actor Actor, kbID int64, policy models.EgressPolicy) (_ KnowledgeBase, resultErr error) {
+	if kbID <= 0 {
+		return KnowledgeBase{}, ErrInvalidRequest
+	}
+	if _, err := models.PolicyWithin(models.Allow, policy); err != nil {
+		return KnowledgeBase{}, ErrInvalidRequest
+	}
+	tx, queries, err := s.begin(ctx, actor)
+	if err != nil {
+		return KnowledgeBase{}, err
+	}
+	defer rollback(tx, &resultErr)
+	if err := requireOwner(ctx, queries, actor, kbID); err != nil {
+		if errors.Is(err, ErrNotFound) || errors.Is(err, ErrForbidden) {
+			return KnowledgeBase{}, deny(ctx, tx, queries, actor, kbID, 0, "", "kb.egress_policy.set", err)
+		}
+		return KnowledgeBase{}, err
+	}
+	tenantPolicy, err := queries.TenantEgressPolicy(ctx, actor.TenantID)
+	if err != nil {
+		return KnowledgeBase{}, fmt.Errorf("read tenant egress policy: %w", err)
+	}
+	within, err := models.PolicyWithin(models.EgressPolicy(tenantPolicy), policy)
+	if err != nil {
+		return KnowledgeBase{}, fmt.Errorf("check tenant egress policy: %w", err)
+	}
+	if !within {
+		return KnowledgeBase{}, deny(ctx, tx, queries, actor, kbID, 0, "", "kb.egress_policy.set", models.ErrEgressDenied)
+	}
+	updated, err := queries.SetKnowledgeBaseEgressPolicy(ctx, dbquery.SetKnowledgeBaseEgressPolicyParams{
+		TenantID: actor.TenantID, KbID: kbID, EgressPolicy: string(policy),
+	})
+	if errors.Is(err, pgx.ErrNoRows) {
+		return KnowledgeBase{}, deny(ctx, tx, queries, actor, kbID, 0, "", "kb.egress_policy.set", ErrArchived)
+	}
+	if err != nil {
+		return KnowledgeBase{}, fmt.Errorf("set knowledge base egress policy: %w", err)
+	}
+	if err := audit(ctx, queries, actor, kbID, 0, "", "kb.egress_policy.set", "allow"); err != nil {
+		return KnowledgeBase{}, err
+	}
+	if err := tx.Commit(ctx); err != nil {
+		return KnowledgeBase{}, fmt.Errorf("commit knowledge base egress policy: %w", err)
+	}
+	return KnowledgeBase{
+		ID: updated.ID, TenantID: updated.TenantID, Name: updated.Name, EmbeddingSpaceID: updated.EmbeddingSpaceID,
+		ConfigRevision: updated.ConfigRevision, EgressPolicy: models.EgressPolicy(updated.EgressPolicy),
+		Status: updated.Status, CreatedAt: updated.CreatedAt.Time, Role: Owner,
+	}, nil
 }
 
 func (s *Service) RemoveMember(ctx context.Context, actor Actor, kbID, userID int64) error {

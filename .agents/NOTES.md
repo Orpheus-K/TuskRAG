@@ -2,6 +2,14 @@
 
 ## 当前快照（2026-11-13）
 
+- **M3-1 知识库成员管理与出域策略配置闭环完成（R13、R16）**：
+  - **后端与契约**：在 [knowledge_bases.sql](../services/core/queries/knowledge_bases.sql) 与 [service.go](../services/core/internal/kb/service.go) 新增 `ListMembers`、`ListTenantUsers`、`SetEgressPolicy`（含 `owner` 鉴权、租户 `egress_policy_max` 约束与审计）；在 [members.go](../services/core/internal/httpapi/members.go) 与 [workspace.go](../services/core/internal/httpapi/workspace.go) 开放 `/api/v1/tenant/users`、`/api/v1/kbs/{kb}/members`（`GET`/`PUT`/`DELETE`，映射 `last_owner` 409）与 `/api/v1/kbs/{kb}/egress-policy`（`PUT`），同步导出 [openapi.json](../contracts/openapi.json) 与 [members.ts](../packages/api-client/src/members.ts)。
+  - **控制台**：新增 [KnowledgeMembers.tsx](../apps/web/src/KnowledgeMembers.tsx) 并在 [Knowledge.tsx](../apps/web/src/Knowledge.tsx) 挂载（仅 `owner` 可见），支持知识库出域策略更新、成员角色修改、移除（含 `last_owner` 提示）与添加租户用户。
+  - **实测证据**：
+    - 本地：`go vet ./...`、`go test -p 1 -count=1 ./internal/kb ./internal/httpapi ./cmd/tuskrag`、`pnpm typecheck`、`pnpm test:web`（15 文件 117 项，含新增 `KnowledgeMembers.test.tsx`）与 `pnpm build:web` 全部通过（注：本地 Windows `biome` 返回系统退出码 `3221225794`，待 Linux 环境补跑）。
+    - 云端 `test-host.invalid`（隔离 `tuskrag-postgres:verify` PG17）：28 项迁移全绿、`TestMembersAndEgressPolicyPostgres`（0.08s）与 `httpapi.test` 全包 PASS；`<db-port>_IS_CLEAN`、`CGROUP_IS_CLEAN`。
+  - **下一步**：推进 M3-2（用户组 `user_group`、文档级 ACL `inherit_kb`/`restricted`、`access_tags` 刷新与出库复核）。
+
 - **真实大模型 E6 消融评测与 `SchemaVersion = 28` 修复完成**：
   - **缺陷修复与测试补充**：修复 [db.go](../services/core/internal/db/db.go) 中 `SchemaVersion` 仍为 `27` 导致 `indexing.Provision` 校验 v28 数据库失败的问题（已升至 `28`）；在 [answer_r07_eval_integration_test.go](../services/core/internal/ingest/answer_r07_eval_integration_test.go) 新增 `TestRealLLMContextAssemblyAndE6GenerationEvalPostgres`（由 `TUSKRAG_TEST_CHAT_CONFIG` 门控）。
   - **实测结果（见 [2026-11-13-e6-real-llm-ablation.md](../docs/eval-reports/2026-11-13-e6-real-llm-ablation.md)）**：

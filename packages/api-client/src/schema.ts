@@ -385,6 +385,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/kbs/{kb}/egress-policy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["set-knowledge-base-egress-policy"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/kbs/{kb}/eval-report-comparison": {
         parameters: {
             query?: never;
@@ -538,6 +554,39 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/kbs/{kb}/members": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 kbs by kb members */
+        get: operations["get-api-v1-kbs-by-kb-members"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kbs/{kb}/members/{user}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["set-knowledge-base-member"];
+        post?: never;
+        delete: operations["remove-knowledge-base-member"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/kbs/{kb}/purge-jobs": {
         parameters: {
             query?: never;
@@ -660,6 +709,23 @@ export interface paths {
             cookie?: never;
         };
         get: operations["read-section"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tenant/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 tenant users */
+        get: operations["get-api-v1-tenant-users"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1080,8 +1146,14 @@ export interface components {
         "Get-chat-modelsResponse": {
             items: components["schemas"]["ChatModel"][];
         };
+        "Get-kbs-by-kb-membersResponse": {
+            items: components["schemas"]["KnowledgeBaseMemberBody"][];
+        };
         "Get-kbsResponse": {
             items: components["schemas"]["KnowledgeBaseBody"][];
+        };
+        "Get-tenant-usersResponse": {
+            items: components["schemas"]["TenantUserBody"][];
         };
         HealthBody: {
             status: string;
@@ -1125,6 +1197,14 @@ export interface components {
             name: string;
             role: string;
             status: string;
+        };
+        KnowledgeBaseMemberBody: {
+            /** Format: date-time */
+            created_at: string;
+            display_name: string;
+            role: string;
+            /** Format: int64 */
+            user_id: number;
         };
         KnowledgeConfig: {
             retrieval?: components["schemas"]["RetrievalConfig"];
@@ -1446,6 +1526,14 @@ export interface components {
             cases: components["schemas"]["CaseDefinition"][] | null;
             name: string;
         };
+        SetKnowledgeBaseEgressPolicyInputBody: {
+            /** @enum {string} */
+            egress_policy: "deny" | "internal_only" | "allow";
+        };
+        SetKnowledgeBaseMemberInputBody: {
+            /** @enum {string} */
+            role: "owner" | "admin" | "editor" | "viewer";
+        };
         SetListItem: {
             /** Format: int32 */
             case_count: number;
@@ -1509,6 +1597,13 @@ export interface components {
             Metrics: components["schemas"]["Metrics"] | null;
             /** Format: int64 */
             UnanswerableCases: number;
+        };
+        TenantUserBody: {
+            /** Format: date-time */
+            created_at: string;
+            display_name: string;
+            /** Format: int64 */
+            id: number;
         };
         Trace: {
             candidates: components["schemas"]["Candidate"][] | null;
@@ -2667,6 +2762,43 @@ export interface operations {
             };
         };
     };
+    "set-knowledge-base-egress-policy": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+            };
+            path: {
+                kb: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetKnowledgeBaseEgressPolicyInputBody"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KnowledgeBaseBody"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
     "get-api-v1-kbs-by-kb-eval-report-comparison": {
         parameters: {
             query: {
@@ -3126,6 +3258,105 @@ export interface operations {
             };
         };
     };
+    "get-api-v1-kbs-by-kb-members": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                kb: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Get-kbs-by-kb-membersResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "set-knowledge-base-member": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+            };
+            path: {
+                kb: number;
+                user: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetKnowledgeBaseMemberInputBody"];
+            };
+        };
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "remove-knowledge-base-member": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+            };
+            path: {
+                kb: number;
+                user: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
     "list-purge-jobs": {
         parameters: {
             query?: {
@@ -3383,6 +3614,35 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SectionOutputBody"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-tenant-users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Get-tenant-usersResponse"];
                 };
             };
             /** @description Error */
