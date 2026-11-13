@@ -21,6 +21,7 @@ import (
 	"tuskrag.local/core/internal/models"
 	"tuskrag.local/core/internal/parser"
 	"tuskrag.local/core/internal/retrieval"
+	"tuskrag.local/core/internal/secrets"
 	"tuskrag.local/core/internal/tokenizer"
 )
 
@@ -463,4 +464,259 @@ func synthesizeGroundedReply(question string, evidence []answer.AnswerEvidence) 
 		}
 	}
 	return answer.Refusal
+}
+
+func TestRealLLMContextAssemblyAndE6GenerationEvalPostgres(t *testing.T) {
+	cfgPath := os.Getenv("TUSKRAG_TEST_CHAT_CONFIG")
+	if cfgPath == "" {
+		t.Skip("real LLM E6 evaluation requires TUSKRAG_TEST_CHAT_CONFIG")
+	}
+	cfgBytes, err := os.ReadFile(cfgPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var chatCfg struct {
+		BaseURL string `json:"base_url"`
+		APIKey  string `json:"api_key"`
+		Model   string `json:"model"`
+	}
+	if err := json.Unmarshal(cfgBytes, &chatCfg); err != nil || chatCfg.BaseURL == "" || chatCfg.Model == "" {
+		t.Fatal("invalid TUSKRAG_TEST_CHAT_CONFIG")
+	}
+	clear(cfgBytes)
+
+	f := setup(t)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
+	defer cancel()
+
+	rawDataset, err := os.ReadFile("../../../../tests/eval/r07-e6-zh.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var dataset eval.AnswerDataset
+	if err := json.Unmarshal(rawDataset, &dataset); err != nil {
+		t.Fatal(err)
+	}
+	if err := eval.ValidateAnswerDataset(dataset); err != nil {
+		t.Fatal(err)
+	}
+
+	counter, err := tokenizer.NewBGEM3(ctx, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/v1/embeddings":
+			var req struct {
+				Input []string `json:"input"`
+			}
+			if json.NewDecoder(r.Body).Decode(&req) != nil {
+				w.WriteHeader(400)
+				return
+			}
+			type embItem struct {
+				Index     int       `json:"index"`
+				Embedding []float32 `json:"embedding"`
+			}
+			totalTokens := 0
+			data := make([]embItem, len(req.Input))
+			for i, text := range req.Input {
+				n, countErr := counter.Count(r.Context(), text)
+				if countErr != nil {
+					w.WriteHeader(500)
+					return
+				}
+				totalTokens += n
+				data[i] = embItem{Index: i, Embedding: syntheticVector(text)}
+			}
+			resp := struct {
+				Data  []embItem      `json:"data"`
+				Usage map[string]int `json:"usage"`
+			}{
+				Data:  data,
+				Usage: map[string]int{"prompt_tokens": totalTokens, "total_tokens": totalTokens},
+			}
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(resp)
+		case "/v1/rerank":
+			var req struct {
+				Query     string   `json:"query"`
+				Documents []string `json:"documents"`
+				TopN      int      `json:"top_n"`
+			}
+			if json.NewDecoder(r.Body).Decode(&req) != nil {
+				w.WriteHeader(400)
+				return
+			}
+			type res struct {
+				Index          int     `json:"index"`
+				RelevanceScore float64 `json:"relevance_score"`
+			}
+			var out []res
+			for i, d := range req.Documents {
+				score := 0.2
+				for _, r := range []rune(req.Query) {
+					if r >= 0x4e00 && strings.ContainsRune(d, r) {
+						score += 0.05
+					}
+				}
+				out = append(out, res{Index: i, RelevanceScore: score})
+			}
+			slices.SortFunc(out, func(a, b res) int {
+				if b.RelevanceScore > a.RelevanceScore {
+					return 1
+				}
+				if b.RelevanceScore < a.RelevanceScore {
+					return -1
+				}
+				return a.Index - b.Index
+			})
+			if req.TopN > 0 && len(out) > req.TopN {
+				out = out[:req.TopN]
+			}
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(map[string]any{"results": out})
+		default:
+			w.WriteHeader(404)
+		}
+	}))
+	defer server.Close()
+
+	var provider, space int64
+	if err := f.admin.QueryRow(ctx, `SELECT e.provider_id,e.id FROM embedding_space e JOIN knowledge_base k ON k.tenant_id=e.tenant_id AND k.embedding_space_id=e.id WHERE k.tenant_id=$1 AND k.id=$2`, f.tenant, f.kbID).Scan(&provider, &space); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := f.admin.Exec(ctx, `UPDATE model_provider SET base_url=$1 WHERE tenant_id=$2 AND id=$3`, server.URL, f.tenant, provider); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := f.admin.Exec(ctx, `UPDATE tenant SET egress_policy_max='allow' WHERE id=$1`, f.tenant); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := f.admin.Exec(ctx, `UPDATE knowledge_base SET egress_policy='allow' WHERE tenant_id=$1 AND id=$2`, f.tenant, f.kbID); err != nil {
+		t.Fatal(err)
+	}
+
+	vault, err := secrets.NewVault(make([]byte, 32))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var chatProviderID int64
+	if err := f.admin.QueryRow(ctx, `INSERT INTO model_provider(tenant_id,name,base_url,locality) VALUES($1,'real-e6-chat',$2,'external') RETURNING id`, f.tenant, chatCfg.BaseURL).Scan(&chatProviderID); err != nil {
+		t.Fatal(err)
+	}
+	if chatCfg.APIKey != "" {
+		enc, sealErr := vault.Seal(ctx, f.tenant, chatProviderID, []byte(chatCfg.APIKey))
+		if sealErr != nil {
+			t.Fatal(sealErr)
+		}
+		if _, err := f.admin.Exec(ctx, `UPDATE model_provider SET api_key_ciphertext=$1,api_key_nonce=$2,api_key_id=$3 WHERE tenant_id=$4 AND id=$5`, enc.Ciphertext, enc.Nonce, enc.KeyID, f.tenant, chatProviderID); err != nil {
+			t.Fatal(err)
+		}
+	}
+	var chatModelID int64
+	if err := f.admin.QueryRow(ctx, `INSERT INTO chat_model(tenant_id,provider_id,model) VALUES($1,$2,$3) RETURNING id`, f.tenant, chatProviderID, chatCfg.Model).Scan(&chatModelID); err != nil {
+		t.Fatal(err)
+	}
+
+	t.Cleanup(func() {
+		for _, table := range []string{"answer_feedback", "answer_message", "conversation"} {
+			_, _ = f.admin.Exec(context.Background(), "DELETE FROM "+table+" WHERE tenant_id=$1", f.tenant)
+		}
+		_, _ = f.admin.Exec(context.Background(), `DELETE FROM chat_model WHERE tenant_id=$1`, f.tenant)
+		_, _ = f.admin.Exec(context.Background(), `DELETE FROM model_provider WHERE tenant_id=$1 AND id<>$2`, f.tenant, provider)
+		_, _ = f.admin.Exec(context.Background(), `UPDATE document SET current_version_id=NULL WHERE tenant_id=$1`, f.tenant)
+	})
+
+	docMap := make(map[string]int64, len(dataset.Documents))
+	var allowedIDs []int64
+	for _, doc := range dataset.Documents {
+		docID := ingestChunkedMarkdownDoc(t, f, space, provider, counter.Count, doc, false)
+		docMap[doc.Key] = docID
+		allowedIDs = append(allowedIDs, docID)
+	}
+	ingestChunkedMarkdownDoc(t, f, space, provider, counter.Count, eval.Document{
+		Key: "restricted_secret", Title: "受限文档", Content: "# 受限文档\n\n董事长薪资与火星基地秘密预算为 9999 万元。",
+	}, true)
+	setupForeignSearchFixture(t, f)
+
+	if err := indexing.Provision(ctx, os.Getenv("TUSKRAG_TEST_MIGRATOR_URL"), f.tenant, space); err != nil {
+		t.Fatal(err)
+	}
+
+	knowledge, err := kb.NewService(f.pool)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := knowledge.PutConfig(ctx, kb.Actor{TenantID: f.tenant, UserID: f.user}, f.kbID, 0, kb.RetrievalConfig{
+		TopK:     15,
+		Reranker: &retrieval.RerankOptions{ProviderID: provider, Model: "stub-rerank", TopN: 30, Fallback: false},
+	}); err != nil {
+		t.Fatal(err)
+	}
+
+	search, err := retrieval.NewService(f.pool, nil, counter.Count)
+	if err != nil {
+		t.Fatal(err)
+	}
+	answers, err := answer.NewService(f.pool, vault, search, counter.Count)
+	if err != nil {
+		t.Fatal(err)
+	}
+	actor := retrieval.Actor{TenantID: f.tenant, UserID: f.user}
+	judge, err := eval.NewModelCitationJudge(f.pool, vault, actor, f.kbID, chatModelID)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runRealE6 := func(name string, backtrack bool, budget int) eval.AnswerReport {
+		answers.Assembly = answer.AssemblyOptions{ParentBacktrack: backtrack, ContextBudgetTokens: budget}
+		cfg := eval.AnswerRunConfig{
+			Actor:               actor,
+			KnowledgeBaseID:     f.kbID,
+			ChatModelID:         chatModelID,
+			Documents:           docMap,
+			AllowedDocumentIDs:  allowedIDs,
+			ModelLabel:          chatCfg.Model,
+			ModelKind:           "real",
+			ParentBacktrack:     &backtrack,
+			ContextBudgetTokens: budget,
+			Judge: &eval.AnswerJudgeConfig{
+				ChatModelID:   chatModelID,
+				ModelLabel:    chatCfg.Model,
+				PromptVersion: eval.JudgePromptVersion,
+			},
+		}
+		report, err := eval.RunAnswer(ctx, answers, judge, dataset, cfg)
+		if err != nil {
+			t.Fatalf("%s run failed: %v", name, err)
+		}
+		if err := eval.ValidateAnswerReport(report); err != nil {
+			t.Fatalf("%s validate failed: %v", name, err)
+		}
+		if report.UnauthorizedEvidence != 0 {
+			t.Fatalf("%s unauthorized evidence leaked: %d", name, report.UnauthorizedEvidence)
+		}
+		ttft := report.LatencyMS["ttft"]
+		total := report.LatencyMS["total"]
+		t.Logf("REAL_E6[%s] status=%s validCit=%.4f srcInt=%.4f evHit=%.4f detPass=%.4f refOk=%.4f falseRef=%.4f unsup=%.4f citSup=%.4f ttft_p50=%.1fms ttft_p95=%.1fms total_p50=%.1fms total_p95=%.1fms",
+			name, report.Status,
+			report.Summary.Metrics.ValidCitationRate,
+			report.Summary.Metrics.SourceIntegrityRate,
+			*report.Summary.Metrics.EvidenceHitRate,
+			*report.Summary.Metrics.DeterministicPassRate,
+			*report.Summary.Metrics.RefusalCorrectRate,
+			*report.Summary.Metrics.FalseRefusalRate,
+			*report.Summary.Metrics.UnsupportedRate,
+			*report.Summary.Metrics.CitationSupportRate,
+			ttft[0], ttft[1], total[0], total[1],
+		)
+		return report
+	}
+
+	runRealE6("off-6k", false, 6000)
+	runRealE6("on-4k", true, 4000)
+	runRealE6("on-6k", true, 6000)
+	runRealE6("on-10k", true, 10000)
 }

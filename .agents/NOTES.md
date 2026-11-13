@@ -2,6 +2,14 @@
 
 ## 当前快照（2026-11-13）
 
+- **真实大模型 E6 消融评测与 `SchemaVersion = 28` 修复完成**：
+  - **缺陷修复与测试补充**：修复 [db.go](../services/core/internal/db/db.go) 中 `SchemaVersion` 仍为 `27` 导致 `indexing.Provision` 校验 v28 数据库失败的问题（已升至 `28`）；在 [answer_r07_eval_integration_test.go](../services/core/internal/ingest/answer_r07_eval_integration_test.go) 新增 `TestRealLLMContextAssemblyAndE6GenerationEvalPostgres`（由 `TUSKRAG_TEST_CHAT_CONFIG` 门控）。
+  - **实测结果（见 [2026-11-13-e6-real-llm-ablation.md](../docs/eval-reports/2026-11-13-e6-real-llm-ablation.md)）**：
+    - `gemini-4-hydrogen-low` 本地 `TestRealAnswerPromptEvaluation`（8/8 通过，68.15s）与 `TestRealFollowupRewriteEvaluation`（4/4 通过，17.12s）PASS；随后在云端运行 E6 消融时上游返回 `HTTP/2 503`（`retry-after: 22208`，`auth_unavailable` / `404 Requested entity was not found.`）。
+    - 转用同网关 `gemini-3-flash` 在云端 `test-host.invalid`（隔离 `tuskrag-postgres:verify` PG17 + `-race`）完成 `TestRealLLMContextAssemblyAndE6GenerationEvalPostgres`（243.85s PASS）：`off-6k` / `on-4k` / `on-6k` / `on-10k` 四组门禁均 `passed`，`validCit=1.0000`、`srcInt=1.0000`、`evHit=1.0000`、`refOk=1.0000`、`falseRef=0.0000`、`citSup=1.0000`（`on-6k` `detPass=0.7500` / `unsup=0.2500`，其余三组 `detPass=1.0000` / `unsup=0.0000`）；端到端 `total_p50` 为 `2574.5ms–3629.6ms`，`total_p95` 为 `4496.4ms–10389.6ms`（离线非流式评测 `ttft_p50/p95=0.0ms`）。
+    - 本地：`go vet ./...` 与 `go test -p 1 -count=1 ./internal/db ./internal/eval ./internal/httpapi ./internal/kb ./cmd/tuskrag` 全部通过；云端退出检查 `<db-port>_IS_CLEAN`、`CGROUP_IS_CLEAN`。
+  - **下一步**：核对 M1/M2 退出条件，或待 `gemini-4-hydrogen-low` 上游恢复后按需复测；如需真实首 token（TTFT）流式基线，需在流式问答路径独立采集。
+
 - **M2 E6 生成评测（Answer Evaluation）存储、API、契约与控制台闭环完成**：
   - **数据与存储**：新增迁移 [00028_answer_eval_report.sql](../services/core/internal/db/migrations/00028_answer_eval_report.sql)（`answer_eval_report` 表 + RLS 隔离 + `tuskrag_app` 权限）、`sqlc` 查询 [answer_eval_report.sql](../services/core/queries/answer_eval_report.sql) 及领域存储 [answer_store.go](../services/core/internal/eval/answer_store.go)（`Import` / `Get` / `List` / `Compare`）。
   - **接口与契约**：在 [answer_eval_reports.go](../services/core/internal/httpapi/answer_eval_reports.go) 开放 `/api/v1/kbs/{kb}/answer-eval-reports`、`/answer-eval-reports/{digest}` 与 `/answer-eval-report-comparison`，同步导出 [openapi.json](../contracts/openapi.json) 并生成 [api-client](../packages/api-client/src/answer_eval.ts)。
