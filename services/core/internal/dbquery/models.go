@@ -8,6 +8,35 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type AnswerFeedback struct {
+	TenantID   int64
+	MessageID  string
+	Rating     int16
+	Correction string
+	Status     string
+	UpdatedAt  pgtype.Timestamptz
+}
+
+type AnswerMessage struct {
+	ID                string
+	TenantID          int64
+	ConversationID    int64
+	Ordinal           int32
+	Question          string
+	Content           string
+	Status            string
+	Evidence          []byte
+	Citations         []byte
+	Degraded          []string
+	Outcome           pgtype.Text
+	PromptVersion     pgtype.Text
+	RetrievalRevision pgtype.Int4
+	Usage             []byte
+	DurationMs        pgtype.Int8
+	CreatedAt         pgtype.Timestamptz
+	Deadline          pgtype.Timestamptz
+}
+
 type AppUser struct {
 	ID          int64
 	TenantID    int64
@@ -38,6 +67,13 @@ type AuditLogDefault struct {
 	ObjectID    int64
 	Result      string
 	CreatedAt   pgtype.Timestamptz
+}
+
+type ChatModel struct {
+	ID         int64
+	TenantID   int64
+	ProviderID int64
+	Model      string
 }
 
 type Chunk struct {
@@ -75,6 +111,16 @@ type ChunkVector struct {
 	Dims       pgtype.Int4
 }
 
+type Conversation struct {
+	ID        int64
+	TenantID  int64
+	UserID    int64
+	KbID      int64
+	ModelID   int64
+	Title     string
+	CreatedAt pgtype.Timestamptz
+}
+
 type Document struct {
 	ID               int64
 	TenantID         int64
@@ -108,6 +154,22 @@ type DocumentVersion struct {
 	ConfirmFirstRowHeaders bool
 }
 
+type EmbeddingRebuild struct {
+	JobID            int64
+	TenantID         int64
+	KbID             int64
+	SourceSpaceID    int64
+	SourceRevision   int32
+	TargetSpaceID    int64
+	TargetProviderID int64
+	TargetModel      string
+	TargetDims       int32
+	TargetNormalized bool
+	TargetDistance   string
+	CreatedBy        int64
+	CreatedAt        pgtype.Timestamptz
+}
+
 type EmbeddingSpace struct {
 	ID         int64
 	TenantID   int64
@@ -117,6 +179,58 @@ type EmbeddingSpace struct {
 	Normalized bool
 	Distance   string
 	IndexName  pgtype.Text
+}
+
+type EvalReport struct {
+	TenantID  int64
+	KbID      int64
+	Digest    string
+	Source    string
+	Report    []byte
+	CreatedBy int64
+	CreatedAt pgtype.Timestamptz
+}
+
+type EvalRun struct {
+	ID            int64
+	TenantID      int64
+	KbID          int64
+	JobID         int64
+	SetID         int64
+	SetRevision   int32
+	SetDigest     string
+	Mode          string
+	Configuration []byte
+	ConfigDigest  string
+	CreatedBy     int64
+	CreatedAt     pgtype.Timestamptz
+}
+
+type EvalRunResult struct {
+	RunID     int64
+	TenantID  int64
+	KbID      int64
+	Digest    string
+	Report    []byte
+	CreatedAt pgtype.Timestamptz
+}
+
+type EvalSet struct {
+	ID       int64
+	TenantID int64
+	KbID     int64
+	Revision int32
+}
+
+type EvalSetRevision struct {
+	TenantID   int64
+	KbID       int64
+	SetID      int64
+	Revision   int32
+	Definition []byte
+	Digest     string
+	CreatedBy  int64
+	CreatedAt  pgtype.Timestamptz
 }
 
 type IdempotencyRecord struct {
@@ -166,6 +280,20 @@ type KbMembership struct {
 	UserID    int64
 	Role      string
 	CreatedAt pgtype.Timestamptz
+}
+
+type KbRetrievalConfigRevision struct {
+	TenantID         int64
+	KbID             int64
+	Revision         int32
+	TopK             int32
+	RerankProviderID pgtype.Int8
+	RerankModel      pgtype.Text
+	RerankTopN       pgtype.Int4
+	RerankFallback   bool
+	RerankMinScore   pgtype.Float8
+	CreatedBy        int64
+	CreatedAt        pgtype.Timestamptz
 }
 
 type KnowledgeBase struct {

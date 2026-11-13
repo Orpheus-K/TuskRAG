@@ -449,6 +449,7 @@ func testRerankService(t *testing.T, f *fixture, service *retrieval.Service, act
 	if err != nil || len(result.Degraded) != 0 || len(result.Candidates) != 2 || result.Candidates[0].ChunkID != baseline.Candidates[1].ChunkID || result.Candidates[0].Score != 0.9 || result.Trace == nil || len(result.Trace.Candidates) != 2 {
 		t.Fatalf("rerank result: %+v %v", result, err)
 	}
+	testStoredRerankConfiguration(t, f, service, actor, request.Rerank, result.Candidates[0].ChunkID)
 	mode.Store(1)
 	if result, err = service.Search(f.ctx, actor, request); err == nil || len(result.Candidates) != 0 {
 		t.Fatal("rerank failure masked")

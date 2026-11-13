@@ -40,11 +40,13 @@ type FailureCode string
 
 const (
 	ModelUnavailable     FailureCode = "model_unavailable"
+	RebuildIncomplete    FailureCode = "rebuild_incomplete"
 	StorageUnavailable   FailureCode = "storage_unavailable"
 	IndexUnavailable     FailureCode = "index_unavailable"
 	ModelRejected        FailureCode = "model_rejected"
 	ModelInvalid         FailureCode = "model_invalid_response"
 	ConfigurationChanged FailureCode = "configuration_changed"
+	PermissionRevoked    FailureCode = "permission_revoked"
 	VersionSuperseded    FailureCode = "version_superseded"
 	UnsupportedEmbedding FailureCode = "unsupported_embedding"
 	TokenizerMismatch    FailureCode = "tokenizer_mismatch"
@@ -115,12 +117,16 @@ type EffectsTx interface {
 }
 
 type effectsTx struct {
+	checkpointStore *Store
+	checkpointLease Lease
 	tx              pgx.Tx
 	completionStore *Store
 	completionLease Lease
 	failureStore    *Store
 	failureLease    Lease
 	failureStatus   Status
+	expirationStore *Store
+	expirationJob   ExpiredJob
 }
 
 func (t effectsTx) Exec(ctx context.Context, sql string, args ...any) (pgconn.CommandTag, error) {
@@ -194,9 +200,13 @@ func (s *Store) begin(ctx context.Context, tenantID int64) (pgx.Tx, *dbquery.Que
 }
 
 func rollback(tx pgx.Tx, result *error) {
+	// pgx may close the connection when a cancelled query cannot be drained.
+	// PostgreSQL aborts that transaction on disconnect. Still call Rollback to
+	// release the pool lease, but do not add a redundant closed-connection error.
+	closedOnCancel := errors.Is(*result, context.Canceled) && tx.Conn().IsClosed()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	if err := tx.Rollback(ctx); err != nil && !errors.Is(err, pgx.ErrTxClosed) {
+	if err := tx.Rollback(ctx); err != nil && !errors.Is(err, pgx.ErrTxClosed) && !closedOnCancel {
 		*result = errors.Join(*result, fmt.Errorf("rollback job transaction: %w", err))
 	}
 }
@@ -338,7 +348,8 @@ func (s *Store) recoverExpired(ctx context.Context, tenantID int64, kinds []stri
 	if recover == nil {
 		return false, ErrNeedsEffects
 	}
-	if err := recover(ctx, effectsTx{tx: tx}, ExpiredJob{ID: row.ID, TenantID: row.TenantID, Kind: Kind(row.Kind), Payload: row.Payload}); err != nil {
+	expired := ExpiredJob{ID: row.ID, TenantID: row.TenantID, Kind: Kind(row.Kind), Payload: row.Payload}
+	if err := recover(ctx, effectsTx{tx: tx, expirationStore: s, expirationJob: expired}, expired); err != nil {
 		return false, fmt.Errorf("recover exhausted job: %w", err)
 	}
 	if _, err := queries.DeadLetterExpiredJob(ctx, dbquery.DeadLetterExpiredJobParams{TenantID: tenantID, JobID: row.ID}); errors.Is(err, pgx.ErrNoRows) {
@@ -450,7 +461,7 @@ func (s *Store) WithLease(ctx context.Context, lease Lease, apply func(context.C
 	} else if err != nil {
 		return fmt.Errorf("lock checkpoint lease: %w", err)
 	}
-	if err := apply(ctx, effectsTx{tx: tx}); err != nil {
+	if err := apply(ctx, effectsTx{tx: tx, checkpointStore: s, checkpointLease: lease}); err != nil {
 		return fmt.Errorf("apply job checkpoint: %w", err)
 	}
 	if _, err := queries.LockLease(ctx, params); errors.Is(err, pgx.ErrNoRows) {
@@ -689,10 +700,10 @@ func validKind(kind Kind) bool {
 
 func failurePolicy(code FailureCode) (retryable, valid bool) {
 	switch code {
-	case ModelUnavailable, StorageUnavailable, IndexUnavailable, Timeout:
+	case ModelUnavailable, StorageUnavailable, IndexUnavailable, Timeout, RebuildIncomplete:
 		return true, true
 	case ParseError, Unsupported, Encrypted, LimitExceeded, FileMissing, FileCorrupt, LeaseExpired, Internal,
-		ModelRejected, ModelInvalid, ConfigurationChanged, VersionSuperseded, UnsupportedEmbedding,
+		ModelRejected, ModelInvalid, ConfigurationChanged, PermissionRevoked, VersionSuperseded, UnsupportedEmbedding,
 		TokenizerMismatch, EgressDenied, QualityReview, TableHeaderRequired:
 		return false, true
 	default:
@@ -701,3 +712,21 @@ func failurePolicy(code FailureCode) (retryable, valid bool) {
 }
 
 func text(value string) pgtype.Text { return pgtype.Text{String: value, Valid: true} }
+
+// CheckExpiration restricts cleanup to this store's locked exhausted-job transaction.
+func (s *Store) CheckExpiration(tx EffectsTx, job ExpiredJob) error {
+	fenced, ok := tx.(effectsTx)
+	if !ok || s == nil || fenced.expirationStore != s || fenced.expirationJob.ID != job.ID || fenced.expirationJob.TenantID != job.TenantID || fenced.expirationJob.Kind != job.Kind {
+		return errors.New("matching job expiration transaction is required")
+	}
+	return nil
+}
+
+// CheckCheckpoint binds a domain checkpoint to this store and current lease.
+func (s *Store) CheckCheckpoint(tx EffectsTx, lease Lease) error {
+	fenced, ok := tx.(effectsTx)
+	if !ok || s == nil || fenced.checkpointStore != s || !sameLease(fenced.checkpointLease, lease) {
+		return errors.New("matching job checkpoint transaction is required")
+	}
+	return nil
+}

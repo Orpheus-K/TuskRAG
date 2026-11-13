@@ -31,17 +31,21 @@ type Dataset struct {
 	Questions []Question `json:"questions"`
 }
 type RunConfig struct {
-	Actor              retrieval.Actor          `json:"actor"`
-	KnowledgeBaseID    int64                    `json:"knowledge_base_id"`
-	Documents          map[string]int64         `json:"documents"`
-	AllowedDocumentIDs []int64                  `json:"allowed_document_ids"`
-	Reranker           *retrieval.RerankOptions `json:"reranker"`
-	ModelLabel         string                   `json:"model_label"`
-	ModelKind          string                   `json:"model_kind"`
+	Actor              retrieval.Actor                  `json:"actor"`
+	KnowledgeBaseID    int64                            `json:"knowledge_base_id"`
+	Documents          map[string]int64                 `json:"documents"`
+	AllowedDocumentIDs []int64                          `json:"allowed_document_ids"`
+	Reranker           *retrieval.RerankOptions         `json:"reranker"`
+	ModelLabel         string                           `json:"model_label"`
+	ModelKind          string                           `json:"model_kind"`
+	Configuration      *retrieval.ConfigurationSnapshot `json:"configuration,omitempty"`
 }
 type Searcher interface {
 	Search(context.Context, retrieval.Actor, retrieval.Request) (retrieval.Result, error)
 }
+
+var ErrRetrievalRevisionChanged = errors.New("evaluation retrieval configuration changed")
+
 type RunRow struct {
 	ID        string             `json:"id"`
 	Fused     []Evidence         `json:"fused"`
@@ -98,6 +102,39 @@ func Run(ctx context.Context, service Searcher, dataset Dataset, config RunConfi
 	if err := ValidateDataset(dataset); err != nil {
 		return RunReport{}, err
 	}
+	allowed := map[int64]bool{}
+	for _, id := range config.AllowedDocumentIDs {
+		allowed[id] = true
+	}
+	for _, doc := range dataset.Documents {
+		if config.Documents[doc.Key] <= 0 || !allowed[config.Documents[doc.Key]] {
+			return RunReport{}, fmt.Errorf("%w: missing document binding", ErrInvalidCase)
+		}
+	}
+	questions := make([]preparedQuestion, 0, len(dataset.Questions))
+	for _, q := range dataset.Questions {
+		item := preparedQuestion{ID: q.ID, Query: q.Question, Answerable: q.Answerable}
+		for _, key := range q.Expected {
+			item.Expected = append(item.Expected, Target{DocumentID: config.Documents[key]})
+		}
+		questions = append(questions, item)
+	}
+	data, err := json.Marshal(dataset)
+	if err != nil {
+		return RunReport{}, err
+	}
+	hash := sha256.Sum256(data)
+	return runQuestions(ctx, service, dataset.Version, hex.EncodeToString(hash[:]), questions, config, mode)
+}
+
+type preparedQuestion struct {
+	ID         string
+	Query      string
+	Answerable bool
+	Expected   []Target
+}
+
+func runQuestions(ctx context.Context, service Searcher, version, digest string, questions []preparedQuestion, config RunConfig, mode string) (RunReport, error) {
 	if service == nil || ctx == nil || config.Actor.TenantID <= 0 || config.Actor.UserID <= 0 || config.KnowledgeBaseID <= 0 || config.ModelLabel == "" || (config.ModelKind != "stub" && config.ModelKind != "real") {
 		return RunReport{}, ErrInvalidCase
 	}
@@ -114,25 +151,31 @@ func Run(ctx context.Context, service Searcher, dataset Dataset, config RunConfi
 		}
 		allowed[id] = true
 	}
-	for _, doc := range dataset.Documents {
-		if config.Documents[doc.Key] <= 0 || !allowed[config.Documents[doc.Key]] {
-			return RunReport{}, fmt.Errorf("%w: missing document binding", ErrInvalidCase)
+	for _, question := range questions {
+		for _, target := range question.Expected {
+			if !allowed[target.DocumentID] {
+				return RunReport{}, fmt.Errorf("%w: expected document outside allowed scope", ErrInvalidCase)
+			}
 		}
 	}
-	datasetBytes, err := json.Marshal(dataset)
-	if err != nil {
-		return RunReport{}, err
-	}
+
 	configBytes, err := json.Marshal(config)
 	if err != nil {
 		return RunReport{}, err
 	}
-	dh, ch := sha256.Sum256(datasetBytes), sha256.Sum256(configBytes)
-	report := RunReport{DatasetVersion: dataset.Version, DatasetSHA256: hex.EncodeToString(dh[:]), ConfigSHA256: hex.EncodeToString(ch[:]), ModelLabel: config.ModelLabel, ModelKind: config.ModelKind, Mode: mode, Status: "failed", Rows: []RunRow{}, LatencyMS: map[string][2]float64{}}
-	cases := make([]Case, 0, len(dataset.Questions))
+	ch := sha256.Sum256(configBytes)
+	report := RunReport{DatasetVersion: version, DatasetSHA256: digest, ConfigSHA256: hex.EncodeToString(ch[:]), ModelLabel: config.ModelLabel, ModelKind: config.ModelKind, Mode: mode, Status: "failed", Rows: []RunRow{}, LatencyMS: map[string][2]float64{}}
+	cases := make([]Case, 0, len(questions))
 	latencies := map[string][]float64{}
-	for _, q := range dataset.Questions {
-		request := retrieval.Request{KnowledgeBaseID: config.KnowledgeBaseID, Query: q.Question, Limit: 30, Debug: true}
+	var retrievalRevision int32
+	revisionObserved := false
+	for _, q := range questions {
+		if err := ctx.Err(); err != nil {
+			return report, err
+		}
+		rerankEnabled := mode == "rerank"
+		request := retrieval.Request{KnowledgeBaseID: config.KnowledgeBaseID, Query: q.Query, Limit: 30, Debug: true, RerankEnabled: &rerankEnabled}
+		request.ExpectedConfiguration = config.Configuration
 		if mode == "rerank" {
 			options := *config.Reranker
 			options.Fallback = false
@@ -143,9 +186,21 @@ func Run(ctx context.Context, service Searcher, dataset Dataset, config RunConfi
 		if err != nil {
 			return report, fmt.Errorf("evaluation case %s: %w", q.ID, err)
 		}
+		if err := ctx.Err(); err != nil {
+			return report, err
+		}
 		if result.Trace == nil {
 			return report, errors.New("evaluation requires authorized trace")
 		}
+		if result.RetrievalRevision < 0 || result.Trace.RetrievalRevision != result.RetrievalRevision {
+			return report, fmt.Errorf("%w: inconsistent retrieval revision", ErrInvalidCase)
+		}
+		// Revision zero is the real unconfigured state, not an unset sentinel.
+		// A batch must not score questions against different saved settings.
+		if revisionObserved && result.RetrievalRevision != retrievalRevision {
+			return report, ErrRetrievalRevisionChanged
+		}
+		retrievalRevision, revisionObserved = result.RetrievalRevision, true
 		for _, list := range [][]retrieval.Candidate{result.Candidates, result.Trace.Candidates} {
 			for _, c := range list {
 				if !allowed[c.DocumentID] {
@@ -175,10 +230,8 @@ func Run(ctx context.Context, service Searcher, dataset Dataset, config RunConfi
 				return fused[i].SemanticRank < fused[j].SemanticRank
 			})
 		}
-		item := Case{Answerable: q.Answerable, Fused: toEvidence(fused)}
-		for _, key := range q.Expected {
-			item.Expected = append(item.Expected, Target{DocumentID: config.Documents[key]})
-		}
+		item := Case{Answerable: q.Answerable, Expected: q.Expected, Fused: toEvidence(fused)}
+
 		if mode == "rerank" {
 			item.Reranked = toEvidence(result.Candidates)
 		} else {
@@ -225,17 +278,49 @@ func toEvidence(candidates []retrieval.Candidate) []Evidence {
 }
 
 func Compare(baseline, current RunReport) error {
-	if baseline.Status != "passed" || current.Status != "passed" || baseline.DatasetSHA256 != current.DatasetSHA256 || baseline.Mode != current.Mode || baseline.ModelKind != current.ModelKind || baseline.Summary.Cases != current.Summary.Cases || baseline.Summary.Metrics == nil || current.Summary.Metrics == nil {
-		return errors.New("incomparable evaluation reports")
+	if err := validateComparisonSummary(baseline); err != nil {
+		return fmt.Errorf("baseline report: %w", err)
 	}
-	if current.UnauthorizedEvidence != 0 {
-		return errors.New("unauthorized evidence regression")
+	if err := validateComparisonSummary(current); err != nil {
+		return fmt.Errorf("current report: %w", err)
+	}
+	if !sameComparisonPopulation(baseline, current) {
+		return ErrReportsIncomparable
+	}
+	if len(baseline.Rows) > 0 && len(current.Rows) > 0 {
+		if _, err := alignComparisonRows(baseline, current); err != nil {
+			return err
+		}
 	}
 	a, b := baseline.Summary.Metrics, current.Summary.Metrics
-	for _, delta := range []float64{a.RecallAt20 - b.RecallAt20, a.HitAt5 - b.HitAt5, a.MRRAt10 - b.MRRAt10, a.NDCGAt10 - b.NDCGAt10} {
-		if delta > 0.02+1e-12 {
-			return errors.New("retrieval metric declined by more than two percentage points")
+	if metricRegression(metricDifference(*a, *b)) {
+		return errors.New("retrieval metric declined by more than two percentage points")
+	}
+	return nil
+}
+
+// Committed CI baselines intentionally omit rows; validate their summary rather
+// than requiring per-question data that those artifacts do not contain.
+func validateComparisonSummary(report RunReport) error {
+	if len(report.Rows) > 0 {
+		if err := ValidateReport(report); err != nil {
+			return err
 		}
+	}
+	s := report.Summary
+	if report.Status != "passed" || report.DatasetSHA256 == "" ||
+		(report.Mode != "lexical" && report.Mode != "vector" && report.Mode != "rrf" && report.Mode != "rerank") ||
+		(report.ModelKind != "real" && report.ModelKind != "stub") {
+		return errors.New("invalid evaluation report identity or status")
+	}
+	if report.UnauthorizedEvidence != 0 {
+		return errors.New("evaluation report must have zero unauthorized evidence")
+	}
+	if s.Cases <= 0 || s.AnswerableCases <= 0 || s.AnswerableCases > s.Cases || s.UnanswerableCases != s.Cases-s.AnswerableCases || s.Metrics == nil {
+		return errors.New("invalid evaluation summary counts or missing metrics")
+	}
+	if !validMetrics(s.Metrics) {
+		return errors.New("evaluation metrics must be finite values between zero and one")
 	}
 	return nil
 }

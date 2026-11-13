@@ -13,6 +13,7 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humago"
 
+	"tuskrag.local/core/internal/eval"
 	"tuskrag.local/core/internal/identity"
 	"tuskrag.local/core/internal/kb"
 	"tuskrag.local/core/internal/models"
@@ -54,6 +55,11 @@ type DocumentService interface {
 	Delete(context.Context, kb.Actor, int64, int64) error
 }
 
+type ConfigService interface {
+	GetConfig(context.Context, kb.Actor, int64) (kb.KnowledgeConfig, error)
+	PutConfig(context.Context, kb.Actor, int64, int32, kb.RetrievalConfig) (kb.KnowledgeConfig, error)
+}
+
 type JobControl interface {
 	GetJob(context.Context, kb.Actor, int64) (kb.JobSummary, error)
 	RetryJob(context.Context, kb.Actor, int64) (int64, error)
@@ -74,15 +80,30 @@ type SearchService interface {
 }
 
 type Dependencies struct {
+	Conversations        ConversationService
+	Answers              AnswerService
+	ChatModels           ChatCatalog
+	Rebuilds             RebuildService
+	Reports              ReportService
+	EvalSets             EvalSetService
+	EvalRuns             EvalRunService
 	Check                func(context.Context) error
 	Identity             IdentityService
 	Knowledge            KnowledgeService
+	Config               ConfigService
 	Documents            DocumentService
 	Jobs                 JobControl
 	Reader               DocumentReader
 	Models               ModelCatalog
 	Search               SearchService
 	InsecureLocalCookies bool
+}
+
+type ReportService interface {
+	Compare(context.Context, retrieval.Actor, int64, string, string, int32, int32) (eval.ReportComparison, error)
+	List(context.Context, retrieval.Actor, int64, string, int32) (eval.ReportPage, error)
+	Import(context.Context, retrieval.Actor, int64, eval.RunReport) (eval.StoredReport, error)
+	Get(context.Context, retrieval.Actor, int64, string) (eval.StoredReport, error)
 }
 
 func New(deps Dependencies) API {

@@ -25,6 +25,7 @@ type fakeEmbeddingService struct {
 	counter      *tokenizer.BGEM3
 	mu           sync.Mutex
 	documents    map[string]int
+	vectors      map[string][]float32
 	total        int
 	failOnce     string
 	mismatch     string
@@ -92,6 +93,9 @@ func (f *fakeEmbeddingService) ServeHTTP(w http.ResponseWriter, r *http.Request)
 	}
 	vector := make([]float32, 64)
 	vector[0] = 1
+	if fixed, ok := f.vectors[input]; ok {
+		vector = fixed
+	}
 	if err := json.NewEncoder(w).Encode(map[string]any{"data": []any{map[string]any{"index": 0, "embedding": vector}},
 		"usage": map[string]int{"prompt_tokens": count, "total_tokens": count}}); err != nil {
 		f.t.Error(err)

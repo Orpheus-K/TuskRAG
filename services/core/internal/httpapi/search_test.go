@@ -29,10 +29,35 @@ func TestSearchMapsConfigurationFailures(t *testing.T) {
 		{indexing.ErrUnsupportedDistance, http.StatusUnprocessableEntity, "unsupported_embedding"},
 		{models.ErrRuntimeChanged, http.StatusConflict, "configuration_changed"},
 		{models.ErrRuntimeUnavailable, http.StatusServiceUnavailable, "model_unavailable"},
+		{retrieval.ErrRerankUnavailable, http.StatusServiceUnavailable, "rerank_unavailable"},
 	} {
 		var result *ErrorModel
 		if err := searchError(context.Background(), tc.err); !errors.As(err, &result) || result.GetStatus() != tc.status || result.Body.Code != tc.code {
 			t.Fatalf("error %v mapped to %v", tc.err, err)
+		}
+	}
+}
+
+func TestSearchPreservesInheritedAndExplicitSettings(t *testing.T) {
+	for _, tc := range []struct {
+		body    string
+		enabled *bool
+		limit   int
+	}{
+		{`{"query":"申请","kb_ids":[7]}`, nil, 0},
+		{`{"query":"申请","kb_ids":[7],"top_k":3}`, nil, 3},
+	} {
+		service := searchServiceFunc(func(_ context.Context, _ retrieval.Actor, request retrieval.Request) (retrieval.Result, error) {
+			if request.Limit != tc.limit || request.RerankEnabled != tc.enabled || request.Rerank != nil {
+				t.Fatalf("defaults overwritten: %+v", request)
+			}
+			return retrieval.Result{RetrievalRevision: 4}, nil
+		})
+		app := New(Dependencies{Identity: uploadTestIdentity{}, Search: service, InsecureLocalCookies: true})
+		w := httptest.NewRecorder()
+		app.Handler.ServeHTTP(w, searchRequest(tc.body))
+		if w.Code != 200 || !strings.Contains(w.Body.String(), `"retrieval_revision":4`) {
+			t.Fatalf("response=%d %s", w.Code, w.Body.String())
 		}
 	}
 }
@@ -69,7 +94,7 @@ func searchRequest(body string) *http.Request {
 func TestSearchReturnsRRFScoreAndExplicitDegradation(t *testing.T) {
 	start, end := int32(2), int32(3)
 	service := searchServiceFunc(func(_ context.Context, actor retrieval.Actor, request retrieval.Request) (retrieval.Result, error) {
-		if actor.TenantID != 1 || actor.UserID != 2 || request.KnowledgeBaseID != 7 || request.Query != "申请" || request.Limit != 8 ||
+		if actor.TenantID != 1 || actor.UserID != 2 || request.KnowledgeBaseID != 7 || request.Query != "申请" || request.Limit != 0 ||
 			request.Filters.UpdatedAfter == nil || len(request.Filters.DocumentTags) != 1 {
 			t.Fatalf("unexpected search request: actor=%+v request=%+v", actor, request)
 		}
@@ -108,7 +133,7 @@ func TestSearchRejectsUnsupportedOptionsAndPropagatesFailures(t *testing.T) {
 		code   string
 		called bool
 	}{
-		{`{"query":"申请","kb_ids":[7]}`, http.StatusServiceUnavailable, "rerank_unavailable", false},
+		{`{"query":"申请","kb_ids":[7]}`, http.StatusServiceUnavailable, "model_unavailable", true},
 		{`{"query":"申请","kb_ids":[7],"options":{"rerank":false,"expand_parent":true}}`, http.StatusNotImplemented, "unsupported", false},
 		{`{"query":"申请","kb_ids":[7],"filters":{"updated_after":"invalid"},"options":{"rerank":false}}`, http.StatusBadRequest, "invalid_request", false},
 		{`{"query":"申请","kb_ids":[7],"options":{"rerank":false}}`, http.StatusServiceUnavailable, "model_unavailable", true},
@@ -127,7 +152,7 @@ func TestSearchRejectsUnsupportedOptionsAndPropagatesFailures(t *testing.T) {
 	req.Header.Del("X-CSRF-Token")
 	w := httptest.NewRecorder()
 	app.Handler.ServeHTTP(w, req)
-	if w.Code != http.StatusForbidden || calls != 1 {
+	if w.Code != http.StatusForbidden || calls != 2 {
 		t.Fatalf("search accepted without CSRF: status=%d calls=%d", w.Code, calls)
 	}
 	var missing *ErrorModel

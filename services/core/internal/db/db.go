@@ -16,7 +16,7 @@ import (
 //go:embed migrations/*.sql
 var migrations embed.FS
 
-const SchemaVersion int64 = 19
+const SchemaVersion int64 = 27
 
 func Migrate(ctx context.Context, databaseURL string) (result error) {
 	config, err := pgx.ParseConfig(databaseURL)
@@ -85,8 +85,8 @@ func Check(ctx context.Context, pool *pgxpool.Pool) error {
 		EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'vector' AND string_to_array(extversion, '.')::int[] >= ARRAY[0,8,0]),
 		EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_search'),
 		(SELECT version_id = $1 AND is_applied FROM goose_db_version ORDER BY id DESC LIMIT 1),
-		(SELECT count(*) = 18 FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
-		 WHERE n.nspname = 'public' AND c.relname = ANY(ARRAY['tenant','app_user','model_provider','embedding_space','knowledge_base','job','kb_membership','audit_log','local_account','login_session','idempotency_record','document','document_version','parse_artifact','section','chunk','chunk_vector','ingest_plan'])
+		(SELECT count(*) = 29 FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+		 WHERE n.nspname = 'public' AND c.relname = ANY(ARRAY['tenant','app_user','model_provider','embedding_space','knowledge_base','job','kb_membership','audit_log','local_account','login_session','idempotency_record','document','document_version','parse_artifact','section','chunk','chunk_vector','ingest_plan','kb_retrieval_config_revision','eval_report','eval_set','eval_set_revision','eval_run','eval_run_result','embedding_rebuild','chat_model','conversation','answer_message','answer_feedback'])
 		 AND c.relrowsecurity AND c.relforcerowsecurity AND pg_get_userbyid(c.relowner) <> current_user)
 		FROM pg_roles WHERE rolname = current_user`, SchemaVersion).Scan(&major, &superuser, &bypassRLS, &customPlan, &vector, &search, &migrated, &isolated)
 	if err != nil {

@@ -11,6 +11,7 @@ import {
 } from "@tuskrag/api-client";
 import { Button } from "@tuskrag/ui/button";
 import { createContext, type FormEvent, useState } from "react";
+import { ChatModels } from "./ChatModels";
 import { Setup } from "./Setup";
 
 export const IdentityContext = createContext<Identity | null>(null);
@@ -258,10 +259,20 @@ export function Workspace({ identity }: { identity: Identity }) {
               <p className="mt-5 text-xs text-muted-foreground">
                 编号 {item.id} · {roleLabels[item.role]}
               </p>
+              {item.status === "active" && (
+                <Link
+                  className="mt-3 inline-block text-sm underline"
+                  to="/kb/$kbId/answer"
+                  params={{ kbId: String(item.id) }}
+                >
+                  提问
+                </Link>
+              )}
             </li>
           ))}
         </ul>
       )}
+      <ChatModels identity={identity} />
       <Setup identity={identity} />
     </section>
   );

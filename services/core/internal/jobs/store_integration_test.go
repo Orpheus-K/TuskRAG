@@ -556,3 +556,50 @@ func TestClaimChild(t *testing.T) {
 	<-ctx.Done()
 	t.Fatal("claimant should have been killed by the parent")
 }
+
+func TestRollbackClosedConnectionAfterCancellation(t *testing.T) {
+	f := setup(t)
+	for _, cancelled := range []bool{true, false} {
+		tx, _, err := f.store.begin(f.ctx, f.tenant)
+		if err != nil {
+			t.Fatal(err)
+		}
+		id, err := f.store.EnqueueTx(f.ctx, tx, f.tenant, request(fmt.Sprintf("closed-%t", cancelled), 3))
+		if err != nil {
+			t.Fatal(err)
+		}
+		original := errors.New("unrelated failure")
+		if cancelled {
+			original = fmt.Errorf("claim: %w", context.Canceled)
+		}
+		if err := tx.Conn().Close(f.ctx); err != nil {
+			t.Fatal(err)
+		}
+		result := original
+		rollback(tx, &result)
+		if cancelled && result != original {
+			t.Fatalf("redundant rollback failure: %v", result)
+		}
+		if !cancelled && (result == original || !errors.Is(result, original)) {
+			t.Fatalf("rollback failure lost: %v", result)
+		}
+		// puddle destroys closed connections asynchronously after Release.
+		releaseCtx, cancelRelease := context.WithTimeout(f.ctx, time.Second)
+		tick := time.NewTicker(time.Millisecond)
+		for f.pool.Stat().AcquiredConns() != 0 {
+			select {
+			case <-tick.C:
+			case <-releaseCtx.Done():
+				tick.Stop()
+				cancelRelease()
+				t.Fatal("transaction connection not released")
+			}
+		}
+		tick.Stop()
+		cancelRelease()
+		var count int
+		if err := f.admin.QueryRow(f.ctx, `SELECT count(*) FROM job WHERE id=$1`, id).Scan(&count); err != nil || count != 0 {
+			t.Fatalf("disconnected transaction committed: count=%d err=%v", count, err)
+		}
+	}
+}

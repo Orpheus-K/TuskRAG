@@ -14,6 +14,7 @@ export type PreviewTarget = {
   versionId: number;
   title: string;
   initialSection?: number;
+  includePrevious?: boolean;
   fromList?: boolean;
 };
 
@@ -74,6 +75,49 @@ export function DocumentPreview({
       return result;
     },
     enabled: sectionId !== null,
+    retry: false,
+    gcTime: 0,
+  });
+
+  const current = section.data;
+  const showContext =
+    target.includePrevious === true && sectionId === target.initialSection;
+  const previous = useQuery({
+    queryKey: [
+      "citation-previous",
+      identity.tenant_id,
+      identity.user_id,
+      target.id,
+      target.versionId,
+      sectionId,
+    ],
+    queryFn: async ({ signal }) => {
+      if (!current || current.section.ordinal <= 1) return null;
+      const nearby = await getDocumentContents(
+        target.id,
+        current.section.ordinal - 2,
+        signal,
+      );
+      if (nearby.document.version_id !== target.versionId)
+        throw new Error("document version changed");
+      const prior = nearby.sections.find(
+        (item) =>
+          item.ordinal === current.section.ordinal - 1 &&
+          item.level === current.section.level &&
+          JSON.stringify(item.heading_path) ===
+            JSON.stringify(current.section.heading_path),
+      );
+      if (!prior) return null;
+      const result = await readSection(prior.id, signal);
+      if (
+        result.document.id !== target.id ||
+        result.document.version_id !== target.versionId
+      )
+        throw new Error("document version changed");
+      return result;
+    },
+    enabled:
+      showContext && !!current && !section.isError && !section.isFetching,
     retry: false,
     gcTime: 0,
   });
@@ -165,21 +209,38 @@ export function DocumentPreview({
           正文不可用，文档可能已更新或权限已变化。
         </p>
       )}
+      {showContext && previous.isFetching && (
+        <p role="status" className="text-sm">
+          正在加载引用上文
+        </p>
+      )}
+      {showContext && previous.isError && (
+        <p role="alert" className="text-sm">
+          引用上文不可用，文档可能已更新或权限已变化。
+        </p>
+      )}
       {sectionId !== null &&
         contents.data &&
         !contents.isError &&
         !contents.isFetching &&
         section.data &&
         !section.isError &&
-        !section.isFetching && (
-          <article className="space-y-2 border-t pt-4">
+        !section.isFetching &&
+        (!showContext ||
+          (!previous.isError && !previous.isPending && !previous.isFetching)) &&
+        (showContext && previous.data
+          ? [previous.data, section.data]
+          : [section.data]
+        ).map((content) => (
+          <article key={content.section.id} className="space-y-2 border-t pt-4">
             <h4 className="break-words font-medium">
-              {section.data.section.heading || "未命名节"}
+              {content.section.id !== sectionId && "上文 · "}
+              {content.section.heading || "未命名节"}
             </h4>
             <p className="text-xs text-muted-foreground">
-              {section.data.section.heading_path.join(" › ")}
-              {section.data.section.pages &&
-                ` · 第 ${section.data.section.pages[0]}—${section.data.section.pages[1]} 页`}
+              {content.section.heading_path.join(" › ")}
+              {content.section.pages &&
+                ` · 第 ${content.section.pages[0]}—${content.section.pages[1]} 页`}
             </p>
             <div className="space-y-3 break-words text-sm">
               <Markdown
@@ -220,11 +281,11 @@ export function DocumentPreview({
                   ),
                 }}
               >
-                {section.data.markdown || "本节无正文。"}
+                {content.markdown || "本节无正文。"}
               </Markdown>
             </div>
           </article>
-        )}
+        ))}
     </section>
   );
 }

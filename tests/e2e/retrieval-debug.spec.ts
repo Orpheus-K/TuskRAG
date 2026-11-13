@@ -6,6 +6,7 @@ for (const width of [1280, 375]) {
   }) => {
     await page.setViewportSize({ width, height: 900 });
     let revoked = false;
+    const requests: unknown[] = [];
     await page.route("**/api/**", async (route) => {
       const url = new URL(route.request().url());
       let body: unknown;
@@ -32,9 +33,25 @@ for (const width of [1280, 375]) {
           body = { items: [], next_cursor: null };
           break;
         case "/api/v1/admin/embedding-spaces":
-          body = { items: [] };
+          body = {
+            items: [
+              {
+                id: 3,
+                provider_id: 9,
+                provider_name: "本地模型",
+                base_url: "http://localhost:9000",
+                locality: "internal",
+                model: "embed",
+                dimensions: 64,
+                normalized: true,
+                distance: "cosine",
+                has_credential: false,
+              },
+            ],
+          };
           break;
         case "/api/v1/search":
+          requests.push(route.request().postDataJSON());
           if (revoked) {
             await route.fulfill({
               status: 404,
@@ -43,6 +60,7 @@ for (const width of [1280, 375]) {
             return;
           }
           body = {
+            retrieval_revision: 4,
             status: "ok",
             degraded: ["rerank"],
             trace_id: "test",
@@ -58,6 +76,7 @@ for (const width of [1280, 375]) {
               },
             ],
             trace: {
+              retrieval_revision: 4,
               candidates: [
                 {
                   ChunkID: 11,
@@ -97,6 +116,35 @@ for (const width of [1280, 375]) {
     await page.goto("/kb/5/documents");
     await page.getByLabel("问题或关键词").fill("上海住宿限额");
     await page.getByRole("button", { name: "检索", exact: true }).click();
+    await expect(page.getByText("检索配置修订 4")).toBeVisible();
+    expect(requests.at(-1)).toEqual({
+      query: "上海住宿限额",
+      kb_ids: [5],
+      options: { debug: true },
+    });
+    await page.getByText("重排配置", { exact: true }).click();
+    await page.getByLabel("重排方式").selectOption("off");
+    await page.getByRole("button", { name: "检索", exact: true }).click();
+    await expect.poll(() => requests.length).toBe(2);
+    expect(requests.at(-1)).toEqual({
+      query: "上海住宿限额",
+      kb_ids: [5],
+      options: { debug: true, rerank: false },
+    });
+    await page.getByLabel("重排方式").selectOption("custom");
+    await page.getByLabel("模型提供方").selectOption("9");
+    await page.getByLabel("重排模型").fill("rank");
+    await page.getByRole("button", { name: "检索", exact: true }).click();
+    await expect.poll(() => requests.length).toBe(3);
+    expect(requests.at(-1)).toEqual({
+      query: "上海住宿限额",
+      kb_ids: [5],
+      options: {
+        debug: true,
+        rerank: true,
+        reranker: { provider_id: 9, model: "rank", top_n: 30, fallback: false },
+      },
+    });
     await page.getByText("检索调试 · 1 个可见候选").click();
     await expect(
       page.getByRole("columnheader", { name: "BM25 排名 / 分数" }),

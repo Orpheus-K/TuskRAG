@@ -10,12 +10,15 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 	"time"
 
 	"tuskrag.local/core/internal/eval"
 	"tuskrag.local/core/internal/indexing"
+	"tuskrag.local/core/internal/jobs"
+	"tuskrag.local/core/internal/kb"
 	"tuskrag.local/core/internal/retrieval"
 	"tuskrag.local/core/internal/tokenizer"
 )
@@ -25,6 +28,11 @@ import (
 func TestSyntheticZHEvaluation(t *testing.T) {
 	publicationDatabase(t)
 	f := setup(t)
+	t.Cleanup(func() {
+		if _, err := f.admin.Exec(context.Background(), `DELETE FROM eval_run WHERE tenant_id=$1`, f.tenant); err != nil {
+			t.Error(err)
+		}
+	})
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
 	f.ctx = ctx
@@ -112,6 +120,29 @@ func TestSyntheticZHEvaluation(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	knowledge, err := kb.NewService(f.pool)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var revision int32
+	sets, err := eval.NewSetStore(f.pool)
+	if err != nil {
+		t.Fatal(err)
+	}
+	definition := eval.SetDefinition{Name: "synthetic-zh pinned"}
+	for _, q := range dataset.Questions {
+		item := eval.CaseDefinition{ID: q.ID, Question: q.Question, Answerable: q.Answerable, Tags: q.Tags}
+		for _, key := range q.Expected {
+			item.Expected = append(item.Expected, eval.ExpectedLocation{DocumentID: config.Documents[key]})
+		}
+		definition.Cases = append(definition.Cases, item)
+	}
+	pinned, err := sets.Create(ctx, config.Actor, f.kbID, "", definition)
+	if err != nil {
+		t.Fatal(err)
+	}
+	setConfig := config
+	setConfig.Documents = nil
 	for _, mode := range []string{"lexical", "vector", "rrf", "rerank"} {
 		t.Run(mode, func(t *testing.T) {
 			report, err := eval.Run(ctx, service, dataset, config, mode)
@@ -122,17 +153,135 @@ func TestSyntheticZHEvaluation(t *testing.T) {
 				t.Fatalf("invalid report: %+v", report.Summary)
 			}
 			t.Logf("%s: %+v unauthorized=%d", mode, report.Summary.Metrics, report.UnauthorizedEvidence)
+			settings := kb.RetrievalConfig{TopK: 30}
+			if mode == "rerank" {
+				settings.Reranker = config.Reranker
+			}
+			saved, err := knowledge.PutConfig(ctx, kb.Actor{TenantID: f.tenant, UserID: f.user}, f.kbID, revision, settings)
+			if err != nil {
+				t.Fatal(err)
+			}
+			revision = saved.Revision
+			inherited, err := eval.Run(ctx, inheritedConfigSearcher{service: service, revision: revision}, dataset, config, mode)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err := eval.Compare(report, inherited); err != nil {
+				t.Fatal(err)
+			}
+			if *report.Summary.Metrics != *inherited.Summary.Metrics {
+				t.Fatalf("same settings changed metrics: direct=%+v inherited=%+v", report.Summary, inherited.Summary)
+			}
+			for i, row := range report.Rows {
+				if !slices.Equal(row.Fused, inherited.Rows[i].Fused) || !slices.Equal(row.Ranked, inherited.Rows[i].Ranked) {
+					t.Fatalf("case %s evidence changed", row.ID)
+				}
+			}
+			t.Logf("%s saved revision=%d: identical metrics/evidence, unauthorized=%d", mode, revision, inherited.UnauthorizedEvidence)
+			snapshot, err := service.Snapshot(ctx, config.Actor, f.kbID)
+			if err != nil {
+				t.Fatal(err)
+			}
+			setConfig.Configuration = &snapshot
+			bound, err := eval.RunSet(ctx, service, sets, eval.SetBinding{SetID: pinned.ID, Revision: pinned.Revision}, setConfig, mode)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if bound.UnauthorizedEvidence != 0 || *bound.Summary.Metrics != *report.Summary.Metrics || bound.Summary.Cases != report.Summary.Cases {
+				t.Fatalf("pinned set changed metrics: %+v %+v", bound.Summary, report.Summary)
+			}
+			for i, row := range report.Rows {
+				if !slices.Equal(row.Fused, bound.Rows[i].Fused) || !slices.Equal(row.Ranked, bound.Rows[i].Ranked) {
+					t.Fatalf("pinned case %s changed evidence", row.ID)
+				}
+			}
+			if err := eval.ValidateReport(bound); err != nil {
+				t.Fatal(err)
+			}
+			t.Logf("%s pinned set: identical metrics/evidence, unauthorized=%d", mode, bound.UnauthorizedEvidence)
+			runs, err := eval.NewRunStore(f.pool, f.queue)
+			if err != nil {
+				t.Fatal(err)
+			}
+			run, err := runs.Create(ctx, config.Actor, f.kbID, "synthetic-job-"+mode, eval.RunRequest{Set: eval.SetBinding{SetID: pinned.ID, Revision: pinned.Revision}, Mode: mode, Config: setConfig})
+			if err != nil {
+				t.Fatal(err)
+			}
+			handler, err := eval.NewRunHandler(runs, service)
+			if err != nil {
+				t.Fatal(err)
+			}
+			job, err := f.queue.ClaimKindsWithRecovery(ctx, f.tenant, "synthetic-eval", time.Minute, []jobs.Kind{jobs.EvalRun}, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			apply, err := handler.Prepare(ctx, job)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err := f.queue.Complete(ctx, job.Lease, apply); err != nil {
+				t.Fatal(err)
+			}
+			executed, err := runs.GetResult(ctx, config.Actor, f.kbID, run.ID)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if executed.Source != "executed" || *executed.Report.Summary.Metrics != *bound.Summary.Metrics || executed.Report.UnauthorizedEvidence != 0 {
+				t.Fatalf("job changed metrics: %+v", executed)
+			}
+			for i, row := range bound.Rows {
+				if !slices.Equal(row.Fused, executed.Report.Rows[i].Fused) || !slices.Equal(row.Ranked, executed.Report.Rows[i].Ranked) {
+					t.Fatalf("job changed case %s", row.ID)
+				}
+			}
+			t.Logf("%s queued run: identical metrics/evidence, unauthorized=0", mode)
 			if directory := os.Getenv("TUSKRAG_EVAL_REPORT_DIR"); directory != "" {
-				encoded, err := json.MarshalIndent(report, "", "  ")
+				encodedJob, err := json.MarshalIndent(executed.Report, "", "  ")
+				if err != nil {
+					t.Fatal(err)
+				}
+				if err := os.WriteFile(filepath.Join(directory, "synthetic-zh-"+mode+"-job.json"), append(encodedJob, '\n'), 0600); err != nil {
+					t.Fatal(err)
+				}
+				encoded, err := json.MarshalIndent(bound, "", "  ")
+				if err != nil {
+					t.Fatal(err)
+				}
+				if err := os.WriteFile(filepath.Join(directory, "synthetic-zh-"+mode+"-set.json"), append(encoded, '\n'), 0600); err != nil {
+					t.Fatal(err)
+				}
+				encoded, err = json.MarshalIndent(report, "", "  ")
 				if err != nil {
 					t.Fatal(err)
 				}
 				if err := os.WriteFile(filepath.Join(directory, "synthetic-zh-"+mode+".json"), append(encoded, '\n'), 0600); err != nil {
 					t.Fatal(err)
 				}
+				encoded, err = json.MarshalIndent(inherited, "", "  ")
+				if err != nil {
+					t.Fatal(err)
+				}
+				if err := os.WriteFile(filepath.Join(directory, "synthetic-zh-"+mode+"-saved.json"), append(encoded, '\n'), 0600); err != nil {
+					t.Fatal(err)
+				}
 			}
 		})
 	}
+}
+
+// Deliberately exercise inheritance while keeping the same evaluation scorer.
+type inheritedConfigSearcher struct {
+	service  *retrieval.Service
+	revision int32
+}
+
+func (s inheritedConfigSearcher) Search(ctx context.Context, actor retrieval.Actor, request retrieval.Request) (retrieval.Result, error) {
+	request.Limit, request.Rerank, request.RerankEnabled = 0, nil, nil
+	result, err := s.service.Search(ctx, actor, request)
+	if err == nil && result.RetrievalRevision != s.revision {
+		return retrieval.Result{}, fmt.Errorf("unexpected retrieval revision: %d", result.RetrievalRevision)
+	}
+	return result, err
 }
 
 func insertSyntheticDocument(t *testing.T, f *fixture, space int64, doc eval.Document, restricted bool) int64 {

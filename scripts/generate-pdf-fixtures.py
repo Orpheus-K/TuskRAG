@@ -56,6 +56,37 @@ def create_scanned() -> None:
     doc.save()
 
 
+def create_cross_page_policy() -> None:
+    """A continued table with explicit headers on both physical pages."""
+    doc = canvas.Canvas(str(ROOT / "policy-cross-page.pdf"), pagesize=PAGE_SIZE, invariant=1)
+    doc.setTitle("差旅住宿限额表 - 跨页引用验收")
+    for page, rows in enumerate(
+        [[("北京", "600"), ("上海", "450")], [("杭州", "380"), ("深圳", "550")]],
+        start=1,
+    ):
+        heading = "差旅住宿限额表" if page == 1 else "差旅住宿限额表（续）"
+        bookmark = f"lodging-{page}"
+        doc.bookmarkPage(bookmark)
+        doc.addOutlineEntry(heading, bookmark, level=0)
+        doc.setFont("NotoSansSC", 20)
+        doc.drawString(60, 780, heading)
+        doc.setFont("NotoSansSC", 12)
+        doc.drawString(60, 744, "以下限额为每人每晚可报销的最高住宿费用，单位为人民币元。")
+        xs, ys = (60, 230, 480), (700, 662, 624, 586)
+        for x in xs:
+            doc.line(x, ys[-1], x, ys[0])
+        for y in ys:
+            doc.line(xs[0], y, xs[-1], y)
+        for index, (city, amount) in enumerate([("城市", "每晚住宿上限（元）"), *rows]):
+            doc.drawString(72, 675 - index * 38, city)
+            doc.drawString(242, 675 - index * 38, amount)
+        doc.drawString(60, 548, "表格在下一页继续。" if page == 1 else "表格结束。")
+        doc.setFont("NotoSansSC", 10)
+        doc.drawRightString(535, 40, f"第 {page} 页 / 共 2 页")
+        doc.showPage()
+    doc.save()
+
+
 def create_columns() -> None:
     doc = canvas.Canvas(str(ROOT / "columns.pdf"), pagesize=PAGE_SIZE, invariant=1)
     doc.setFont("NotoSansSC", 12)
@@ -90,3 +121,4 @@ if __name__ == "__main__":
     create_columns()
     create_staggered_columns()
     create_encrypted()
+    create_cross_page_policy()

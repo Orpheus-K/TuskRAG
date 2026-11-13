@@ -83,7 +83,7 @@ func TestCatalogEncryptsCredentialsAndEnforcesAdministrator(t *testing.T) {
 	prefix := "model-test-" + hex.EncodeToString(nonce[:])
 	var tenants []int64
 	t.Cleanup(func() {
-		for _, table := range []string{"login_session", "local_account", "audit_log", "embedding_space", "model_provider", "app_user"} {
+		for _, table := range []string{"login_session", "local_account", "audit_log", "chat_model", "embedding_space", "model_provider", "app_user"} {
 			if _, err := admin.Exec(context.Background(), "DELETE FROM "+table+" WHERE tenant_id = ANY($1)", tenants); err != nil {
 				t.Errorf("clean %s: %v", table, err)
 			}
@@ -278,6 +278,25 @@ func TestCatalogEncryptsCredentialsAndEnforcesAdministrator(t *testing.T) {
 	var denied int
 	if err := admin.QueryRow(ctx, `SELECT count(*) FROM audit_log WHERE tenant_id = $1 AND action IN ('model.list', 'model.create') AND result = 'deny'`, first.TenantID).Scan(&denied); err != nil || denied != 2 {
 		t.Fatalf("administrator denials not audited: count=%d err=%v", denied, err)
+	}
+	chat, err := catalog.CreateChatModel(ctx, first.TenantID, first.UserID, NewChatModel{Name: "chat", BaseURL: server.URL, Locality: Internal, Model: "test-chat", APIKey: "chat-secret"})
+	if err != nil || chat.ID <= 0 {
+		t.Fatalf("create chat: %+v %v", chat, err)
+	}
+	chatModels, err := catalog.ListChatModels(ctx, first.TenantID, first.UserID)
+	if err != nil || len(chatModels) != 1 || chatModels[0] != chat {
+		t.Fatalf("list chat: %+v %v", chatModels, err)
+	}
+	foreignModels, err := catalog.ListChatModels(ctx, other.TenantID, other.UserID)
+	if err != nil || len(foreignModels) != 0 {
+		t.Fatalf("chat tenant leak: %+v %v", foreignModels, err)
+	}
+	var chatCiphertext []byte
+	if err := admin.QueryRow(ctx, `SELECT p.api_key_ciphertext FROM chat_model c JOIN model_provider p ON p.tenant_id=c.tenant_id AND p.id=c.provider_id WHERE c.tenant_id=$1 AND c.id=$2`, first.TenantID, chat.ID).Scan(&chatCiphertext); err != nil || len(chatCiphertext) == 0 || bytes.Contains(chatCiphertext, []byte("chat-secret")) {
+		t.Fatalf("chat key not encrypted: %v", err)
+	}
+	if _, err := catalog.CreateChatModel(ctx, first.TenantID, other.UserID, NewChatModel{Name: "forbidden-chat", BaseURL: server.URL, Locality: Internal, Model: "chat"}); !errors.Is(err, ErrForbidden) {
+		t.Fatalf("chat authorization: %v", err)
 	}
 	trigger := fmt.Sprintf("tuskrag_test_deny_model_%d", first.TenantID)
 	if _, err := admin.Exec(ctx, "CREATE FUNCTION "+trigger+`() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'test audit failure'; END $$`); err != nil {

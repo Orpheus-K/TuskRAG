@@ -24,12 +24,14 @@ import (
 type TokenCounter func(context.Context, string) (int, error)
 
 type Request struct {
-	KnowledgeBaseID int64
-	Query           string
-	Filters         Filters
-	Limit           int
-	Rerank          *RerankOptions
-	Debug           bool
+	KnowledgeBaseID       int64
+	Query                 string
+	Filters               Filters
+	Limit                 int
+	Rerank                *RerankOptions
+	RerankEnabled         *bool // nil inherits the saved setting; false explicitly disables it.
+	Debug                 bool
+	ExpectedConfiguration *ConfigurationSnapshot
 }
 
 type RerankOptions struct {
@@ -41,16 +43,18 @@ type RerankOptions struct {
 }
 
 type Trace struct {
-	Candidates []Candidate        `json:"candidates"`
-	TimingsMS  map[string]float64 `json:"timings_ms"`
-	Degraded   []string           `json:"degraded"`
-	Filters    Filters            `json:"filters"`
+	RetrievalRevision int32              `json:"retrieval_revision"`
+	Candidates        []Candidate        `json:"candidates"`
+	TimingsMS         map[string]float64 `json:"timings_ms"`
+	Degraded          []string           `json:"degraded"`
+	Filters           Filters            `json:"filters"`
 }
 
 type Result struct {
-	Candidates []Candidate
-	Degraded   []string
-	Trace      *Trace
+	RetrievalRevision int32
+	Candidates        []Candidate
+	Degraded          []string
+	Trace             *Trace
 }
 
 type Service struct {
@@ -79,10 +83,22 @@ func NewService(pool *pgxpool.Pool, vault *secrets.Vault, count TokenCounter) (*
 // Search rechecks all evidence after model calls, including debug candidates.
 func (s *Service) Search(ctx context.Context, actor Actor, request Request) (Result, error) {
 	if s == nil || s.driver == nil || s.pool == nil || s.catalog == nil || s.count == nil || ctx == nil ||
-		actor.TenantID <= 0 || actor.UserID <= 0 || request.KnowledgeBaseID <= 0 || request.Limit < 1 || request.Limit > 30 {
+		actor.TenantID <= 0 || actor.UserID <= 0 || request.KnowledgeBaseID <= 0 || request.Limit < 0 || request.Limit > 30 {
 		return Result{}, ErrInvalidQuery
 	}
 	query, err := normalizeQuery(request.Query)
+	if err != nil {
+		return Result{}, err
+	}
+	configuration, err := s.driver.searchConfig(ctx, actor, request.KnowledgeBaseID)
+	if err != nil {
+		return Result{}, err
+	}
+	if request.ExpectedConfiguration != nil && *request.ExpectedConfiguration != configuration.snapshot() {
+		return Result{}, ErrConfigurationChanged
+	}
+	binding, revision := configuration.Binding, configuration.Revision
+	request, err = resolveSearchOptions(request, configuration.Limit, configuration.Reranker)
 	if err != nil {
 		return Result{}, err
 	}
@@ -112,10 +128,6 @@ func (s *Service) Search(ctx context.Context, actor Actor, request Request) (Res
 	if request.Filters.UpdatedAfter != nil {
 		value := request.Filters.UpdatedAfter.UTC()
 		request.Filters.UpdatedAfter = &value
-	}
-	binding, err := s.driver.Binding(ctx, actor, request.KnowledgeBaseID)
-	if err != nil {
-		return Result{}, err
 	}
 	if binding.Distance != "cosine" {
 		return Result{}, indexing.ErrUnsupportedDistance
@@ -255,9 +267,9 @@ func (s *Service) Search(ctx context.Context, actor Actor, request Request) (Res
 	if len(final) > request.Limit {
 		final = final[:request.Limit]
 	}
-	output := Result{Candidates: final, Degraded: degraded}
+	output := Result{Candidates: final, Degraded: degraded, RetrievalRevision: revision}
 	if request.Debug {
-		output.Trace = &Trace{Candidates: candidates, TimingsMS: timings, Degraded: degraded, Filters: request.Filters}
+		output.Trace = &Trace{Candidates: candidates, TimingsMS: timings, Degraded: degraded, Filters: request.Filters, RetrievalRevision: revision}
 	}
 	return output, nil
 }

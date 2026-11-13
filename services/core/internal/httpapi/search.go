@@ -20,7 +20,7 @@ type SearchInput struct {
 	Body struct {
 		Query   string  `json:"query" minLength:"1" maxLength:"4096"`
 		KBIDs   []int64 `json:"kb_ids" minItems:"1" maxItems:"1" nullable:"false"`
-		TopK    int     `json:"top_k,omitempty" minimum:"1" maximum:"30" default:"8"`
+		TopK    *int    `json:"top_k,omitempty" minimum:"1" maximum:"30"`
 		Filters *struct {
 			DocumentTags []string `json:"doc_tags,omitempty" maxItems:"64"`
 			MIMEs        []string `json:"mimes,omitempty" maxItems:"64"`
@@ -54,11 +54,12 @@ type SearchEvidence struct {
 
 type SearchOutput struct {
 	Body struct {
-		Status   string           `json:"status" enum:"ok,no_match"`
-		Degraded []string         `json:"degraded" nullable:"false"`
-		Evidence []SearchEvidence `json:"evidence" nullable:"false"`
-		TraceID  string           `json:"trace_id"`
-		Trace    *retrieval.Trace `json:"trace,omitempty"`
+		RetrievalRevision int32            `json:"retrieval_revision"`
+		Status            string           `json:"status" enum:"ok,no_match"`
+		Degraded          []string         `json:"degraded" nullable:"false"`
+		Evidence          []SearchEvidence `json:"evidence" nullable:"false"`
+		TraceID           string           `json:"trace_id"`
+		Trace             *retrieval.Trace `json:"trace,omitempty"`
 	}
 }
 
@@ -71,15 +72,15 @@ func registerSearch(api huma.API, deps Dependencies) {
 			if len(input.Body.KBIDs) != 1 || input.Body.KBIDs[0] <= 0 {
 				return nil, statusError(ctx, http.StatusBadRequest, "invalid_request", "exactly one knowledge base is required", false)
 			}
-			if input.Body.Options == nil || input.Body.Options.Rerank == nil || (*input.Body.Options.Rerank && input.Body.Options.Reranker == nil) {
-				return nil, statusError(ctx, http.StatusServiceUnavailable, "rerank_unavailable", "reranking requires a provider and model", false)
-			}
 			var reranker *retrieval.RerankOptions
-			if *input.Body.Options.Rerank {
+			var enabled *bool
+			var debug bool
+			if input.Body.Options != nil {
 				reranker = input.Body.Options.Reranker
-			}
-			if input.Body.Options.ExpandParent != nil && *input.Body.Options.ExpandParent {
-				return nil, statusError(ctx, http.StatusNotImplemented, "unsupported", "parent expansion is not available", false)
+				enabled, debug = input.Body.Options.Rerank, input.Body.Options.Debug
+				if input.Body.Options.ExpandParent != nil && *input.Body.Options.ExpandParent {
+					return nil, statusError(ctx, http.StatusNotImplemented, "unsupported", "parent expansion is not available", false)
+				}
 			}
 			filters := retrieval.Filters{}
 			if input.Body.Filters != nil {
@@ -92,20 +93,21 @@ func registerSearch(api huma.API, deps Dependencies) {
 					filters.UpdatedAfter = &value
 				}
 			}
-			limit := input.Body.TopK
-			if limit == 0 {
-				limit = 8
+			limit := 0
+			if input.Body.TopK != nil {
+				limit = *input.Body.TopK
 			}
 			principal := ctx.Value(sessionKey{}).(requestSession).session.Principal
 			searchCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
 			defer cancel()
 			result, err := deps.Search.Search(searchCtx, retrieval.Actor{TenantID: principal.TenantID, UserID: principal.UserID},
-				retrieval.Request{KnowledgeBaseID: input.Body.KBIDs[0], Query: input.Body.Query, Filters: filters, Limit: limit, Rerank: reranker, Debug: input.Body.Options.Debug})
+				retrieval.Request{KnowledgeBaseID: input.Body.KBIDs[0], Query: input.Body.Query, Filters: filters, Limit: limit, Rerank: reranker, RerankEnabled: enabled, Debug: debug})
 			if err != nil {
 				return nil, searchError(ctx, err)
 			}
 			output := &SearchOutput{}
-			if input.Body.Options.Debug {
+			output.Body.RetrievalRevision = result.RetrievalRevision
+			if debug {
 				output.Body.Trace = result.Trace
 			}
 			output.Body.Status = "ok"
@@ -142,6 +144,8 @@ func parseSearchDate(value string) (time.Time, error) {
 func searchError(ctx context.Context, err error) error {
 	var upstream *models.UpstreamError
 	switch {
+	case errors.Is(err, retrieval.ErrRerankUnavailable):
+		return statusError(ctx, http.StatusServiceUnavailable, "rerank_unavailable", "reranking requires a configured provider and model", false)
 	case errors.Is(err, retrieval.ErrInvalidQuery):
 		return statusError(ctx, http.StatusBadRequest, "invalid_request", "invalid search request", false)
 	case errors.Is(err, retrieval.ErrNotFound):

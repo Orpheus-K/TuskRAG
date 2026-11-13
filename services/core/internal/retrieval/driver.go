@@ -54,6 +54,10 @@ type Candidate struct {
 	DocumentID       int64
 	VersionID        int64
 	SectionID        int64
+	Ordinal          int32  `json:"-"`
+	Kind             string `json:"-"`
+	TokenCount       int32  `json:"-"`
+	MIME             string `json:"-"`
 	Title            string
 	Content          string
 	HeadingPath      []string
@@ -219,7 +223,8 @@ func (d *Driver) recheck(ctx context.Context, actor Actor, kbID int64, binding B
 			continue
 		}
 		candidate := Candidate{ChunkID: item.ChunkID, DocumentID: evidence.DocumentID, VersionID: evidence.VersionID,
-			SectionID: evidence.SectionID, Title: evidence.Title, Content: evidence.Content, HeadingPath: evidence.HeadingPath,
+			SectionID: evidence.SectionID, Ordinal: evidence.Ordinal, Kind: evidence.Kind, TokenCount: evidence.TokenCount,
+			MIME: evidence.Mime, Title: evidence.Title, Content: evidence.Content, HeadingPath: evidence.HeadingPath,
 			Score: item.Score, LexicalRank: item.LexicalRank, SemanticRank: item.SemanticRank,
 			LexicalScore: item.LexicalScore, SemanticDistance: item.SemanticDistance}
 		if evidence.PageStart.Valid != evidence.PageEnd.Valid {

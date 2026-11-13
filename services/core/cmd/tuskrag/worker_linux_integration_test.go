@@ -413,10 +413,10 @@ func TestWorkerProcess(t *testing.T) {
 	case <-time.After(10 * time.Second):
 		t.Fatal("worker did not stop after SIGTERM")
 	}
-	testAllProcess(t, ctx, admin, cmd.Env, actor, base.ID, root, documents, revisionEntered, func() { releaseRevision.Do(func() { close(revisionRelease) }) })
+	testAllProcess(t, ctx, admin, migratorURL, cmd.Env, actor, base.ID, root, documents, revisionEntered, func() { releaseRevision.Do(func() { close(revisionRelease) }) })
 }
 
-func testAllProcess(t *testing.T, ctx context.Context, admin *pgx.Conn, environment []string, actor kb.Actor, kbID int64, root string, documents *kb.DocumentService, revisionEntered <-chan struct{}, releaseRevision func()) {
+func testAllProcess(t *testing.T, ctx context.Context, admin *pgx.Conn, migratorURL string, environment []string, actor kb.Actor, kbID int64, root string, documents *kb.DocumentService, revisionEntered <-chan struct{}, releaseRevision func()) {
 	t.Helper()
 	uploaded, err := documents.Upload(ctx, actor, kb.UploadRequest{KBID: kbID, Title: "combined.md", MIME: "text/markdown", Content: strings.NewReader("# 综合模式\n\n另一份需要申请的制度。\n")})
 	if err != nil {
@@ -1077,6 +1077,8 @@ func testAllProcess(t *testing.T, ctx context.Context, admin *pgx.Conn, environm
 			t.Fatalf("deleted version original still exists: version=%d err=%v", versionID, err)
 		}
 	}
+	testAnswerProcess(t, ctx, address, client, cookie, session.CSRF, kbID)
+	testRebuildProcess(t, ctx, admin, migratorURL, address, client, cookie, session.CSRF, actor, kbID)
 	if err := cmd.Process.Signal(syscall.SIGTERM); err != nil {
 		t.Fatal(err)
 	}

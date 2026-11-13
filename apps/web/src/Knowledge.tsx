@@ -14,55 +14,11 @@ import {
   uploadDocumentVersion,
 } from "@tuskrag/api-client";
 import { Button } from "@tuskrag/ui/button";
-import {
-  Component,
-  type FormEvent,
-  lazy,
-  type ReactNode,
-  Suspense,
-  useRef,
-  useState,
-} from "react";
+import { type FormEvent, useRef, useState } from "react";
 import type { PreviewTarget } from "./DocumentPreview";
+import { KnowledgeConfigPanel } from "./KnowledgeConfig";
+import { Preview } from "./Preview";
 import { SearchTrace } from "./SearchTrace";
-
-const DocumentPreview = lazy(() =>
-  import("./DocumentPreview").then((module) => ({
-    default: module.DocumentPreview,
-  })),
-);
-
-class PreviewBoundary extends Component<
-  { children: ReactNode; onClose: () => void },
-  { failed: boolean }
-> {
-  state = { failed: false };
-
-  static getDerivedStateFromError() {
-    return { failed: true };
-  }
-
-  render() {
-    if (this.state.failed) {
-      return (
-        <section className="mt-6 rounded-xl border p-5">
-          <p role="alert" className="text-sm">
-            预览加载失败，请刷新页面后重试。
-          </p>
-          <Button
-            className="mt-3"
-            type="button"
-            variant="outline"
-            onClick={this.props.onClose}
-          >
-            关闭预览
-          </Button>
-        </section>
-      );
-    }
-    return this.props.children;
-  }
-}
 
 const statuses: Record<string, string> = {
   queued: "等待处理",
@@ -135,8 +91,8 @@ export function KnowledgeDetail({
   const [preview, setPreview] = useState<PreviewTarget | null>(null);
   const [searchText, setSearchText] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");
+  const [rerankMode, setRerankMode] = useState("inherit");
   const [searchOptions, setSearchOptions] = useState<SearchOptions>({
-    rerank: false,
     debug: true,
   });
   const providers = useQuery({
@@ -210,15 +166,18 @@ export function KnowledgeDetail({
     const query = searchText.trim();
     if (!query || search.isFetching) return;
     const form = new FormData(event.currentTarget);
-    const enabled = form.get("rerank") === "on";
-    const options: SearchOptions = { rerank: enabled, debug: true };
-    if (enabled)
+    const mode = form.get("rerank-mode");
+    const options: SearchOptions = { debug: true };
+    if (mode === "off") options.rerank = false;
+    if (mode === "custom") {
+      options.rerank = true;
       options.reranker = {
         provider_id: Number(form.get("rerank-provider")),
         model: String(form.get("rerank-model") ?? "").trim(),
         top_n: 30,
         fallback: form.get("rerank-fallback") === "on",
       };
+    }
     if (JSON.stringify(options) !== JSON.stringify(searchOptions)) {
       setSearchOptions(options);
       setSubmittedSearch(query);
@@ -407,9 +366,39 @@ export function KnowledgeDetail({
       <h1 className="mt-5 break-words text-3xl font-semibold tracking-tight">
         {base.data.name}
       </h1>
+      <KnowledgeConfigPanel identity={identity} base={base.data} />
+      {(base.data.role === "owner" || base.data.role === "admin") && (
+        <Link
+          className="mt-4 mr-5 inline-block text-sm underline"
+          to="/kb/$kbId/rebuild"
+          params={{ kbId: String(id) }}
+          search={{ job: 0 }}
+        >
+          嵌入重建
+        </Link>
+      )}
+      {(base.data.role === "owner" || base.data.role === "admin") && (
+        <Link
+          className="mt-4 inline-block text-sm underline"
+          to="/kb/$kbId/eval"
+          params={{ kbId: String(id) }}
+          search={{ cursor: "", digest: "", row: 0 }}
+        >
+          评测报告
+        </Link>
+      )}
       {base.data.status === "active" && (
         <section className="mt-8 rounded-xl border p-5">
-          <h2 className="text-lg font-medium">检索知识库</h2>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-lg font-medium">检索知识库</h2>
+            <Link
+              className="text-sm underline"
+              to="/kb/$kbId/answer"
+              params={{ kbId: String(id) }}
+            >
+              向知识库提问
+            </Link>
+          </div>
           <form className="mt-4 space-y-3" onSubmit={submitSearch}>
             <label className="block text-sm font-medium" htmlFor="search-query">
               问题或关键词
@@ -431,16 +420,34 @@ export function KnowledgeDetail({
               <summary className="cursor-pointer">重排配置</summary>
               <div className="mt-3 grid gap-3 sm:grid-cols-2">
                 <label>
-                  <input type="checkbox" name="rerank" /> 启用重排
+                  重排方式
+                  <select
+                    name="rerank-mode"
+                    value={rerankMode}
+                    onChange={(event) =>
+                      setRerankMode(event.currentTarget.value)
+                    }
+                    className="mt-1 block w-full rounded-md border bg-background p-2"
+                  >
+                    <option value="inherit">使用知识库配置</option>
+                    <option value="off">本次关闭重排</option>
+                    <option value="custom">本次自定义重排</option>
+                  </select>
                 </label>
                 <label>
-                  <input type="checkbox" name="rerank-fallback" />{" "}
+                  <input
+                    type="checkbox"
+                    name="rerank-fallback"
+                    disabled={rerankMode !== "custom"}
+                  />{" "}
                   服务不可用时允许返回未重排结果
                 </label>
                 <label>
                   模型提供方
                   <select
                     name="rerank-provider"
+                    disabled={rerankMode !== "custom"}
+                    required={rerankMode === "custom"}
                     className="mt-1 block w-full rounded-md border bg-background p-2"
                   >
                     <option value="">选择已配置提供方</option>
@@ -455,13 +462,17 @@ export function KnowledgeDetail({
                   重排模型
                   <input
                     name="rerank-model"
+                    disabled={rerankMode !== "custom"}
+                    required={rerankMode === "custom"}
                     maxLength={200}
                     placeholder="bge-reranker-v2-m3"
                     className="mt-1 block w-full rounded-md border bg-background p-2"
                   />
                 </label>
               </div>
-              {providers.isError && <p role="alert">模型提供方加载失败。</p>}
+              {rerankMode === "custom" && providers.isError && (
+                <p role="alert">模型提供方加载失败。</p>
+              )}
             </details>
           </form>
           {search.isError && (
@@ -471,6 +482,9 @@ export function KnowledgeDetail({
           )}
           {search.data && !search.isError && !search.isFetching && (
             <div className="mt-5 space-y-3">
+              <p className="text-sm text-muted-foreground">
+                检索配置修订 {search.data.retrieval_revision}
+              </p>
               {search.data.degraded.includes("rerank") && (
                 <p className="text-sm text-muted-foreground">结果未经重排。</p>
               )}
@@ -777,24 +791,11 @@ export function KnowledgeDetail({
             </Button>
           </section>
         ) : (
-          <PreviewBoundary
-            key={`${preview.id}:${preview.versionId}:${preview.initialSection ?? 0}`}
+          <Preview
+            identity={identity}
+            target={preview}
             onClose={() => setPreview(null)}
-          >
-            <Suspense
-              fallback={
-                <p role="status" className="mt-6 text-sm">
-                  正在加载预览
-                </p>
-              }
-            >
-              <DocumentPreview
-                identity={identity}
-                target={preview}
-                onClose={() => setPreview(null)}
-              />
-            </Suspense>
-          </PreviewBoundary>
+          />
         ))}
       <nav className="mt-5 flex gap-5 text-sm" aria-label="文档分页">
         {cursor > 0 && (

@@ -93,8 +93,8 @@ SELECT chunk_id, score, COALESCE(lexical_rank, 0)::bigint AS lexical_rank,
 FROM fused ORDER BY score DESC, chunk_id LIMIT 100;
 
 -- name: RecheckSearchEvidence :many
-SELECT c.id, c.document_id, c.version_id, c.section_id, c.content, c.page_start, c.page_end,
-       d.title, d.mime, s.heading_path
+SELECT c.id, c.document_id, c.version_id, c.section_id, c.ordinal, c.kind, c.token_count,
+       c.content, c.page_start, c.page_end, d.title, d.mime, s.heading_path
 FROM chunk c
 JOIN document d ON d.tenant_id = c.tenant_id AND d.kb_id = c.kb_id AND d.id = c.document_id
 JOIN document_version dv ON dv.tenant_id = c.tenant_id AND dv.kb_id = c.kb_id
@@ -110,6 +110,24 @@ WHERE c.tenant_id = sqlc.arg(tenant_id) AND c.kb_id = sqlc.arg(kb_id)
   AND (cardinality(sqlc.arg(mimes)::text[]) = 0 OR d.mime = ANY(sqlc.arg(mimes)::text[]))
   AND (sqlc.narg(updated_after)::timestamptz IS NULL OR dv.created_at >= sqlc.narg(updated_after)::timestamptz)
 ORDER BY c.id FOR SHARE OF c, d, dv, s;
+
+-- name: ListSectionChunksForAnswer :many
+SELECT c.id, c.document_id, c.version_id, c.section_id, c.ordinal, c.kind, c.token_count,
+       c.content, c.page_start, c.page_end, d.title, d.mime, s.heading_path,
+       s.token_count AS section_token_count,
+       (c.is_current AND NOT c.disabled AND c.access_tags && sqlc.arg(principal_tags)::text[])::boolean AS allowed
+FROM chunk c
+JOIN document d ON d.tenant_id = c.tenant_id AND d.kb_id = c.kb_id AND d.id = c.document_id
+JOIN document_version dv ON dv.tenant_id = c.tenant_id AND dv.kb_id = c.kb_id
+  AND dv.document_id = c.document_id AND dv.id = c.version_id
+JOIN section s ON s.tenant_id = c.tenant_id AND s.kb_id = c.kb_id
+  AND s.document_id = c.document_id AND s.version_id = c.version_id AND s.id = c.section_id
+WHERE c.tenant_id = sqlc.arg(tenant_id) AND c.kb_id = sqlc.arg(kb_id)
+  AND c.section_id = ANY(sqlc.arg(section_ids)::bigint[])
+  AND d.deleted_at IS NULL AND d.acl_mode = 'inherit_kb' AND d.current_version_id = c.version_id
+  AND dv.status IN ('ready', 'partial')
+ORDER BY c.section_id, c.ordinal
+FOR SHARE OF c, d, dv, s;
 
 -- name: AuditSearch :exec
 INSERT INTO audit_log (tenant_id, actor_user_id, action, object_type, object_id, result, details)

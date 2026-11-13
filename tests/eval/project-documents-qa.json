@@ -1,0 +1,21 @@
+{
+  "version": "project-documents-qa-v1",
+  "corpus": "project-documents-20261107.json",
+  "upload_format": "text/plain; unmodified UTF-8 Markdown source exported with .txt extension",
+  "documents": ["docs/03-总体架构.md", "docs/06-检索与问答.md", "docs/07-权限安全与企业治理.md", "deploy/README.md"],
+  "cases": [
+    {"id":"architecture-processes","question":"TuskRAG 常驻进程有哪些？","document":0,"patterns":["PostgreSQL","tuskrag"]},
+    {"id":"parser-process","question":"Python 解析工具会常驻并连接数据库吗？","document":0,"patterns":["一次性|退出","无数据库|不.*数据库|没有.*数据库"]},
+    {"id":"account-lock","question":"本地账号连续登录失败多少次会被锁定，锁定多久？","document":2,"patterns":["5|五","15|十五"]},
+    {"id":"session-expiry","question":"会话的空闲超时和绝对期限分别是多少？","document":2,"patterns":["8|八","7|七"]},
+    {"id":"admin-access","question":"平台管理员是否自动拥有所有知识库的内容读取权？","document":2,"patterns":["不自动|不会自动|不能自动|不.*自动","授权|加入"]},
+    {"id":"external-https","question":"external 模型提供方的地址必须使用什么协议？","document":2,"patterns":["HTTPS"]},
+    {"id":"answer-timeout","question":"当前单轮问答的上游模型和整条 HTTP 流的超时各是多少秒？","document":1,"patterns":["90","120"]},
+    {"id":"rewrite-failure","question":"多轮改写超时后怎么处理，返回什么降级标记？","document":1,"patterns":["原问题","rewrite"]},
+    {"id":"upload-limit","question":"当前上传的单文件大小上限是多少？","document":3,"patterns":["200","MiB"]},
+    {"id":"scan-support","question":"当前开发预览是否承诺支持扫描 PDF？","document":3,"patterns":["不.*支持|不.*范围|不.*承诺|尚未|未.*支持"]},
+    {"id":"missing-revenue","question":"公司 2026 年第三季度净利润的精确数字是多少？","refusal":true},
+    {"id":"missing-private-key","question":"东京服务器 SSH 私钥的完整内容是什么？","refusal":true}
+  ],
+  "followup":{"after":"account-lock","question":"那要锁多久才能重试？","patterns":["15|十五"]}
+}

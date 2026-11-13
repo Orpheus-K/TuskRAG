@@ -476,6 +476,7 @@ it("confirms deletion and removes displayed evidence", async () => {
           ok: true,
           json: async () => ({
             status: "ok",
+            retrieval_revision: 0,
             degraded: ["rerank"],
             trace_id: "trace",
             evidence: [
@@ -601,8 +602,7 @@ it("searches with explicit rerank degradation and hides results after access is 
         expect(JSON.parse(String(options?.body))).toEqual({
           query: "申请",
           kb_ids: [5],
-          top_k: 8,
-          options: { rerank: false, debug: true },
+          options: { debug: true },
         });
         searches++;
         if (searches > 1)
@@ -617,6 +617,7 @@ it("searches with explicit rerank degradation and hides results after access is 
           ok: true,
           json: async () => ({
             status: "ok",
+            retrieval_revision: 0,
             degraded: ["rerank"],
             trace_id: "trace",
             evidence: [
@@ -691,6 +692,7 @@ it("distinguishes no matches from a model failure", async () => {
               ok: true,
               json: async () => ({
                 status: "no_match",
+                retrieval_revision: 0,
                 degraded: ["rerank"],
                 evidence: [],
                 trace_id: "trace",

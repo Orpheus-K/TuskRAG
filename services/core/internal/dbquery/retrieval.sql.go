@@ -118,6 +118,91 @@ func (q *Queries) GetSearchBinding(ctx context.Context, arg GetSearchBindingPara
 	return i, err
 }
 
+const listSectionChunksForAnswer = `-- name: ListSectionChunksForAnswer :many
+SELECT c.id, c.document_id, c.version_id, c.section_id, c.ordinal, c.kind, c.token_count,
+       c.content, c.page_start, c.page_end, d.title, d.mime, s.heading_path,
+       s.token_count AS section_token_count,
+       (c.is_current AND NOT c.disabled AND c.access_tags && $1::text[])::boolean AS allowed
+FROM chunk c
+JOIN document d ON d.tenant_id = c.tenant_id AND d.kb_id = c.kb_id AND d.id = c.document_id
+JOIN document_version dv ON dv.tenant_id = c.tenant_id AND dv.kb_id = c.kb_id
+  AND dv.document_id = c.document_id AND dv.id = c.version_id
+JOIN section s ON s.tenant_id = c.tenant_id AND s.kb_id = c.kb_id
+  AND s.document_id = c.document_id AND s.version_id = c.version_id AND s.id = c.section_id
+WHERE c.tenant_id = $2 AND c.kb_id = $3
+  AND c.section_id = ANY($4::bigint[])
+  AND d.deleted_at IS NULL AND d.acl_mode = 'inherit_kb' AND d.current_version_id = c.version_id
+  AND dv.status IN ('ready', 'partial')
+ORDER BY c.section_id, c.ordinal
+FOR SHARE OF c, d, dv, s
+`
+
+type ListSectionChunksForAnswerParams struct {
+	PrincipalTags []string
+	TenantID      int64
+	KbID          int64
+	SectionIds    []int64
+}
+
+type ListSectionChunksForAnswerRow struct {
+	ID                int64
+	DocumentID        int64
+	VersionID         int64
+	SectionID         int64
+	Ordinal           int32
+	Kind              string
+	TokenCount        int32
+	Content           string
+	PageStart         pgtype.Int4
+	PageEnd           pgtype.Int4
+	Title             string
+	Mime              string
+	HeadingPath       []string
+	SectionTokenCount int32
+	Allowed           bool
+}
+
+func (q *Queries) ListSectionChunksForAnswer(ctx context.Context, arg ListSectionChunksForAnswerParams) ([]ListSectionChunksForAnswerRow, error) {
+	rows, err := q.db.Query(ctx, listSectionChunksForAnswer,
+		arg.PrincipalTags,
+		arg.TenantID,
+		arg.KbID,
+		arg.SectionIds,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListSectionChunksForAnswerRow
+	for rows.Next() {
+		var i ListSectionChunksForAnswerRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.DocumentID,
+			&i.VersionID,
+			&i.SectionID,
+			&i.Ordinal,
+			&i.Kind,
+			&i.TokenCount,
+			&i.Content,
+			&i.PageStart,
+			&i.PageEnd,
+			&i.Title,
+			&i.Mime,
+			&i.HeadingPath,
+			&i.SectionTokenCount,
+			&i.Allowed,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const lockSearchBinding = `-- name: LockSearchBinding :one
 SELECT k.embedding_space_id, k.config_revision, e.dims, e.distance, e.normalized
 FROM knowledge_base k
@@ -287,8 +372,8 @@ func (q *Queries) RecallHybrid(ctx context.Context, arg RecallHybridParams) ([]R
 }
 
 const recheckSearchEvidence = `-- name: RecheckSearchEvidence :many
-SELECT c.id, c.document_id, c.version_id, c.section_id, c.content, c.page_start, c.page_end,
-       d.title, d.mime, s.heading_path
+SELECT c.id, c.document_id, c.version_id, c.section_id, c.ordinal, c.kind, c.token_count,
+       c.content, c.page_start, c.page_end, d.title, d.mime, s.heading_path
 FROM chunk c
 JOIN document d ON d.tenant_id = c.tenant_id AND d.kb_id = c.kb_id AND d.id = c.document_id
 JOIN document_version dv ON dv.tenant_id = c.tenant_id AND dv.kb_id = c.kb_id
@@ -321,6 +406,9 @@ type RecheckSearchEvidenceRow struct {
 	DocumentID  int64
 	VersionID   int64
 	SectionID   int64
+	Ordinal     int32
+	Kind        string
+	TokenCount  int32
 	Content     string
 	PageStart   pgtype.Int4
 	PageEnd     pgtype.Int4
@@ -351,6 +439,9 @@ func (q *Queries) RecheckSearchEvidence(ctx context.Context, arg RecheckSearchEv
 			&i.DocumentID,
 			&i.VersionID,
 			&i.SectionID,
+			&i.Ordinal,
+			&i.Kind,
+			&i.TokenCount,
 			&i.Content,
 			&i.PageStart,
 			&i.PageEnd,

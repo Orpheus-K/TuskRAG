@@ -1,0 +1,20 @@
+{
+  "name": "知识库验收示例",
+  "cases": [
+    {
+      "id": "q1",
+      "question": "申请条件是什么？",
+      "expected": [{ "document_id": 1, "section_id": 2, "page": 3 }],
+      "answerable": true,
+      "reference_answer": "以制度中的申请条件为准。",
+      "tags": ["精确词"]
+    },
+    {
+      "id": "q2",
+      "question": "未记载的年度预算是多少？",
+      "expected": [],
+      "answerable": false,
+      "tags": ["无答案"]
+    }
+  ]
+}

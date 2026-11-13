@@ -6,6 +6,7 @@ test("shows stage ranks, negative rerank scores and explicit degradation", () =>
   render(
     <SearchTrace
       trace={{
+        retrieval_revision: 0,
         candidates: [
           {
             ChunkID: 1,

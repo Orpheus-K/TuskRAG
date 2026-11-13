@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net"
 	"net/http"
 	"testing"
@@ -64,5 +65,40 @@ func TestRunWorkerPreservesFailures(t *testing.T) {
 	err := runWorker(ctx, func(context.Context) error { return errors.Join(context.Canceled, want) })
 	if !errors.Is(err, want) {
 		t.Fatalf("cleanup failure was ignored: %v", err)
+	}
+}
+
+func TestWrappedWorkerCancellation(t *testing.T) {
+	wrapped := fmt.Errorf("claim worker job: %w", fmt.Errorf("begin job transaction: %w", context.Canceled))
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	if err := runWorker(ctx, func(context.Context) error { return wrapped }); err != nil {
+		t.Fatalf("normal shutdown failed: %v", err)
+	}
+	if err := runWorker(context.Background(), func(context.Context) error { return wrapped }); err == nil {
+		t.Fatal("unsolicited cancellation ignored")
+	}
+}
+func TestServeWrappedCancellation(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	err := serve(ctx, &http.Server{Addr: "127.0.0.1:0"}, func(ctx context.Context) error {
+		cancel()
+		<-ctx.Done()
+		return fmt.Errorf("claim worker job: %w", ctx.Err())
+	})
+	if err != nil {
+		t.Fatalf("normal shutdown failed: %v", err)
+	}
+}
+func TestServePreservesJoinedCleanupFailure(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	want := errors.New("listener cleanup failed")
+	err := serve(ctx, &http.Server{Addr: "127.0.0.1:0"}, func(ctx context.Context) error {
+		cancel()
+		<-ctx.Done()
+		return fmt.Errorf("stop: %w", errors.Join(ctx.Err(), want))
+	})
+	if !errors.Is(err, want) {
+		t.Fatalf("cleanup failure lost: %v", err)
 	}
 }

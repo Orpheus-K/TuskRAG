@@ -38,6 +38,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/chat-models": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["create-chat-model"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/embedding-spaces": {
         parameters: {
             query?: never;
@@ -49,6 +65,22 @@ export interface paths {
         get: operations["get-api-v1-admin-embedding-spaces"];
         put?: never;
         post: operations["create-embedding-space"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/answers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["answer"];
         delete?: never;
         options?: never;
         head?: never;
@@ -81,6 +113,72 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["logout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/chat-models": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 chat models */
+        get: operations["get-api-v1-chat-models"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/conversations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["create-conversation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/conversations/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 conversations by ID */
+        get: operations["get-api-v1-conversations-by-id"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/conversations/{id}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["conversation-answer"];
         delete?: never;
         options?: never;
         head?: never;
@@ -153,6 +251,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/kbs/{kb}/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 kbs by kb config */
+        get: operations["get-api-v1-kbs-by-kb-config"];
+        put: operations["put-knowledge-config"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kbs/{kb}/conversations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 kbs by kb conversations */
+        get: operations["get-api-v1-kbs-by-kb-conversations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/kbs/{kb}/documents": {
         parameters: {
             query?: never;
@@ -202,6 +334,208 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/kbs/{kb}/eval-report-comparison": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 kbs by kb eval report comparison */
+        get: operations["get-api-v1-kbs-by-kb-eval-report-comparison"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kbs/{kb}/eval-reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 kbs by kb eval reports */
+        get: operations["get-api-v1-kbs-by-kb-eval-reports"];
+        put?: never;
+        post: operations["import-eval-report"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kbs/{kb}/eval-reports/{digest}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 kbs by kb eval reports by digest */
+        get: operations["get-api-v1-kbs-by-kb-eval-reports-by-digest"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kbs/{kb}/eval-run-comparison": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 kbs by kb eval run comparison */
+        get: operations["get-api-v1-kbs-by-kb-eval-run-comparison"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kbs/{kb}/eval-runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 kbs by kb eval runs */
+        get: operations["get-api-v1-kbs-by-kb-eval-runs"];
+        put?: never;
+        post: operations["start-eval-run"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kbs/{kb}/eval-runs/{run}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 kbs by kb eval runs by run */
+        get: operations["get-api-v1-kbs-by-kb-eval-runs-by-run"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kbs/{kb}/eval-runs/{run}/result": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 kbs by kb eval runs by run result */
+        get: operations["get-api-v1-kbs-by-kb-eval-runs-by-run-result"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kbs/{kb}/eval-sets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 kbs by kb eval sets */
+        get: operations["get-api-v1-kbs-by-kb-eval-sets"];
+        put?: never;
+        post: operations["create-eval-set"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kbs/{kb}/eval-sets/{set}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 kbs by kb eval sets by set */
+        get: operations["get-api-v1-kbs-by-kb-eval-sets-by-set"];
+        put: operations["update-eval-set"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kbs/{kb}/rebuilds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["create-rebuild"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kbs/{kb}/rebuilds/{job}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 kbs by kb rebuilds by job */
+        get: operations["get-api-v1-kbs-by-kb-rebuilds-by-job"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kbs/{kb}/rebuilds/{job}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["cancel-rebuild"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me": {
         parameters: {
             query?: never;
@@ -213,6 +547,22 @@ export interface paths {
         get: operations["get-api-v1-me"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/messages/{id}/feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["answer-feedback"];
         delete?: never;
         options?: never;
         head?: never;
@@ -255,6 +605,33 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        "Answer-feedbackResponse": {
+            status: string;
+        };
+        AnswerError: {
+            code: string;
+            message: string;
+            retryable: boolean;
+        };
+        AnswerEvidence: {
+            content: string;
+            /** Format: int64 */
+            document_id: number;
+            heading_path: string[];
+            id: string;
+            /** Format: int64 */
+            n: number;
+            pages: number[] | null;
+            /** Format: int64 */
+            section_id: number;
+            title: string;
+            /** Format: int64 */
+            version_id: number;
+        };
+        CancelRebuildOutputBody: {
+            /** @enum {string} */
+            status: "cancelled";
+        };
         Candidate: {
             /** Format: int64 */
             ChunkID: number;
@@ -288,12 +665,67 @@ export interface components {
             /** Format: int64 */
             VersionID: number;
         };
+        CaseDefinition: {
+            answerable: boolean;
+            expected: components["schemas"]["ExpectedLocation"][] | null;
+            id: string;
+            question: string;
+            reference_answer?: string;
+            tags: string[] | null;
+        };
+        ChatModel: {
+            /** Format: int64 */
+            id: number;
+            model: string;
+            name: string;
+        };
+        ChatUsage: {
+            /** Format: int64 */
+            completion_tokens: number;
+            /** Format: int64 */
+            prompt_tokens: number;
+            /** Format: int64 */
+            total_tokens: number;
+        };
+        Citation: {
+            evidence_id: string;
+            /** Format: int64 */
+            n: number;
+        };
+        Citations: {
+            /** Format: int64 */
+            invalid_count: number;
+            items: components["schemas"]["Citation"][];
+        };
         ContentDocumentBody: {
             /** Format: int64 */
             id: number;
             title: string;
             /** Format: int64 */
             version_id: number;
+        };
+        Conversation: {
+            /** Format: date-time */
+            created_at: string;
+            /** Format: int64 */
+            id: number;
+            /** Format: int64 */
+            kb_id: number;
+            /** Format: int64 */
+            model_id: number;
+            title: string;
+        };
+        ConversationDetail: {
+            conversation: components["schemas"]["Conversation"];
+            messages: components["schemas"]["SavedMessage"][];
+        };
+        ConversationMessageInputBody: {
+            question: string;
+        };
+        ConversationPage: {
+            items: components["schemas"]["Conversation"][];
+            /** Format: int64 */
+            next_cursor: number | null;
         };
         CreateEmbeddingSpaceInputBody: {
             api_key?: string;
@@ -318,6 +750,9 @@ export interface components {
         DeleteDocumentOutputBody: {
             /** @enum {string} */
             status: "deleting";
+        };
+        Delta: {
+            text: string;
         };
         DocumentBody: {
             /** Format: int64 */
@@ -349,6 +784,13 @@ export interface components {
             /** Format: int64 */
             next_cursor: number | null;
         };
+        Done: {
+            message_id: string;
+            /** @enum {string} */
+            outcome: "answered" | "refused" | "unsupported" | "truncated";
+            prompt_version: string;
+            usage?: components["schemas"]["ChatUsage"];
+        };
         EmbeddingSpaceBody: {
             base_url: string;
             /** Format: int32 */
@@ -376,6 +818,34 @@ export interface components {
         ErrorModel: {
             error: components["schemas"]["ErrorBody"];
         };
+        Evidence: {
+            /** Format: int64 */
+            ChunkID: number;
+            /** Format: int64 */
+            DocumentID: number;
+            /** Format: int32 */
+            PageEnd: number;
+            /** Format: int32 */
+            PageStart: number;
+            /** Format: int64 */
+            SectionID: number;
+        };
+        ExpectedLocation: {
+            /** Format: int64 */
+            document_id: number;
+            /** Format: int32 */
+            page?: number;
+            /** Format: int64 */
+            section_id?: number;
+        };
+        Feedback: {
+            correction: string;
+            /**
+             * Format: int32
+             * @enum {integer}
+             */
+            rating: -1 | 1;
+        };
         Filters: {
             DocumentTags: string[] | null;
             MIMEs: string[] | null;
@@ -386,6 +856,9 @@ export interface components {
             doc_tags?: string[] | null;
             mimes?: string[] | null;
             updated_after?: string;
+        };
+        "Get-chat-modelsResponse": {
+            items: components["schemas"]["ChatModel"][];
         };
         "Get-kbsResponse": {
             items: components["schemas"]["KnowledgeBaseBody"][];
@@ -431,17 +904,113 @@ export interface components {
             role: string;
             status: string;
         };
+        KnowledgeConfig: {
+            retrieval?: components["schemas"]["RetrievalConfig"];
+            /** Format: int32 */
+            revision: number;
+        };
         LoginInputBody: {
             login: string;
             password: string;
             /** Format: int64 */
             tenant_id: number;
         };
+        Metrics: {
+            /** Format: double */
+            HitAt5: number;
+            /** Format: double */
+            MRRAt10: number;
+            /** Format: double */
+            NDCGAt10: number;
+            /** Format: double */
+            RecallAt20: number;
+        };
+        NewChatModel: {
+            api_key?: string;
+            base_url: string;
+            /** @enum {string} */
+            locality: "internal" | "external";
+            model: string;
+            name: string;
+        };
+        NewConversation: {
+            /** Format: int64 */
+            kb_id: number;
+            /** Format: int64 */
+            model_id: number;
+            title: string;
+        };
         OptionsStruct: {
             debug?: boolean;
             expand_parent?: boolean;
             rerank?: boolean;
             reranker?: components["schemas"]["RerankOptions"];
+        };
+        PutKnowledgeConfigInputBody: {
+            retrieval: components["schemas"]["RetrievalConfig"];
+        };
+        Rebuild: {
+            /** Format: int32 */
+            attempts: number;
+            /** Format: date-time */
+            created_at: string;
+            failure_code: string | null;
+            /** Format: date-time */
+            finished_at: string | null;
+            /** Format: int64 */
+            job_id: number;
+            /** Format: int32 */
+            max_attempts: number;
+            /** Format: int32 */
+            source_revision: number;
+            /** Format: int64 */
+            source_space_id: number;
+            /** @enum {string} */
+            status: "queued" | "running" | "succeeded" | "failed" | "dead" | "cancelled";
+            /** Format: int64 */
+            target_space_id: number;
+        };
+        RebuildRequest: {
+            /** Format: int32 */
+            revision: number;
+            /** Format: int64 */
+            target_space_id: number;
+        };
+        ReportComparison: {
+            baseline: components["schemas"]["Summary"];
+            baseline_digest: string;
+            current: components["schemas"]["Summary"];
+            current_digest: string;
+            delta: components["schemas"]["Metrics"];
+            /** @enum {string} */
+            gate: "passed" | "regressed";
+            /** Format: int32 */
+            next_offset: number | null;
+            rows: components["schemas"]["RowComparison"][] | null;
+            /** Format: int64 */
+            total_rows: number;
+        };
+        ReportListItem: {
+            /** Format: date-time */
+            created_at: string;
+            dataset_version: string;
+            digest: string;
+            mode: string;
+            model_kind: string;
+            model_label: string;
+            source: string;
+            summary: components["schemas"]["Summary"];
+        };
+        ReportPage: {
+            items: components["schemas"]["ReportListItem"][] | null;
+            next_cursor: string | null;
+        };
+        Request: {
+            /** Format: int64 */
+            kb_id: number;
+            /** Format: int64 */
+            model_id: number;
+            question: string;
         };
         RerankOptions: {
             fallback?: boolean;
@@ -457,11 +1026,103 @@ export interface components {
              */
             top_n: 20 | 30 | 50;
         };
+        RetrievalConfig: {
+            reranker?: components["schemas"]["RerankOptions"];
+            /** Format: int64 */
+            top_k: number;
+        };
+        RetrievalEvent: {
+            degraded: string[];
+            evidence: components["schemas"]["AnswerEvidence"][];
+            /** Format: int32 */
+            retrieval_revision: number;
+        };
         RetryJobOutputBody: {
             /** Format: int64 */
             job_id: number;
             /** @enum {string} */
             status: "queued";
+        };
+        RowComparison: {
+            baseline: components["schemas"]["RunRow"];
+            current: components["schemas"]["RunRow"];
+            delta: components["schemas"]["Metrics"] | null;
+            evidence_changed: boolean;
+            id: string;
+        };
+        RunComparison: {
+            /** Format: int64 */
+            baseline_run_id: number;
+            comparison: components["schemas"]["ReportComparison"];
+            /** Format: int64 */
+            current_run_id: number;
+            source: string;
+        };
+        RunPage: {
+            items: components["schemas"]["RunStatus"][] | null;
+            /** Format: int64 */
+            next_cursor: number | null;
+        };
+        RunReport: {
+            config_sha256: string;
+            dataset_sha256: string;
+            dataset_version: string;
+            latency_ms_p50_p95: {
+                [key: string]: number[];
+            };
+            mode: string;
+            model_kind: string;
+            model_label: string;
+            rows: components["schemas"]["RunRow"][] | null;
+            status: string;
+            summary: components["schemas"]["Summary"];
+            /** Format: int64 */
+            unauthorized_evidence: number;
+        };
+        RunRow: {
+            degraded: string[] | null;
+            fused: components["schemas"]["Evidence"][] | null;
+            id: string;
+            metrics: components["schemas"]["Metrics"] | null;
+            ranked: components["schemas"]["Evidence"][] | null;
+            timings_ms: {
+                [key: string]: number;
+            };
+        };
+        RunStatus: {
+            /** Format: int32 */
+            attempts: number;
+            /** Format: date-time */
+            created_at: string;
+            failure_code: string | null;
+            /** Format: date-time */
+            finished_at: string | null;
+            /** Format: int64 */
+            id: number;
+            /** Format: int64 */
+            job_id: number;
+            /** Format: int32 */
+            max_attempts: number;
+            /** @enum {string} */
+            mode: "lexical" | "vector" | "rrf" | "rerank";
+            result_available: boolean;
+            set: components["schemas"]["SetBinding"];
+            /** @enum {string} */
+            status: "queued" | "running" | "succeeded" | "failed" | "dead" | "cancelled";
+        };
+        SavedMessage: {
+            citations: components["schemas"]["Citations"];
+            content: string;
+            /** Format: date-time */
+            created_at: string;
+            degraded: string[];
+            done?: components["schemas"]["Done"];
+            evidence: components["schemas"]["AnswerEvidence"][];
+            feedback?: components["schemas"]["Feedback"];
+            id: string;
+            question: string;
+            /** @enum {string} */
+            status: "running" | "complete" | "failed" | "cancelled";
         };
         SearchEvidence: {
             content: string;
@@ -491,15 +1152,14 @@ export interface components {
             kb_ids: number[];
             options?: components["schemas"]["OptionsStruct"];
             query: string;
-            /**
-             * Format: int64
-             * @default 8
-             */
-            top_k: number;
+            /** Format: int64 */
+            top_k?: number;
         };
         SearchOutputBody: {
             degraded: string[];
             evidence: components["schemas"]["SearchEvidence"][];
+            /** Format: int32 */
+            retrieval_revision: number;
             /** @enum {string} */
             status: "ok" | "no_match";
             trace?: components["schemas"]["Trace"];
@@ -525,10 +1185,79 @@ export interface components {
             /** Format: int64 */
             parent_id: number | null;
         };
+        SetBinding: {
+            /** Format: int32 */
+            revision: number;
+            /** Format: int64 */
+            set_id: number;
+        };
+        SetDefinition: {
+            cases: components["schemas"]["CaseDefinition"][] | null;
+            name: string;
+        };
+        SetListItem: {
+            /** Format: int32 */
+            case_count: number;
+            /** Format: date-time */
+            created_at: string;
+            digest: string;
+            /** Format: int64 */
+            id: number;
+            name: string;
+            /** Format: int32 */
+            revision: number;
+        };
+        SetPage: {
+            items: components["schemas"]["SetListItem"][] | null;
+            /** Format: int64 */
+            next_cursor: number | null;
+        };
+        StartRequest: {
+            /** @enum {string} */
+            mode: "lexical" | "vector" | "rrf" | "rerank";
+            /** Format: int32 */
+            revision: number;
+            /** Format: int64 */
+            set_id: number;
+        };
+        StartedRun: {
+            /** Format: int64 */
+            id: number;
+            /** Format: int64 */
+            job_id: number;
+        };
+        StoredReport: {
+            /** Format: date-time */
+            created_at: string;
+            digest: string;
+            report: components["schemas"]["RunReport"];
+            source: string;
+        };
+        StoredSet: {
+            /** Format: date-time */
+            created_at: string;
+            definition: components["schemas"]["SetDefinition"];
+            digest: string;
+            /** Format: int64 */
+            id: number;
+            /** Format: int32 */
+            revision: number;
+        };
+        Summary: {
+            /** Format: int64 */
+            AnswerableCases: number;
+            /** Format: int64 */
+            Cases: number;
+            Metrics: components["schemas"]["Metrics"] | null;
+            /** Format: int64 */
+            UnanswerableCases: number;
+        };
         Trace: {
             candidates: components["schemas"]["Candidate"][] | null;
             degraded: string[] | null;
             filters: components["schemas"]["Filters"];
+            /** Format: int32 */
+            retrieval_revision: number;
             timings_ms: {
                 [key: string]: number;
             };
@@ -613,6 +1342,41 @@ export interface operations {
             };
         };
     };
+    "create-chat-model": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NewChatModel"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChatModel"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
     "get-api-v1-admin-embedding-spaces": {
         parameters: {
             query?: never;
@@ -664,6 +1428,96 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EmbeddingSpaceBody"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    answer: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Request"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": ({
+                        data: components["schemas"]["Citations"];
+                        /**
+                         * @description The event name.
+                         * @constant
+                         */
+                        event: "citations";
+                        /** @description The event ID. */
+                        id?: number | string;
+                        /** @description The retry time in milliseconds. */
+                        retry?: number;
+                    } | {
+                        data: components["schemas"]["Delta"];
+                        /**
+                         * @description The event name.
+                         * @constant
+                         */
+                        event: "delta";
+                        /** @description The event ID. */
+                        id?: number | string;
+                        /** @description The retry time in milliseconds. */
+                        retry?: number;
+                    } | {
+                        data: components["schemas"]["Done"];
+                        /**
+                         * @description The event name.
+                         * @constant
+                         */
+                        event: "done";
+                        /** @description The event ID. */
+                        id?: number | string;
+                        /** @description The retry time in milliseconds. */
+                        retry?: number;
+                    } | {
+                        data: components["schemas"]["AnswerError"];
+                        /**
+                         * @description The event name.
+                         * @constant
+                         */
+                        event: "error";
+                        /** @description The event ID. */
+                        id?: number | string;
+                        /** @description The retry time in milliseconds. */
+                        retry?: number;
+                    } | {
+                        data: components["schemas"]["RetrievalEvent"];
+                        /**
+                         * @description The event name.
+                         * @constant
+                         */
+                        event: "retrieval";
+                        /** @description The event ID. */
+                        id?: number | string;
+                        /** @description The retry time in milliseconds. */
+                        retry?: number;
+                    })[];
                 };
             };
             /** @description Error */
@@ -731,6 +1585,193 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-chat-models": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Get-chat-modelsResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "create-conversation": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NewConversation"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Conversation"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-conversations-by-id": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationDetail"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "conversation-answer": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+            };
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConversationMessageInputBody"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": ({
+                        data: components["schemas"]["Citations"];
+                        /**
+                         * @description The event name.
+                         * @constant
+                         */
+                        event: "citations";
+                        /** @description The event ID. */
+                        id?: number | string;
+                        /** @description The retry time in milliseconds. */
+                        retry?: number;
+                    } | {
+                        data: components["schemas"]["Delta"];
+                        /**
+                         * @description The event name.
+                         * @constant
+                         */
+                        event: "delta";
+                        /** @description The event ID. */
+                        id?: number | string;
+                        /** @description The retry time in milliseconds. */
+                        retry?: number;
+                    } | {
+                        data: components["schemas"]["Done"];
+                        /**
+                         * @description The event name.
+                         * @constant
+                         */
+                        event: "done";
+                        /** @description The event ID. */
+                        id?: number | string;
+                        /** @description The retry time in milliseconds. */
+                        retry?: number;
+                    } | {
+                        data: components["schemas"]["AnswerError"];
+                        /**
+                         * @description The event name.
+                         * @constant
+                         */
+                        event: "error";
+                        /** @description The event ID. */
+                        id?: number | string;
+                        /** @description The retry time in milliseconds. */
+                        retry?: number;
+                    } | {
+                        data: components["schemas"]["RetrievalEvent"];
+                        /**
+                         * @description The event name.
+                         * @constant
+                         */
+                        event: "retrieval";
+                        /** @description The event ID. */
+                        id?: number | string;
+                        /** @description The retry time in milliseconds. */
+                        retry?: number;
+                    })[];
+                };
             };
             /** @description Error */
             default: {
@@ -968,6 +2009,110 @@ export interface operations {
             };
         };
     };
+    "get-api-v1-kbs-by-kb-config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                kb: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KnowledgeConfig"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "put-knowledge-config": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+                "If-Match": string;
+            };
+            path: {
+                kb: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PutKnowledgeConfigInputBody"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KnowledgeConfig"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-kbs-by-kb-conversations": {
+        parameters: {
+            query?: {
+                cursor?: number;
+            };
+            header?: never;
+            path: {
+                kb: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationPage"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
     "get-api-v1-kbs-by-kb-documents": {
         parameters: {
             query?: {
@@ -1125,6 +2270,569 @@ export interface operations {
             };
         };
     };
+    "get-api-v1-kbs-by-kb-eval-report-comparison": {
+        parameters: {
+            query: {
+                baseline: string;
+                current: string;
+                offset?: number;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                kb: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReportComparison"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-kbs-by-kb-eval-reports": {
+        parameters: {
+            query?: {
+                cursor?: string;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                kb: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReportPage"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "import-eval-report": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+            };
+            path: {
+                kb: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RunReport"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StoredReport"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-kbs-by-kb-eval-reports-by-digest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                kb: number;
+                digest: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StoredReport"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-kbs-by-kb-eval-run-comparison": {
+        parameters: {
+            query: {
+                baseline: number;
+                current: number;
+                offset?: number;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                kb: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunComparison"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-kbs-by-kb-eval-runs": {
+        parameters: {
+            query?: {
+                cursor?: number;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                kb: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunPage"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "start-eval-run": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+                "Idempotency-Key": string;
+            };
+            path: {
+                kb: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StartRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StartedRun"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-kbs-by-kb-eval-runs-by-run": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                kb: number;
+                run: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunStatus"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-kbs-by-kb-eval-runs-by-run-result": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                kb: number;
+                run: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StoredReport"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-kbs-by-kb-eval-sets": {
+        parameters: {
+            query?: {
+                cursor?: number;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                kb: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SetPage"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "create-eval-set": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+                "Idempotency-Key"?: string;
+            };
+            path: {
+                kb: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetDefinition"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StoredSet"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-kbs-by-kb-eval-sets-by-set": {
+        parameters: {
+            query?: {
+                revision?: number;
+            };
+            header?: never;
+            path: {
+                kb: number;
+                set: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StoredSet"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "update-eval-set": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+                "If-Match": string;
+            };
+            path: {
+                kb: number;
+                set: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetDefinition"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StoredSet"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "create-rebuild": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+                "Idempotency-Key": string;
+            };
+            path: {
+                kb: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RebuildRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Rebuild"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-kbs-by-kb-rebuilds-by-job": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                kb: number;
+                job: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Rebuild"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "cancel-rebuild": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+            };
+            path: {
+                kb: number;
+                job: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CancelRebuildOutputBody"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
     "get-api-v1-me": {
         parameters: {
             query?: never;
@@ -1141,6 +2849,43 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["IdentityBody"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "answer-feedback": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Feedback"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Answer-feedbackResponse"];
                 };
             };
             /** @description Error */

@@ -3,6 +3,7 @@ package eval
 import (
 	"context"
 	"errors"
+	"math"
 	"testing"
 
 	"tuskrag.local/core/internal/retrieval"
@@ -39,7 +40,7 @@ func TestRunnerRejectsFailuresAndUnauthorizedDebugEvidence(t *testing.T) {
 }
 
 func TestComparisonGate(t *testing.T) {
-	baseline := RunReport{Status: "passed", DatasetSHA256: "same", Mode: "rrf", ModelKind: "stub", Summary: Summary{Cases: 64, Metrics: &Metrics{RecallAt20: 0.9, HitAt5: 0.9, MRRAt10: 0.9, NDCGAt10: 0.9}}}
+	baseline := comparisonReport()
 	current := baseline
 	current.Summary.Metrics = &Metrics{RecallAt20: 0.88, HitAt5: 0.9, MRRAt10: 0.9, NDCGAt10: 0.9}
 	if err := Compare(baseline, current); err != nil {
@@ -58,5 +59,42 @@ func TestComparisonGate(t *testing.T) {
 	current.ModelKind = "real"
 	if Compare(baseline, current) == nil {
 		t.Fatal("stub compared to real model")
+	}
+}
+
+func comparisonReport() RunReport {
+	return RunReport{Status: "passed", DatasetSHA256: "same", Mode: "rrf", ModelKind: "stub", Summary: Summary{Cases: 64, AnswerableCases: 54, UnanswerableCases: 10, Metrics: &Metrics{RecallAt20: 0.9, HitAt5: 0.9, MRRAt10: 0.9, NDCGAt10: 0.9}}}
+}
+
+func TestComparisonRejectsInvalidSummaries(t *testing.T) {
+	for name, mutate := range map[string]func(*RunReport){
+		"empty dataset identity":      func(r *RunReport) { r.DatasetSHA256 = "" },
+		"unknown mode":                func(r *RunReport) { r.Mode = "unknown" },
+		"unknown model kind":          func(r *RunReport) { r.ModelKind = "unknown" },
+		"no cases":                    func(r *RunReport) { r.Summary.Cases = 0 },
+		"negative count":              func(r *RunReport) { r.Summary.UnanswerableCases = -1 },
+		"inconsistent counts":         func(r *RunReport) { r.Summary.AnswerableCases = 53 },
+		"no answerable cases":         func(r *RunReport) { r.Summary.AnswerableCases = 0; r.Summary.UnanswerableCases = 64 },
+		"missing metrics":             func(r *RunReport) { r.Summary.Metrics = nil },
+		"NaN":                         func(r *RunReport) { r.Summary.Metrics.MRRAt10 = math.NaN() },
+		"infinity":                    func(r *RunReport) { r.Summary.Metrics.RecallAt20 = math.Inf(1) },
+		"negative metric":             func(r *RunReport) { r.Summary.Metrics.HitAt5 = -0.1 },
+		"metric above one":            func(r *RunReport) { r.Summary.Metrics.NDCGAt10 = 1.1 },
+		"unauthorized evidence":       func(r *RunReport) { r.UnauthorizedEvidence = 1 },
+		"negative unauthorized count": func(r *RunReport) { r.UnauthorizedEvidence = -1 },
+	} {
+		t.Run(name, func(t *testing.T) {
+			invalid := comparisonReport()
+			mutate(&invalid)
+			if Compare(invalid, invalid) == nil || Compare(invalid, comparisonReport()) == nil || Compare(comparisonReport(), invalid) == nil {
+				t.Fatal("invalid report accepted")
+			}
+		})
+	}
+	current := comparisonReport()
+	current.Summary.AnswerableCases--
+	current.Summary.UnanswerableCases++
+	if Compare(comparisonReport(), current) == nil {
+		t.Fatal("different answerable populations accepted")
 	}
 }

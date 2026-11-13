@@ -13,8 +13,10 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	"tuskrag.local/core/internal/answer"
 	"tuskrag.local/core/internal/config"
 	"tuskrag.local/core/internal/db"
+	"tuskrag.local/core/internal/eval"
 	"tuskrag.local/core/internal/httpapi"
 	"tuskrag.local/core/internal/identity"
 	"tuskrag.local/core/internal/jobs"
@@ -38,6 +40,11 @@ func main() {
 }
 
 func run() (resultErr error) {
+	if len(os.Args) >= 2 && os.Args[1] == "ops" {
+		ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+		defer stop()
+		return runOperations(ctx, os.Args[2:])
+	}
 	if len(os.Args) >= 2 && os.Args[1] == "eval" {
 		ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 		defer stop()
@@ -62,7 +69,7 @@ func run() (resultErr error) {
 		return provisionIndexes(ctx, os.Args[2:])
 	}
 	if len(os.Args) != 1 {
-		return errors.New("usage: tuskrag [openapi|bootstrap|provision-indexes <tenant-id> <space-id>]")
+		return errors.New("usage: tuskrag [openapi|bootstrap|provision-indexes <tenant-id> <space-id>|eval ...|ops verify-storage <tenant-id>]")
 	}
 	cfg, err := config.Load()
 	if err != nil {
@@ -149,8 +156,41 @@ func run() (resultErr error) {
 	if err != nil {
 		return err
 	}
+	answers, err := answer.NewService(pool, vault, search, counter.Count)
+	if err != nil {
+		return err
+	}
+	reports, err := eval.NewReportStore(pool)
+	if err != nil {
+		return err
+	}
+	evalSets, err := eval.NewSetStore(pool)
+	if err != nil {
+		return err
+	}
+	evalQueue, err := jobs.NewStore(pool, jobs.RetryPolicy{Initial: time.Second, Maximum: time.Minute})
+	if err != nil {
+		return err
+	}
+	evalRuns, err := eval.NewRunStore(pool, evalQueue)
+	if err != nil {
+		return err
+	}
+	rebuilds, err := kb.NewRebuildService(pool, evalQueue)
+	if err != nil {
+		return err
+	}
+	conversations, err := answer.NewConversations(pool, answers)
+	if err != nil {
+		return err
+	}
 	app := httpapi.New(httpapi.Dependencies{
-		Identity: identities, Knowledge: knowledgeBases, Documents: documents, Jobs: jobControl, Reader: knowledgeBases, Models: catalog, Search: search, InsecureLocalCookies: cfg.InsecureLocalCookies,
+		Answers: answers, ChatModels: catalog, Conversations: conversations,
+		Rebuilds: rebuilds,
+		Reports:  reports,
+		EvalSets: evalSets,
+		EvalRuns: evalRuns,
+		Identity: identities, Knowledge: knowledgeBases, Config: knowledgeBases, Documents: documents, Jobs: jobControl, Reader: knowledgeBases, Models: catalog, Search: search, InsecureLocalCookies: cfg.InsecureLocalCookies,
 		Check: func(ctx context.Context) error {
 			checkCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
 			defer cancel()
@@ -171,9 +211,21 @@ func run() (resultErr error) {
 	return serve(ctx, server, runJobs)
 }
 
+// Follow single-error wrappers only. Joined errors may contain a cleanup
+// failure alongside cancellation and must remain visible.
+func workerCancelled(err error) bool {
+	for err != nil {
+		if err == context.Canceled {
+			return true
+		}
+		err = errors.Unwrap(err)
+	}
+	return false
+}
+
 func runWorker(ctx context.Context, run func(context.Context) error) error {
 	err := run(ctx)
-	if err == context.Canceled && ctx.Err() != nil {
+	if workerCancelled(err) && ctx.Err() != nil {
 		return nil
 	}
 	return err
@@ -202,7 +254,7 @@ func serve(ctx context.Context, server *http.Server, runJobs func(context.Contex
 		workerStopped = true
 		if err == nil {
 			result = errors.New("worker stopped unexpectedly")
-		} else if err != context.Canceled || ctx.Err() == nil {
+		} else if !workerCancelled(err) || ctx.Err() == nil {
 			result = fmt.Errorf("worker stopped: %w", err)
 		}
 	}
@@ -217,7 +269,7 @@ func serve(ctx context.Context, server *http.Server, runJobs func(context.Contex
 	if workerDone != nil && !workerStopped {
 		select {
 		case err := <-workerDone:
-			if err != nil && err != context.Canceled {
+			if err != nil && !workerCancelled(err) {
 				result = errors.Join(result, fmt.Errorf("stop worker: %w", err))
 			}
 		case <-shutdownCtx.Done():

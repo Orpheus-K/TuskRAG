@@ -1,6 +1,111 @@
 {
   "components": {
     "schemas": {
+      "Answer-feedbackResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "type": "object"
+      },
+      "AnswerError": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "retryable": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "retryable"
+        ],
+        "type": "object"
+      },
+      "AnswerEvidence": {
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "document_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "heading_path": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          },
+          "n": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "pages": {
+            "items": {
+              "format": "int32",
+              "type": "integer"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "section_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "version_id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "n",
+          "id",
+          "content",
+          "document_id",
+          "version_id",
+          "title",
+          "section_id",
+          "heading_path",
+          "pages"
+        ],
+        "type": "object"
+      },
+      "CancelRebuildOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "enum": [
+              "cancelled"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "type": "object"
+      },
       "Candidate": {
         "additionalProperties": false,
         "properties": {
@@ -106,6 +211,130 @@
         ],
         "type": "object"
       },
+      "CaseDefinition": {
+        "additionalProperties": false,
+        "properties": {
+          "answerable": {
+            "type": "boolean"
+          },
+          "expected": {
+            "items": {
+              "$ref": "#/components/schemas/ExpectedLocation"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "question": {
+            "type": "string"
+          },
+          "reference_answer": {
+            "type": "string"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "question",
+          "expected",
+          "answerable",
+          "tags"
+        ],
+        "type": "object"
+      },
+      "ChatModel": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "model": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "model"
+        ],
+        "type": "object"
+      },
+      "ChatUsage": {
+        "additionalProperties": false,
+        "properties": {
+          "completion_tokens": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "prompt_tokens": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "total_tokens": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "prompt_tokens",
+          "completion_tokens",
+          "total_tokens"
+        ],
+        "type": "object"
+      },
+      "Citation": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence_id": {
+            "type": "string"
+          },
+          "n": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "n",
+          "evidence_id"
+        ],
+        "type": "object"
+      },
+      "Citations": {
+        "additionalProperties": false,
+        "properties": {
+          "invalid_count": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Citation"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "invalid_count"
+        ],
+        "type": "object"
+      },
       "ContentDocumentBody": {
         "additionalProperties": false,
         "properties": {
@@ -125,6 +354,94 @@
           "id",
           "version_id",
           "title"
+        ],
+        "type": "object"
+      },
+      "Conversation": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "kb_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "model_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kb_id",
+          "model_id",
+          "title",
+          "created_at"
+        ],
+        "type": "object"
+      },
+      "ConversationDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "conversation": {
+            "$ref": "#/components/schemas/Conversation"
+          },
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/SavedMessage"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "conversation",
+          "messages"
+        ],
+        "type": "object"
+      },
+      "ConversationMessageInputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "question": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "question"
+        ],
+        "type": "object"
+      },
+      "ConversationPage": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Conversation"
+            },
+            "type": "array"
+          },
+          "next_cursor": {
+            "format": "int64",
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
         ],
         "type": "object"
       },
@@ -226,6 +543,18 @@
         },
         "required": [
           "status"
+        ],
+        "type": "object"
+      },
+      "Delta": {
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
         ],
         "type": "object"
       },
@@ -346,6 +675,35 @@
         ],
         "type": "object"
       },
+      "Done": {
+        "additionalProperties": false,
+        "properties": {
+          "message_id": {
+            "type": "string"
+          },
+          "outcome": {
+            "enum": [
+              "answered",
+              "refused",
+              "unsupported",
+              "truncated"
+            ],
+            "type": "string"
+          },
+          "prompt_version": {
+            "type": "string"
+          },
+          "usage": {
+            "$ref": "#/components/schemas/ChatUsage"
+          }
+        },
+        "required": [
+          "message_id",
+          "outcome",
+          "prompt_version"
+        ],
+        "type": "object"
+      },
       "EmbeddingSpaceBody": {
         "additionalProperties": false,
         "properties": {
@@ -448,6 +806,84 @@
         ],
         "type": "object"
       },
+      "Evidence": {
+        "additionalProperties": false,
+        "properties": {
+          "ChunkID": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "DocumentID": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "PageEnd": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "PageStart": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "SectionID": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "ChunkID",
+          "DocumentID",
+          "SectionID",
+          "PageStart",
+          "PageEnd"
+        ],
+        "type": "object"
+      },
+      "ExpectedLocation": {
+        "additionalProperties": false,
+        "properties": {
+          "document_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "page": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "section_id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "document_id"
+        ],
+        "type": "object"
+      },
+      "Feedback": {
+        "additionalProperties": false,
+        "properties": {
+          "correction": {
+            "maxLength": 4000,
+            "type": "string"
+          },
+          "rating": {
+            "enum": [
+              -1,
+              1
+            ],
+            "format": "int32",
+            "maximum": 32767,
+            "minimum": -32768,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "rating",
+          "correction"
+        ],
+        "type": "object"
+      },
       "Filters": {
         "additionalProperties": false,
         "properties": {
@@ -511,6 +947,21 @@
             "type": "string"
           }
         },
+        "type": "object"
+      },
+      "Get-chat-modelsResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ChatModel"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
         "type": "object"
       },
       "Get-kbsResponse": {
@@ -659,6 +1110,22 @@
         ],
         "type": "object"
       },
+      "KnowledgeConfig": {
+        "additionalProperties": false,
+        "properties": {
+          "retrieval": {
+            "$ref": "#/components/schemas/RetrievalConfig"
+          },
+          "revision": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "revision"
+        ],
+        "type": "object"
+      },
       "LoginInputBody": {
         "additionalProperties": false,
         "properties": {
@@ -685,6 +1152,98 @@
         ],
         "type": "object"
       },
+      "Metrics": {
+        "additionalProperties": false,
+        "properties": {
+          "HitAt5": {
+            "format": "double",
+            "type": "number"
+          },
+          "MRRAt10": {
+            "format": "double",
+            "type": "number"
+          },
+          "NDCGAt10": {
+            "format": "double",
+            "type": "number"
+          },
+          "RecallAt20": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "RecallAt20",
+          "HitAt5",
+          "MRRAt10",
+          "NDCGAt10"
+        ],
+        "type": "object"
+      },
+      "NewChatModel": {
+        "additionalProperties": false,
+        "properties": {
+          "api_key": {
+            "maxLength": 4096,
+            "type": "string"
+          },
+          "base_url": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          },
+          "locality": {
+            "enum": [
+              "internal",
+              "external"
+            ],
+            "type": "string"
+          },
+          "model": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "base_url",
+          "locality",
+          "model"
+        ],
+        "type": "object"
+      },
+      "NewConversation": {
+        "additionalProperties": false,
+        "properties": {
+          "kb_id": {
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "model_id": {
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "title": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "kb_id",
+          "model_id",
+          "title"
+        ],
+        "type": "object"
+      },
       "OptionsStruct": {
         "additionalProperties": false,
         "properties": {
@@ -701,6 +1260,261 @@
             "$ref": "#/components/schemas/RerankOptions"
           }
         },
+        "type": "object"
+      },
+      "PutKnowledgeConfigInputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "retrieval": {
+            "$ref": "#/components/schemas/RetrievalConfig"
+          }
+        },
+        "required": [
+          "retrieval"
+        ],
+        "type": "object"
+      },
+      "Rebuild": {
+        "additionalProperties": false,
+        "properties": {
+          "attempts": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "failure_code": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "finished_at": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "job_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "max_attempts": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "source_revision": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "source_space_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "queued",
+              "running",
+              "succeeded",
+              "failed",
+              "dead",
+              "cancelled"
+            ],
+            "type": "string"
+          },
+          "target_space_id": {
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "job_id",
+          "source_space_id",
+          "source_revision",
+          "target_space_id",
+          "status",
+          "attempts",
+          "max_attempts",
+          "failure_code",
+          "created_at",
+          "finished_at"
+        ],
+        "type": "object"
+      },
+      "RebuildRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "revision": {
+            "format": "int32",
+            "maximum": 2147483646,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "target_space_id": {
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "target_space_id",
+          "revision"
+        ],
+        "type": "object"
+      },
+      "ReportComparison": {
+        "additionalProperties": false,
+        "properties": {
+          "baseline": {
+            "$ref": "#/components/schemas/Summary"
+          },
+          "baseline_digest": {
+            "type": "string"
+          },
+          "current": {
+            "$ref": "#/components/schemas/Summary"
+          },
+          "current_digest": {
+            "type": "string"
+          },
+          "delta": {
+            "$ref": "#/components/schemas/Metrics"
+          },
+          "gate": {
+            "enum": [
+              "passed",
+              "regressed"
+            ],
+            "type": "string"
+          },
+          "next_offset": {
+            "format": "int32",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/RowComparison"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "total_rows": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "baseline_digest",
+          "current_digest",
+          "gate",
+          "baseline",
+          "current",
+          "delta",
+          "rows",
+          "total_rows",
+          "next_offset"
+        ],
+        "type": "object"
+      },
+      "ReportListItem": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "dataset_version": {
+            "type": "string"
+          },
+          "digest": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "model_kind": {
+            "type": "string"
+          },
+          "model_label": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/Summary"
+          }
+        },
+        "required": [
+          "digest",
+          "source",
+          "created_at",
+          "dataset_version",
+          "model_label",
+          "model_kind",
+          "mode",
+          "summary"
+        ],
+        "type": "object"
+      },
+      "ReportPage": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ReportListItem"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "next_cursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "type": "object"
+      },
+      "Request": {
+        "additionalProperties": false,
+        "properties": {
+          "kb_id": {
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "model_id": {
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "question": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "kb_id",
+          "model_id",
+          "question"
+        ],
         "type": "object"
       },
       "RerankOptions": {
@@ -740,6 +1554,51 @@
         ],
         "type": "object"
       },
+      "RetrievalConfig": {
+        "additionalProperties": false,
+        "properties": {
+          "reranker": {
+            "$ref": "#/components/schemas/RerankOptions"
+          },
+          "top_k": {
+            "format": "int64",
+            "maximum": 30,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "top_k"
+        ],
+        "type": "object"
+      },
+      "RetrievalEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "degraded": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/AnswerEvidence"
+            },
+            "type": "array"
+          },
+          "retrieval_revision": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "evidence",
+          "degraded",
+          "retrieval_revision"
+        ],
+        "type": "object"
+      },
       "RetryJobOutputBody": {
         "additionalProperties": false,
         "properties": {
@@ -757,6 +1616,359 @@
         "required": [
           "job_id",
           "status"
+        ],
+        "type": "object"
+      },
+      "RowComparison": {
+        "additionalProperties": false,
+        "properties": {
+          "baseline": {
+            "$ref": "#/components/schemas/RunRow"
+          },
+          "current": {
+            "$ref": "#/components/schemas/RunRow"
+          },
+          "delta": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Metrics"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "evidence_changed": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "baseline",
+          "current",
+          "delta",
+          "evidence_changed"
+        ],
+        "type": "object"
+      },
+      "RunComparison": {
+        "additionalProperties": false,
+        "properties": {
+          "baseline_run_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "comparison": {
+            "$ref": "#/components/schemas/ReportComparison"
+          },
+          "current_run_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "source": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "baseline_run_id",
+          "current_run_id",
+          "source",
+          "comparison"
+        ],
+        "type": "object"
+      },
+      "RunPage": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RunStatus"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "next_cursor": {
+            "format": "int64",
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "type": "object"
+      },
+      "RunReport": {
+        "additionalProperties": false,
+        "properties": {
+          "config_sha256": {
+            "type": "string"
+          },
+          "dataset_sha256": {
+            "type": "string"
+          },
+          "dataset_version": {
+            "type": "string"
+          },
+          "latency_ms_p50_p95": {
+            "additionalProperties": {
+              "items": {
+                "format": "double",
+                "type": "number"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            "type": "object"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "model_kind": {
+            "type": "string"
+          },
+          "model_label": {
+            "type": "string"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/RunRow"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/Summary"
+          },
+          "unauthorized_evidence": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "dataset_version",
+          "dataset_sha256",
+          "config_sha256",
+          "model_label",
+          "model_kind",
+          "mode",
+          "status",
+          "summary",
+          "unauthorized_evidence",
+          "rows",
+          "latency_ms_p50_p95"
+        ],
+        "type": "object"
+      },
+      "RunRow": {
+        "additionalProperties": false,
+        "properties": {
+          "degraded": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "fused": {
+            "items": {
+              "$ref": "#/components/schemas/Evidence"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "metrics": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Metrics"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ranked": {
+            "items": {
+              "$ref": "#/components/schemas/Evidence"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "timings_ms": {
+            "additionalProperties": {
+              "format": "double",
+              "type": "number"
+            },
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "fused",
+          "ranked",
+          "metrics",
+          "timings_ms",
+          "degraded"
+        ],
+        "type": "object"
+      },
+      "RunStatus": {
+        "additionalProperties": false,
+        "properties": {
+          "attempts": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "failure_code": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "finished_at": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "job_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "max_attempts": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "mode": {
+            "enum": [
+              "lexical",
+              "vector",
+              "rrf",
+              "rerank"
+            ],
+            "type": "string"
+          },
+          "result_available": {
+            "type": "boolean"
+          },
+          "set": {
+            "$ref": "#/components/schemas/SetBinding"
+          },
+          "status": {
+            "enum": [
+              "queued",
+              "running",
+              "succeeded",
+              "failed",
+              "dead",
+              "cancelled"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "job_id",
+          "set",
+          "mode",
+          "status",
+          "attempts",
+          "max_attempts",
+          "failure_code",
+          "result_available",
+          "created_at",
+          "finished_at"
+        ],
+        "type": "object"
+      },
+      "SavedMessage": {
+        "additionalProperties": false,
+        "properties": {
+          "citations": {
+            "$ref": "#/components/schemas/Citations"
+          },
+          "content": {
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "degraded": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "done": {
+            "$ref": "#/components/schemas/Done"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/AnswerEvidence"
+            },
+            "type": "array"
+          },
+          "feedback": {
+            "$ref": "#/components/schemas/Feedback"
+          },
+          "id": {
+            "type": "string"
+          },
+          "question": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "running",
+              "complete",
+              "failed",
+              "cancelled"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "question",
+          "content",
+          "status",
+          "evidence",
+          "citations",
+          "degraded",
+          "created_at"
         ],
         "type": "object"
       },
@@ -874,7 +2086,6 @@
             "type": "string"
           },
           "top_k": {
-            "default": 8,
             "format": "int64",
             "maximum": 30,
             "minimum": 1,
@@ -902,6 +2113,10 @@
             },
             "type": "array"
           },
+          "retrieval_revision": {
+            "format": "int32",
+            "type": "integer"
+          },
           "status": {
             "enum": [
               "ok",
@@ -917,6 +2132,7 @@
           }
         },
         "required": [
+          "retrieval_revision",
           "status",
           "degraded",
           "evidence",
@@ -1004,6 +2220,246 @@
         ],
         "type": "object"
       },
+      "SetBinding": {
+        "additionalProperties": false,
+        "properties": {
+          "revision": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "set_id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "set_id",
+          "revision"
+        ],
+        "type": "object"
+      },
+      "SetDefinition": {
+        "additionalProperties": false,
+        "properties": {
+          "cases": {
+            "items": {
+              "$ref": "#/components/schemas/CaseDefinition"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "cases"
+        ],
+        "type": "object"
+      },
+      "SetListItem": {
+        "additionalProperties": false,
+        "properties": {
+          "case_count": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "digest": {
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "revision": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "revision",
+          "digest",
+          "name",
+          "case_count",
+          "created_at"
+        ],
+        "type": "object"
+      },
+      "SetPage": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SetListItem"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "next_cursor": {
+            "format": "int64",
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "type": "object"
+      },
+      "StartRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "mode": {
+            "enum": [
+              "lexical",
+              "vector",
+              "rrf",
+              "rerank"
+            ],
+            "type": "string"
+          },
+          "revision": {
+            "format": "int32",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "set_id": {
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "set_id",
+          "revision",
+          "mode"
+        ],
+        "type": "object"
+      },
+      "StartedRun": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "job_id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "job_id"
+        ],
+        "type": "object"
+      },
+      "StoredReport": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "digest": {
+            "type": "string"
+          },
+          "report": {
+            "$ref": "#/components/schemas/RunReport"
+          },
+          "source": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "digest",
+          "source",
+          "created_at",
+          "report"
+        ],
+        "type": "object"
+      },
+      "StoredSet": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "definition": {
+            "$ref": "#/components/schemas/SetDefinition"
+          },
+          "digest": {
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "revision": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "revision",
+          "digest",
+          "created_at",
+          "definition"
+        ],
+        "type": "object"
+      },
+      "Summary": {
+        "additionalProperties": false,
+        "properties": {
+          "AnswerableCases": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "Cases": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "Metrics": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Metrics"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "UnanswerableCases": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "Cases",
+          "AnswerableCases",
+          "UnanswerableCases",
+          "Metrics"
+        ],
+        "type": "object"
+      },
       "Trace": {
         "additionalProperties": false,
         "properties": {
@@ -1028,6 +2484,10 @@
           "filters": {
             "$ref": "#/components/schemas/Filters"
           },
+          "retrieval_revision": {
+            "format": "int32",
+            "type": "integer"
+          },
           "timings_ms": {
             "additionalProperties": {
               "format": "double",
@@ -1037,6 +2497,7 @@
           }
         },
         "required": [
+          "retrieval_revision",
           "candidates",
           "timings_ms",
           "degraded",
@@ -1155,6 +2616,58 @@
         "summary": "Get API health ready"
       }
     },
+    "/api/v1/admin/chat-models": {
+      "post": {
+        "operationId": "create-chat-model",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewChatModel"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatModel"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
     "/api/v1/admin/embedding-spaces": {
       "get": {
         "operationId": "get-api-v1-admin-embedding-spaces",
@@ -1215,6 +2728,229 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/EmbeddingSpaceBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/api/v1/answers": {
+      "post": {
+        "operationId": "answer",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Request"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "description": "Each oneOf object in the array represents one possible Server Sent Events (SSE) message, serialized as UTF-8 text according to the SSE specification.",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "properties": {
+                          "data": {
+                            "$ref": "#/components/schemas/Citations"
+                          },
+                          "event": {
+                            "const": "citations",
+                            "description": "The event name.",
+                            "type": "string"
+                          },
+                          "id": {
+                            "description": "The event ID.",
+                            "oneOf": [
+                              {
+                                "type": "integer"
+                              },
+                              {
+                                "type": "string"
+                              }
+                            ]
+                          },
+                          "retry": {
+                            "description": "The retry time in milliseconds.",
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "data",
+                          "event"
+                        ],
+                        "title": "Event citations",
+                        "type": "object"
+                      },
+                      {
+                        "properties": {
+                          "data": {
+                            "$ref": "#/components/schemas/Delta"
+                          },
+                          "event": {
+                            "const": "delta",
+                            "description": "The event name.",
+                            "type": "string"
+                          },
+                          "id": {
+                            "description": "The event ID.",
+                            "oneOf": [
+                              {
+                                "type": "integer"
+                              },
+                              {
+                                "type": "string"
+                              }
+                            ]
+                          },
+                          "retry": {
+                            "description": "The retry time in milliseconds.",
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "data",
+                          "event"
+                        ],
+                        "title": "Event delta",
+                        "type": "object"
+                      },
+                      {
+                        "properties": {
+                          "data": {
+                            "$ref": "#/components/schemas/Done"
+                          },
+                          "event": {
+                            "const": "done",
+                            "description": "The event name.",
+                            "type": "string"
+                          },
+                          "id": {
+                            "description": "The event ID.",
+                            "oneOf": [
+                              {
+                                "type": "integer"
+                              },
+                              {
+                                "type": "string"
+                              }
+                            ]
+                          },
+                          "retry": {
+                            "description": "The retry time in milliseconds.",
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "data",
+                          "event"
+                        ],
+                        "title": "Event done",
+                        "type": "object"
+                      },
+                      {
+                        "properties": {
+                          "data": {
+                            "$ref": "#/components/schemas/AnswerError"
+                          },
+                          "event": {
+                            "const": "error",
+                            "description": "The event name.",
+                            "type": "string"
+                          },
+                          "id": {
+                            "description": "The event ID.",
+                            "oneOf": [
+                              {
+                                "type": "integer"
+                              },
+                              {
+                                "type": "string"
+                              }
+                            ]
+                          },
+                          "retry": {
+                            "description": "The retry time in milliseconds.",
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "data",
+                          "event"
+                        ],
+                        "title": "Event error",
+                        "type": "object"
+                      },
+                      {
+                        "properties": {
+                          "data": {
+                            "$ref": "#/components/schemas/RetrievalEvent"
+                          },
+                          "event": {
+                            "const": "retrieval",
+                            "description": "The event name.",
+                            "type": "string"
+                          },
+                          "id": {
+                            "description": "The event ID.",
+                            "oneOf": [
+                              {
+                                "type": "integer"
+                              },
+                              {
+                                "type": "string"
+                              }
+                            ]
+                          },
+                          "retry": {
+                            "description": "The retry time in milliseconds.",
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "data",
+                          "event"
+                        ],
+                        "title": "Event retrieval",
+                        "type": "object"
+                      }
+                    ]
+                  },
+                  "title": "Server Sent Events",
+                  "type": "array"
                 }
               }
             },
@@ -1315,6 +3051,369 @@
                 }
               }
             }
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/api/v1/chat-models": {
+      "get": {
+        "operationId": "get-api-v1-chat-models",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Get-chat-modelsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Get API v1 chat models"
+      }
+    },
+    "/api/v1/conversations": {
+      "post": {
+        "operationId": "create-conversation",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewConversation"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Conversation"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/api/v1/conversations/{id}": {
+      "get": {
+        "operationId": "get-api-v1-conversations-by-id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationDetail"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Get API v1 conversations by ID"
+      }
+    },
+    "/api/v1/conversations/{id}/messages": {
+      "post": {
+        "operationId": "conversation-answer",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConversationMessageInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "description": "Each oneOf object in the array represents one possible Server Sent Events (SSE) message, serialized as UTF-8 text according to the SSE specification.",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "properties": {
+                          "data": {
+                            "$ref": "#/components/schemas/Citations"
+                          },
+                          "event": {
+                            "const": "citations",
+                            "description": "The event name.",
+                            "type": "string"
+                          },
+                          "id": {
+                            "description": "The event ID.",
+                            "oneOf": [
+                              {
+                                "type": "integer"
+                              },
+                              {
+                                "type": "string"
+                              }
+                            ]
+                          },
+                          "retry": {
+                            "description": "The retry time in milliseconds.",
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "data",
+                          "event"
+                        ],
+                        "title": "Event citations",
+                        "type": "object"
+                      },
+                      {
+                        "properties": {
+                          "data": {
+                            "$ref": "#/components/schemas/Delta"
+                          },
+                          "event": {
+                            "const": "delta",
+                            "description": "The event name.",
+                            "type": "string"
+                          },
+                          "id": {
+                            "description": "The event ID.",
+                            "oneOf": [
+                              {
+                                "type": "integer"
+                              },
+                              {
+                                "type": "string"
+                              }
+                            ]
+                          },
+                          "retry": {
+                            "description": "The retry time in milliseconds.",
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "data",
+                          "event"
+                        ],
+                        "title": "Event delta",
+                        "type": "object"
+                      },
+                      {
+                        "properties": {
+                          "data": {
+                            "$ref": "#/components/schemas/Done"
+                          },
+                          "event": {
+                            "const": "done",
+                            "description": "The event name.",
+                            "type": "string"
+                          },
+                          "id": {
+                            "description": "The event ID.",
+                            "oneOf": [
+                              {
+                                "type": "integer"
+                              },
+                              {
+                                "type": "string"
+                              }
+                            ]
+                          },
+                          "retry": {
+                            "description": "The retry time in milliseconds.",
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "data",
+                          "event"
+                        ],
+                        "title": "Event done",
+                        "type": "object"
+                      },
+                      {
+                        "properties": {
+                          "data": {
+                            "$ref": "#/components/schemas/AnswerError"
+                          },
+                          "event": {
+                            "const": "error",
+                            "description": "The event name.",
+                            "type": "string"
+                          },
+                          "id": {
+                            "description": "The event ID.",
+                            "oneOf": [
+                              {
+                                "type": "integer"
+                              },
+                              {
+                                "type": "string"
+                              }
+                            ]
+                          },
+                          "retry": {
+                            "description": "The retry time in milliseconds.",
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "data",
+                          "event"
+                        ],
+                        "title": "Event error",
+                        "type": "object"
+                      },
+                      {
+                        "properties": {
+                          "data": {
+                            "$ref": "#/components/schemas/RetrievalEvent"
+                          },
+                          "event": {
+                            "const": "retrieval",
+                            "description": "The event name.",
+                            "type": "string"
+                          },
+                          "id": {
+                            "description": "The event ID.",
+                            "oneOf": [
+                              {
+                                "type": "integer"
+                              },
+                              {
+                                "type": "string"
+                              }
+                            ]
+                          },
+                          "retry": {
+                            "description": "The retry time in milliseconds.",
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "data",
+                          "event"
+                        ],
+                        "title": "Event retrieval",
+                        "type": "object"
+                      }
+                    ]
+                  },
+                  "title": "Server Sent Events",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
           },
           "default": {
             "content": {
@@ -1672,6 +3771,190 @@
         "summary": "Get API v1 kbs by kb"
       }
     },
+    "/api/v1/kbs/{kb}/config": {
+      "get": {
+        "operationId": "get-api-v1-kbs-by-kb-config",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KnowledgeConfig"
+                }
+              }
+            },
+            "description": "OK",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Get API v1 kbs by kb config"
+      },
+      "put": {
+        "operationId": "put-knowledge-config",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": true,
+            "schema": {
+              "maxLength": 12,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutKnowledgeConfigInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KnowledgeConfig"
+                }
+              }
+            },
+            "description": "OK",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/api/v1/kbs/{kb}/conversations": {
+      "get": {
+        "operationId": "get-api-v1-kbs-by-kb-conversations",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "default": 0,
+              "format": "int64",
+              "minimum": 0,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationPage"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Get API v1 kbs by kb conversations"
+      }
+    },
     "/api/v1/kbs/{kb}/documents": {
       "get": {
         "operationId": "get-api-v1-kbs-by-kb-documents",
@@ -2002,6 +4285,1107 @@
         ]
       }
     },
+    "/api/v1/kbs/{kb}/eval-report-comparison": {
+      "get": {
+        "operationId": "get-api-v1-kbs-by-kb-eval-report-comparison",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "baseline",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "current",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "default": 0,
+              "format": "int32",
+              "maximum": 10000,
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 20,
+              "format": "int32",
+              "maximum": 50,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportComparison"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Get API v1 kbs by kb eval report comparison"
+      }
+    },
+    "/api/v1/kbs/{kb}/eval-reports": {
+      "get": {
+        "operationId": "get-api-v1-kbs-by-kb-eval-reports",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "pattern": "^([0-9a-f]{64})?$",
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 10,
+              "format": "int32",
+              "maximum": 10,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportPage"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Get API v1 kbs by kb eval reports"
+      },
+      "post": {
+        "operationId": "import-eval-report",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunReport"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoredReport"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/api/v1/kbs/{kb}/eval-reports/{digest}": {
+      "get": {
+        "operationId": "get-api-v1-kbs-by-kb-eval-reports-by-digest",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "digest",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoredReport"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Get API v1 kbs by kb eval reports by digest"
+      }
+    },
+    "/api/v1/kbs/{kb}/eval-run-comparison": {
+      "get": {
+        "operationId": "get-api-v1-kbs-by-kb-eval-run-comparison",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "baseline",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "current",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "default": 0,
+              "format": "int32",
+              "maximum": 10000,
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 20,
+              "format": "int32",
+              "maximum": 50,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunComparison"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Get API v1 kbs by kb eval run comparison"
+      }
+    },
+    "/api/v1/kbs/{kb}/eval-runs": {
+      "get": {
+        "operationId": "get-api-v1-kbs-by-kb-eval-runs",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "default": 0,
+              "format": "int64",
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 10,
+              "format": "int32",
+              "maximum": 10,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunPage"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Get API v1 kbs by kb eval runs"
+      },
+      "post": {
+        "operationId": "start-eval-run",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[!-~]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StartedRun"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/api/v1/kbs/{kb}/eval-runs/{run}": {
+      "get": {
+        "operationId": "get-api-v1-kbs-by-kb-eval-runs-by-run",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "run",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunStatus"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Get API v1 kbs by kb eval runs by run"
+      }
+    },
+    "/api/v1/kbs/{kb}/eval-runs/{run}/result": {
+      "get": {
+        "operationId": "get-api-v1-kbs-by-kb-eval-runs-by-run-result",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "run",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoredReport"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Get API v1 kbs by kb eval runs by run result"
+      }
+    },
+    "/api/v1/kbs/{kb}/eval-sets": {
+      "get": {
+        "operationId": "get-api-v1-kbs-by-kb-eval-sets",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "default": 0,
+              "format": "int64",
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 10,
+              "format": "int32",
+              "maximum": 10,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SetPage"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Get API v1 kbs by kb eval sets"
+      },
+      "post": {
+        "operationId": "create-eval-set",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "schema": {
+              "maxLength": 128,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetDefinition"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoredSet"
+                }
+              }
+            },
+            "description": "OK",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/api/v1/kbs/{kb}/eval-sets/{set}": {
+      "get": {
+        "operationId": "get-api-v1-kbs-by-kb-eval-sets-by-set",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "set",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "revision",
+            "schema": {
+              "default": 0,
+              "format": "int32",
+              "minimum": 0,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoredSet"
+                }
+              }
+            },
+            "description": "OK",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Get API v1 kbs by kb eval sets by set"
+      },
+      "put": {
+        "operationId": "update-eval-set",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "set",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": true,
+            "schema": {
+              "maxLength": 12,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetDefinition"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoredSet"
+                }
+              }
+            },
+            "description": "OK",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/api/v1/kbs/{kb}/rebuilds": {
+      "post": {
+        "operationId": "create-rebuild",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[!-~]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RebuildRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rebuild"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/api/v1/kbs/{kb}/rebuilds/{job}": {
+      "get": {
+        "operationId": "get-api-v1-kbs-by-kb-rebuilds-by-job",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "job",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rebuild"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Get API v1 kbs by kb rebuilds by job"
+      }
+    },
+    "/api/v1/kbs/{kb}/rebuilds/{job}/cancel": {
+      "post": {
+        "operationId": "cancel-rebuild",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "job",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelRebuildOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
     "/api/v1/me": {
       "get": {
         "operationId": "get-api-v1-me",
@@ -2033,6 +5417,68 @@
           }
         ],
         "summary": "Get API v1 me"
+      }
+    },
+    "/api/v1/messages/{id}/feedback": {
+      "post": {
+        "operationId": "answer-feedback",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "maxLength": 64,
+              "minLength": 16,
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Feedback"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Answer-feedbackResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
       }
     },
     "/api/v1/search": {

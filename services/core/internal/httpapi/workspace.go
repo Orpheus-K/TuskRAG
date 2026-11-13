@@ -239,6 +239,13 @@ func registerWorkspace(api huma.API, deps Dependencies) {
 		})
 	registerModelCatalog(protected, deps)
 	registerSearch(protected, deps)
+	registerAnswers(protected, deps)
+	registerConversations(protected, deps)
+	registerKnowledgeConfig(protected, deps)
+	registerEvalReports(protected, deps)
+	registerEvalSets(protected, deps)
+	registerEvalRuns(protected, deps)
+	registerRebuilds(protected, deps)
 }
 
 func requireSession(api huma.API, deps Dependencies) func(huma.Context, func(huma.Context)) {
@@ -312,6 +319,8 @@ func sessionCookie(insecure bool, token string, clearCookie bool) http.Cookie {
 
 func knowledgeError(ctx context.Context, action string, err error) error {
 	switch {
+	case errors.Is(err, kb.ErrConfigProviderNotFound):
+		return statusError(ctx, http.StatusNotFound, "provider_not_found", "model provider not found", false)
 	case errors.Is(err, kb.ErrNotFound):
 		return statusError(ctx, http.StatusNotFound, "not_found", "knowledge base not found", false)
 	case errors.Is(err, kb.ErrForbidden):
@@ -320,6 +329,10 @@ func knowledgeError(ctx context.Context, action string, err error) error {
 		return statusError(ctx, http.StatusConflict, "name_conflict", "knowledge base name already exists", false)
 	case errors.Is(err, kb.ErrIdempotencyConflict):
 		return statusError(ctx, http.StatusConflict, "idempotency_conflict", "idempotency key used for a different request", false)
+	case errors.Is(err, kb.ErrRevisionConflict):
+		return statusError(ctx, http.StatusConflict, "revision_conflict", "configuration revision changed", false)
+	case errors.Is(err, kb.ErrArchived):
+		return statusError(ctx, http.StatusConflict, "knowledge_base_archived", "knowledge base is archived", false)
 	case errors.Is(err, kb.ErrInvalidRequest):
 		return statusError(ctx, http.StatusBadRequest, "invalid_request", "invalid knowledge base request", false)
 	case errors.Is(err, models.ErrEgressDenied):
