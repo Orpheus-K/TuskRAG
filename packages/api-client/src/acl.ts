@@ -61,7 +61,10 @@ export async function createGroup(
   return data as UserGroup;
 }
 
-export async function deleteGroup(groupId: number, csrf: string): Promise<void> {
+export async function deleteGroup(
+  groupId: number,
+  csrf: string,
+): Promise<void> {
   if (!positive(groupId)) throw new Error("invalid group id");
   await checked(
     await fetch(`/api/v1/groups/${groupId}`, {

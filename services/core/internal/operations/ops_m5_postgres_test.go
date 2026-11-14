@@ -62,6 +62,8 @@ func TestM5OperationsDiagnoseAndRotateMasterKeyPostgres(t *testing.T) {
 		tx, cErr := adminPool.Begin(context.Background())
 		if cErr == nil {
 			_, _ = dbquery.New(tx).SetTenant(context.Background(), tenantID)
+			_, _ = tx.Exec(context.Background(), `DELETE FROM knowledge_base WHERE tenant_id = $1`, tenantID)
+			_, _ = tx.Exec(context.Background(), `DELETE FROM embedding_space WHERE tenant_id = $1`, tenantID)
 			_, _ = tx.Exec(context.Background(), `DELETE FROM oidc_provider WHERE tenant_id = $1`, tenantID)
 			_, _ = tx.Exec(context.Background(), `DELETE FROM model_provider WHERE tenant_id = $1`, tenantID)
 			_, _ = tx.Exec(context.Background(), `DELETE FROM tenant WHERE id = $1`, tenantID)
@@ -115,6 +117,21 @@ func TestM5OperationsDiagnoseAndRotateMasterKeyPostgres(t *testing.T) {
 	`, oidcSealed.KeyID, oidcSealed.Nonce, oidcSealed.Ciphertext, oidcProviderID); err != nil {
 		t.Fatalf("update oidc_provider secret: %v", err)
 	}
+	var spaceID, kbID int64
+	if err := setupTx.QueryRow(ctx, `
+		INSERT INTO embedding_space (tenant_id, provider_id, model, dims, normalized, distance)
+		VALUES ($1, $2, 'bge-m3-test', 1024, true, 'cosine')
+		RETURNING id
+	`, tenantID, modelProviderID).Scan(&spaceID); err != nil {
+		t.Fatalf("insert embedding_space: %v", err)
+	}
+	if err := setupTx.QueryRow(ctx, `
+		INSERT INTO knowledge_base (tenant_id, name, embedding_space_id, egress_policy, status)
+		VALUES ($1, 'm5-reindex-kb', $2, 'deny', 'active')
+		RETURNING id
+	`, tenantID, spaceID).Scan(&kbID); err != nil {
+		t.Fatalf("insert knowledge_base: %v", err)
+	}
 	if err := setupTx.Commit(ctx); err != nil {
 		t.Fatalf("commit setupTx: %v", err)
 	}
@@ -163,5 +180,14 @@ func TestM5OperationsDiagnoseAndRotateMasterKeyPostgres(t *testing.T) {
 	oidcPlain, err := newVault.Open(ctx, tenantID, oidcProviderID, secrets.Encrypted{KeyID: keyID, Nonce: nonce, Ciphertext: ciphertext})
 	if err != nil || string(oidcPlain) != "oidc-old-client-secret" {
 		t.Fatalf("Open rotated oidc secret = %q, %v", string(oidcPlain), err)
+	}
+	_ = verifyTx.Rollback(ctx)
+
+	reindex, err := ReindexKB(ctx, adminURL, tenantID, kbID)
+	if err != nil {
+		t.Fatalf("ReindexKB: %v", err)
+	}
+	if reindex.KnowledgeBaseID != kbID || reindex.TenantID != tenantID || reindex.SpaceID != spaceID || !reindex.Analyzed {
+		t.Fatalf("unexpected ReindexKB report: %+v", reindex)
 	}
 }

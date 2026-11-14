@@ -75,8 +75,7 @@ export function AnswerEvaluationCompare({
     retry: false,
     gcTime: 0,
   });
-  const ready =
-    admin && selection.baseline !== "" && selection.current !== "";
+  const ready = admin && selection.baseline !== "" && selection.current !== "";
   const compare = useQuery({
     queryKey: [
       ...scope,
@@ -179,9 +178,7 @@ export function AnswerEvaluationCompare({
                   variant={
                     selection.baseline === item.digest ? "default" : "outline"
                   }
-                  onClick={() =>
-                    onChange({ baseline: item.digest, offset: 0 })
-                  }
+                  onClick={() => onChange({ baseline: item.digest, offset: 0 })}
                 >
                   设为基线
                 </Button>
@@ -211,7 +208,8 @@ export function AnswerEvaluationCompare({
               {data.gate === "passed" ? "通过 (passed)" : "回退 (regressed)"}
             </h2>
             <p className="text-sm text-muted-foreground">
-              基线 {data.baseline.model_label} vs 当前 {data.current.model_label}
+              基线 {data.baseline.model_label} vs 当前{" "}
+              {data.current.model_label}
             </p>
           </div>
           <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -227,7 +225,9 @@ export function AnswerEvaluationCompare({
             ))}
           </dl>
           <div className="space-y-2">
-            <h3 className="text-lg font-medium">逐题对比（共 {data.total} 题）</h3>
+            <h3 className="text-lg font-medium">
+              逐题对比（共 {data.total} 题）
+            </h3>
             <ul className="space-y-2">
               {rows.map((row) => (
                 <li key={row.id} className="rounded-lg border p-3 text-sm">

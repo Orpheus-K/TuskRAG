@@ -29,7 +29,7 @@ export TUSKRAG_BOOTSTRAP_PASSWORD_FILE='/run/secrets/tuskrag-initial-password'
 
 API 默认使用仅可通过 HTTPS 传输的会话 Cookie。仅在本机开发时，可将 `TUSKRAG_LISTEN` 绑定回环地址并设置 `TUSKRAG_INSECURE_LOCAL_COOKIES=true`，以便通过 HTTP 访问；生产环境应使用 HTTPS。
 
-如需保存模型提供方的 API 密钥或 OIDC 客户端密钥，启动 API/worker 前设置 `TUSKRAG_MASTER_KEY_FILE` 为绝对路径。文件内容为随机生成的 32 字节密钥的 64 个十六进制字符，权限要求与初始化口令文件相同；密钥不可与数据库放在一起。如需轮换主密钥，可停止写入后设置 `TUSKRAG_OLD_MASTER_KEY_FILE` 与新 `TUSKRAG_MASTER_KEY_FILE`，执行 `tuskrag ops rotate-master-key <tenant-id>` 在单事务内完成重加密。可用 `tuskrag ops verify-storage <tenant-id>` 校验原件完整性，用 `tuskrag ops diagnose <tenant-id>` 导出脱敏诊断快照。
+如需保存模型提供方的 API 密钥或 OIDC 客户端密钥，启动 API/worker 前设置 `TUSKRAG_MASTER_KEY_FILE` 为绝对路径。文件内容为随机生成的 32 字节密钥的 64 个十六进制字符，权限要求与初始化口令文件相同；密钥不可与数据库放在一起。如需轮换主密钥，可停止写入后设置 `TUSKRAG_OLD_MASTER_KEY_FILE` 与新 `TUSKRAG_MASTER_KEY_FILE`，执行 `tuskrag ops rotate-master-key <tenant-id>` 在单事务内完成重加密。可用 `tuskrag ops verify-storage <tenant-id>` 校验原件完整性，用 `tuskrag ops diagnose <tenant-id>` 导出脱敏诊断快照，或使用具备建索引权限的连接执行 `tuskrag ops reindex <tenant-id> --kb <kb-id>` 校验/重建指定知识库索引并刷新统计信息。
 
 如需接收文档，设置 `TUSKRAG_STORAGE_DIR` 为持久化原件目录的绝对路径；未设置时上传接口返回服务不可用。运行账号还须能写入系统临时目录，multipart 文件会先写入该目录、处理完后删除；应限制该目录的访问权限并预留空间。单文件上限 200 MiB，同时最多读取两个上传请求。
 

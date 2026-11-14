@@ -186,7 +186,10 @@ function setup(initialPath: string) {
             created_at: "2026-11-13T08:00:00Z",
           }),
         );
-      if (url.includes("/answer-eval-reports?") && (init?.method ?? "GET") === "GET")
+      if (
+        url.includes("/answer-eval-reports?") &&
+        (init?.method ?? "GET") === "GET"
+      )
         return new Response(
           JSON.stringify({
             items: [sampleListItemA, sampleListItemB],
@@ -229,7 +232,9 @@ it("renders answer evaluation list, detail, and imports a valid E6 report", asyn
     key === "report" ? file : null,
   );
   const input = screen.getByLabelText(/完整 E6 生成评测报告 JSON/);
-  fireEvent.submit(input.closest("form")!);
+  const form = input.closest("form");
+  if (!form) throw new Error("missing form");
+  fireEvent.submit(form);
 
   expect(
     await screen.findByText("生成评测报告已导入。相同内容自动去重。"),

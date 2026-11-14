@@ -1,13 +1,15 @@
 import { ApiError } from "./index";
 import type { components } from "./schema";
 
-export type AnswerAssemblyReport = components["schemas"]["AnswerAssemblyReport"];
+export type AnswerAssemblyReport =
+  components["schemas"]["AnswerAssemblyReport"];
 export type AnswerJudgeConfig = components["schemas"]["AnswerJudgeConfig"];
 export type AnswerEvalMetrics = components["schemas"]["AnswerMetrics"];
 export type AnswerEvalSummary = components["schemas"]["AnswerSummary"];
 export type AnswerEvalRow = components["schemas"]["AnswerRow"];
 export type AnswerEvalReport = components["schemas"]["AnswerReport"];
-export type StoredAnswerEvalReport = components["schemas"]["StoredAnswerReport"];
+export type StoredAnswerEvalReport =
+  components["schemas"]["StoredAnswerReport"];
 export type AnswerEvalReportListItem =
   components["schemas"]["AnswerReportListItem"];
 export type AnswerEvalReportPage = components["schemas"]["AnswerReportPage"];
@@ -26,7 +28,8 @@ const positive = (v: unknown): v is number =>
 const nonnegative = (v: unknown): v is number =>
   typeof v === "number" && Number.isSafeInteger(v) && v >= 0;
 const nullableRate = (v: unknown): v is number | null =>
-  v === null || (typeof v === "number" && Number.isFinite(v) && v >= 0 && v <= 1);
+  v === null ||
+  (typeof v === "number" && Number.isFinite(v) && v >= 0 && v <= 1);
 const nullableDeltaRate = (v: unknown): v is number | null =>
   v === null ||
   (typeof v === "number" && Number.isFinite(v) && v >= -1 && v <= 1);

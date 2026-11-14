@@ -135,8 +135,13 @@ function MembersAndEgressEditor({
   });
 
   const saveMember = useMutation({
-    mutationFn: ({ userId, role }: { userId: number; role: KnowledgeBaseRole }) =>
-      setKnowledgeBaseMember(base.id, userId, role, identity.csrf_token),
+    mutationFn: ({
+      userId,
+      role,
+    }: {
+      userId: number;
+      role: KnowledgeBaseRole;
+    }) => setKnowledgeBaseMember(base.id, userId, role, identity.csrf_token),
     onSuccess: async () => {
       setErrorMessage(null);
       setStatusMessage("成员角色已更新。");

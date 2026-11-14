@@ -14,7 +14,9 @@ async function checked(response: Response) {
   const value: unknown = await response.json().catch(() => null);
   throw new ApiError(
     response.status,
-    isRecord(value) && isRecord(value.error) && typeof value.error.code === "string"
+    isRecord(value) &&
+      isRecord(value.error) &&
+      typeof value.error.code === "string"
       ? value.error.code
       : "http_error",
     isRecord(value) &&
@@ -30,7 +32,9 @@ export async function getPublicOIDCProviders(
   tenantId: number,
 ): Promise<TenantAuthPolicy> {
   const res = await checked(
-    await fetch(`/api/v1/auth/oidc/providers?tenant_id=${tenantId}`, { signal }),
+    await fetch(`/api/v1/auth/oidc/providers?tenant_id=${tenantId}`, {
+      signal,
+    }),
   );
   return (await res.json()) as TenantAuthPolicy;
 }

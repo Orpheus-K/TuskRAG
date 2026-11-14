@@ -2,10 +2,13 @@ import { ApiError } from "./index";
 import type { components } from "./schema";
 
 export type AuditLogEntry = components["schemas"]["AuditLogEntryBody"];
-export type TenantEgressPolicy = components["schemas"]["TenantEgressPolicyBody"];
+export type TenantEgressPolicy =
+  components["schemas"]["TenantEgressPolicyBody"];
 export type ModelProvider = components["schemas"]["ModelProviderBody"];
-export type ModelProviderInput = components["schemas"]["CreateModelProviderInputBody"];
-export type ProviderConnectivity = components["schemas"]["ProviderConnectivityBody"];
+export type ModelProviderInput =
+  components["schemas"]["CreateModelProviderInputBody"];
+export type ProviderConnectivity =
+  components["schemas"]["ProviderConnectivityBody"];
 
 const isRecord = (v: unknown): v is Record<string, unknown> =>
   typeof v === "object" && v !== null && !Array.isArray(v);
@@ -15,7 +18,9 @@ async function checked(response: Response) {
   const value: unknown = await response.json().catch(() => null);
   throw new ApiError(
     response.status,
-    isRecord(value) && isRecord(value.error) && typeof value.error.code === "string"
+    isRecord(value) &&
+      isRecord(value.error) &&
+      typeof value.error.code === "string"
       ? value.error.code
       : "http_error",
     isRecord(value) &&
@@ -40,7 +45,8 @@ export interface AuditLogQuery {
 function buildAuditParams(query: AuditLogQuery): string {
   const params = new URLSearchParams();
   if (query.action) params.set("action", query.action);
-  if (query.actor_user_id) params.set("actor_user_id", String(query.actor_user_id));
+  if (query.actor_user_id)
+    params.set("actor_user_id", String(query.actor_user_id));
   if (query.object_type) params.set("object_type", query.object_type);
   if (query.result) params.set("result", query.result);
   if (query.from) params.set("from", query.from);
@@ -56,7 +62,9 @@ export async function listAuditLogs(
   query: AuditLogQuery = {},
 ): Promise<AuditLogEntry[]> {
   const res = await checked(
-    await fetch(`/api/v1/admin/audit-logs${buildAuditParams(query)}`, { signal }),
+    await fetch(`/api/v1/admin/audit-logs${buildAuditParams(query)}`, {
+      signal,
+    }),
   );
   const body = (await res.json()) as { items?: AuditLogEntry[] };
   return Array.isArray(body.items) ? body.items : [];
@@ -67,10 +75,14 @@ export async function exportAuditLogs(
   query: AuditLogQuery,
   format: "jsonl" | "csv",
 ): Promise<string> {
-  const params = new URLSearchParams(buildAuditParams(query).replace(/^\?/, ""));
+  const params = new URLSearchParams(
+    buildAuditParams(query).replace(/^\?/, ""),
+  );
   params.set("format", format);
   const res = await checked(
-    await fetch(`/api/v1/admin/audit-logs/export?${params.toString()}`, { signal }),
+    await fetch(`/api/v1/admin/audit-logs/export?${params.toString()}`, {
+      signal,
+    }),
   );
   return res.text();
 }

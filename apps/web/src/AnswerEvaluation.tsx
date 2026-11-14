@@ -247,14 +247,16 @@ export function AnswerEvaluation({
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="space-y-1 text-sm">
                   <p className="font-medium">
-                    {item.dataset_version} · {item.model_label} ({item.model_kind}) ·{" "}
-                    {item.prompt_version}
+                    {item.dataset_version} · {item.model_label} (
+                    {item.model_kind}) · {item.prompt_version}
                   </p>
                   <p className="text-muted-foreground">
                     样本 {item.summary.cases} · Valid Citation{" "}
-                    {formatRate(item.summary.metrics.valid_citation_rate)} · Source
-                    Integrity {formatRate(item.summary.metrics.source_integrity_rate)}{" "}
-                    · Unsupported {formatRate(item.summary.metrics.unsupported_rate)}
+                    {formatRate(item.summary.metrics.valid_citation_rate)} ·
+                    Source Integrity{" "}
+                    {formatRate(item.summary.metrics.source_integrity_rate)} ·
+                    Unsupported{" "}
+                    {formatRate(item.summary.metrics.unsupported_rate)}
                   </p>
                 </div>
                 <Link
@@ -295,11 +297,12 @@ export function AnswerEvaluation({
             <p className="text-sm text-muted-foreground">
               模型：{report.model_label} ({report.model_kind}) · Prompt：
               {report.prompt_version} · 状态：{report.status} · 样本：
-              {report.summary.cases}（可答 {report.summary.answerable_cases} / 拒答{" "}
-              {report.summary.unanswerable_cases}）
+              {report.summary.cases}（可答 {report.summary.answerable_cases} /
+              拒答 {report.summary.unanswerable_cases}）
             </p>
             <p className="text-sm text-muted-foreground">
-              上下文预算：{report.assembly.context_budget_tokens} tokens · 父段落回溯：
+              上下文预算：{report.assembly.context_budget_tokens} tokens ·
+              父段落回溯：
               {report.assembly.parent_backtrack ? "开启" : "关闭"}
             </p>
           </div>
@@ -322,18 +325,19 @@ export function AnswerEvaluation({
                 <li key={row.id} className="rounded-lg border p-3 text-sm">
                   <p className="font-medium">
                     {row.id} · {row.answerable ? "可答" : "不可答"} · 结果{" "}
-                    {row.outcome} · 引用有效 {row.valid_citation ? "是" : "否"} ·
-                    来源一致 {row.source_integrity ? "是" : "否"}
+                    {row.outcome} · 引用有效 {row.valid_citation ? "是" : "否"}{" "}
+                    · 来源一致 {row.source_integrity ? "是" : "否"}
                   </p>
                   <p className="mt-1 text-muted-foreground">
-                    引用数 {row.citation_count}（无效 {row.invalid_citations}） ·
-                    证据命中{" "}
+                    引用数 {row.citation_count}（无效 {row.invalid_citations}）
+                    · 证据命中{" "}
                     {row.evidence_hit === null
                       ? "不适用"
                       : row.evidence_hit
                         ? "是"
                         : "否"}{" "}
-                    · 降级：{row.degraded?.length ? row.degraded.join("、") : "无"}
+                    · 降级：
+                    {row.degraded?.length ? row.degraded.join("、") : "无"}
                   </p>
                 </li>
               ))}

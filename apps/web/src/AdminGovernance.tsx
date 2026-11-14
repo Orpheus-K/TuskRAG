@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   ApiError,
@@ -22,9 +21,12 @@ import {
   updateModelProvider,
   updateTenantEgressPolicy,
 } from "@tuskrag/api-client";
+import { useCallback, useEffect, useState } from "react";
 
 export function AdminGovernancePage({ identity }: { identity: Identity }) {
-  const [tab, setTab] = useState<"audit" | "providers" | "egress" | "sso">("audit");
+  const [tab, setTab] = useState<"audit" | "providers" | "egress" | "sso">(
+    "audit",
+  );
   const [error, setError] = useState("");
   const [forbidden, setForbidden] = useState(false);
 
@@ -38,13 +40,21 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
   const [providers, setProviders] = useState<ModelProvider[]>([]);
   const [providerName, setProviderName] = useState("");
   const [providerBaseURL, setProviderBaseURL] = useState("");
-  const [providerLocality, setProviderLocality] = useState<"internal" | "external">("internal");
+  const [providerLocality, setProviderLocality] = useState<
+    "internal" | "external"
+  >("internal");
   const [providerAPIKey, setProviderAPIKey] = useState("");
-  const [editingProviderId, setEditingProviderId] = useState<number | null>(null);
-  const [probeResults, setProbeResults] = useState<Record<number, ProviderConnectivity>>({});
+  const [editingProviderId, setEditingProviderId] = useState<number | null>(
+    null,
+  );
+  const [probeResults, setProbeResults] = useState<
+    Record<number, ProviderConnectivity>
+  >({});
 
   // Tenant egress policy
-  const [egressMax, setEgressMax] = useState<"deny" | "internal_only" | "allow">("deny");
+  const [egressMax, setEgressMax] = useState<
+    "deny" | "internal_only" | "allow"
+  >("deny");
   const [egressSaved, setEgressSaved] = useState(false);
 
   // OIDC SSO
@@ -139,7 +149,10 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
         format,
       );
       const blob = new Blob([text], {
-        type: format === "csv" ? "text/csv;charset=utf-8" : "application/x-ndjson;charset=utf-8",
+        type:
+          format === "csv"
+            ? "text/csv;charset=utf-8"
+            : "application/x-ndjson;charset=utf-8",
       });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -164,7 +177,11 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
         ...(providerAPIKey.trim() ? { api_key: providerAPIKey.trim() } : {}),
       };
       if (editingProviderId) {
-        await updateModelProvider(identity.csrf_token, editingProviderId, payload);
+        await updateModelProvider(
+          identity.csrf_token,
+          editingProviderId,
+          payload,
+        );
       } else {
         await createModelProvider(identity.csrf_token, payload);
       }
@@ -203,7 +220,10 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
     setError("");
     setEgressSaved(false);
     try {
-      const updated = await updateTenantEgressPolicy(identity.csrf_token, egressMax);
+      const updated = await updateTenantEgressPolicy(
+        identity.csrf_token,
+        egressMax,
+      );
       setEgressMax(updated.egress_policy_max);
       setEgressSaved(true);
     } catch (cause) {
@@ -215,8 +235,12 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
     <section className="py-10">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <p className="text-sm text-muted-foreground">租户 {identity.tenant_id}</p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight">平台治理中心</h1>
+          <p className="text-sm text-muted-foreground">
+            租户 {identity.tenant_id}
+          </p>
+          <h1 className="mt-1 text-3xl font-semibold tracking-tight">
+            平台治理中心
+          </h1>
         </div>
         <Link
           className="inline-flex h-9 items-center justify-center rounded-md border border-border bg-background px-4 py-2 text-sm font-medium shadow-sm hover:bg-muted"
@@ -267,7 +291,10 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
         <div className="mt-6 space-y-4">
           <div className="flex flex-wrap items-end gap-3">
             <div>
-              <label className="block text-xs font-medium text-muted-foreground" htmlFor="audit-action">
+              <label
+                className="block text-xs font-medium text-muted-foreground"
+                htmlFor="audit-action"
+              >
                 动作过滤
               </label>
               <input
@@ -279,7 +306,10 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-muted-foreground" htmlFor="audit-result">
+              <label
+                className="block text-xs font-medium text-muted-foreground"
+                htmlFor="audit-result"
+              >
                 结果
               </label>
               <select
@@ -333,17 +363,26 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
               <tbody>
                 {logs.length === 0 ? (
                   <tr>
-                    <td className="px-3 py-4 text-center text-muted-foreground" colSpan={6}>
+                    <td
+                      className="px-3 py-4 text-center text-muted-foreground"
+                      colSpan={6}
+                    >
                       暂无审计记录
                     </td>
                   </tr>
                 ) : (
                   logs.map((entry) => (
                     <tr key={entry.id} className="border-t border-border">
-                      <td className="px-3 py-2 font-mono text-xs">{entry.id}</td>
+                      <td className="px-3 py-2 font-mono text-xs">
+                        {entry.id}
+                      </td>
                       <td className="px-3 py-2 text-xs">{entry.created_at}</td>
-                      <td className="px-3 py-2">{entry.actor_name || `User #${entry.actor_user_id}`}</td>
-                      <td className="px-3 py-2 font-mono text-xs">{entry.action}</td>
+                      <td className="px-3 py-2">
+                        {entry.actor_name || `User #${entry.actor_user_id}`}
+                      </td>
+                      <td className="px-3 py-2 font-mono text-xs">
+                        {entry.action}
+                      </td>
                       <td className="px-3 py-2 font-mono text-xs">
                         {entry.object_type}#{entry.object_id}
                       </td>
@@ -359,7 +398,10 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
 
       {!forbidden && tab === "providers" ? (
         <div className="mt-6 space-y-6">
-          <form className="grid gap-3 rounded-md border border-border p-4 sm:grid-cols-2" onSubmit={(e) => void onSaveProvider(e)}>
+          <form
+            className="grid gap-3 rounded-md border border-border p-4 sm:grid-cols-2"
+            onSubmit={(e) => void onSaveProvider(e)}
+          >
             <input
               className="h-9 rounded-md border border-input bg-background px-3 text-sm"
               placeholder="供应商名称"
@@ -377,7 +419,9 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
             <select
               className="h-9 rounded-md border border-input bg-background px-3 text-sm"
               value={providerLocality}
-              onChange={(e) => setProviderLocality(e.target.value as "internal" | "external")}
+              onChange={(e) =>
+                setProviderLocality(e.target.value as "internal" | "external")
+              }
             >
               <option value="internal">internal</option>
               <option value="external">external</option>
@@ -385,12 +429,19 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
             <input
               className="h-9 rounded-md border border-input bg-background px-3 text-sm"
               type="password"
-              placeholder={editingProviderId ? "新 API Key（留空保持不变）" : "API Key（可选）"}
+              placeholder={
+                editingProviderId
+                  ? "新 API Key（留空保持不变）"
+                  : "API Key（可选）"
+              }
               value={providerAPIKey}
               onChange={(e) => setProviderAPIKey(e.target.value)}
             />
             <div className="flex gap-2 sm:col-span-2">
-              <button type="submit" className="h-9 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">
+              <button
+                type="submit"
+                className="h-9 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground"
+              >
                 {editingProviderId ? "保存修改" : "添加供应商"}
               </button>
               {editingProviderId ? (
@@ -414,20 +465,29 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
             {providers.map((p) => {
               const probe = probeResults[p.id];
               return (
-                <div key={p.id} className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border p-4">
+                <div
+                  key={p.id}
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border p-4"
+                >
                   <div>
                     <div className="font-medium">
                       {p.name}{" "}
-                      <span className="ml-2 rounded bg-muted px-2 py-0.5 text-xs">{p.locality}</span>
+                      <span className="ml-2 rounded bg-muted px-2 py-0.5 text-xs">
+                        {p.locality}
+                      </span>
                       {p.has_credential ? (
                         <span className="ml-2 rounded bg-emerald-500/15 px-2 py-0.5 text-xs text-emerald-700">
                           已配置密钥
                         </span>
                       ) : null}
                     </div>
-                    <div className="mt-1 font-mono text-xs text-muted-foreground">{p.base_url}</div>
+                    <div className="mt-1 font-mono text-xs text-muted-foreground">
+                      {p.base_url}
+                    </div>
                     {probe ? (
-                      <div className={`mt-1 text-xs ${probe.reachable ? "text-emerald-700" : "text-destructive"}`}>
+                      <div
+                        className={`mt-1 text-xs ${probe.reachable ? "text-emerald-700" : "text-destructive"}`}
+                      >
                         连通性测试: {probe.message} ({probe.latency_ms} ms)
                       </div>
                     ) : null}
@@ -447,7 +507,9 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
                         setEditingProviderId(p.id);
                         setProviderName(p.name);
                         setProviderBaseURL(p.base_url);
-                        setProviderLocality(p.locality as "internal" | "external");
+                        setProviderLocality(
+                          p.locality as "internal" | "external",
+                        );
                         setProviderAPIKey("");
                       }}
                     >
@@ -469,26 +531,43 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
       ) : null}
 
       {!forbidden && tab === "egress" ? (
-        <form className="mt-6 max-w-md space-y-4 rounded-md border border-border p-4" onSubmit={(e) => void onSaveEgress(e)}>
+        <form
+          className="mt-6 max-w-md space-y-4 rounded-md border border-border p-4"
+          onSubmit={(e) => void onSaveEgress(e)}
+        >
           <div>
-            <label className="block text-sm font-medium" htmlFor="tenant-egress-max">
+            <label
+              className="block text-sm font-medium"
+              htmlFor="tenant-egress-max"
+            >
               租户最高出域策略（egress_policy_max）
             </label>
             <select
               id="tenant-egress-max"
               className="mt-2 h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
               value={egressMax}
-              onChange={(e) => setEgressMax(e.target.value as "deny" | "internal_only" | "allow")}
+              onChange={(e) =>
+                setEgressMax(
+                  e.target.value as "deny" | "internal_only" | "allow",
+                )
+              }
             >
               <option value="deny">deny（禁止任何模型调用）</option>
-              <option value="internal_only">internal_only（仅允许内网模型）</option>
+              <option value="internal_only">
+                internal_only（仅允许内网模型）
+              </option>
               <option value="allow">allow（允许内网与外部模型）</option>
             </select>
           </div>
-          <button type="submit" className="h-9 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">
+          <button
+            type="submit"
+            className="h-9 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground"
+          >
             保存租户出域上限
           </button>
-          {egressSaved ? <p className="text-xs text-emerald-700">已更新租户出域上限。</p> : null}
+          {egressSaved ? (
+            <p className="text-xs text-emerald-700">已更新租户出域上限。</p>
+          ) : null}
         </form>
       ) : null}
 
@@ -498,7 +577,8 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
             <div>
               <div className="font-medium">禁用本地密码登录</div>
               <p className="text-xs text-muted-foreground">
-                启用后仅允许通过已启用的 OIDC 身份源登录（需至少保留一个已启用的 OIDC 提供方）。
+                启用后仅允许通过已启用的 OIDC 身份源登录（需至少保留一个已启用的
+                OIDC 提供方）。
               </p>
             </div>
             <button
@@ -508,7 +588,10 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
                 void (async () => {
                   setError("");
                   try {
-                    const res = await updateAuthPolicy(identity.csrf_token, !disableLocalLogin);
+                    const res = await updateAuthPolicy(
+                      identity.csrf_token,
+                      !disableLocalLogin,
+                    );
                     setDisableLocalLogin(res.disable_local_login);
                   } catch (cause) {
                     handleErr(cause);
@@ -516,7 +599,9 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
                 })();
               }}
             >
-              {disableLocalLogin ? "已禁用本地登录（点击恢复）" : "已允许本地登录（点击禁用）"}
+              {disableLocalLogin
+                ? "已禁用本地登录（点击恢复）"
+                : "已允许本地登录（点击禁用）"}
             </button>
           </div>
 
@@ -531,7 +616,9 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
                     name: oidcName.trim(),
                     issuer_url: oidcIssuer.trim(),
                     client_id: oidcClientId.trim(),
-                    ...(oidcClientSecret.trim() ? { client_secret: oidcClientSecret.trim() } : {}),
+                    ...(oidcClientSecret.trim()
+                      ? { client_secret: oidcClientSecret.trim() }
+                      : {}),
                     group_claim: oidcGroupClaim.trim() || "groups",
                     enabled: true,
                   });
@@ -580,17 +667,26 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
               value={oidcGroupClaim}
               onChange={(e) => setOidcGroupClaim(e.target.value)}
             />
-            <button type="submit" className="h-9 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">
+            <button
+              type="submit"
+              className="h-9 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground"
+            >
               添加 OIDC 身份源
             </button>
           </form>
 
           <div className="space-y-2">
             {oidcProviders.map((p) => (
-              <div key={p.id} className="flex items-center justify-between rounded-md border border-border p-4">
+              <div
+                key={p.id}
+                className="flex items-center justify-between rounded-md border border-border p-4"
+              >
                 <div>
                   <div className="font-medium">
-                    {p.name} <span className="ml-2 rounded bg-muted px-2 py-0.5 text-xs">claim: {p.group_claim}</span>
+                    {p.name}{" "}
+                    <span className="ml-2 rounded bg-muted px-2 py-0.5 text-xs">
+                      claim: {p.group_claim}
+                    </span>
                   </div>
                   <div className="mt-1 font-mono text-xs text-muted-foreground">
                     {p.issuer_url} · client: {p.client_id}

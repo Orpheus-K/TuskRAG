@@ -3,8 +3,8 @@ import type { components, paths } from "./schema";
 export * from "./acl";
 export * from "./admin";
 export * from "./answer";
-export * from "./apikeys";
 export * from "./answer_eval";
+export * from "./apikeys";
 export * from "./members";
 export * from "./oidc";
 
@@ -801,16 +801,12 @@ function isPurgeJob(value: unknown): value is PurgeJob {
     isPositiveInteger(value.kb_id) &&
     isPositiveInteger(value.document_id) &&
     isPositiveInteger(value.version_id) &&
-    (value.document_title === null || typeof value.document_title === "string") &&
+    (value.document_title === null ||
+      typeof value.document_title === "string") &&
     typeof value.document_deleted === "boolean" &&
-    [
-      "queued",
-      "running",
-      "succeeded",
-      "failed",
-      "dead",
-      "cancelled",
-    ].includes(String(value.status)) &&
+    ["queued", "running", "succeeded", "failed", "dead", "cancelled"].includes(
+      String(value.status),
+    ) &&
     typeof value.attempts === "number" &&
     Number.isSafeInteger(value.attempts) &&
     value.attempts >= 0 &&
@@ -898,7 +894,11 @@ export async function importDocumentURL(
         "X-CSRF-Token": csrf,
         "Idempotency-Key": idempotencyKey,
       },
-      body: JSON.stringify(title?.trim() ? { url: url.trim(), title: title.trim() } : { url: url.trim() }),
+      body: JSON.stringify(
+        title?.trim()
+          ? { url: url.trim(), title: title.trim() }
+          : { url: url.trim() },
+      ),
     }),
   );
   const value: unknown = await response.json();

@@ -24,4 +24,13 @@ func TestDiagnoseAndRotateMasterKeyValidation(t *testing.T) {
 	if _, err := RotateMasterKey(context.Background(), nil, 0, vault, vault); err == nil {
 		t.Fatal("expected error when tenantID <= 0")
 	}
+	if _, err := ReindexKB(context.Background(), "", 1, 1); err == nil {
+		t.Fatal("expected error when databaseURL is empty")
+	}
+	if _, err := ReindexKB(context.Background(), "postgres://localhost/db", 0, 1); err == nil {
+		t.Fatal("expected error when tenantID <= 0")
+	}
+	if _, err := ReindexKB(context.Background(), "postgres://localhost/db", 1, 0); err == nil {
+		t.Fatal("expected error when kbID <= 0")
+	}
 }

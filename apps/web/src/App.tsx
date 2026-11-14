@@ -124,9 +124,13 @@ function LoginForm({ onLogin }: { onLogin: (identity: Identity) => void }) {
             required
           />
         </div>
-        {authPolicy && Array.isArray(authPolicy.providers) && authPolicy.providers.length > 0 ? (
+        {authPolicy &&
+        Array.isArray(authPolicy.providers) &&
+        authPolicy.providers.length > 0 ? (
           <div className="space-y-2 border-b pb-4">
-            <p className="text-xs text-muted-foreground">企业单点登录（OIDC）</p>
+            <p className="text-xs text-muted-foreground">
+              企业单点登录（OIDC）
+            </p>
             <div className="flex flex-wrap gap-2">
               {authPolicy.providers.map((p) => (
                 <Button

@@ -17,8 +17,8 @@ import {
 } from "@tuskrag/api-client";
 import { Button } from "@tuskrag/ui/button";
 import { type FormEvent, useRef, useState } from "react";
-import type { PreviewTarget } from "./DocumentPreview";
 import { DocumentACLButton, UserGroupsPanel } from "./DocumentACL";
+import type { PreviewTarget } from "./DocumentPreview";
 import { KnowledgeConfigPanel } from "./KnowledgeConfig";
 import { KnowledgeMembersPanel } from "./KnowledgeMembers";
 import { Preview } from "./Preview";
@@ -604,177 +604,186 @@ export function KnowledgeDetail({
             className="mt-8 space-y-3 rounded-xl border p-5"
             onSubmit={submitUpload}
           >
-          <label
-            className="block text-sm font-medium"
-            htmlFor="document-upload"
-          >
-            {versionTarget
-              ? `上传 ${versionTarget.title} 的新版本`
-              : "上传文档"}
-          </label>
-          <input
-            id="document-upload"
-            ref={uploadInput}
-            className="block w-full text-sm"
-            type="file"
-            accept=".csv,.md,.markdown,.txt,.docx,.xlsx,.pptx,.html,.htm,.pdf"
-            disabled={uploading}
-            onChange={(event) => {
-              setFile(event.currentTarget.files?.[0] ?? null);
-              setConfirmFirstRowHeaders(false);
-              uploadKey.current = null;
-              setUploadError("");
-              setUploadMessage("");
-            }}
-          />
-          <p className="text-sm text-muted-foreground">
-            支持 CSV、Markdown、TXT、DOCX、XLSX、PPTX、HTML、PDF，单文件不超过 200
-            MiB。上传后进入处理队列。
-          </p>
-          {versionTarget && (
+            <label
+              className="block text-sm font-medium"
+              htmlFor="document-upload"
+            >
+              {versionTarget
+                ? `上传 ${versionTarget.title} 的新版本`
+                : "上传文档"}
+            </label>
+            <input
+              id="document-upload"
+              ref={uploadInput}
+              className="block w-full text-sm"
+              type="file"
+              accept=".csv,.md,.markdown,.txt,.docx,.xlsx,.pptx,.html,.htm,.pdf"
+              disabled={uploading}
+              onChange={(event) => {
+                setFile(event.currentTarget.files?.[0] ?? null);
+                setConfirmFirstRowHeaders(false);
+                uploadKey.current = null;
+                setUploadError("");
+                setUploadMessage("");
+              }}
+            />
             <p className="text-sm text-muted-foreground">
-              新版本须与原文档格式相同；处理期间继续使用当前生效版本。
+              支持 CSV、Markdown、TXT、DOCX、XLSX、PPTX、HTML、PDF，单文件不超过
+              200 MiB。上传后进入处理队列。
             </p>
-          )}
-          {file && /\.(csv|docx|xlsx|pdf)$/i.test(file.name) && (
-            <label className="flex items-start gap-2 text-sm">
+            {versionTarget && (
+              <p className="text-sm text-muted-foreground">
+                新版本须与原文档格式相同；处理期间继续使用当前生效版本。
+              </p>
+            )}
+            {file && /\.(csv|docx|xlsx|pdf)$/i.test(file.name) && (
+              <label className="flex items-start gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={confirmFirstRowHeaders}
+                  disabled={uploading}
+                  onChange={(event) => {
+                    setConfirmFirstRowHeaders(event.currentTarget.checked);
+                    uploadKey.current = null;
+                    setUploadError("");
+                  }}
+                />
+                <span>
+                  确认此文件中所有表格的首行都是表头；未确认的表格无法入库。
+                </span>
+              </label>
+            )}
+            <label className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
-                checked={confirmFirstRowHeaders}
+                checked={allowDuplicate}
                 disabled={uploading}
                 onChange={(event) => {
-                  setConfirmFirstRowHeaders(event.currentTarget.checked);
+                  setAllowDuplicate(event.currentTarget.checked);
                   uploadKey.current = null;
                   setUploadError("");
                 }}
               />
-              <span>
-                确认此文件中所有表格的首行都是表头；未确认的表格无法入库。
-              </span>
+              仍导入相同内容
             </label>
-          )}
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={allowDuplicate}
-              disabled={uploading}
-              onChange={(event) => {
-                setAllowDuplicate(event.currentTarget.checked);
-                uploadKey.current = null;
-                setUploadError("");
-              }}
-            />
-            仍导入相同内容
-          </label>
-          {uploadError && (
-            <p role="alert" className="text-sm">
-              {uploadError}
-            </p>
-          )}
-          {uploadMessage && (
-            <p role="status" className="text-sm">
-              {uploadMessage}
-            </p>
-          )}
-          <Button
-            type="submit"
-            disabled={
-              !file || uploading || deleting !== null || retrying !== null
-            }
-          >
-            {uploading ? "正在上传" : versionTarget ? "上传新版本" : "上传"}
-          </Button>
-          {versionTarget && (
+            {uploadError && (
+              <p role="alert" className="text-sm">
+                {uploadError}
+              </p>
+            )}
+            {uploadMessage && (
+              <p role="status" className="text-sm">
+                {uploadMessage}
+              </p>
+            )}
             <Button
-              type="button"
-              variant="outline"
-              disabled={uploading}
-              onClick={() => {
-                setVersionTarget(null);
-                setFile(null);
-                setAllowDuplicate(false);
-                setConfirmFirstRowHeaders(false);
-                setUploadError("");
-                uploadKey.current = null;
-                if (uploadInput.current) uploadInput.current.value = "";
-              }}
+              type="submit"
+              disabled={
+                !file || uploading || deleting !== null || retrying !== null
+              }
             >
-              取消更新
+              {uploading ? "正在上传" : versionTarget ? "上传新版本" : "上传"}
             </Button>
-          )}
-        </form>
-        <form
-          className="mt-4 space-y-3 rounded-xl border p-5"
-          onSubmit={async (event) => {
-            event.preventDefault();
-            if (!importURL.trim() || importingURL) return;
-            setImportingURL(true);
-            setImportError("");
-            setImportMessage("");
-            try {
-              const key = crypto.randomUUID();
-              const res = await importDocumentURL(
-                id,
-                importURL,
-                importTitle,
-                identity.csrf_token,
-                key,
-                allowDuplicate,
-              );
-              setImportURL("");
-              setImportTitle("");
-              setImportMessage(`已抓取并入队：${res.title}`);
-              await queryClient.invalidateQueries({
-                queryKey: ["documents", identity.tenant_id, identity.user_id, id],
-              });
-            } catch (err) {
-              setImportError(
-                err instanceof ApiError && err.status === 403
-                  ? "目标地址被安全策略拦截（禁止内网/本机地址）。"
-                  : "URL 导入失败，请检查链接或格式后重试。",
-              );
-            } finally {
-              setImportingURL(false);
-            }
-          }}
-        >
-          <p className="text-sm font-medium">从 URL 导入网页或文档</p>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <input
-              aria-label="导入 URL"
-              type="url"
-              required
-              placeholder="https://example.com/guide.html"
-              className="block w-full rounded-md border bg-background px-3 py-2 text-sm"
-              value={importURL}
-              disabled={importingURL}
-              onChange={(e) => setImportURL(e.target.value)}
-            />
-            <input
-              aria-label="文档标题（可选）"
-              type="text"
-              maxLength={200}
-              placeholder="标题（可选，默认从 URL 推导）"
-              className="block w-full rounded-md border bg-background px-3 py-2 text-sm"
-              value={importTitle}
-              disabled={importingURL}
-              onChange={(e) => setImportTitle(e.target.value)}
-            />
-          </div>
-          {importError && (
-            <p role="alert" className="text-sm">
-              {importError}
-            </p>
-          )}
-          {importMessage && (
-            <p role="status" className="text-sm">
-              {importMessage}
-            </p>
-          )}
-          <Button type="submit" variant="outline" disabled={!importURL.trim() || importingURL}>
-            {importingURL ? "正在导入" : "URL 导入"}
-          </Button>
-        </form>
+            {versionTarget && (
+              <Button
+                type="button"
+                variant="outline"
+                disabled={uploading}
+                onClick={() => {
+                  setVersionTarget(null);
+                  setFile(null);
+                  setAllowDuplicate(false);
+                  setConfirmFirstRowHeaders(false);
+                  setUploadError("");
+                  uploadKey.current = null;
+                  if (uploadInput.current) uploadInput.current.value = "";
+                }}
+              >
+                取消更新
+              </Button>
+            )}
+          </form>
+          <form
+            className="mt-4 space-y-3 rounded-xl border p-5"
+            onSubmit={async (event) => {
+              event.preventDefault();
+              if (!importURL.trim() || importingURL) return;
+              setImportingURL(true);
+              setImportError("");
+              setImportMessage("");
+              try {
+                const key = crypto.randomUUID();
+                const res = await importDocumentURL(
+                  id,
+                  importURL,
+                  importTitle,
+                  identity.csrf_token,
+                  key,
+                  allowDuplicate,
+                );
+                setImportURL("");
+                setImportTitle("");
+                setImportMessage(`已抓取并入队：${res.title}`);
+                await queryClient.invalidateQueries({
+                  queryKey: [
+                    "documents",
+                    identity.tenant_id,
+                    identity.user_id,
+                    id,
+                  ],
+                });
+              } catch (err) {
+                setImportError(
+                  err instanceof ApiError && err.status === 403
+                    ? "目标地址被安全策略拦截（禁止内网/本机地址）。"
+                    : "URL 导入失败，请检查链接或格式后重试。",
+                );
+              } finally {
+                setImportingURL(false);
+              }
+            }}
+          >
+            <p className="text-sm font-medium">从 URL 导入网页或文档</p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <input
+                aria-label="导入 URL"
+                type="url"
+                required
+                placeholder="https://example.com/guide.html"
+                className="block w-full rounded-md border bg-background px-3 py-2 text-sm"
+                value={importURL}
+                disabled={importingURL}
+                onChange={(e) => setImportURL(e.target.value)}
+              />
+              <input
+                aria-label="文档标题（可选）"
+                type="text"
+                maxLength={200}
+                placeholder="标题（可选，默认从 URL 推导）"
+                className="block w-full rounded-md border bg-background px-3 py-2 text-sm"
+                value={importTitle}
+                disabled={importingURL}
+                onChange={(e) => setImportTitle(e.target.value)}
+              />
+            </div>
+            {importError && (
+              <p role="alert" className="text-sm">
+                {importError}
+              </p>
+            )}
+            {importMessage && (
+              <p role="status" className="text-sm">
+                {importMessage}
+              </p>
+            )}
+            <Button
+              type="submit"
+              variant="outline"
+              disabled={!importURL.trim() || importingURL}
+            >
+              {importingURL ? "正在导入" : "URL 导入"}
+            </Button>
+          </form>
         </>
       )}
       <h2 className="mt-10 text-lg font-medium">文档</h2>
@@ -1010,9 +1019,7 @@ export function KnowledgeDetail({
                   >
                     <div className="min-w-0 space-y-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="font-medium break-words">
-                          {label}
-                        </span>
+                        <span className="font-medium break-words">{label}</span>
                         <span className="text-xs text-muted-foreground">
                           版本 #{item.version_id}
                         </span>

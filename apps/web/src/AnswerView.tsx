@@ -90,7 +90,8 @@ export function AnswerView({
         >
           {state.steps.map((s) => (
             <li key={s.step}>
-              #{s.step} <code>{s.tool}</code>（{s.args_summary}）→ {s.result_count} 条结果
+              #{s.step} <code>{s.tool}</code>（{s.args_summary}）→{" "}
+              {s.result_count} 条结果
             </li>
           ))}
         </ol>

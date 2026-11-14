@@ -22,7 +22,11 @@ const allActions = [
 export function APIKeysPage({ identity }: { identity: Identity }) {
   const queryClient = useQueryClient();
   const [name, setName] = useState("");
-  const [actions, setActions] = useState<string[]>(["search", "read", "answer"]);
+  const [actions, setActions] = useState<string[]>([
+    "search",
+    "read",
+    "answer",
+  ]);
   const [selectedKBs, setSelectedKBs] = useState<number[]>([]);
   const [rpm, setRpm] = useState("60");
   const [quota, setQuota] = useState("0");
@@ -108,9 +112,12 @@ export function APIKeysPage({ identity }: { identity: Identity }) {
     <section className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">API Key 管理</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            API Key 管理
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            为外部 Agent 与系统集成签发范围受限的访问密钥，创建后仅显示一次明文。
+            为外部 Agent
+            与系统集成签发范围受限的访问密钥，创建后仅显示一次明文。
           </p>
         </div>
         <Link className="text-sm underline" to="/">
@@ -139,7 +146,10 @@ export function APIKeysPage({ identity }: { identity: Identity }) {
       <section className="space-y-2 rounded-xl border p-5 text-sm">
         <h2 className="font-semibold">Agent 接入（MCP Streamable HTTP）</h2>
         <p className="text-xs text-muted-foreground">
-          签发包含 <code>mcp</code> 权限的 API Key 后，可在 Claude Desktop / Cursor / Windsurf 等客户端接入只读知识库工具（<code>search</code>、<code>list_documents</code>、<code>get_toc</code>、<code>read_section</code>、<code>get_neighbors</code>）。
+          签发包含 <code>mcp</code> 权限的 API Key 后，可在 Claude Desktop /
+          Cursor / Windsurf 等客户端接入只读知识库工具（<code>search</code>、
+          <code>list_documents</code>、<code>get_toc</code>、
+          <code>read_section</code>、<code>get_neighbors</code>）。
         </p>
         <pre className="overflow-x-auto rounded-md bg-muted/60 p-3 font-mono text-xs">
           {JSON.stringify(
@@ -228,7 +238,9 @@ export function APIKeysPage({ identity }: { identity: Identity }) {
 
         {kbs.data && kbs.data.length > 0 && (
           <div>
-            <p className="font-medium">限定知识库（不选表示本人有权访问的全部知识库）</p>
+            <p className="font-medium">
+              限定知识库（不选表示本人有权访问的全部知识库）
+            </p>
             <div className="mt-2 flex flex-wrap gap-3">
               {kbs.data.map((kb) => (
                 <label key={kb.id} className="flex items-center gap-1.5">
@@ -277,8 +289,8 @@ export function APIKeysPage({ identity }: { identity: Identity }) {
                     )}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    动作：{k.actions.join(", ")} · 限速：{k.rate_limit_rpm} RPM ·
-                    本月用量：{k.month_tokens_used}
+                    动作：{k.actions.join(", ")} · 限速：{k.rate_limit_rpm} RPM
+                    · 本月用量：{k.month_tokens_used}
                     {k.monthly_token_quota > 0
                       ? ` / ${k.monthly_token_quota} tokens`
                       : " tokens（不限额）"}

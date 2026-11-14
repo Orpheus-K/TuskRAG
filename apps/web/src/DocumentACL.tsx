@@ -76,7 +76,10 @@ function UserGroupsEditor({ identity }: { identity: Identity }) {
 
   const groupMembers = useQuery({
     queryKey: ["group-members", identity.tenant_id, activeGroupId],
-    queryFn: ({ signal }) => listGroupMembers(activeGroupId!, signal),
+    queryFn: ({ signal }) =>
+      activeGroupId !== null
+        ? listGroupMembers(activeGroupId, signal)
+        : Promise.resolve([]),
     enabled: activeGroupId !== null,
     retry: false,
   });

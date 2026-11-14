@@ -3,12 +3,12 @@
 ## 当前快照（2026-11-14 M5 生产化与全里程碑收官）
 
 - **M5（生产化：Compose 编排、可观测、运维命令与故障验证）完成**：
-  - **可观测与运维**：新增 `GET /metrics`（[metrics.go](../services/core/internal/httpapi/metrics.go)，Prometheus 文本格式 + 回环/`TUSKRAG_METRICS_TOKEN` 鉴权）、`tuskrag ops diagnose <tenant-id>` 与 `tuskrag ops rotate-master-key <tenant-id>`（[ops_m5.go](../services/core/internal/operations/ops_m5.go) + [operations.go](../services/core/cmd/tuskrag/operations.go)）。
+  - **可观测与运维**：新增 `GET /metrics`（[metrics.go](../services/core/internal/httpapi/metrics.go)，Prometheus 文本格式 + 回环/`TUSKRAG_METRICS_TOKEN` 鉴权）、`tuskrag ops diagnose <tenant-id>`、`tuskrag ops rotate-master-key <tenant-id>` 与 `tuskrag ops reindex <tenant-id> --kb <kb-id>`（[ops_m5.go](../services/core/internal/operations/ops_m5.go) + [operations.go](../services/core/cmd/tuskrag/operations.go)）。
   - **部署编排与 SBOM**：新增 [Dockerfile](../deploy/Dockerfile)、[docker-compose.lite.yml](../deploy/compose/docker-compose.lite.yml)、[docker-compose.standard.yml](../deploy/compose/docker-compose.standard.yml)、[docker-compose.model-node.yml](../deploy/compose/docker-compose.model-node.yml)、[docker-compose.legacy-office.yml](../deploy/compose/docker-compose.legacy-office.yml)、[prometheus-alerts.yml](../deploy/compose/prometheus-alerts.yml) 与 [sbom.sh](../deploy/linux/sbom.sh)；更新 [deploy/README.md](../deploy/README.md)、[09 部署运维与可观测](../docs/09-部署运维与可观测.md) 与 [12 开发计划与里程碑](../docs/12-开发计划与里程碑.md)。
   - **实测证据（[M5 报告](../docs/eval-reports/2026-11-14-m5-production-verification.md)）**：
-    - 云端 `test-host.invalid`（隔离 `tuskrag-postgres:verify` PG17，35 项迁移全绿）：`TestM5OperationsDiagnoseAndRotateMasterKeyPostgres`（`0.27s`）与 `jobs` 全包 17 项 `V01`/`V02` 并发租约/崩溃恢复集成测试全部 `PASS`。
-    - 本地：`go vet ./...`、`go test -p 1 -count=1 ./internal/operations ./internal/jobs ./internal/models ./internal/secrets ./cmd/tuskrag`、`httpapi.test.exe -test.run=TestMetricsEndpointLoopbackAndTokenAuth`、`pnpm typecheck`、`pnpm test:web`（18 文件 122 项）与 `pnpm build:web` 全部通过。
-  - **未运行项**：100 万块 `V08` / 50-100 会话 `V09` 压测、跨版本 `V13` 滚动升级与发行版 Docker 镜像构建/`syft` 扫描需在独立生产规格环境执行；本地 Windows `biome` 因系统退出码 `0xC0000142` 无法启动。
+    - 云端 `test-host.invalid`（隔离 `tuskrag-postgres:verify` PG17，35 项迁移全绿）：`TestM5OperationsDiagnoseAndRotateMasterKeyPostgres`（`0.36s`，含 `Diagnose` / `RotateMasterKey` / `ReindexKB`）、`T16`/`V12` 冷备恢复演练（`T16_V12_RESTORE_OK`：`pg_dump -Fc` + 存储 `tar` → 空库 `pg_restore` → `ops verify-storage` & `ops diagnose`）、`jobs` 全包 17 项 `V01`/`V02` 并发租约/崩溃恢复集成测试全部 `PASS`；Linux 端 `biome check .`（71 文件）0 错误 0 警告。
+    - 本地与 WSL：`go vet ./...`、`go test -p 1 -count=1 ./internal/operations ./internal/jobs ./internal/models ./internal/secrets ./cmd/tuskrag`、`httpapi.test.exe -test.run=TestMetricsEndpointLoopbackAndTokenAuth`、`pnpm typecheck`、`pnpm test:web`（18 文件 122 项）、`pnpm build:web` 及 `bash deploy/linux/sbom.sh`（锁文件与 `SHA256SUMS`）全部通过。
+  - **未运行项**：100 万块 `V08` / 50-100 会话 `V09` 压测、跨版本 `V13` 滚动升级与发行版 Docker 镜像构建/`syft` 扫描需在独立生产规格环境执行。
 
 - **M4（解析增强与 Agent 接入：M4-1 ~ M4-5）完成（R03、R09、R22、T02、T03、T11、T19、V03、V07、V14、E5、E7）**：
   - **M4-1（`2554bd2`）**：兼容词汇检索驱动自动检测（`pg_search` / `tsvector` GIN 回退）与 `V03` 驱动契约测试。

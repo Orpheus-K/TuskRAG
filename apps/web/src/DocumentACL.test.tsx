@@ -34,6 +34,7 @@ afterEach(() => {
 describe("UserGroupsPanel & DocumentACLButton", () => {
   it("hides DocumentACLButton for viewer and editor", () => {
     renderWithQuery(
+      // biome-ignore lint/a11y/useValidAriaRole: component prop, not ARIA role
       <DocumentACLButton
         identity={identity}
         kbId={5}
@@ -46,80 +47,97 @@ describe("UserGroupsPanel & DocumentACLButton", () => {
   });
 
   it("creates user group and updates document ACL to restricted", async () => {
-    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
-      const url = String(input);
-      if (url === "/api/v1/groups" && (!init?.method || init.method === "GET")) {
-        return new Response(
-          JSON.stringify({
-            items: [
-              {
-                id: 3,
-                name: "security",
-                source: "manual",
-                created_at: "2026-11-13T00:00:00Z",
-              },
-            ],
-          }),
-          { status: 200, headers: { "Content-Type": "application/json" } },
-        );
-      }
-      if (url === "/api/v1/groups" && init?.method === "POST") {
-        return new Response(
-          JSON.stringify({
-            id: 4,
-            name: "finance",
-            source: "manual",
-            created_at: "2026-11-13T00:00:00Z",
-          }),
-          { status: 200, headers: { "Content-Type": "application/json" } },
-        );
-      }
-      if (url === "/api/v1/tenant/users") {
-        return new Response(
-          JSON.stringify({
-            items: [
-              { id: 10, display_name: "Alice", created_at: "2026-11-13T00:00:00Z" },
-              { id: 11, display_name: "Bob", created_at: "2026-11-13T00:00:00Z" },
-            ],
-          }),
-          { status: 200, headers: { "Content-Type": "application/json" } },
-        );
-      }
-      if (url.startsWith("/api/v1/groups/") && url.endsWith("/members")) {
-        return new Response(JSON.stringify({ items: [] }), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      }
-      if (url === "/api/v1/kbs/5/documents/9/acl" && (!init?.method || init.method === "GET")) {
-        return new Response(
-          JSON.stringify({
-            document_id: 9,
-            acl_mode: "inherit_kb",
-            acl_revision: 1,
-            subjects: [],
-          }),
-          { status: 200, headers: { "Content-Type": "application/json" } },
-        );
-      }
-      if (url === "/api/v1/kbs/5/documents/9/acl" && init?.method === "PUT") {
-        return new Response(
-          JSON.stringify({
-            document_id: 9,
-            acl_mode: "restricted",
-            acl_revision: 2,
-            subjects: [{ type: "group", id: 3 }],
-          }),
-          { status: 200, headers: { "Content-Type": "application/json" } },
-        );
-      }
-      return new Response(null, { status: 404 });
-    });
+    const fetchMock = vi.fn(
+      async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = String(input);
+        if (
+          url === "/api/v1/groups" &&
+          (!init?.method || init.method === "GET")
+        ) {
+          return new Response(
+            JSON.stringify({
+              items: [
+                {
+                  id: 3,
+                  name: "security",
+                  source: "manual",
+                  created_at: "2026-11-13T00:00:00Z",
+                },
+              ],
+            }),
+            { status: 200, headers: { "Content-Type": "application/json" } },
+          );
+        }
+        if (url === "/api/v1/groups" && init?.method === "POST") {
+          return new Response(
+            JSON.stringify({
+              id: 4,
+              name: "finance",
+              source: "manual",
+              created_at: "2026-11-13T00:00:00Z",
+            }),
+            { status: 200, headers: { "Content-Type": "application/json" } },
+          );
+        }
+        if (url === "/api/v1/tenant/users") {
+          return new Response(
+            JSON.stringify({
+              items: [
+                {
+                  id: 10,
+                  display_name: "Alice",
+                  created_at: "2026-11-13T00:00:00Z",
+                },
+                {
+                  id: 11,
+                  display_name: "Bob",
+                  created_at: "2026-11-13T00:00:00Z",
+                },
+              ],
+            }),
+            { status: 200, headers: { "Content-Type": "application/json" } },
+          );
+        }
+        if (url.startsWith("/api/v1/groups/") && url.endsWith("/members")) {
+          return new Response(JSON.stringify({ items: [] }), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+        if (
+          url === "/api/v1/kbs/5/documents/9/acl" &&
+          (!init?.method || init.method === "GET")
+        ) {
+          return new Response(
+            JSON.stringify({
+              document_id: 9,
+              acl_mode: "inherit_kb",
+              acl_revision: 1,
+              subjects: [],
+            }),
+            { status: 200, headers: { "Content-Type": "application/json" } },
+          );
+        }
+        if (url === "/api/v1/kbs/5/documents/9/acl" && init?.method === "PUT") {
+          return new Response(
+            JSON.stringify({
+              document_id: 9,
+              acl_mode: "restricted",
+              acl_revision: 2,
+              subjects: [{ type: "group", id: 3 }],
+            }),
+            { status: 200, headers: { "Content-Type": "application/json" } },
+          );
+        }
+        return new Response(null, { status: 404 });
+      },
+    );
     vi.stubGlobal("fetch", fetchMock);
 
     renderWithQuery(
       <>
         <UserGroupsPanel identity={identity} />
+        {/* biome-ignore lint/a11y/useValidAriaRole: component prop, not ARIA role */}
         <DocumentACLButton
           identity={identity}
           kbId={5}

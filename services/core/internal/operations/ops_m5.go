@@ -7,10 +7,12 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"tuskrag.local/core/internal/db"
 	"tuskrag.local/core/internal/dbquery"
+	"tuskrag.local/core/internal/indexing"
 	"tuskrag.local/core/internal/secrets"
 )
 
@@ -38,6 +40,13 @@ type KeyRotationReport struct {
 	NewKeyID              string `json:"new_key_id"`
 	ModelProvidersRotated int    `json:"model_providers_rotated"`
 	OIDCProvidersRotated  int    `json:"oidc_providers_rotated"`
+}
+
+type ReindexReport struct {
+	KnowledgeBaseID int64 `json:"knowledge_base_id"`
+	TenantID        int64 `json:"tenant_id"`
+	SpaceID         int64 `json:"embedding_space_id"`
+	Analyzed        bool  `json:"analyzed"`
 }
 
 // Diagnose collects a sanitized operational snapshot without any document text,
@@ -210,4 +219,53 @@ func RotateMasterKey(ctx context.Context, pool *pgxpool.Pool, tenantID int64, ol
 		return report, err
 	}
 	return report, nil
+}
+
+// ReindexKB verifies or provisions the shared lexical index and the
+// knowledge base's HNSW vector index, then refreshes planner statistics.
+func ReindexKB(ctx context.Context, databaseURL string, tenantID, kbID int64) (ReindexReport, error) {
+	if ctx == nil || databaseURL == "" || tenantID <= 0 || kbID <= 0 {
+		return ReindexReport{}, errors.New("context, database URL, positive tenant ID, and positive knowledge base ID are required")
+	}
+	conn, err := pgx.Connect(ctx, databaseURL)
+	if err != nil {
+		return ReindexReport{}, fmt.Errorf("connect reindex: %w", err)
+	}
+	defer func() {
+		closeCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		_ = conn.Close(closeCtx)
+	}()
+
+	tx, err := conn.Begin(ctx)
+	if err != nil {
+		return ReindexReport{}, err
+	}
+	if _, err := dbquery.New(tx).SetTenant(ctx, tenantID); err != nil {
+		_ = tx.Rollback(ctx)
+		return ReindexReport{}, err
+	}
+	var spaceID int64
+	if err := tx.QueryRow(ctx, `SELECT embedding_space_id FROM knowledge_base WHERE tenant_id = $1 AND id = $2`, tenantID, kbID).Scan(&spaceID); err != nil {
+		_ = tx.Rollback(ctx)
+		return ReindexReport{}, fmt.Errorf("load knowledge base %d: %w", kbID, err)
+	}
+	if err := tx.Commit(ctx); err != nil {
+		return ReindexReport{}, err
+	}
+	if err := indexing.Provision(ctx, databaseURL, tenantID, spaceID); err != nil {
+		return ReindexReport{}, err
+	}
+	if _, err := conn.Exec(ctx, `ANALYZE chunk`); err != nil {
+		return ReindexReport{}, fmt.Errorf("analyze chunk: %w", err)
+	}
+	if _, err := conn.Exec(ctx, `ANALYZE chunk_vector`); err != nil {
+		return ReindexReport{}, fmt.Errorf("analyze chunk_vector: %w", err)
+	}
+	return ReindexReport{
+		KnowledgeBaseID: kbID,
+		TenantID:        tenantID,
+		SpaceID:         spaceID,
+		Analyzed:        true,
+	}, nil
 }

@@ -15,8 +15,23 @@ import (
 )
 
 func runOperations(ctx context.Context, args []string) (resultErr error) {
+	if len(args) >= 1 && args[0] == "reindex" {
+		if len(args) != 4 || args[2] != "--kb" {
+			return errors.New("usage: tuskrag ops reindex <tenant-id> --kb <kb-id>")
+		}
+		tenantID, tenantErr := strconv.ParseInt(args[1], 10, 64)
+		kbID, kbErr := strconv.ParseInt(args[3], 10, 64)
+		if tenantErr != nil || kbErr != nil || tenantID <= 0 || kbID <= 0 {
+			return errors.New("tenant-id and kb-id must be positive integers")
+		}
+		report, rErr := operations.ReindexKB(ctx, os.Getenv("TUSKRAG_DATABASE_URL"), tenantID, kbID)
+		if rErr != nil {
+			return rErr
+		}
+		return json.NewEncoder(os.Stdout).Encode(report)
+	}
 	if len(args) != 2 {
-		return errors.New("usage: tuskrag ops [verify-storage|diagnose|rotate-master-key] <tenant-id>")
+		return errors.New("usage: tuskrag ops [verify-storage|diagnose|rotate-master-key] <tenant-id> | reindex <tenant-id> --kb <kb-id>")
 	}
 	subcommand := args[0]
 	tenantID, err := strconv.ParseInt(args[1], 10, 64)
