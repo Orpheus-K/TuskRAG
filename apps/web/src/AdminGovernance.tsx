@@ -21,6 +21,12 @@ import {
   updateModelProvider,
   updateTenantEgressPolicy,
 } from "@tuskrag/api-client";
+import { Alert } from "@tuskrag/ui/alert";
+import { Badge } from "@tuskrag/ui/badge";
+import { Button } from "@tuskrag/ui/button";
+import { DataTable, DataTableCell, DataTableRow } from "@tuskrag/ui/data-table";
+import { Input } from "@tuskrag/ui/input";
+import { Select } from "@tuskrag/ui/select";
 import { useCallback, useEffect, useState } from "react";
 
 export function AdminGovernancePage({ identity }: { identity: Identity }) {
@@ -251,41 +257,37 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
       </div>
 
       <div className="mt-6 flex gap-2 border-b border-border pb-3">
-        <button
-          type="button"
-          className={`rounded-md px-3 py-1.5 text-sm font-medium ${tab === "audit" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+        <Button
+          size="sm"
+          variant={tab === "audit" ? "default" : "secondary"}
           onClick={() => setTab("audit")}
         >
           审计日志
-        </button>
-        <button
-          type="button"
-          className={`rounded-md px-3 py-1.5 text-sm font-medium ${tab === "providers" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+        </Button>
+        <Button
+          size="sm"
+          variant={tab === "providers" ? "default" : "secondary"}
           onClick={() => setTab("providers")}
         >
           模型供应商
-        </button>
-        <button
-          type="button"
-          className={`rounded-md px-3 py-1.5 text-sm font-medium ${tab === "egress" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+        </Button>
+        <Button
+          size="sm"
+          variant={tab === "egress" ? "default" : "secondary"}
           onClick={() => setTab("egress")}
         >
           租户出域上限
-        </button>
-        <button
-          type="button"
-          className={`rounded-md px-3 py-1.5 text-sm font-medium ${tab === "sso" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+        </Button>
+        <Button
+          size="sm"
+          variant={tab === "sso" ? "default" : "secondary"}
           onClick={() => setTab("sso")}
         >
           身份源（OIDC）
-        </button>
+        </Button>
       </div>
 
-      {error ? (
-        <p className="mt-4 rounded-md border border-destructive/40 bg-destructive/10 px-4 py-2 text-sm text-destructive">
-          {error}
-        </p>
-      ) : null}
+      {error ? <Alert className="mt-4" variant="danger">{error}</Alert> : null}
 
       {!forbidden && tab === "audit" ? (
         <div className="mt-6 space-y-4">
@@ -297,9 +299,9 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
               >
                 动作过滤
               </label>
-              <input
+              <Input
                 id="audit-action"
-                className="mt-1 h-9 rounded-md border border-input bg-background px-3 text-sm"
+                className="mt-1"
                 placeholder="例如 audit.export"
                 value={actionFilter}
                 onChange={(e) => setActionFilter(e.target.value)}
@@ -312,9 +314,9 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
               >
                 结果
               </label>
-              <select
+              <Select
                 id="audit-result"
-                className="mt-1 h-9 rounded-md border border-input bg-background px-3 text-sm"
+                className="mt-1"
                 value={resultFilter}
                 onChange={(e) => setResultFilter(e.target.value)}
               >
@@ -322,102 +324,85 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
                 <option value="allow">allow</option>
                 <option value="deny">deny</option>
                 <option value="error">error</option>
-              </select>
+              </Select>
             </div>
-            <button
-              type="button"
-              className="h-9 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground"
+            <Button
               onClick={() => void loadLogs()}
               disabled={loadingLogs}
             >
               查询
-            </button>
-            <button
-              type="button"
-              className="h-9 rounded-md border border-border px-3 text-sm"
+            </Button>
+            <Button
+              variant="outline"
               onClick={() => void onExport("jsonl")}
             >
               导出 JSONL
-            </button>
-            <button
-              type="button"
-              className="h-9 rounded-md border border-border px-3 text-sm"
+            </Button>
+            <Button
+              variant="outline"
               onClick={() => void onExport("csv")}
             >
               导出 CSV
-            </button>
+            </Button>
           </div>
 
-          <div className="overflow-x-auto rounded-md border border-border">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
-                <tr>
-                  <th className="px-3 py-2">ID</th>
-                  <th className="px-3 py-2">时间</th>
-                  <th className="px-3 py-2">操作者</th>
-                  <th className="px-3 py-2">动作</th>
-                  <th className="px-3 py-2">对象</th>
-                  <th className="px-3 py-2">结果</th>
-                </tr>
-              </thead>
-              <tbody>
-                {logs.length === 0 ? (
-                  <tr>
-                    <td
-                      className="px-3 py-4 text-center text-muted-foreground"
-                      colSpan={6}
-                    >
-                      暂无审计记录
-                    </td>
-                  </tr>
-                ) : (
-                  logs.map((entry) => (
-                    <tr key={entry.id} className="border-t border-border">
-                      <td className="px-3 py-2 font-mono text-xs">
-                        {entry.id}
-                      </td>
-                      <td className="px-3 py-2 text-xs">{entry.created_at}</td>
-                      <td className="px-3 py-2">
-                        {entry.actor_name || `User #${entry.actor_user_id}`}
-                      </td>
-                      <td className="px-3 py-2 font-mono text-xs">
-                        {entry.action}
-                      </td>
-                      <td className="px-3 py-2 font-mono text-xs">
-                        {entry.object_type}#{entry.object_id}
-                      </td>
-                      <td className="px-3 py-2">{entry.result}</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+          <DataTable
+            headers={["ID", "时间", "操作者", "动作", "对象", "结果"]}
+          >
+            {logs.length === 0 ? (
+              <DataTableRow>
+                <td
+                  className="px-4 py-4 text-center text-muted-foreground"
+                  colSpan={6}
+                >
+                  暂无审计记录
+                </td>
+              </DataTableRow>
+            ) : (
+              logs.map((entry) => (
+                <DataTableRow key={entry.id}>
+                  <DataTableCell className="font-mono text-xs">
+                    {entry.id}
+                  </DataTableCell>
+                  <DataTableCell className="text-xs">
+                    {entry.created_at}
+                  </DataTableCell>
+                  <DataTableCell>
+                    {entry.actor_name || `User #${entry.actor_user_id}`}
+                  </DataTableCell>
+                  <DataTableCell className="font-mono text-xs">
+                    {entry.action}
+                  </DataTableCell>
+                  <DataTableCell className="font-mono text-xs">
+                    {entry.object_type}#{entry.object_id}
+                  </DataTableCell>
+                  <DataTableCell>{entry.result}</DataTableCell>
+                </DataTableRow>
+              ))
+            )}
+          </DataTable>
         </div>
       ) : null}
 
       {!forbidden && tab === "providers" ? (
         <div className="mt-6 space-y-6">
           <form
-            className="grid gap-3 rounded-md border border-border p-4 sm:grid-cols-2"
+            className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2"
             onSubmit={(e) => void onSaveProvider(e)}
           >
-            <input
-              className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+            <Input
               placeholder="供应商名称"
               value={providerName}
               onChange={(e) => setProviderName(e.target.value)}
               required
             />
-            <input
-              className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+            <Input
               placeholder="Base URL (例如 https://api.example.com/v1)"
               value={providerBaseURL}
               onChange={(e) => setProviderBaseURL(e.target.value)}
               required
             />
-            <select
-              className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+            <Select
               value={providerLocality}
               onChange={(e) =>
                 setProviderLocality(e.target.value as "internal" | "external")
@@ -425,9 +410,8 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
             >
               <option value="internal">internal</option>
               <option value="external">external</option>
-            </select>
-            <input
-              className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+            </Select>
+            <Input
               type="password"
               placeholder={
                 editingProviderId
@@ -438,16 +422,12 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
               onChange={(e) => setProviderAPIKey(e.target.value)}
             />
             <div className="flex gap-2 sm:col-span-2">
-              <button
-                type="submit"
-                className="h-9 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground"
-              >
+              <Button type="submit">
                 {editingProviderId ? "保存修改" : "添加供应商"}
-              </button>
+              </Button>
               {editingProviderId ? (
-                <button
-                  type="button"
-                  className="h-9 rounded-md border border-border px-3 text-sm"
+                <Button
+                  variant="outline"
                   onClick={() => {
                     setEditingProviderId(null);
                     setProviderName("");
@@ -456,7 +436,7 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
                   }}
                 >
                   取消编辑
-                </button>
+                </Button>
               ) : null}
             </div>
           </form>
@@ -467,18 +447,14 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
               return (
                 <div
                   key={p.id}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border p-4"
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4"
                 >
                   <div>
-                    <div className="font-medium">
-                      {p.name}{" "}
-                      <span className="ml-2 rounded bg-muted px-2 py-0.5 text-xs">
-                        {p.locality}
-                      </span>
+                    <div className="flex flex-wrap items-center gap-2 font-medium">
+                      <span>{p.name}</span>
+                      <Badge variant="neutral">{p.locality}</Badge>
                       {p.has_credential ? (
-                        <span className="ml-2 rounded bg-emerald-500/15 px-2 py-0.5 text-xs text-emerald-700">
-                          已配置密钥
-                        </span>
+                        <Badge variant="success">已配置密钥</Badge>
                       ) : null}
                     </div>
                     <div className="mt-1 font-mono text-xs text-muted-foreground">
@@ -486,23 +462,23 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
                     </div>
                     {probe ? (
                       <div
-                        className={`mt-1 text-xs ${probe.reachable ? "text-emerald-700" : "text-destructive"}`}
+                        className={`mt-1 text-xs ${probe.reachable ? "text-emerald-700" : "text-danger"}`}
                       >
                         连通性测试: {probe.message} ({probe.latency_ms} ms)
                       </div>
                     ) : null}
                   </div>
                   <div className="flex gap-2">
-                    <button
-                      type="button"
-                      className="h-8 rounded-md border border-border px-3 text-xs"
+                    <Button
+                      size="sm"
+                      variant="outline"
                       onClick={() => void onTestProvider(p.id)}
                     >
                       测试连通性
-                    </button>
-                    <button
-                      type="button"
-                      className="h-8 rounded-md border border-border px-3 text-xs"
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
                       onClick={() => {
                         setEditingProviderId(p.id);
                         setProviderName(p.name);
@@ -514,14 +490,14 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
                       }}
                     >
                       编辑
-                    </button>
-                    <button
-                      type="button"
-                      className="h-8 rounded-md border border-destructive/40 px-3 text-xs text-destructive"
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
                       onClick={() => void onDeleteProvider(p.id)}
                     >
                       删除
-                    </button>
+                    </Button>
                   </div>
                 </div>
               );
@@ -532,7 +508,7 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
 
       {!forbidden && tab === "egress" ? (
         <form
-          className="mt-6 max-w-md space-y-4 rounded-md border border-border p-4"
+          className="mt-6 max-w-md space-y-4 rounded-xl border border-border bg-surface p-4"
           onSubmit={(e) => void onSaveEgress(e)}
         >
           <div>
@@ -542,9 +518,9 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
             >
               租户最高出域策略（egress_policy_max）
             </label>
-            <select
+            <Select
               id="tenant-egress-max"
-              className="mt-2 h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+              className="mt-2"
               value={egressMax}
               onChange={(e) =>
                 setEgressMax(
@@ -557,14 +533,9 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
                 internal_only（仅允许内网模型）
               </option>
               <option value="allow">allow（允许内网与外部模型）</option>
-            </select>
+            </Select>
           </div>
-          <button
-            type="submit"
-            className="h-9 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground"
-          >
-            保存租户出域上限
-          </button>
+          <Button type="submit">保存租户出域上限</Button>
           {egressSaved ? (
             <p className="text-xs text-emerald-700">已更新租户出域上限。</p>
           ) : null}
@@ -573,7 +544,7 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
 
       {!forbidden && tab === "sso" ? (
         <div className="mt-6 space-y-6">
-          <div className="flex items-center justify-between rounded-md border border-border p-4">
+          <div className="flex items-center justify-between rounded-xl border border-border bg-surface p-4">
             <div>
               <div className="font-medium">禁用本地密码登录</div>
               <p className="text-xs text-muted-foreground">
@@ -581,9 +552,8 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
                 OIDC 提供方）。
               </p>
             </div>
-            <button
-              type="button"
-              className="h-9 rounded-md border border-border px-4 text-sm font-medium"
+            <Button
+              variant="outline"
               onClick={() => {
                 void (async () => {
                   setError("");
@@ -602,7 +572,7 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
               {disableLocalLogin
                 ? "已禁用本地登录（点击恢复）"
                 : "已允许本地登录（点击禁用）"}
-            </button>
+            </Button>
           </div>
 
           <form
@@ -633,68 +603,56 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
               })();
             }}
           >
-            <input
-              className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+            <Input
               placeholder="身份源名称（如 Corp SSO）"
               value={oidcName}
               onChange={(e) => setOidcName(e.target.value)}
               required
             />
-            <input
-              className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+            <Input
               placeholder="Issuer URL（https://idp.example.com）"
               value={oidcIssuer}
               onChange={(e) => setOidcIssuer(e.target.value)}
               required
             />
-            <input
-              className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+            <Input
               placeholder="Client ID"
               value={oidcClientId}
               onChange={(e) => setOidcClientId(e.target.value)}
               required
             />
-            <input
-              className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+            <Input
               type="password"
               placeholder="Client Secret（PKCE 公开客户端可留空）"
               value={oidcClientSecret}
               onChange={(e) => setOidcClientSecret(e.target.value)}
             />
-            <input
-              className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+            <Input
               placeholder="组声明字段（默认 groups）"
               value={oidcGroupClaim}
               onChange={(e) => setOidcGroupClaim(e.target.value)}
             />
-            <button
-              type="submit"
-              className="h-9 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground"
-            >
-              添加 OIDC 身份源
-            </button>
+            <Button type="submit">添加 OIDC 身份源</Button>
           </form>
 
           <div className="space-y-2">
             {oidcProviders.map((p) => (
               <div
                 key={p.id}
-                className="flex items-center justify-between rounded-md border border-border p-4"
+                className="flex items-center justify-between rounded-xl border border-border bg-surface p-4"
               >
                 <div>
-                  <div className="font-medium">
-                    {p.name}{" "}
-                    <span className="ml-2 rounded bg-muted px-2 py-0.5 text-xs">
-                      claim: {p.group_claim}
-                    </span>
+                  <div className="flex flex-wrap items-center gap-2 font-medium">
+                    <span>{p.name}</span>
+                    <Badge variant="neutral">claim: {p.group_claim}</Badge>
                   </div>
                   <div className="mt-1 font-mono text-xs text-muted-foreground">
                     {p.issuer_url} · client: {p.client_id}
                   </div>
                 </div>
-                <button
-                  type="button"
-                  className="h-8 rounded-md border border-destructive/40 px-3 text-xs text-destructive"
+                <Button
+                  size="sm"
+                  variant="destructive"
                   onClick={() => {
                     void (async () => {
                       setError("");
@@ -708,7 +666,7 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
                   }}
                 >
                   删除
-                </button>
+                </Button>
               </div>
             ))}
           </div>

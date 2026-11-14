@@ -160,14 +160,16 @@ export function DocumentPreview({
                     paddingInlineStart: `${Math.min(item.level, 5) * 0.5}rem`,
                   }}
                 >
-                  <button
+                  <Button
                     type="button"
-                    className="break-words text-left text-sm underline"
+                    size="xs"
+                    variant="ghost"
+                    className="h-auto justify-start whitespace-normal break-words px-1 py-0.5 text-left font-normal underline"
                     aria-label={`查看 ${item.heading || "未命名节"}`}
                     onClick={() => setSectionId(item.id)}
                   >
                     {item.heading || "未命名节"}
-                  </button>
+                  </Button>
                   {item.pages && (
                     <span className="ml-2 text-xs text-muted-foreground">
                       第 {item.pages[0]}—{item.pages[1]} 页

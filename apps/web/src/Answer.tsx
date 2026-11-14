@@ -11,12 +11,17 @@ import {
   listConversations,
   streamConversation,
 } from "@tuskrag/api-client";
+import { Alert } from "@tuskrag/ui/alert";
 import { Button } from "@tuskrag/ui/button";
+import { Card } from "@tuskrag/ui/card";
+import { SectionHeader } from "@tuskrag/ui/section-header";
+import { Select } from "@tuskrag/ui/select";
+import { Textarea } from "@tuskrag/ui/textarea";
+import { WorkspaceSplit } from "@tuskrag/ui/workspace-split";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import {
   type AnswerState,
   AnswerView,
-  answerInputClass,
   emptyAnswer,
 } from "./AnswerView";
 import type { PreviewTarget } from "./DocumentPreview";
@@ -242,186 +247,172 @@ export function AnswerPage({
         知识库不可用或访问权限已变化。
       </p>
     );
-  return (
-    <section className="mx-auto max-w-5xl space-y-6 py-8 sm:py-12">
-      <nav className="flex flex-wrap gap-4 text-sm">
-        <Link className="underline" to="/">
-          选择知识库
-        </Link>
-        <Link
-          className="underline"
-          to="/kb/$kbId/documents"
-          params={{ kbId: String(id) }}
-          search={{ cursor: 0 }}
-        >
-          查看文档
-        </Link>
-      </nav>
-      <div>
-        <h1 className="text-2xl font-semibold">{base.data.name} · 问答</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          依据知识库回答，点击引用查看原文。会话仅自己可见。
+  const historyPane = (
+    <aside className="space-y-3" aria-label="会话历史">
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        className="w-full"
+        disabled={Boolean(active.current)}
+        onClick={() => select(0)}
+      >
+        新建会话
+      </Button>
+      {conversations.isPending && base.data.status === "active" && (
+        <p role="status" className="text-sm text-muted-foreground">
+          正在加载会话
         </p>
-      </div>
-      <div className="grid items-start gap-6 md:grid-cols-[200px_minmax(0,1fr)]">
-        <aside
-          className="max-h-72 space-y-3 overflow-y-auto rounded-xl border p-4 md:max-h-[calc(100vh-5rem)]"
-          aria-label="会话历史"
-        >
+      )}
+      {conversations.isError && (
+        <Alert className="flex items-center justify-between gap-2" variant="danger">
+          <span>会话列表不可用。</span>
           <Button
             type="button"
+            size="xs"
             variant="outline"
-            className="w-full"
-            disabled={Boolean(active.current)}
-            onClick={() => select(0)}
+            onClick={() => void conversations.refetch()}
           >
-            新建会话
+            重试
           </Button>
-          {conversations.isPending && base.data.status === "active" && (
-            <p role="status" className="text-sm">
-              正在加载会话
-            </p>
-          )}
-          {conversations.isError && (
-            <p role="alert" className="text-sm">
-              会话列表不可用。
-              <button
-                type="button"
-                className="underline"
-                onClick={() => void conversations.refetch()}
-              >
-                重试
-              </button>
-            </p>
-          )}
-          {conversations.data?.items.length === 0 && (
-            <p className="text-sm text-muted-foreground">
-              暂无会话，提问后自动保存。
-            </p>
-          )}
-          <ul className="space-y-2">
-            {conversations.data?.items.map((item) => (
-              <li key={item.id}>
-                <button
-                  type="button"
-                  className={`w-full break-words rounded p-2 text-left text-sm ${conversation === item.id ? "bg-muted font-medium" : "hover:bg-muted"}`}
-                  aria-current={conversation === item.id ? "page" : undefined}
-                  disabled={Boolean(active.current)}
-                  onClick={() => select(item.id)}
-                >
-                  {item.title}
-                </button>
-              </li>
-            ))}
-          </ul>
-          <div className="flex flex-wrap gap-3 text-sm">
-            {cursor > 0 && (
-              <button
-                type="button"
-                className="underline"
-                onClick={() => setCursor(0)}
-              >
-                最新会话
-              </button>
-            )}
-            {conversations.data?.next_cursor && (
-              <button
-                type="button"
-                className="underline"
-                onClick={() => {
-                  const next = conversations.data?.next_cursor;
-                  if (next) setCursor(next);
-                }}
-              >
-                更早会话
-              </button>
-            )}
-          </div>
-        </aside>
-        <div className="min-w-0 space-y-5">
-          {conversation > 0 && history.isPending && (
-            <p role="status">正在读取会话</p>
-          )}
-          {conversation > 0 && history.isError && (
-            <div role="alert" className="rounded-xl border p-5">
-              <p>会话不可用，权限或历史引用可能已变化。</p>
-              <button
-                type="button"
-                className="mt-2 underline"
-                onClick={() => void history.refetch()}
-              >
-                重新读取
-              </button>
-            </div>
-          )}
-          {!history.isError &&
-            state.phase !== "error" &&
-            history.data?.messages
-              .filter((m) => m.id !== state.done?.message_id)
-              .map((message) =>
-                message.status === "complete" ? (
-                  <AnswerView
-                    key={message.id}
-                    state={{
-                      phase: "complete",
-                      question: message.question,
-                      text: message.content,
-                      evidence: message.evidence,
-                      cited: message.citations.items.map((c) => c.n),
-                      degraded: message.degraded,
-                      done: message.done,
-                    }}
-                    onEvidence={openEvidence}
-                    identity={identity}
-                    feedback={message.feedback}
-                    saved
-                  />
-                ) : message.status === "running" ? (
-                  !active.current && (
-                    <p key={message.id} role="status">
-                      另一窗口正在回答，请稍候。
-                    </p>
-                  )
-                ) : (
-                  <div
-                    key={message.id}
-                    className="rounded-xl border p-4 text-sm"
-                  >
-                    <p className="break-words font-medium">
-                      {message.question}
-                    </p>
-                    <p className="mt-2 text-muted-foreground">
-                      {message.status === "cancelled"
-                        ? "已停止回答。"
-                        : "回答未完成，可重新提问。"}
-                    </p>
-                  </div>
-                ),
-              )}
-          {!history.isError && (
-            <AnswerView
-              state={state}
-              onEvidence={openEvidence}
-              identity={identity}
-              saved={Boolean(state.done)}
-              feedback={
-                history.data?.messages.find(
-                  (m) => m.id === state.done?.message_id,
-                )?.feedback
-              }
-            />
-          )}
-          {base.data.status === "archived" ? (
-            <p role="status">知识库已归档，不能发起问答。</p>
-          ) : (
-            <form
-              onSubmit={(event) => void submit(event)}
-              className="space-y-4 rounded-xl border p-5"
+        </Alert>
+      )}
+      {conversations.data?.items.length === 0 && (
+        <p className="text-sm text-muted-foreground">
+          暂无会话，提问后自动保存。
+        </p>
+      )}
+      <ul className="space-y-1.5">
+        {conversations.data?.items.map((item) => (
+          <li key={item.id}>
+            <Button
+              type="button"
+              size="sm"
+              variant={conversation === item.id ? "secondary" : "ghost"}
+              className="h-auto w-full justify-start whitespace-normal break-words px-2.5 py-2 text-left font-normal"
+              aria-current={conversation === item.id ? "page" : undefined}
+              disabled={Boolean(active.current)}
+              onClick={() => select(item.id)}
             >
-              <label className="block space-y-2 text-sm font-medium">
+              {item.title}
+            </Button>
+          </li>
+        ))}
+      </ul>
+      <div className="flex flex-wrap gap-2 text-sm">
+        {cursor > 0 && (
+          <Button
+            type="button"
+            size="xs"
+            variant="ghost"
+            className="underline"
+            onClick={() => setCursor(0)}
+          >
+            最新会话
+          </Button>
+        )}
+        {conversations.data?.next_cursor && (
+          <Button
+            type="button"
+            size="xs"
+            variant="ghost"
+            className="underline"
+            onClick={() => {
+              const next = conversations.data?.next_cursor;
+              if (next) setCursor(next);
+            }}
+          >
+            更早会话
+          </Button>
+        )}
+      </div>
+    </aside>
+  );
+
+  const mainPane = (
+    <div className="min-w-0 space-y-5">
+      {conversation > 0 && history.isPending && (
+        <p role="status" className="text-sm text-muted-foreground">
+          正在读取会话
+        </p>
+      )}
+      {conversation > 0 && history.isError && (
+        <Alert className="space-y-2" variant="danger">
+          <p>会话不可用，权限或历史引用可能已变化。</p>
+          <Button
+            type="button"
+            size="xs"
+            variant="outline"
+            onClick={() => void history.refetch()}
+          >
+            重新读取
+          </Button>
+        </Alert>
+      )}
+      {!history.isError &&
+        state.phase !== "error" &&
+        history.data?.messages
+          .filter((m) => m.id !== state.done?.message_id)
+          .map((message) =>
+            message.status === "complete" ? (
+              <AnswerView
+                key={message.id}
+                state={{
+                  phase: "complete",
+                  question: message.question,
+                  text: message.content,
+                  evidence: message.evidence,
+                  cited: message.citations.items.map((c) => c.n),
+                  degraded: message.degraded,
+                  done: message.done,
+                }}
+                onEvidence={openEvidence}
+                identity={identity}
+                feedback={message.feedback}
+                saved
+              />
+            ) : message.status === "running" ? (
+              !active.current && (
+                <p key={message.id} role="status" className="text-sm text-muted-foreground">
+                  另一窗口正在回答，请稍候。
+                </p>
+              )
+            ) : (
+              <Card key={message.id} className="p-4 text-sm">
+                <p className="break-words font-medium">{message.question}</p>
+                <p className="mt-2 text-muted-foreground">
+                  {message.status === "cancelled"
+                    ? "已停止回答。"
+                    : "回答未完成，可重新提问。"}
+                </p>
+              </Card>
+            ),
+          )}
+      {!history.isError && (
+        <AnswerView
+          state={state}
+          onEvidence={openEvidence}
+          identity={identity}
+          saved={Boolean(state.done)}
+          feedback={
+            history.data?.messages.find(
+              (m) => m.id === state.done?.message_id,
+            )?.feedback
+          }
+        />
+      )}
+      {base.data.status === "archived" ? (
+        <Alert variant="warning">知识库已归档，不能发起问答。</Alert>
+      ) : (
+        <Card className="p-4">
+          <form
+            onSubmit={(event) => void submit(event)}
+            className="space-y-4"
+          >
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label className="block space-y-1.5 text-xs font-medium">
                 <span>回答模型</span>
-                <select
-                  className={answerInputClass}
+                <Select
                   value={modelID}
                   onChange={(event) => setModel(Number(event.target.value))}
                   disabled={conversation > 0 || running || !models.data?.length}
@@ -434,13 +425,12 @@ export function AnswerPage({
                       {item.name} · {item.model}
                     </option>
                   ))}
-                </select>
+                </Select>
               </label>
-              <label className="block space-y-2 text-sm font-medium">
+              <label className="block space-y-1.5 text-xs font-medium">
                 <span>问答模式</span>
-                <select
+                <Select
                   aria-label="问答模式"
-                  className={answerInputClass}
                   value={mode}
                   disabled={running}
                   onChange={(event) =>
@@ -449,73 +439,118 @@ export function AnswerPage({
                 >
                   <option value="standard">标准模式 (Standard)</option>
                   <option value="agentic">Agentic 多步推理</option>
-                </select>
+                </Select>
               </label>
-              {models.isError && (
-                <p role="alert">
-                  无法加载回答模型。
-                  <button
-                    type="button"
-                    className="ml-2 underline"
-                    onClick={() => void models.refetch()}
-                  >
-                    重试
-                  </button>
-                </p>
-              )}
-              {models.data?.length === 0 && (
-                <p className="text-sm text-muted-foreground">
-                  请管理员在知识库首页配置回答模型。
-                </p>
-              )}
-              <label className="block space-y-2 text-sm font-medium">
-                <span>你的问题</span>
-                <textarea
-                  ref={questionRef}
-                  className={`${answerInputClass} min-h-24 resize-y`}
-                  value={question}
-                  maxLength={4096}
-                  onChange={(event) => setQuestion(event.target.value)}
-                  placeholder={
-                    conversation ? "继续追问…" : "例如：申请需要准备哪些材料？"
-                  }
-                  required
-                />
-              </label>
-              <div className="flex gap-3">
+            </div>
+            {models.isError && (
+              <Alert className="flex items-center justify-between gap-2" variant="danger">
+                <span>无法加载回答模型。</span>
                 <Button
-                  disabled={
-                    !modelID || !question.trim() || running || historyBlocked
-                  }
-                  type="submit"
+                  type="button"
+                  size="xs"
+                  variant="outline"
+                  onClick={() => void models.refetch()}
                 >
-                  {state.phase === "loading" ? "正在回答…" : "提问"}
+                  重试
                 </Button>
-                {state.phase === "loading" && (
-                  <Button
-                    variant="outline"
-                    type="button"
-                    onClick={() => {
-                      active.current?.abort();
-                      questionRef.current?.focus();
-                    }}
-                  >
-                    停止回答
-                  </Button>
-                )}
-              </div>
-            </form>
-          )}
-          {!history.isError && preview && (
-            <Preview
-              key={`${preview.id}:${preview.versionId}:${preview.initialSection}`}
-              identity={identity}
-              target={preview}
-              onClose={() => setPreview(null)}
-            />
-          )}
-        </div>
-      </div>
+              </Alert>
+            )}
+            {models.data?.length === 0 && (
+              <p className="text-sm text-muted-foreground">
+                请管理员在知识库首页配置回答模型。
+              </p>
+            )}
+            <label className="block space-y-1.5 text-xs font-medium">
+              <span>你的问题</span>
+              <Textarea
+                ref={questionRef}
+                className="min-h-24 resize-y"
+                value={question}
+                maxLength={4096}
+                onChange={(event) => setQuestion(event.target.value)}
+                placeholder={
+                  conversation ? "继续追问…" : "例如：申请需要准备哪些材料？"
+                }
+                required
+              />
+            </label>
+            <div className="flex gap-3">
+              <Button
+                disabled={
+                  !modelID || !question.trim() || running || historyBlocked
+                }
+                type="submit"
+              >
+                {state.phase === "loading" ? "正在回答…" : "提问"}
+              </Button>
+              {state.phase === "loading" && (
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() => {
+                    active.current?.abort();
+                    questionRef.current?.focus();
+                  }}
+                >
+                  停止回答
+                </Button>
+              )}
+            </div>
+          </form>
+        </Card>
+      )}
+      {!history.isError && preview && (
+        <Preview
+          key={`${preview.id}:${preview.versionId}:${preview.initialSection}`}
+          identity={identity}
+          target={preview}
+          onClose={() => setPreview(null)}
+        />
+      )}
+    </div>
+  );
+
+  return (
+    <section className="space-y-4">
+      <SectionHeader
+        actions={
+          <div className="flex flex-wrap gap-2">
+            <Button asChild size="xs" variant="outline">
+              <Link to="/">选择知识库</Link>
+            </Button>
+            <Button asChild size="xs" variant="outline">
+              <Link
+                to="/kb/$kbId/documents"
+                params={{ kbId: String(id) }}
+                search={{ cursor: 0 }}
+              >
+                查看文档
+              </Link>
+            </Button>
+          </div>
+        }
+        description="依据知识库回答，点击引用查看原文。会话仅自己可见。"
+        title={`${base.data.name} · 问答`}
+      />
+      <WorkspaceSplit
+        panes={[
+          {
+            id: "answer-history",
+            title: "会话历史",
+            defaultWidth: 230,
+            minWidth: 180,
+            maxWidth: 360,
+            collapsible: true,
+            content: historyPane,
+          },
+          {
+            id: "answer-main",
+            title: "对话与证据",
+            content: mainPane,
+          },
+        ]}
+        storageKey={`tuskrag.answer.${id}`}
+      />
     </section>
   );
 }

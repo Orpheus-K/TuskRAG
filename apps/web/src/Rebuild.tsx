@@ -10,6 +10,7 @@ import {
   type RebuildInput,
 } from "@tuskrag/api-client";
 import { Button } from "@tuskrag/ui/button";
+import { Input } from "@tuskrag/ui/input";
 import { useState } from "react";
 
 const labels = {
@@ -140,10 +141,9 @@ export function RebuildPage({
           <p className="text-sm text-muted-foreground">
             输入管理员已配置的目标嵌入空间编号。重建完成并通过覆盖核验后才切换，处理中继续使用原空间。
           </p>
-          <label className="block">
-            目标空间编号
-            <input
-              className="mt-1 block w-full rounded-md border bg-background px-3 py-2"
+          <label className="block space-y-1.5 text-sm">
+            <span>目标空间编号</span>
+            <Input
               inputMode="numeric"
               value={target}
               disabled={archived || !!submitted}

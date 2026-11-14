@@ -10,6 +10,7 @@ import {
   startEvalRun,
 } from "@tuskrag/api-client";
 import { Button } from "@tuskrag/ui/button";
+import { Select } from "@tuskrag/ui/select";
 import { useState } from "react";
 import { ReportDetail } from "./Evaluation";
 
@@ -121,10 +122,9 @@ export function EvaluationRun({
           <p className="text-sm text-muted-foreground">
             执行已保存的题集修订。文档范围和配置由服务器确定；编辑页未保存的草稿不参与运行。
           </p>
-          <label className="block">
-            检索模式
-            <select
-              className="mt-1 block w-full rounded-md border bg-background px-3 py-2"
+          <label className="block space-y-1 text-sm">
+            <span>检索模式</span>
+            <Select
               value={mode}
               disabled={
                 archived || start.isPending || start.isError || start.isSuccess
@@ -145,7 +145,7 @@ export function EvaluationRun({
                   {v}
                 </option>
               ))}
-            </select>
+            </Select>
           </label>
           {start.isError && (
             <p role="alert">

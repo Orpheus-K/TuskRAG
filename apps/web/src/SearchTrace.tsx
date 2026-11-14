@@ -1,4 +1,5 @@
 import type { SearchResult } from "@tuskrag/api-client";
+import { DataTable, DataTableCell, DataTableRow } from "@tuskrag/ui/data-table";
 
 export function SearchTrace({
   trace,
@@ -19,55 +20,42 @@ export function SearchTrace({
         过滤：{JSON.stringify(trace.filters)} · 降级：
         {trace.degraded?.join("、") || "无"}
       </p>
-      <div className="mt-3 overflow-x-auto">
-        <table className="w-full text-left text-xs">
-          <caption className="sr-only">
-            BM25、向量、RRF 和重排分数与排名
-          </caption>
-          <thead>
-            <tr>
-              {[
-                "文档 / 块",
-                "BM25 排名 / 分数",
-                "向量排名 / 距离",
-                "RRF 排名 / 分数",
-                "重排排名 / 分数",
-              ].map((title) => (
-                <th className="whitespace-nowrap border-b p-2" key={title}>
-                  {title}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {trace.candidates?.map((c) => (
-              <tr key={c.ChunkID}>
-                <td className="max-w-48 break-words border-b p-2">
-                  {c.Title} / {c.ChunkID}
-                </td>
-                <td className="border-b p-2">
-                  {c.LexicalRank
-                    ? `${c.LexicalRank} / ${c.LexicalScore.toFixed(4)}`
-                    : "—"}
-                </td>
-                <td className="border-b p-2">
-                  {c.SemanticRank
-                    ? `${c.SemanticRank} / ${c.SemanticDistance.toFixed(4)}`
-                    : "—"}
-                </td>
-                <td className="border-b p-2">
-                  {c.RRFRank} / {c.Score.toFixed(6)}
-                </td>
-                <td className="border-b p-2">
-                  {c.RerankScore === null
-                    ? "—"
-                    : `${c.RerankRank} / ${c.RerankScore.toFixed(4)}`}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <DataTable
+        className="mt-3 text-xs"
+        headers={[
+          "文档 / 块",
+          "BM25 排名 / 分数",
+          "向量排名 / 距离",
+          "RRF 排名 / 分数",
+          "重排排名 / 分数",
+        ]}
+      >
+        {trace.candidates?.map((c) => (
+          <DataTableRow key={c.ChunkID}>
+            <DataTableCell className="max-w-48 break-words">
+              {c.Title} / {c.ChunkID}
+            </DataTableCell>
+            <DataTableCell>
+              {c.LexicalRank
+                ? `${c.LexicalRank} / ${c.LexicalScore.toFixed(4)}`
+                : "—"}
+            </DataTableCell>
+            <DataTableCell>
+              {c.SemanticRank
+                ? `${c.SemanticRank} / ${c.SemanticDistance.toFixed(4)}`
+                : "—"}
+            </DataTableCell>
+            <DataTableCell>
+              {c.RRFRank} / {c.Score.toFixed(6)}
+            </DataTableCell>
+            <DataTableCell>
+              {c.RerankScore === null
+                ? "—"
+                : `${c.RerankRank} / ${c.RerankScore.toFixed(4)}`}
+            </DataTableCell>
+          </DataTableRow>
+        ))}
+      </DataTable>
     </details>
   );
 }

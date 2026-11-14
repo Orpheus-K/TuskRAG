@@ -16,6 +16,8 @@ import {
   uploadDocumentVersion,
 } from "@tuskrag/api-client";
 import { Button } from "@tuskrag/ui/button";
+import { Input } from "@tuskrag/ui/input";
+import { Select } from "@tuskrag/ui/select";
 import { type FormEvent, useRef, useState } from "react";
 import { DocumentACLButton, UserGroupsPanel } from "./DocumentACL";
 import type { PreviewTarget } from "./DocumentPreview";
@@ -471,9 +473,8 @@ export function KnowledgeDetail({
             <label className="block text-sm font-medium" htmlFor="search-query">
               问题或关键词
             </label>
-            <input
+            <Input
               id="search-query"
-              className="w-full rounded-md border bg-background px-3 py-2 text-sm"
               maxLength={4096}
               value={searchText}
               onChange={(event) => setSearchText(event.currentTarget.value)}
@@ -487,36 +488,34 @@ export function KnowledgeDetail({
             <details className="text-sm">
               <summary className="cursor-pointer">重排配置</summary>
               <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                <label>
-                  重排方式
-                  <select
+                <label className="space-y-1">
+                  <span>重排方式</span>
+                  <Select
                     name="rerank-mode"
                     value={rerankMode}
                     onChange={(event) =>
                       setRerankMode(event.currentTarget.value)
                     }
-                    className="mt-1 block w-full rounded-md border bg-background p-2"
                   >
                     <option value="inherit">使用知识库配置</option>
                     <option value="off">本次关闭重排</option>
                     <option value="custom">本次自定义重排</option>
-                  </select>
+                  </Select>
                 </label>
-                <label>
-                  <input
+                <label className="flex items-center gap-2 pt-5">
+                  <Input
                     type="checkbox"
                     name="rerank-fallback"
                     disabled={rerankMode !== "custom"}
-                  />{" "}
-                  服务不可用时允许返回未重排结果
+                  />
+                  <span>服务不可用时允许返回未重排结果</span>
                 </label>
-                <label>
-                  模型提供方
-                  <select
+                <label className="space-y-1">
+                  <span>模型提供方</span>
+                  <Select
                     name="rerank-provider"
                     disabled={rerankMode !== "custom"}
                     required={rerankMode === "custom"}
-                    className="mt-1 block w-full rounded-md border bg-background p-2"
                   >
                     <option value="">选择已配置提供方</option>
                     {providers.data?.map((space) => (
@@ -524,17 +523,16 @@ export function KnowledgeDetail({
                         {space.provider_name}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </label>
-                <label>
-                  重排模型
-                  <input
+                <label className="space-y-1">
+                  <span>重排模型</span>
+                  <Input
                     name="rerank-model"
                     disabled={rerankMode !== "custom"}
                     required={rerankMode === "custom"}
                     maxLength={200}
                     placeholder="bge-reranker-v2-m3"
-                    className="mt-1 block w-full rounded-md border bg-background p-2"
                   />
                 </label>
               </div>
@@ -612,10 +610,9 @@ export function KnowledgeDetail({
                 ? `上传 ${versionTarget.title} 的新版本`
                 : "上传文档"}
             </label>
-            <input
+            <Input
               id="document-upload"
               ref={uploadInput}
-              className="block w-full text-sm"
               type="file"
               accept=".csv,.md,.markdown,.txt,.docx,.xlsx,.pptx,.html,.htm,.pdf"
               disabled={uploading}
@@ -638,7 +635,7 @@ export function KnowledgeDetail({
             )}
             {file && /\.(csv|docx|xlsx|pdf)$/i.test(file.name) && (
               <label className="flex items-start gap-2 text-sm">
-                <input
+                <Input
                   type="checkbox"
                   checked={confirmFirstRowHeaders}
                   disabled={uploading}
@@ -654,7 +651,7 @@ export function KnowledgeDetail({
               </label>
             )}
             <label className="flex items-center gap-2 text-sm">
-              <input
+              <Input
                 type="checkbox"
                 checked={allowDuplicate}
                 disabled={uploading}
@@ -745,22 +742,20 @@ export function KnowledgeDetail({
           >
             <p className="text-sm font-medium">从 URL 导入网页或文档</p>
             <div className="grid gap-3 sm:grid-cols-2">
-              <input
+              <Input
                 aria-label="导入 URL"
                 type="url"
                 required
                 placeholder="https://example.com/guide.html"
-                className="block w-full rounded-md border bg-background px-3 py-2 text-sm"
                 value={importURL}
                 disabled={importingURL}
                 onChange={(e) => setImportURL(e.target.value)}
               />
-              <input
+              <Input
                 aria-label="文档标题（可选）"
                 type="text"
                 maxLength={200}
                 placeholder="标题（可选，默认从 URL 推导）"
-                className="block w-full rounded-md border bg-background px-3 py-2 text-sm"
                 value={importTitle}
                 disabled={importingURL}
                 onChange={(e) => setImportTitle(e.target.value)}
@@ -1064,18 +1059,22 @@ export function KnowledgeDetail({
           {(purgeCursor > 0 || purgeJobs.data?.next_cursor !== null) && (
             <nav className="mt-3 flex gap-4 text-sm" aria-label="清理任务分页">
               {purgeCursor > 0 && (
-                <button
+                <Button
                   type="button"
+                  size="xs"
+                  variant="ghost"
                   className="underline"
                   onClick={() => setPurgeCursor(0)}
                 >
                   返回第一页
-                </button>
+                </Button>
               )}
               {purgeJobs.data?.next_cursor !== null &&
                 purgeJobs.data?.next_cursor !== undefined && (
-                  <button
+                  <Button
                     type="button"
+                    size="xs"
+                    variant="ghost"
                     className="underline"
                     onClick={() => {
                       const next = purgeJobs.data?.next_cursor;
@@ -1084,7 +1083,7 @@ export function KnowledgeDetail({
                     }}
                   >
                     下一页
-                  </button>
+                  </Button>
                 )}
             </nav>
           )}

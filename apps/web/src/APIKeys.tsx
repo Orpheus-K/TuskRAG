@@ -9,6 +9,7 @@ import {
   revokeAPIKey,
 } from "@tuskrag/api-client";
 import { Button } from "@tuskrag/ui/button";
+import { Input } from "@tuskrag/ui/input";
 import { type FormEvent, useState } from "react";
 
 const allActions = [
@@ -175,45 +176,41 @@ export function APIKeysPage({ identity }: { identity: Identity }) {
       >
         <h2 className="font-semibold">签发新密钥</h2>
         <div className="grid gap-4 sm:grid-cols-3">
-          <label className="block">
-            密钥名称
-            <input
+          <label className="block space-y-1 text-sm">
+            <span>密钥名称</span>
+            <Input
               aria-label="密钥名称"
-              className="mt-1 block w-full rounded-md border bg-background px-3 py-2"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="例如：agent-prod"
             />
           </label>
-          <label className="block">
-            每分钟限速 (RPM)
-            <input
+          <label className="block space-y-1 text-sm">
+            <span>每分钟限速 (RPM)</span>
+            <Input
               aria-label="每分钟限速"
               type="number"
               min={1}
-              className="mt-1 block w-full rounded-md border bg-background px-3 py-2"
               value={rpm}
               onChange={(e) => setRpm(e.target.value)}
             />
           </label>
-          <label className="block">
-            月度 Token 配额（0 不限）
-            <input
+          <label className="block space-y-1 text-sm">
+            <span>月度 Token 配额（0 不限）</span>
+            <Input
               aria-label="月度 Token 配额"
               type="number"
               min={0}
-              className="mt-1 block w-full rounded-md border bg-background px-3 py-2"
               value={quota}
               onChange={(e) => setQuota(e.target.value)}
             />
           </label>
         </div>
 
-        <label className="block">
-          IP 白名单（可选，逗号分隔 IP 或 CIDR）
-          <input
+        <label className="block space-y-1 text-sm">
+          <span>IP 白名单（可选，逗号分隔 IP 或 CIDR）</span>
+          <Input
             aria-label="IP 白名单"
-            className="mt-1 block w-full rounded-md border bg-background px-3 py-2"
             value={ipAllowlist}
             onChange={(e) => setIpAllowlist(e.target.value)}
             placeholder="例如：10.0.0.0/8, 192.168.1.10"
@@ -224,8 +221,8 @@ export function APIKeysPage({ identity }: { identity: Identity }) {
           <p className="font-medium">允许的动作范围</p>
           <div className="mt-2 flex flex-wrap gap-3">
             {allActions.map((act) => (
-              <label key={act.id} className="flex items-center gap-1.5">
-                <input
+              <label key={act.id} className="flex items-center gap-1.5 text-sm">
+                <Input
                   type="checkbox"
                   checked={actions.includes(act.id)}
                   onChange={() => toggleAction(act.id)}
@@ -243,8 +240,8 @@ export function APIKeysPage({ identity }: { identity: Identity }) {
             </p>
             <div className="mt-2 flex flex-wrap gap-3">
               {kbs.data.map((kb) => (
-                <label key={kb.id} className="flex items-center gap-1.5">
-                  <input
+                <label key={kb.id} className="flex items-center gap-1.5 text-sm">
+                  <Input
                     type="checkbox"
                     checked={selectedKBs.includes(kb.id)}
                     onChange={() => toggleKB(kb.id)}

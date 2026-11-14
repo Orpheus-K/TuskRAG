@@ -13,10 +13,10 @@ import {
   saveEvalSet,
 } from "@tuskrag/api-client";
 import { Button } from "@tuskrag/ui/button";
+import { Input } from "@tuskrag/ui/input";
+import { Textarea } from "@tuskrag/ui/textarea";
 import { useState } from "react";
 
-const inputClass =
-  "mt-1 block w-full rounded-md border bg-background px-3 py-2 text-sm";
 const denied = (e: unknown) =>
   e instanceof ApiError && [401, 403, 404].includes(e.status);
 type DraftCase = {
@@ -108,10 +108,9 @@ function SetForm({
       }}
     >
       <fieldset disabled={disabled} className="min-w-0 space-y-4">
-        <label className="block">
-          题集名称
-          <input
-            className={inputClass}
+        <label className="block space-y-1 text-sm">
+          <span>题集名称</span>
+          <Input
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -164,27 +163,25 @@ function SetForm({
       <fieldset disabled={disabled} className="min-w-0 space-y-4">
         {current && (
           <div className="space-y-4 rounded-lg border p-4">
-            <label className="block">
-              题号
-              <input
-                className={inputClass}
+            <label className="block space-y-1 text-sm">
+              <span>题号</span>
+              <Input
                 value={current.id}
                 onChange={(e) => update({ id: e.target.value })}
                 required
               />
             </label>
-            <label className="block">
-              问题
-              <textarea
-                className={inputClass}
+            <label className="block space-y-1 text-sm">
+              <span>问题</span>
+              <Textarea
                 rows={3}
                 value={current.question}
                 onChange={(e) => update({ question: e.target.value })}
                 required
               />
             </label>
-            <label className="flex items-center gap-2">
-              <input
+            <label className="flex items-center gap-2 text-sm">
+              <Input
                 type="checkbox"
                 checked={current.answerable}
                 onChange={(e) => update({ answerable: e.target.checked })}
@@ -213,10 +210,9 @@ function SetForm({
                         ["page", "页码"],
                       ] as const
                     ).map(([field, label]) => (
-                      <label key={field}>
-                        {label}
-                        <input
-                          className={inputClass}
+                      <label key={field} className="space-y-1 text-sm">
+                        <span>{label}</span>
+                        <Input
                           type="number"
                           min="1"
                           step="1"
@@ -271,19 +267,17 @@ function SetForm({
                 </Button>
               </section>
             )}
-            <label className="block">
-              参考答案（可选）
-              <textarea
-                className={inputClass}
+            <label className="block space-y-1 text-sm">
+              <span>参考答案（可选）</span>
+              <Textarea
                 rows={3}
                 value={current.reference_answer}
                 onChange={(e) => update({ reference_answer: e.target.value })}
               />
             </label>
-            <label className="block">
-              标签（逗号分隔）
-              <input
-                className={inputClass}
+            <label className="block space-y-1 text-sm">
+              <span>标签（逗号分隔）</span>
+              <Input
                 value={current.tags}
                 onChange={(e) => update({ tags: e.target.value })}
               />

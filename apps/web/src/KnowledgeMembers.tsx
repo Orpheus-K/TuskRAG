@@ -12,10 +12,8 @@ import {
   setKnowledgeBaseMember,
 } from "@tuskrag/api-client";
 import { Button } from "@tuskrag/ui/button";
+import { Select } from "@tuskrag/ui/select";
 import { type FormEvent, useState } from "react";
-
-const selectClass =
-  "mt-1 block w-full rounded-md border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
 const roleLabels: Record<KnowledgeBaseRole, string> = {
   owner: "所有者 (owner)",
@@ -199,11 +197,10 @@ function MembersAndEgressEditor({
       <div className="space-y-3">
         <h3 className="text-sm font-semibold">数据出域策略</h3>
         <div className="flex flex-wrap items-end gap-3">
-          <label className="block min-w-[220px] text-sm">
-            知识库出域策略
-            <select
+          <label className="block min-w-[220px] space-y-1 text-sm">
+            <span>知识库出域策略</span>
+            <Select
               aria-label="知识库出域策略"
-              className={selectClass}
               value={policy}
               onChange={(e) => setPolicy(e.target.value as EgressPolicy)}
             >
@@ -212,7 +209,7 @@ function MembersAndEgressEditor({
                 {egressLabels.internal_only}
               </option>
               <option value="allow">{egressLabels.allow}</option>
-            </select>
+            </Select>
           </label>
           <Button
             type="button"
@@ -248,9 +245,9 @@ function MembersAndEgressEditor({
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <select
+                  <Select
                     aria-label={`成员 ${member.display_name} 角色`}
-                    className="rounded-md border bg-background px-2 py-1 text-sm"
+                    className="h-8 w-auto px-2 py-1"
                     value={member.role}
                     disabled={saveMember.isPending}
                     onChange={(e) =>
@@ -264,7 +261,7 @@ function MembersAndEgressEditor({
                     <option value="admin">{roleLabels.admin}</option>
                     <option value="editor">{roleLabels.editor}</option>
                     <option value="viewer">{roleLabels.viewer}</option>
-                  </select>
+                  </Select>
                   <Button
                     type="button"
                     variant="outline"
@@ -284,11 +281,10 @@ function MembersAndEgressEditor({
             onSubmit={handleAddMember}
             className="flex flex-wrap items-end gap-3 pt-2"
           >
-            <label className="block min-w-[200px] text-sm">
-              添加租户成员
-              <select
+            <label className="block min-w-[200px] space-y-1 text-sm">
+              <span>添加租户成员</span>
+              <Select
                 aria-label="选择租户用户"
-                className={selectClass}
                 value={selectedUserId || String(candidateUsers[0]?.id ?? "")}
                 onChange={(e) => setSelectedUserId(e.target.value)}
               >
@@ -297,13 +293,12 @@ function MembersAndEgressEditor({
                     {u.display_name} (#{u.id})
                   </option>
                 ))}
-              </select>
+              </Select>
             </label>
-            <label className="block min-w-[180px] text-sm">
-              分配角色
-              <select
+            <label className="block min-w-[180px] space-y-1 text-sm">
+              <span>分配角色</span>
+              <Select
                 aria-label="新成员角色"
-                className={selectClass}
                 value={selectedRole}
                 onChange={(e) =>
                   setSelectedRole(e.target.value as KnowledgeBaseRole)
@@ -313,7 +308,7 @@ function MembersAndEgressEditor({
                 <option value="editor">{roleLabels.editor}</option>
                 <option value="admin">{roleLabels.admin}</option>
                 <option value="owner">{roleLabels.owner}</option>
-              </select>
+              </Select>
             </label>
             <Button type="submit" disabled={saveMember.isPending}>
               添加成员

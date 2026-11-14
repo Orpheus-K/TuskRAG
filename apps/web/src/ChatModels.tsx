@@ -5,7 +5,18 @@ import {
   type Identity,
   listChatModels,
 } from "@tuskrag/api-client";
+import { Alert } from "@tuskrag/ui/alert";
 import { Button } from "@tuskrag/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@tuskrag/ui/card";
+import { Field } from "@tuskrag/ui/field";
+import { Input } from "@tuskrag/ui/input";
+import { Select } from "@tuskrag/ui/select";
 import { type FormEvent, useState } from "react";
 
 export function ChatModels({ identity }: { identity: Identity }) {
@@ -54,104 +65,106 @@ export function ChatModels({ identity }: { identity: Identity }) {
     }
   }
   return (
-    <section className="mt-6 rounded-xl border p-5 sm:p-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <Card>
+      <CardHeader className="flex-row flex-wrap items-center justify-between space-y-0 gap-3">
         <div>
-          <h2 className="font-medium">回答模型</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            配置用于生成知识库回答的模型。
-          </p>
+          <CardTitle>回答模型</CardTitle>
+          <CardDescription>配置用于生成知识库回答的模型。</CardDescription>
         </div>
-        <Button type="button" variant="outline" onClick={() => setShow(!show)}>
+        <Button
+          onClick={() => setShow(!show)}
+          size="xs"
+          type="button"
+          variant="outline"
+        >
           {show ? "收起回答模型配置" : "配置回答模型"}
         </Button>
-      </div>
-      {models.isPending && (
-        <p role="status" className="mt-4 text-sm">
-          正在加载回答模型
-        </p>
-      )}
-      {models.isError && (
-        <p role="alert" className="mt-4 text-sm">
-          回答模型加载失败。
-          <button
-            type="button"
-            className="ml-2 underline"
-            onClick={() => void models.refetch()}
-          >
-            重试
-          </button>
-        </p>
-      )}
-      {models.data?.length === 0 && (
-        <p className="mt-4 text-sm text-muted-foreground">尚未配置回答模型。</p>
-      )}
-      {models.data && (
-        <ul className="mt-4 space-y-2 text-sm">
-          {models.data.map((model) => (
-            <li key={model.id}>
-              {model.name} · {model.model}
-            </li>
-          ))}
-        </ul>
-      )}
-      {show && (
-        <form
-          onSubmit={(event) => void save(event)}
-          className="mt-5 grid gap-4 sm:grid-cols-2"
-        >
-          {[
-            ["name", "显示名称", "例如：知识助手"],
-            ["base_url", "服务根地址", "https://model.example.com"],
-            ["model", "模型名称", "服务提供的模型标识"],
-            ["api_key", "API 密钥", "可选；仅发送至本服务器加密保存"],
-          ].map(([name, label, placeholder]) => (
-            <label key={name} className="space-y-2 text-sm">
-              <span>{label}</span>
-              <input
-                className="h-10 w-full rounded-md border bg-background px-3"
-                name={name}
-                type={
-                  name === "api_key"
-                    ? "password"
-                    : name === "base_url"
-                      ? "url"
-                      : "text"
-                }
-                placeholder={placeholder}
-                required={name !== "api_key"}
-                maxLength={
-                  name === "api_key" ? 4096 : name === "base_url" ? 2048 : 200
-                }
-                autoComplete={name === "api_key" ? "new-password" : "off"}
-                disabled={saving}
-              />
-            </label>
-          ))}
-          <label className="space-y-2 text-sm">
-            <span>服务位置</span>
-            <select
-              name="locality"
-              className="h-10 w-full rounded-md border bg-background px-3"
-              defaultValue="external"
-              disabled={saving}
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {models.isPending && (
+          <p className="text-sm text-muted-foreground" role="status">
+            正在加载回答模型
+          </p>
+        )}
+        {models.isError && (
+          <Alert className="flex items-center justify-between gap-2" variant="danger">
+            <span>回答模型加载失败。</span>
+            <Button
+              onClick={() => void models.refetch()}
+              size="xs"
+              variant="outline"
             >
-              <option value="external">组织外部（需要允许出域）</option>
-              <option value="internal">组织内部</option>
-            </select>
-          </label>
-          <div className="flex items-end">
-            <Button type="submit" disabled={saving}>
+              重试
+            </Button>
+          </Alert>
+        )}
+        {models.data?.length === 0 && (
+          <p className="text-sm text-muted-foreground">尚未配置回答模型。</p>
+        )}
+        {models.data && models.data.length > 0 && (
+          <ul className="space-y-1.5 text-sm">
+            {models.data.map((model) => (
+              <li
+                className="rounded-md border bg-surface-subtle px-3 py-1.5"
+                key={model.id}
+              >
+                {model.name} · {model.model}
+              </li>
+            ))}
+          </ul>
+        )}
+        {show && (
+          <form
+            className="grid gap-3 border-t pt-4"
+            onSubmit={(event) => void save(event)}
+          >
+            {(
+              [
+                ["name", "显示名称", "例如：知识助手"],
+                ["base_url", "服务根地址", "https://model.example.com"],
+                ["model", "模型名称", "服务提供的模型标识"],
+                ["api_key", "API 密钥", "可选；仅发送至本服务器加密保存"],
+              ] as const
+            ).map(([name, label, placeholder]) => (
+              <Field htmlFor={`chat-${name}`} key={name} label={label}>
+                <Input
+                  autoComplete={name === "api_key" ? "new-password" : "off"}
+                  disabled={saving}
+                  id={`chat-${name}`}
+                  maxLength={
+                    name === "api_key" ? 4096 : name === "base_url" ? 2048 : 200
+                  }
+                  name={name}
+                  placeholder={placeholder}
+                  required={name !== "api_key"}
+                  type={
+                    name === "api_key"
+                      ? "password"
+                      : name === "base_url"
+                        ? "url"
+                        : "text"
+                  }
+                />
+              </Field>
+            ))}
+            <Field htmlFor="chat-locality" label="服务位置">
+              <Select
+                defaultValue="external"
+                disabled={saving}
+                id="chat-locality"
+                name="locality"
+              >
+                <option value="external">组织外部（需要允许出域）</option>
+                <option value="internal">组织内部</option>
+              </Select>
+            </Field>
+            <Button disabled={saving} size="sm" type="submit">
               {saving ? "正在保存…" : "保存回答模型"}
             </Button>
-          </div>
-          {error && (
-            <p role="alert" className="text-sm sm:col-span-2">
-              {error}
-            </p>
-          )}
-        </form>
-      )}
-    </section>
+            {error && <Alert variant="danger">{error}</Alert>}
+          </form>
+        )}
+      </CardContent>
+    </Card>
   );
 }

@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link, Outlet } from "@tanstack/react-router";
+import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import {
   ApiError,
   getIdentity,
@@ -12,7 +12,22 @@ import {
   startOIDCLogin,
   type TenantAuthPolicy,
 } from "@tuskrag/api-client";
+import { Alert } from "@tuskrag/ui/alert";
+import { Badge } from "@tuskrag/ui/badge";
 import { Button } from "@tuskrag/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@tuskrag/ui/card";
+import { EmptyState } from "@tuskrag/ui/empty-state";
+import { Field } from "@tuskrag/ui/field";
+import { IdeShell, IdeSidebarGroup } from "@tuskrag/ui/ide-shell";
+import { Input } from "@tuskrag/ui/input";
+import { SectionHeader } from "@tuskrag/ui/section-header";
+import { WorkspaceSplit } from "@tuskrag/ui/workspace-split";
 import { createContext, type FormEvent, useEffect, useState } from "react";
 import { ChatModels } from "./ChatModels";
 import { Setup } from "./Setup";
@@ -27,6 +42,44 @@ function messageFor(error: unknown): string {
     return "请求过多，请稍后再试。";
   }
   return "暂时无法完成操作，请检查服务状态后重试。";
+}
+
+function SidebarNavItem({
+  to,
+  params,
+  search,
+  icon,
+  label,
+  active,
+}: {
+  to: string;
+  params?: Record<string, string>;
+  search?: Record<string, unknown>;
+  icon: string;
+  label: string;
+  active?: boolean;
+}) {
+  return (
+    <Link
+      className={`tusk-sidebar-item flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-sm transition-colors ${
+        active
+          ? "bg-accent font-medium text-accent-foreground"
+          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+      }`}
+      params={params as never}
+      search={search as never}
+      title={label}
+      to={to as never}
+    >
+      <span
+        aria-hidden="true"
+        className="flex h-5 w-5 shrink-0 items-center justify-center rounded border border-border/70 bg-surface text-[11px] font-mono"
+      >
+        {icon}
+      </span>
+      <span className="tusk-sidebar-label truncate">{label}</span>
+    </Link>
+  );
 }
 
 function LoginForm({ onLogin }: { onLogin: (identity: Identity) => void }) {
@@ -93,98 +146,85 @@ function LoginForm({ onLogin }: { onLogin: (identity: Identity) => void }) {
     }
   }
 
-  const inputClass =
-    "h-10 w-full rounded-md border bg-background px-3 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring";
-
   return (
-    <section className="mx-auto w-full max-w-md py-16 sm:py-24">
-      <p className="text-sm font-medium text-muted-foreground">企业知识空间</p>
-      <h1 className="mt-3 text-3xl font-semibold tracking-tight">
+    <section className="mx-auto w-full max-w-md py-12 sm:py-20">
+      <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+        企业知识空间
+      </p>
+      <h1 className="mt-2 text-2xl font-semibold tracking-tight">
         登录 TuskRAG
       </h1>
-      <p className="mt-3 text-sm leading-6 text-muted-foreground">
+      <p className="mt-2 text-sm leading-6 text-muted-foreground">
         使用管理员提供的租户编号和账号登录。
       </p>
-      <form className="mt-8 space-y-5 rounded-xl border p-6" onSubmit={submit}>
-        <div className="space-y-2">
-          <label className="text-sm font-medium" htmlFor="tenant">
-            租户编号
-          </label>
-          <input
-            className={inputClass}
-            id="tenant"
-            name="tenant"
-            type="number"
-            min="1"
-            step="1"
-            inputMode="numeric"
-            autoComplete="off"
-            value={tenantInput}
-            onChange={(e) => setTenantInput(e.target.value)}
-            required
-          />
-        </div>
-        {authPolicy &&
-        Array.isArray(authPolicy.providers) &&
-        authPolicy.providers.length > 0 ? (
-          <div className="space-y-2 border-b pb-4">
-            <p className="text-xs text-muted-foreground">
-              企业单点登录（OIDC）
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {authPolicy.providers.map((p) => (
-                <Button
-                  key={p.id}
-                  type="button"
-                  variant="outline"
-                  disabled={busy}
-                  onClick={() => void onSSO(p.id)}
-                >
-                  使用 {p.name} 登录
-                </Button>
-              ))}
-            </div>
-          </div>
-        ) : null}
-        {authPolicy?.disable_local_login ? (
-          <p className="text-sm text-muted-foreground">
-            该租户已禁用本地密码登录，请使用上方企业 SSO 登录。
-          </p>
-        ) : null}
-        <div className="space-y-2">
-          <label className="text-sm font-medium" htmlFor="login">
-            账号
-          </label>
-          <input
-            className={inputClass}
-            id="login"
-            name="login"
-            autoComplete="username"
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium" htmlFor="password">
-            密码
-          </label>
-          <input
-            className={inputClass}
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-          />
-        </div>
-        {error && (
-          <p className="text-sm text-muted-foreground" role="alert">
-            {error}
-          </p>
-        )}
-        <Button className="w-full" type="submit" disabled={busy}>
-          {busy ? "正在登录" : "登录"}
-        </Button>
-      </form>
+      <Card className="mt-6">
+        <CardContent className="pt-6">
+          <form className="space-y-4" onSubmit={submit}>
+            <Field htmlFor="tenant" label="租户编号">
+              <Input
+                autoComplete="off"
+                id="tenant"
+                inputMode="numeric"
+                min="1"
+                name="tenant"
+                onChange={(e) => setTenantInput(e.target.value)}
+                required
+                step="1"
+                type="number"
+                value={tenantInput}
+              />
+            </Field>
+            {authPolicy &&
+            Array.isArray(authPolicy.providers) &&
+            authPolicy.providers.length > 0 ? (
+              <div className="space-y-2 border-b pb-4">
+                <p className="text-xs text-muted-foreground">
+                  企业单点登录（OIDC）
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {authPolicy.providers.map((p) => (
+                    <Button
+                      disabled={busy}
+                      key={p.id}
+                      onClick={() => void onSSO(p.id)}
+                      type="button"
+                      variant="outline"
+                    >
+                      使用 {p.name} 登录
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+            {authPolicy?.disable_local_login ? (
+              <p className="text-sm text-muted-foreground">
+                该租户已禁用本地密码登录，请使用上方企业 SSO 登录。
+              </p>
+            ) : null}
+            <Field htmlFor="login" label="账号">
+              <Input
+                autoComplete="username"
+                id="login"
+                name="login"
+                required
+              />
+            </Field>
+            <Field htmlFor="password" label="密码">
+              <Input
+                autoComplete="current-password"
+                id="password"
+                name="password"
+                required
+                type="password"
+              />
+            </Field>
+            {error && <Alert variant="danger">{error}</Alert>}
+            <Button className="w-full" disabled={busy} type="submit">
+              {busy ? "正在登录" : "登录"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </section>
   );
 }
@@ -232,130 +272,167 @@ export function Workspace({ identity }: { identity: Identity }) {
     }
   }
 
-  return (
-    <section className="py-12 sm:py-16">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="text-sm text-muted-foreground">
-            租户 {identity.tenant_id}
-          </p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight">知识库</h1>
-          <p className="mt-3 text-sm text-muted-foreground">
-            查看你有权访问的知识库。
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Link
-            className="inline-flex h-9 items-center justify-center rounded-md border border-border bg-background px-4 py-2 text-sm font-medium shadow-sm hover:bg-muted"
-            to="/admin"
-          >
-            平台治理
-          </Link>
-          <Link
-            className="inline-flex h-9 items-center justify-center rounded-md border border-border bg-background px-4 py-2 text-sm font-medium shadow-sm hover:bg-muted"
-            to="/api-keys"
-          >
-            API Key 管理
-          </Link>
-          <Button
-            variant="outline"
-            onClick={() => void signOut()}
-            disabled={loggingOut}
-          >
-            {loggingOut ? "正在退出" : "退出登录"}
-          </Button>
-        </div>
-      </div>
-      {error && (
-        <p className="mt-5 text-sm text-muted-foreground" role="alert">
-          {error}
-        </p>
-      )}
+  const kbListContent = (
+    <div className="space-y-5">
+      <SectionHeader
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <Button asChild size="sm" variant="outline">
+              <Link to="/admin">平台治理</Link>
+            </Button>
+            <Button asChild size="sm" variant="outline">
+              <Link to="/api-keys">API Key 管理</Link>
+            </Button>
+            <Button
+              disabled={loggingOut}
+              onClick={() => void signOut()}
+              size="sm"
+              variant="outline"
+            >
+              {loggingOut ? "正在退出" : "退出登录"}
+            </Button>
+          </div>
+        }
+        description="查看你有权访问的知识库，点击进入文档管理或直接提问。"
+        eyebrow={`租户 ${identity.tenant_id}`}
+        title="知识库"
+      />
+      {error && <Alert variant="danger">{error}</Alert>}
       {knowledgeBases.isPending ? (
-        <p className="mt-10 text-sm text-muted-foreground" role="status">
-          正在加载知识库
-        </p>
+        <Alert variant="info">正在加载知识库</Alert>
       ) : knowledgeBases.isError ? (
-        <div className="mt-10 rounded-xl border p-6">
-          {knowledgeBases.error instanceof ApiError &&
-          knowledgeBases.error.status === 401 ? (
-            <>
-              <p className="text-sm" role="alert">
-                登录已过期，请重新登录。
-              </p>
-              <Button
-                className="mt-4"
-                variant="outline"
-                onClick={() => void forgetSession()}
-              >
-                重新登录
-              </Button>
-            </>
-          ) : (
-            <>
-              <p className="text-sm" role="alert">
-                无法加载知识库。
-              </p>
-              <Button
-                className="mt-4"
-                variant="outline"
-                onClick={() => void knowledgeBases.refetch()}
-              >
-                重试
-              </Button>
-            </>
-          )}
-        </div>
-      ) : knowledgeBases.data.length === 0 ? (
-        <div className="mt-10 rounded-xl border border-dashed p-8">
-          <h2 className="font-medium">暂无知识库</h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            配置嵌入模型后可创建知识库。
-          </p>
-        </div>
-      ) : (
-        <ul className="mt-10 grid gap-4 sm:grid-cols-2">
-          {knowledgeBases.data.map((item) => (
-            <li className="rounded-xl border p-5" key={item.id}>
-              <div className="flex items-start justify-between gap-3">
-                <h2 className="min-w-0 break-words font-medium">
-                  <Link
-                    className="underline-offset-4 hover:underline focus-visible:underline"
-                    to="/kb/$kbId/documents"
-                    params={{ kbId: String(item.id) }}
-                    search={{ cursor: 0 }}
-                  >
-                    {item.name}
-                  </Link>
-                </h2>
-                <span className="shrink-0 whitespace-nowrap rounded-full border px-2 py-0.5 text-xs text-muted-foreground">
-                  {item.status === "archived" ? "已归档" : "使用中"}
-                </span>
-              </div>
-              <p className="mt-5 text-xs text-muted-foreground">
-                编号 {item.id} · {roleLabels[item.role]}
-              </p>
-              {item.status === "active" && (
-                <Link
-                  className="mt-3 inline-block text-sm underline"
-                  to="/kb/$kbId/answer"
-                  params={{ kbId: String(item.id) }}
+        <Card>
+          <CardContent className="pt-5">
+            {knowledgeBases.error instanceof ApiError &&
+            knowledgeBases.error.status === 401 ? (
+              <>
+                <p className="text-sm" role="alert">
+                  登录已过期，请重新登录。
+                </p>
+                <Button
+                  className="mt-4"
+                  onClick={() => void forgetSession()}
+                  variant="outline"
                 >
-                  提问
-                </Link>
-              )}
+                  重新登录
+                </Button>
+              </>
+            ) : (
+              <>
+                <p className="text-sm" role="alert">
+                  无法加载知识库。
+                </p>
+                <Button
+                  className="mt-4"
+                  onClick={() => void knowledgeBases.refetch()}
+                  variant="outline"
+                >
+                  重试
+                </Button>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      ) : knowledgeBases.data.length === 0 ? (
+        <EmptyState
+          description="配置嵌入模型后可创建知识库。"
+          title="暂无知识库"
+        />
+      ) : (
+        <ul className="grid gap-4 sm:grid-cols-2">
+          {knowledgeBases.data.map((item) => (
+            <li key={item.id}>
+              <Card className="h-full transition-colors hover:border-foreground/25">
+                <CardHeader className="pb-2">
+                  <div className="flex items-start justify-between gap-3">
+                    <CardTitle className="min-w-0 break-words text-base">
+                      <Link
+                        className="underline-offset-4 hover:underline focus-visible:underline"
+                        params={{ kbId: String(item.id) }}
+                        search={{ cursor: 0 }}
+                        to="/kb/$kbId/documents"
+                      >
+                        {item.name}
+                      </Link>
+                    </CardTitle>
+                    <Badge
+                      variant={
+                        item.status === "archived" ? "neutral" : "success"
+                      }
+                    >
+                      {item.status === "archived" ? "已归档" : "使用中"}
+                    </Badge>
+                  </div>
+                  <CardDescription>
+                    编号 {item.id} · {roleLabels[item.role]}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="flex items-center gap-3 pt-2">
+                  <Button asChild size="xs" variant="outline">
+                    <Link
+                      params={{ kbId: String(item.id) }}
+                      search={{ cursor: 0 }}
+                      to="/kb/$kbId/documents"
+                    >
+                      文档管理
+                    </Link>
+                  </Button>
+                  {item.status === "active" && (
+                    <Link
+                      className="text-xs font-medium underline underline-offset-4"
+                      params={{ kbId: String(item.id) }}
+                      to="/kb/$kbId/answer"
+                    >
+                      提问
+                    </Link>
+                  )}
+                </CardContent>
+              </Card>
             </li>
           ))}
         </ul>
       )}
+    </div>
+  );
+
+  const configPanelContent = (
+    <div className="space-y-4">
       <ChatModels identity={identity} />
       <Setup identity={identity} />
-    </section>
+    </div>
+  );
+
+  return (
+    <WorkspaceSplit
+      panes={[
+        {
+          id: "kb-main",
+          title: "知识库工作区",
+          content: kbListContent,
+        },
+        {
+          id: "kb-setup",
+          title: "模型与创建",
+          defaultWidth: 420,
+          minWidth: 300,
+          maxWidth: 640,
+          collapsible: true,
+          content: configPanelContent,
+        },
+      ]}
+      storageKey={`tuskrag.workspace.${identity.tenant_id}`}
+    />
   );
 }
 
 export function App() {
   const queryClient = useQueryClient();
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  });
+  const kbMatch = /^\/kb\/([1-9]\d*)(?:\/|$)/.exec(pathname);
+  const activeKbId = kbMatch ? kbMatch[1] : null;
+
   const readiness = useQuery({
     queryKey: ["readiness"],
     queryFn: ({ signal }) => getReadiness(signal),
@@ -378,21 +455,172 @@ export function App() {
     : readiness.isError
       ? "服务不可用"
       : "服务已就绪";
+
+  const readinessBadge = (
+    <Badge
+      role="status"
+      variant={
+        readiness.isPending
+          ? "neutral"
+          : readiness.isError
+            ? "danger"
+            : "success"
+      }
+    >
+      {status}
+    </Badge>
+  );
+
+  if (currentIdentity.data) {
+    const identity = currentIdentity.data;
+    return (
+      <IdentityContext.Provider value={identity}>
+        <IdeShell
+          brand={
+            <Link
+              className="flex items-center gap-2 text-sm font-semibold tracking-tight"
+              to="/"
+            >
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">
+                T
+              </span>
+              <span className="tusk-sidebar-label">TuskRAG</span>
+            </Link>
+          }
+          sidebarFooter={
+            <div className="space-y-0.5 px-1">
+              <p className="tusk-sidebar-label truncate text-xs font-medium text-foreground">
+                用户 #{identity.user_id}
+              </p>
+              <p className="tusk-sidebar-label truncate text-[11px] text-muted-foreground">
+                租户 {identity.tenant_id}
+              </p>
+            </div>
+          }
+          sidebarNav={
+            <div className="space-y-3">
+              <IdeSidebarGroup title="工作台">
+                <SidebarNavItem
+                  active={pathname === "/"}
+                  icon="KB"
+                  label="知识库总览"
+                  to="/"
+                />
+                <SidebarNavItem
+                  active={pathname === "/admin"}
+                  icon="AD"
+                  label="平台治理"
+                  to="/admin"
+                />
+                <SidebarNavItem
+                  active={pathname === "/api-keys"}
+                  icon="AK"
+                  label="API Key 管理"
+                  to="/api-keys"
+                />
+              </IdeSidebarGroup>
+
+              {activeKbId ? (
+                <IdeSidebarGroup title={`知识库 #${activeKbId}`}>
+                  <SidebarNavItem
+                    active={pathname.endsWith("/documents")}
+                    icon="DOC"
+                    label="文档与入库"
+                    params={{ kbId: activeKbId }}
+                    search={{ cursor: 0 }}
+                    to="/kb/$kbId/documents"
+                  />
+                  <SidebarNavItem
+                    active={pathname.endsWith("/answer")}
+                    icon="QA"
+                    label="知识问答"
+                    params={{ kbId: activeKbId }}
+                    to="/kb/$kbId/answer"
+                  />
+                  <SidebarNavItem
+                    active={pathname.endsWith("/config")}
+                    icon="CFG"
+                    label="配置与重建"
+                    params={{ kbId: activeKbId }}
+                    to="/kb/$kbId/config"
+                  />
+                  <SidebarNavItem
+                    active={pathname.endsWith("/members")}
+                    icon="USR"
+                    label="成员权限"
+                    params={{ kbId: activeKbId }}
+                    to="/kb/$kbId/members"
+                  />
+                  <SidebarNavItem
+                    active={pathname.includes("/eval")}
+                    icon="EVL"
+                    label="评测中心"
+                    params={{ kbId: activeKbId }}
+                    search={{ cursor: "", digest: "", row: 0 }}
+                    to="/kb/$kbId/eval"
+                  />
+                  <SidebarNavItem
+                    active={pathname.endsWith("/trace")}
+                    icon="TRC"
+                    label="检索追踪"
+                    params={{ kbId: activeKbId }}
+                    to="/kb/$kbId/trace"
+                  />
+                </IdeSidebarGroup>
+              ) : null}
+            </div>
+          }
+          topbarLeft={
+            <span className="truncate text-xs text-muted-foreground">
+              {activeKbId ? `知识库 #${activeKbId}` : "控制台"}
+            </span>
+          }
+          topbarRight={
+            <div className="flex items-center gap-2">
+              {readiness.isError ? (
+                <Button
+                  onClick={() => void readiness.refetch()}
+                  size="xs"
+                  variant="outline"
+                >
+                  重新检查
+                </Button>
+              ) : null}
+              {readinessBadge}
+            </div>
+          }
+        >
+          {readiness.isError && (
+            <Alert className="mb-4 flex items-center justify-between gap-3" variant="warning">
+              <span>基础服务暂不可用。</span>
+              <Button
+                onClick={() => void readiness.refetch()}
+                size="xs"
+                variant="outline"
+              >
+                重新检查
+              </Button>
+            </Alert>
+          )}
+          <Outlet />
+        </IdeShell>
+      </IdentityContext.Provider>
+    );
+  }
+
   return (
     <main className="mx-auto flex min-h-screen max-w-5xl flex-col px-6 py-8 sm:px-10">
       <header className="flex items-center justify-between border-b pb-6">
         <span className="text-lg font-semibold tracking-tight">TuskRAG</span>
-        <span className="text-sm text-muted-foreground" role="status">
-          {status}
-        </span>
+        {readinessBadge}
       </header>
       {readiness.isError && (
         <div className="mt-5 flex items-center gap-3 text-sm text-muted-foreground">
           <span>基础服务暂不可用。</span>
           <Button
+            onClick={() => void readiness.refetch()}
             size="sm"
             variant="outline"
-            onClick={() => void readiness.refetch()}
           >
             重新检查
           </Button>
@@ -402,10 +630,6 @@ export function App() {
         <p className="py-16 text-sm text-muted-foreground" role="status">
           正在加载
         </p>
-      ) : currentIdentity.data ? (
-        <IdentityContext.Provider value={currentIdentity.data}>
-          <Outlet />
-        </IdentityContext.Provider>
       ) : currentIdentity.data === null ? (
         <LoginForm
           onLogin={(value) => queryClient.setQueryData(["identity"], value)}
@@ -415,8 +639,8 @@ export function App() {
           <p role="alert">暂时无法连接，请稍后重试。</p>
           <Button
             className="mt-4"
-            variant="outline"
             onClick={() => void currentIdentity.refetch()}
+            variant="outline"
           >
             重试
           </Button>

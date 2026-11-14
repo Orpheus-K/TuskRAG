@@ -8,6 +8,9 @@ import {
   putAnswerFeedback,
 } from "@tuskrag/api-client";
 import { Button } from "@tuskrag/ui/button";
+import { Card } from "@tuskrag/ui/card";
+import { Field } from "@tuskrag/ui/field";
+import { Textarea } from "@tuskrag/ui/textarea";
 import { useState } from "react";
 
 export type AnswerState = {
@@ -53,7 +56,8 @@ export function AnswerView({
       </p>
     );
   return (
-    <article aria-label="回答" className="space-y-4 rounded-xl border p-5">
+    <Card className="p-5">
+      <article aria-label="回答" className="space-y-4">
       {state.question && (
         <h2 className="break-words font-medium">{state.question}</h2>
       )}
@@ -104,15 +108,17 @@ export function AnswerView({
               ? state.evidence.find((e) => e.n === Number(n))
               : undefined;
           return item && state.cited.includes(item.n) ? (
-            <button
+            <Button
               key={`${match.index}-${part}`}
               type="button"
-              className="mx-0.5 rounded border px-1 text-sm underline"
+              size="xs"
+              variant="outline"
+              className="mx-0.5 h-6 px-1.5 text-xs underline"
               aria-label={`引用 ${item.n}：${item.title}`}
               onClick={() => onEvidence(item)}
             >
               {part}
-            </button>
+            </Button>
           ) : (
             part
           );
@@ -124,14 +130,16 @@ export function AnswerView({
             .filter((e) => state.cited.includes(e.n))
             .map((item) => (
               <li key={item.id}>
-                <button
+                <Button
                   type="button"
-                  className="text-left text-sm underline"
+                  size="xs"
+                  variant="ghost"
+                  className="h-auto justify-start px-1 py-0.5 text-left text-sm font-normal underline"
                   onClick={() => onEvidence(item)}
                 >
                   [{item.n}] {item.title} · {item.heading_path.join(" › ")}
                   {item.pages && ` · 第 ${item.pages[0]}—${item.pages[1]} 页`}
-                </button>
+                </Button>
               </li>
             ))}
         </ul>
@@ -144,7 +152,8 @@ export function AnswerView({
           identity={identity}
         />
       )}
-    </article>
+      </article>
+    </Card>
   );
 }
 
@@ -201,15 +210,14 @@ function FeedbackForm({
           无帮助
         </Button>
       </div>
-      <label className="block space-y-2 text-sm">
-        <span>纠错建议（选填）</span>
-        <textarea
-          className={answerInputClass}
+      <Field htmlFor={`feedback-${id}`} label="纠错建议（选填）">
+        <Textarea
+          id={`feedback-${id}`}
           value={correction}
           maxLength={4000}
           onChange={(event) => setCorrection(event.target.value)}
         />
-      </label>
+      </Field>
       {tooLong && (
         <p role="alert" className="text-sm">
           纠错建议过长，请缩短。

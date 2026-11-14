@@ -13,6 +13,7 @@ import {
   type StoredEvalReport,
 } from "@tuskrag/api-client";
 import { Button } from "@tuskrag/ui/button";
+import { Input } from "@tuskrag/ui/input";
 import type { FormEvent } from "react";
 
 function errorText(error: unknown) {
@@ -224,14 +225,13 @@ export function Evaluation({
           <label className="block text-sm" htmlFor="eval-file">
             完整报告 JSON（最大 8 MiB）
           </label>
-          <input
+          <Input
             id="eval-file"
             name="report"
             type="file"
             accept=".json,application/json"
             required
             disabled={upload.isPending}
-            className="block w-full min-w-0 text-sm"
           />
           <Button type="submit" disabled={upload.isPending}>
             {upload.isPending ? "正在导入" : "导入报告"}

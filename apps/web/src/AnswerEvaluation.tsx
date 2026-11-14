@@ -11,6 +11,7 @@ import {
   listAnswerEvalReports,
 } from "@tuskrag/api-client";
 import { Button } from "@tuskrag/ui/button";
+import { Input } from "@tuskrag/ui/input";
 import type { FormEvent } from "react";
 
 function errorText(error: unknown) {
@@ -201,14 +202,13 @@ export function AnswerEvaluation({
           <label className="block text-sm" htmlFor="answer-eval-file">
             完整 E6 生成评测报告 JSON（最大 8 MiB）
           </label>
-          <input
+          <Input
             id="answer-eval-file"
             name="report"
             type="file"
             accept=".json,application/json"
             required
             disabled={upload.isPending}
-            className="block w-full min-w-0 text-sm"
           />
           <Button type="submit" disabled={upload.isPending}>
             {upload.isPending ? "正在导入" : "导入生成报告"}

@@ -15,6 +15,8 @@ import {
   setDocumentACL,
 } from "@tuskrag/api-client";
 import { Button } from "@tuskrag/ui/button";
+import { Input } from "@tuskrag/ui/input";
+import { Select } from "@tuskrag/ui/select";
 import { type FormEvent, useState } from "react";
 
 function aclErrorMessage(error: unknown): string {
@@ -150,11 +152,10 @@ function UserGroupsEditor({ identity }: { identity: Identity }) {
         </p>
       )}
       <form onSubmit={handleCreate} className="flex flex-wrap items-end gap-2">
-        <label className="block">
-          新建用户组
-          <input
+        <label className="block space-y-1">
+          <span>新建用户组</span>
+          <Input
             aria-label="新建用户组名称"
-            className="mt-1 block rounded-md border bg-background px-3 py-1.5"
             value={groupName}
             onChange={(e) => setGroupName(e.target.value)}
             placeholder="例如：finance-team"
@@ -218,9 +219,9 @@ function UserGroupsEditor({ identity }: { identity: Identity }) {
               </ul>
               {candidates.length > 0 && (
                 <div className="flex flex-wrap items-end gap-2 pt-2">
-                  <select
+                  <Select
                     aria-label="选择加入组的用户"
-                    className="rounded-md border bg-background px-2 py-1.5"
+                    className="w-auto px-2 py-1"
                     value={selectedUserId || String(candidates[0]?.id ?? "")}
                     onChange={(e) => setSelectedUserId(e.target.value)}
                   >
@@ -229,7 +230,7 @@ function UserGroupsEditor({ identity }: { identity: Identity }) {
                         {u.display_name} (#{u.id})
                       </option>
                     ))}
-                  </select>
+                  </Select>
                   <Button
                     type="button"
                     onClick={() => {
@@ -378,17 +379,17 @@ function DocumentACLEditor({
       {acl.isPending && <p className="mt-1 text-muted-foreground">加载中...</p>}
       {acl.data && (
         <div className="mt-2 space-y-3">
-          <label className="block">
-            访问模式
-            <select
+          <label className="block space-y-1">
+            <span>访问模式</span>
+            <Select
               aria-label={`文档 ${documentTitle} 访问模式`}
-              className="mt-1 block rounded-md border bg-background px-2 py-1"
+              className="w-auto px-2 py-1"
               value={mode}
               onChange={(e) => setDraftMode(e.target.value as ACLMode)}
             >
               <option value="inherit_kb">继承知识库成员 (inherit_kb)</option>
               <option value="restricted">仅指定主体可见 (restricted)</option>
-            </select>
+            </Select>
           </label>
 
           {mode === "restricted" && (
@@ -398,7 +399,7 @@ function DocumentACLEditor({
                 <div className="mt-1 space-y-1">
                   {(users.data ?? []).map((u) => (
                     <label key={u.id} className="flex items-center gap-2">
-                      <input
+                      <Input
                         type="checkbox"
                         checked={subjects.some(
                           (s) => s.type === "user" && s.id === u.id,
@@ -417,7 +418,7 @@ function DocumentACLEditor({
                 <div className="mt-1 space-y-1">
                   {(groups.data ?? []).map((g) => (
                     <label key={g.id} className="flex items-center gap-2">
-                      <input
+                      <Input
                         type="checkbox"
                         checked={subjects.some(
                           (s) => s.type === "group" && s.id === g.id,
