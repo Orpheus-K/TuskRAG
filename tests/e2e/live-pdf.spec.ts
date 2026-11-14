@@ -31,7 +31,8 @@ for (const width of [1280, 375]) {
       })
       .getByRole("link", { name: "提问", exact: true })
       .click();
-    await page.getByLabel("回答模型").selectOption(model);
+    await page.getByLabel("回答模型").click();
+    await page.locator(`[role="option"][data-value="${model}"]`).click();
     await page
       .getByLabel("你的问题")
       .fill("这张跨页住宿限额表中，北京和杭州每人每晚最高分别报销多少元？");

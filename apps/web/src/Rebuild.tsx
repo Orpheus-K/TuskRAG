@@ -1,3 +1,5 @@
+import { ArrowRight } from "lucide-react";
+import { Label } from "@tuskrag/ui/label";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import {
@@ -141,7 +143,7 @@ export function RebuildPage({
           <p className="text-sm text-muted-foreground">
             输入管理员已配置的目标嵌入空间编号。重建完成并通过覆盖核验后才切换，处理中继续使用原空间。
           </p>
-          <label className="block space-y-1.5 text-sm">
+          <Label className="block space-y-1.5 text-sm">
             <span>目标空间编号</span>
             <Input
               inputMode="numeric"
@@ -149,7 +151,7 @@ export function RebuildPage({
               disabled={archived || !!submitted}
               onChange={(e) => setTarget(e.target.value)}
             />
-          </label>
+          </Label>
           {start.isError && (
             <p role="alert">
               创建未确认或被拒绝（
@@ -187,8 +189,12 @@ export function RebuildPage({
               <>
                 <p role="status">{labels[status.data.status]}</p>
                 <p>
-                  源空间 {status.data.source_space_id} → 目标空间{" "}
-                  {status.data.target_space_id}
+                  源空间 {status.data.source_space_id}{" "}
+                  <ArrowRight
+                    aria-hidden="true"
+                    className="inline size-3.5 align-middle"
+                  />{" "}
+                  目标空间 {status.data.target_space_id}
                 </p>
                 <p>
                   源修订 {status.data.source_revision} · 尝试{" "}

@@ -115,7 +115,7 @@ it("retries unchanged input and key after a lost creation response", async () =>
   const x = setup({ failure: true });
   fireEvent.click(await screen.findByRole("button", { name: "开始运行" }));
   await screen.findByRole("button", { name: "原样重试运行" });
-  expect((screen.getByRole("combobox") as HTMLSelectElement).disabled).toBe(
+  expect((screen.getByRole("combobox") as HTMLButtonElement).disabled).toBe(
     true,
   );
   x.recover();

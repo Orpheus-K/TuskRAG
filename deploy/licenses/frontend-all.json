@@ -6,7 +6,7 @@
         "3.2.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@asamuzakjp+css-color@3.2.0\\node_modules\\@asamuzakjp\\css-color"
+        "node_modules/.pnpm/@asamuzakjp+css-color@3.2.0/node_modules/@asamuzakjp/css-color"
       ],
       "license": "MIT",
       "author": "asamuzaK",
@@ -19,7 +19,7 @@
         "7.29.7"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@babel+code-frame@7.29.7\\node_modules\\@babel\\code-frame"
+        "node_modules/.pnpm/@babel+code-frame@7.29.7/node_modules/@babel/code-frame"
       ],
       "license": "MIT",
       "author": "The Babel Team",
@@ -32,7 +32,7 @@
         "7.29.7"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@babel+helper-validator-identifier@7.29.7\\node_modules\\@babel\\helper-validator-identifier"
+        "node_modules/.pnpm/@babel+helper-validator-identifier@7.29.7/node_modules/@babel/helper-validator-identifier"
       ],
       "license": "MIT",
       "author": "The Babel Team",
@@ -45,7 +45,7 @@
         "7.29.10"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@babel+runtime@7.29.10\\node_modules\\@babel\\runtime"
+        "node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime"
       ],
       "license": "MIT",
       "author": "The Babel Team",
@@ -58,7 +58,7 @@
         "2.1.4"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@csstools+css-calc@2.1.4_@c_e8d5cb57048a11d39451107410ea18b6\\node_modules\\@csstools\\css-calc"
+        "node_modules/.pnpm/@csstools+css-calc@2.1.4_@c_e8d5cb57048a11d39451107410ea18b6/node_modules/@csstools/css-calc"
       ],
       "license": "MIT",
       "homepage": "https://github.com/csstools/postcss-plugins/tree/main/packages/css-calc#readme",
@@ -70,7 +70,7 @@
         "3.1.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@csstools+css-color-parser@_ac3eaa9e6357e2e6fe2577d663b974a1\\node_modules\\@csstools\\css-color-parser"
+        "node_modules/.pnpm/@csstools+css-color-parser@_ac3eaa9e6357e2e6fe2577d663b974a1/node_modules/@csstools/css-color-parser"
       ],
       "license": "MIT",
       "homepage": "https://github.com/csstools/postcss-plugins/tree/main/packages/css-color-parser#readme",
@@ -82,7 +82,7 @@
         "3.0.5"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@csstools+css-parser-algori_f97be086dec1114cf77bb1341d3f2991\\node_modules\\@csstools\\css-parser-algorithms"
+        "node_modules/.pnpm/@csstools+css-parser-algori_f97be086dec1114cf77bb1341d3f2991/node_modules/@csstools/css-parser-algorithms"
       ],
       "license": "MIT",
       "homepage": "https://github.com/csstools/postcss-plugins/tree/main/packages/css-parser-algorithms#readme",
@@ -94,11 +94,63 @@
         "3.0.4"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@csstools+css-tokenizer@3.0.4\\node_modules\\@csstools\\css-tokenizer"
+        "node_modules/.pnpm/@csstools+css-tokenizer@3.0.4/node_modules/@csstools/css-tokenizer"
       ],
       "license": "MIT",
       "homepage": "https://github.com/csstools/postcss-plugins/tree/main/packages/css-tokenizer#readme",
       "description": "Tokenize CSS"
+    },
+    {
+      "name": "@floating-ui/core",
+      "versions": [
+        "1.8.0"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@floating-ui+core@1.8.0/node_modules/@floating-ui/core"
+      ],
+      "license": "MIT",
+      "author": "atomiks",
+      "homepage": "https://floating-ui.com",
+      "description": "Positioning library for floating elements: tooltips, popovers, dropdowns, and more"
+    },
+    {
+      "name": "@floating-ui/dom",
+      "versions": [
+        "1.8.0"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@floating-ui+dom@1.8.0/node_modules/@floating-ui/dom"
+      ],
+      "license": "MIT",
+      "author": "atomiks",
+      "homepage": "https://floating-ui.com",
+      "description": "Floating UI for the web"
+    },
+    {
+      "name": "@floating-ui/react-dom",
+      "versions": [
+        "2.1.9"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@floating-ui+react-dom@2.1._c645c4d66c08a969d8ea8e3044efd0cf/node_modules/@floating-ui/react-dom"
+      ],
+      "license": "MIT",
+      "author": "atomiks",
+      "homepage": "https://floating-ui.com/docs/react-dom",
+      "description": "Floating UI for React DOM"
+    },
+    {
+      "name": "@floating-ui/utils",
+      "versions": [
+        "0.2.12"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@floating-ui+utils@0.2.12/node_modules/@floating-ui/utils"
+      ],
+      "license": "MIT",
+      "author": "atomiks",
+      "homepage": "https://floating-ui.com",
+      "description": "Utilities for Floating UI"
     },
     {
       "name": "@jridgewell/gen-mapping",
@@ -106,7 +158,7 @@
         "0.3.13"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@jridgewell+gen-mapping@0.3.13\\node_modules\\@jridgewell\\gen-mapping"
+        "node_modules/.pnpm/@jridgewell+gen-mapping@0.3.13/node_modules/@jridgewell/gen-mapping"
       ],
       "license": "MIT",
       "author": "Justin Ridgewell",
@@ -119,7 +171,7 @@
         "2.3.5"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@jridgewell+remapping@2.3.5\\node_modules\\@jridgewell\\remapping"
+        "node_modules/.pnpm/@jridgewell+remapping@2.3.5/node_modules/@jridgewell/remapping"
       ],
       "license": "MIT",
       "author": "Justin Ridgewell",
@@ -132,7 +184,7 @@
         "3.1.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@jridgewell+resolve-uri@3.1.2\\node_modules\\@jridgewell\\resolve-uri"
+        "node_modules/.pnpm/@jridgewell+resolve-uri@3.1.2/node_modules/@jridgewell/resolve-uri"
       ],
       "license": "MIT",
       "author": "Justin Ridgewell",
@@ -145,7 +197,7 @@
         "1.6.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@jridgewell+sourcemap-codec@1.6.0\\node_modules\\@jridgewell\\sourcemap-codec"
+        "node_modules/.pnpm/@jridgewell+sourcemap-codec@1.6.0/node_modules/@jridgewell/sourcemap-codec"
       ],
       "license": "MIT",
       "author": "Justin Ridgewell",
@@ -158,7 +210,7 @@
         "0.3.31"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@jridgewell+trace-mapping@0.3.31\\node_modules\\@jridgewell\\trace-mapping"
+        "node_modules/.pnpm/@jridgewell+trace-mapping@0.3.31/node_modules/@jridgewell/trace-mapping"
       ],
       "license": "MIT",
       "author": "Justin Ridgewell",
@@ -171,7 +223,7 @@
         "0.155.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@oxc-project+types@0.155.0\\node_modules\\@oxc-project\\types"
+        "node_modules/.pnpm/@oxc-project+types@0.155.0/node_modules/@oxc-project/types"
       ],
       "license": "MIT",
       "author": "Boshen and oxc contributors",
@@ -179,12 +231,254 @@
       "description": "Types for Oxc AST nodes"
     },
     {
+      "name": "@radix-ui/number",
+      "versions": [
+        "1.1.3"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+number@1.1.3/node_modules/@radix-ui/number"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/primitive",
+      "versions": [
+        "1.2.0"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+primitive@1.2.0/node_modules/@radix-ui/primitive"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-alert-dialog",
+      "versions": [
+        "1.2.1"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-alert-dialo_9fb8ed36b898ecb69373e4d64f11612c/node_modules/@radix-ui/react-alert-dialog"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-arrow",
+      "versions": [
+        "1.1.17"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-arrow@1.1.1_42c166494782f9339172e39dfcc4494e/node_modules/@radix-ui/react-arrow"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-checkbox",
+      "versions": [
+        "1.4.1"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-checkbox@1._630633f10999d131c84963aa64950d79/node_modules/@radix-ui/react-checkbox"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-collapsible",
+      "versions": [
+        "1.2.1"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-collapsible_f8634540a4e1e40b51592c3777d0d653/node_modules/@radix-ui/react-collapsible"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-collection",
+      "versions": [
+        "1.2.0"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-collection@_6acb2d8ed0d1a5e2d86fa68fa86b38fc/node_modules/@radix-ui/react-collection"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
       "name": "@radix-ui/react-compose-refs",
       "versions": [
         "1.1.5"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@radix-ui+react-compose-ref_b3d765b39c685001f44067d66c248108\\node_modules\\@radix-ui\\react-compose-refs"
+        "node_modules/.pnpm/@radix-ui+react-compose-ref_b3d765b39c685001f44067d66c248108/node_modules/@radix-ui/react-compose-refs"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-context",
+      "versions": [
+        "1.3.0"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-context@1.3_f5e7faa335a2377b2de19422090f7bda/node_modules/@radix-ui/react-context"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-dialog",
+      "versions": [
+        "1.3.1"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-dialog@1.3._4dc34b117641e6b0d7103bbf4056ed99/node_modules/@radix-ui/react-dialog"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-direction",
+      "versions": [
+        "1.2.0"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-direction@1_527de58341a1b41b1117c799ae82b79a/node_modules/@radix-ui/react-direction"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-dismissable-layer",
+      "versions": [
+        "1.2.1"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-dismissable_aa9a2defeade16af3bdfd2945af978c3/node_modules/@radix-ui/react-dismissable-layer"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-dropdown-menu",
+      "versions": [
+        "2.2.1"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-dropdown-me_59087697bb8d70fe27e0ede367aec154/node_modules/@radix-ui/react-dropdown-menu"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-focus-guards",
+      "versions": [
+        "1.2.0"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-focus-guard_c0670c59f51feaa6adb45a3bc8fcd0e3/node_modules/@radix-ui/react-focus-guards"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-focus-scope",
+      "versions": [
+        "1.3.1"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-focus-scope_6d7db95e6b4b16578fd42789685673fa/node_modules/@radix-ui/react-focus-scope"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-id",
+      "versions": [
+        "1.1.4"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-id@1.1.4_@types+react@19.3.0_react@19.3.1/node_modules/@radix-ui/react-id"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-menu",
+      "versions": [
+        "2.2.1"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-menu@2.2.1__5b19b71a44c52a23e68bd8126ace118c/node_modules/@radix-ui/react-menu"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-popper",
+      "versions": [
+        "1.4.0"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-popper@1.4._8afc6f49a39cf3de4250aed01ab9dae8/node_modules/@radix-ui/react-popper"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-portal",
+      "versions": [
+        "1.2.0"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-portal@1.2._058d94c3625e9af8e54f0154a66c0818/node_modules/@radix-ui/react-portal"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-presence",
+      "versions": [
+        "1.1.11"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-presence@1._f62c16392ef5c0f7dddc17b4112d7eab/node_modules/@radix-ui/react-presence"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-primitive",
+      "versions": [
+        "2.2.0"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-primitive@2_8110221bfe749bbb617b2ef4d8402995/node_modules/@radix-ui/react-primitive"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-roving-focus",
+      "versions": [
+        "1.2.1"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-roving-focu_bed290ae4c554285fceef8952991064b/node_modules/@radix-ui/react-roving-focus"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-select",
+      "versions": [
+        "2.4.1"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-select@2.4._e8fd14f43f640bf7754c8314026f8b0b/node_modules/@radix-ui/react-select"
       ],
       "license": "MIT",
       "homepage": "https://radix-ui.com/primitives"
@@ -195,7 +489,106 @@
         "1.5.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@radix-ui+react-slot@1.5.0_@types+react@19.3.0_react@19.3.1\\node_modules\\@radix-ui\\react-slot"
+        "node_modules/.pnpm/@radix-ui+react-slot@1.5.0_@types+react@19.3.0_react@19.3.1/node_modules/@radix-ui/react-slot"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-use-callback-ref",
+      "versions": [
+        "1.1.5"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-use-callbac_69a3fb791ef61c6e6ef64d5483eb0094/node_modules/@radix-ui/react-use-callback-ref"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-use-controllable-state",
+      "versions": [
+        "1.3.0"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-use-control_d278618b86c81b0639a590dbb168baee/node_modules/@radix-ui/react-use-controllable-state"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-use-effect-event",
+      "versions": [
+        "0.0.5"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-use-effect-_9cf9bb6c5dfb7539079d7befafe3de75/node_modules/@radix-ui/react-use-effect-event"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-use-is-hydrated",
+      "versions": [
+        "0.1.3"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-use-is-hydr_d5f02d66173c49c68cbede894417d34b/node_modules/@radix-ui/react-use-is-hydrated"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-use-layout-effect",
+      "versions": [
+        "1.1.4"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-use-layout-_d3987928d2181a5100d43510a878393c/node_modules/@radix-ui/react-use-layout-effect"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-use-rect",
+      "versions": [
+        "1.1.4"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-use-rect@1._5cea43895ad00bbb9230b6ac56e4df96/node_modules/@radix-ui/react-use-rect"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-use-size",
+      "versions": [
+        "1.1.5"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-use-size@1._2b848c55b0857f8c7546508027700b89/node_modules/@radix-ui/react-use-size"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/react-visually-hidden",
+      "versions": [
+        "1.2.13"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+react-visually-hi_703f89cfbdd73455c4bf03a3c2fc4305/node_modules/@radix-ui/react-visually-hidden"
+      ],
+      "license": "MIT",
+      "homepage": "https://radix-ui.com/primitives"
+    },
+    {
+      "name": "@radix-ui/rect",
+      "versions": [
+        "1.1.3"
+      ],
+      "paths": [
+        "node_modules/.pnpm/@radix-ui+rect@1.1.3/node_modules/@radix-ui/rect"
       ],
       "license": "MIT",
       "homepage": "https://radix-ui.com/primitives"
@@ -206,7 +599,7 @@
         "8.11.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@redocly+ajv@8.11.2\\node_modules\\@redocly\\ajv"
+        "node_modules/.pnpm/@redocly+ajv@8.11.2/node_modules/@redocly/ajv"
       ],
       "license": "MIT",
       "author": "Evgeny Poberezkin",
@@ -219,7 +612,7 @@
         "0.22.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@redocly+config@0.22.0\\node_modules\\@redocly\\config"
+        "node_modules/.pnpm/@redocly+config@0.22.0/node_modules/@redocly/config"
       ],
       "license": "MIT"
     },
@@ -229,7 +622,7 @@
         "1.34.22"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@redocly+openapi-core@1.34.22_supports-color@10.2.2\\node_modules\\@redocly\\openapi-core"
+        "node_modules/.pnpm/@redocly+openapi-core@1.34.22_supports-color@10.2.2/node_modules/@redocly/openapi-core"
       ],
       "license": "MIT",
       "homepage": "https://github.com/Redocly/redocly-cli",
@@ -241,7 +634,7 @@
         "1.2.15"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@rolldown+binding-win32-x64-msvc@1.2.15\\node_modules\\@rolldown\\binding-win32-x64-msvc"
+        "node_modules/.pnpm/@rolldown+binding-win32-x64-msvc@1.2.15/node_modules/@rolldown/binding-win32-x64-msvc"
       ],
       "license": "MIT",
       "homepage": "https://rolldown.rs/",
@@ -253,7 +646,7 @@
         "1.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@rolldown+pluginutils@1.0.1\\node_modules\\@rolldown\\pluginutils"
+        "node_modules/.pnpm/@rolldown+pluginutils@1.0.1/node_modules/@rolldown/pluginutils"
       ],
       "license": "MIT",
       "homepage": "https://github.com/rolldown/plugins/tree/main/packages/pluginutils#readme",
@@ -265,7 +658,7 @@
         "4.3.3"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@tailwindcss+node@4.3.3\\node_modules\\@tailwindcss\\node"
+        "node_modules/.pnpm/@tailwindcss+node@4.3.3/node_modules/@tailwindcss/node"
       ],
       "license": "MIT",
       "homepage": "https://tailwindcss.com",
@@ -277,7 +670,7 @@
         "4.3.3"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@tailwindcss+oxide@4.3.3\\node_modules\\@tailwindcss\\oxide"
+        "node_modules/.pnpm/@tailwindcss+oxide@4.3.3/node_modules/@tailwindcss/oxide"
       ],
       "license": "MIT",
       "homepage": "https://github.com/tailwindlabs/tailwindcss#readme"
@@ -288,7 +681,7 @@
         "4.3.3"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@tailwindcss+oxide-win32-x64-msvc@4.3.3\\node_modules\\@tailwindcss\\oxide-win32-x64-msvc"
+        "node_modules/.pnpm/@tailwindcss+oxide-win32-x64-msvc@4.3.3/node_modules/@tailwindcss/oxide-win32-x64-msvc"
       ],
       "license": "MIT",
       "homepage": "https://github.com/tailwindlabs/tailwindcss#readme"
@@ -299,7 +692,7 @@
         "4.3.3"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@tailwindcss+vite@4.3.3_vit_7daf7d9bdedf82b6a54273c0bb551d91\\node_modules\\@tailwindcss\\vite"
+        "node_modules/.pnpm/@tailwindcss+vite@4.3.3_vit_7daf7d9bdedf82b6a54273c0bb551d91/node_modules/@tailwindcss/vite"
       ],
       "license": "MIT",
       "homepage": "https://tailwindcss.com",
@@ -311,7 +704,7 @@
         "1.162.5"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@tanstack+history@1.162.5\\node_modules\\@tanstack\\history"
+        "node_modules/.pnpm/@tanstack+history@1.162.5/node_modules/@tanstack/history"
       ],
       "license": "MIT",
       "author": "Tanner Linsley",
@@ -324,7 +717,7 @@
         "5.90.20"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@tanstack+query-core@5.90.20\\node_modules\\@tanstack\\query-core"
+        "node_modules/.pnpm/@tanstack+query-core@5.90.20/node_modules/@tanstack/query-core"
       ],
       "license": "MIT",
       "author": "tannerlinsley",
@@ -337,7 +730,7 @@
         "5.90.21"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@tanstack+react-query@5.90.21_react@19.3.1\\node_modules\\@tanstack\\react-query"
+        "node_modules/.pnpm/@tanstack+react-query@5.90.21_react@19.3.1/node_modules/@tanstack/react-query"
       ],
       "license": "MIT",
       "author": "tannerlinsley",
@@ -350,7 +743,7 @@
         "1.170.46"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@tanstack+react-router@1.17_e16e07e4fd54e4e259681370207791aa\\node_modules\\@tanstack\\react-router"
+        "node_modules/.pnpm/@tanstack+react-router@1.17_e16e07e4fd54e4e259681370207791aa/node_modules/@tanstack/react-router"
       ],
       "license": "MIT",
       "author": "Tanner Linsley",
@@ -363,7 +756,7 @@
         "0.11.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@tanstack+react-store@0.11._6def17552e8b2a0b74c5841dd97fc82c\\node_modules\\@tanstack\\react-store"
+        "node_modules/.pnpm/@tanstack+react-store@0.11._6def17552e8b2a0b74c5841dd97fc82c/node_modules/@tanstack/react-store"
       ],
       "license": "MIT",
       "author": "Tanner Linsley",
@@ -376,7 +769,7 @@
         "1.171.39"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@tanstack+router-core@1.171.39\\node_modules\\@tanstack\\router-core"
+        "node_modules/.pnpm/@tanstack+router-core@1.171.39/node_modules/@tanstack/router-core"
       ],
       "license": "MIT",
       "author": "Tanner Linsley",
@@ -389,7 +782,7 @@
         "0.11.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@tanstack+store@0.11.2\\node_modules\\@tanstack\\store"
+        "node_modules/.pnpm/@tanstack+store@0.11.2/node_modules/@tanstack/store"
       ],
       "license": "MIT",
       "author": "Tanner Linsley",
@@ -402,7 +795,7 @@
         "10.4.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@testing-library+dom@10.4.2\\node_modules\\@testing-library\\dom"
+        "node_modules/.pnpm/@testing-library+dom@10.4.2/node_modules/@testing-library/dom"
       ],
       "license": "MIT",
       "author": "Kent C. Dodds",
@@ -415,7 +808,7 @@
         "16.3.3"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@testing-library+react@16.3_caf0c89dcd807677af52e2a43e70eff8\\node_modules\\@testing-library\\react"
+        "node_modules/.pnpm/@testing-library+react@16.3_caf0c89dcd807677af52e2a43e70eff8/node_modules/@testing-library/react"
       ],
       "license": "MIT",
       "author": "Kent C. Dodds",
@@ -428,7 +821,7 @@
         "5.0.4"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@types+aria-query@5.0.4\\node_modules\\@types\\aria-query"
+        "node_modules/.pnpm/@types+aria-query@5.0.4/node_modules/@types/aria-query"
       ],
       "license": "MIT",
       "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/aria-query",
@@ -440,7 +833,7 @@
         "5.2.3"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@types+chai@5.2.3\\node_modules\\@types\\chai"
+        "node_modules/.pnpm/@types+chai@5.2.3/node_modules/@types/chai"
       ],
       "license": "MIT",
       "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/chai",
@@ -452,7 +845,7 @@
         "4.1.13"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@types+debug@4.1.13\\node_modules\\@types\\debug"
+        "node_modules/.pnpm/@types+debug@4.1.13/node_modules/@types/debug"
       ],
       "license": "MIT",
       "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/debug",
@@ -464,7 +857,7 @@
         "4.0.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@types+deep-eql@4.0.2\\node_modules\\@types\\deep-eql"
+        "node_modules/.pnpm/@types+deep-eql@4.0.2/node_modules/@types/deep-eql"
       ],
       "license": "MIT",
       "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/deep-eql",
@@ -476,7 +869,7 @@
         "1.0.9"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@types+estree@1.0.9\\node_modules\\@types\\estree"
+        "node_modules/.pnpm/@types+estree@1.0.9/node_modules/@types/estree"
       ],
       "license": "MIT",
       "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/estree",
@@ -488,7 +881,7 @@
         "1.0.5"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@types+estree-jsx@1.0.5\\node_modules\\@types\\estree-jsx"
+        "node_modules/.pnpm/@types+estree-jsx@1.0.5/node_modules/@types/estree-jsx"
       ],
       "license": "MIT",
       "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/estree-jsx",
@@ -500,7 +893,7 @@
         "3.0.5"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@types+hast@3.0.5\\node_modules\\@types\\hast"
+        "node_modules/.pnpm/@types+hast@3.0.5/node_modules/@types/hast"
       ],
       "license": "MIT",
       "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/hast",
@@ -512,7 +905,7 @@
         "4.0.4"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@types+mdast@4.0.4\\node_modules\\@types\\mdast"
+        "node_modules/.pnpm/@types+mdast@4.0.4/node_modules/@types/mdast"
       ],
       "license": "MIT",
       "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/mdast",
@@ -524,7 +917,7 @@
         "2.1.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@types+ms@2.1.0\\node_modules\\@types\\ms"
+        "node_modules/.pnpm/@types+ms@2.1.0/node_modules/@types/ms"
       ],
       "license": "MIT",
       "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/ms",
@@ -536,7 +929,7 @@
         "22.20.5"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@types+node@22.20.5\\node_modules\\@types\\node"
+        "node_modules/.pnpm/@types+node@22.20.5/node_modules/@types/node"
       ],
       "license": "MIT",
       "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/node",
@@ -548,7 +941,7 @@
         "19.3.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@types+react@19.3.0\\node_modules\\@types\\react"
+        "node_modules/.pnpm/@types+react@19.3.0/node_modules/@types/react"
       ],
       "license": "MIT",
       "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/react",
@@ -560,7 +953,7 @@
         "19.3.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@types+react-dom@19.3.0_@types+react@19.3.0\\node_modules\\@types\\react-dom"
+        "node_modules/.pnpm/@types+react-dom@19.3.0_@types+react@19.3.0/node_modules/@types/react-dom"
       ],
       "license": "MIT",
       "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/react-dom",
@@ -573,8 +966,8 @@
         "3.0.3"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@types+unist@2.0.11\\node_modules\\@types\\unist",
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@types+unist@3.0.3\\node_modules\\@types\\unist"
+        "node_modules/.pnpm/@types+unist@2.0.11/node_modules/@types/unist",
+        "node_modules/.pnpm/@types+unist@3.0.3/node_modules/@types/unist"
       ],
       "license": "MIT",
       "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/unist",
@@ -586,7 +979,7 @@
         "6.1.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@vitejs+plugin-react@6.1.2__52280f50780f3222ccc4a6cb1c90b000\\node_modules\\@vitejs\\plugin-react"
+        "node_modules/.pnpm/@vitejs+plugin-react@6.1.2__52280f50780f3222ccc4a6cb1c90b000/node_modules/@vitejs/plugin-react"
       ],
       "license": "MIT",
       "author": "Evan You",
@@ -599,7 +992,7 @@
         "5.0.5"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@vitest+mocker@5.0.5_vite@8_fa2d09d12bd9433072e42748eff1eab3\\node_modules\\@vitest\\mocker"
+        "node_modules/.pnpm/@vitest+mocker@5.0.5_vite@8_fa2d09d12bd9433072e42748eff1eab3/node_modules/@vitest/mocker"
       ],
       "license": "MIT",
       "homepage": "https://github.com/vitest-dev/vitest/tree/main/packages/mocker",
@@ -611,7 +1004,7 @@
         "5.0.5"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@vitest+spy@5.0.5\\node_modules\\@vitest\\spy"
+        "node_modules/.pnpm/@vitest+spy@5.0.5/node_modules/@vitest/spy"
       ],
       "license": "MIT",
       "homepage": "https://vitest.dev/api/mock",
@@ -623,7 +1016,7 @@
         "7.1.4"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\agent-base@7.1.4\\node_modules\\agent-base"
+        "node_modules/.pnpm/agent-base@7.1.4/node_modules/agent-base"
       ],
       "license": "MIT",
       "author": "Nathan Rajlich",
@@ -636,7 +1029,7 @@
         "4.1.3"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\ansi-colors@4.1.3\\node_modules\\ansi-colors"
+        "node_modules/.pnpm/ansi-colors@4.1.3/node_modules/ansi-colors"
       ],
       "license": "MIT",
       "author": "Brian Woodward",
@@ -649,7 +1042,7 @@
         "5.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\ansi-regex@5.0.1\\node_modules\\ansi-regex"
+        "node_modules/.pnpm/ansi-regex@5.0.1/node_modules/ansi-regex"
       ],
       "license": "MIT",
       "author": "Sindre Sorhus",
@@ -662,7 +1055,7 @@
         "5.2.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\ansi-styles@5.2.0\\node_modules\\ansi-styles"
+        "node_modules/.pnpm/ansi-styles@5.2.0/node_modules/ansi-styles"
       ],
       "license": "MIT",
       "author": "Sindre Sorhus",
@@ -670,12 +1063,25 @@
       "description": "ANSI escape codes for styling strings in the terminal"
     },
     {
+      "name": "aria-hidden",
+      "versions": [
+        "1.2.6"
+      ],
+      "paths": [
+        "node_modules/.pnpm/aria-hidden@1.2.6/node_modules/aria-hidden"
+      ],
+      "license": "MIT",
+      "author": "Anton Korzunov",
+      "homepage": "https://github.com/theKashey/aria-hidden#readme",
+      "description": "Cast aria-hidden to everything, except..."
+    },
+    {
       "name": "assertion-error",
       "versions": [
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\assertion-error@2.0.1\\node_modules\\assertion-error"
+        "node_modules/.pnpm/assertion-error@2.0.1/node_modules/assertion-error"
       ],
       "license": "MIT",
       "author": "Jake Luer",
@@ -688,7 +1094,7 @@
         "2.0.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\bail@2.0.2\\node_modules\\bail"
+        "node_modules/.pnpm/bail@2.0.2/node_modules/bail"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -701,7 +1107,7 @@
         "1.0.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\balanced-match@1.0.2\\node_modules\\balanced-match"
+        "node_modules/.pnpm/balanced-match@1.0.2/node_modules/balanced-match"
       ],
       "license": "MIT",
       "author": "Julian Gruber",
@@ -714,7 +1120,7 @@
         "2.1.7"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\brace-expansion@2.1.7\\node_modules\\brace-expansion"
+        "node_modules/.pnpm/brace-expansion@2.1.7/node_modules/brace-expansion"
       ],
       "license": "MIT",
       "author": "Julian Gruber",
@@ -727,7 +1133,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\ccount@2.0.1\\node_modules\\ccount"
+        "node_modules/.pnpm/ccount@2.0.1/node_modules/ccount"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -740,7 +1146,7 @@
         "6.3.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\chai@6.3.0\\node_modules\\chai"
+        "node_modules/.pnpm/chai@6.3.0/node_modules/chai"
       ],
       "license": "MIT",
       "author": "Jake Luer",
@@ -753,7 +1159,7 @@
         "5.4.4"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\change-case@5.4.4\\node_modules\\change-case"
+        "node_modules/.pnpm/change-case@5.4.4/node_modules/change-case"
       ],
       "license": "MIT",
       "author": "Blake Embrey",
@@ -766,7 +1172,7 @@
         "2.0.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\character-entities@2.0.2\\node_modules\\character-entities"
+        "node_modules/.pnpm/character-entities@2.0.2/node_modules/character-entities"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -779,7 +1185,7 @@
         "2.1.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\character-entities-html4@2.1.0\\node_modules\\character-entities-html4"
+        "node_modules/.pnpm/character-entities-html4@2.1.0/node_modules/character-entities-html4"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -792,7 +1198,7 @@
         "3.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\character-entities-legacy@3.0.0\\node_modules\\character-entities-legacy"
+        "node_modules/.pnpm/character-entities-legacy@3.0.0/node_modules/character-entities-legacy"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -805,7 +1211,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\character-reference-invalid@2.0.1\\node_modules\\character-reference-invalid"
+        "node_modules/.pnpm/character-reference-invalid@2.0.1/node_modules/character-reference-invalid"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -818,7 +1224,7 @@
         "2.1.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\clsx@2.1.1\\node_modules\\clsx"
+        "node_modules/.pnpm/clsx@2.1.1/node_modules/clsx"
       ],
       "license": "MIT",
       "author": "Luke Edwards",
@@ -831,7 +1237,7 @@
         "1.4.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\colorette@1.4.0\\node_modules\\colorette"
+        "node_modules/.pnpm/colorette@1.4.0/node_modules/colorette"
       ],
       "license": "MIT",
       "author": "Jorge Bucaran",
@@ -844,7 +1250,7 @@
         "2.0.3"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\comma-separated-tokens@2.0.3\\node_modules\\comma-separated-tokens"
+        "node_modules/.pnpm/comma-separated-tokens@2.0.3/node_modules/comma-separated-tokens"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -857,7 +1263,7 @@
         "3.1.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\cookie-es@3.1.1\\node_modules\\cookie-es"
+        "node_modules/.pnpm/cookie-es@3.1.1/node_modules/cookie-es"
       ],
       "license": "MIT",
       "homepage": "https://github.com/unjs/cookie-es#readme"
@@ -868,7 +1274,7 @@
         "4.6.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\cssstyle@4.6.0\\node_modules\\cssstyle"
+        "node_modules/.pnpm/cssstyle@4.6.0/node_modules/cssstyle"
       ],
       "license": "MIT",
       "homepage": "https://github.com/jsdom/cssstyle",
@@ -880,7 +1286,7 @@
         "3.2.3"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\csstype@3.2.3\\node_modules\\csstype"
+        "node_modules/.pnpm/csstype@3.2.3/node_modules/csstype"
       ],
       "license": "MIT",
       "author": "Fredrik Nicol",
@@ -893,7 +1299,7 @@
         "5.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\data-urls@5.0.0\\node_modules\\data-urls"
+        "node_modules/.pnpm/data-urls@5.0.0/node_modules/data-urls"
       ],
       "license": "MIT",
       "author": "Domenic Denicola",
@@ -906,7 +1312,7 @@
         "4.4.3"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\debug@4.4.3_supports-color@10.2.2\\node_modules\\debug"
+        "node_modules/.pnpm/debug@4.4.3_supports-color@10.2.2/node_modules/debug"
       ],
       "license": "MIT",
       "author": "Josh Junon",
@@ -919,7 +1325,7 @@
         "10.6.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\decimal.js@10.6.0\\node_modules\\decimal.js"
+        "node_modules/.pnpm/decimal.js@10.6.0/node_modules/decimal.js"
       ],
       "license": "MIT",
       "author": "Michael Mclaughlin",
@@ -932,7 +1338,7 @@
         "1.3.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\decode-named-character-reference@1.3.0\\node_modules\\decode-named-character-reference"
+        "node_modules/.pnpm/decode-named-character-reference@1.3.0/node_modules/decode-named-character-reference"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -945,7 +1351,7 @@
         "2.0.3"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\dequal@2.0.3\\node_modules\\dequal"
+        "node_modules/.pnpm/dequal@2.0.3/node_modules/dequal"
       ],
       "license": "MIT",
       "author": "Luke Edwards",
@@ -953,12 +1359,25 @@
       "description": "A tiny (304B to 489B) utility for check for deep equality"
     },
     {
+      "name": "detect-node-es",
+      "versions": [
+        "1.1.0"
+      ],
+      "paths": [
+        "node_modules/.pnpm/detect-node-es@1.1.0/node_modules/detect-node-es"
+      ],
+      "license": "MIT",
+      "author": "Ilya Kantor",
+      "homepage": "https://github.com/thekashey/detect-node",
+      "description": "Detect Node.JS (as opposite to browser environment). ESM modification"
+    },
+    {
       "name": "devlop",
       "versions": [
         "1.1.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\devlop@1.1.0\\node_modules\\devlop"
+        "node_modules/.pnpm/devlop@1.1.0/node_modules/devlop"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -971,7 +1390,7 @@
         "0.5.16"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\dom-accessibility-api@0.5.16\\node_modules\\dom-accessibility-api"
+        "node_modules/.pnpm/dom-accessibility-api@0.5.16/node_modules/dom-accessibility-api"
       ],
       "license": "MIT",
       "homepage": "https://github.com/eps1lon/dom-accessibility-api#readme",
@@ -983,7 +1402,7 @@
         "5.26.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\enhanced-resolve@5.26.0\\node_modules\\enhanced-resolve"
+        "node_modules/.pnpm/enhanced-resolve@5.26.0/node_modules/enhanced-resolve"
       ],
       "license": "MIT",
       "author": "Tobias Koppers @sokra",
@@ -996,7 +1415,7 @@
         "2.3.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\es-module-lexer@2.3.2\\node_modules\\es-module-lexer"
+        "node_modules/.pnpm/es-module-lexer@2.3.2/node_modules/es-module-lexer"
       ],
       "license": "MIT",
       "author": "Guy Bedford",
@@ -1009,7 +1428,7 @@
         "5.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\escape-string-regexp@5.0.0\\node_modules\\escape-string-regexp"
+        "node_modules/.pnpm/escape-string-regexp@5.0.0/node_modules/escape-string-regexp"
       ],
       "license": "MIT",
       "author": "Sindre Sorhus",
@@ -1022,7 +1441,7 @@
         "3.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\estree-util-is-identifier-name@3.0.0\\node_modules\\estree-util-is-identifier-name"
+        "node_modules/.pnpm/estree-util-is-identifier-name@3.0.0/node_modules/estree-util-is-identifier-name"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1035,7 +1454,7 @@
         "3.0.3"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\estree-walker@3.0.3\\node_modules\\estree-walker"
+        "node_modules/.pnpm/estree-walker@3.0.3/node_modules/estree-walker"
       ],
       "license": "MIT",
       "author": "Rich Harris",
@@ -1048,7 +1467,7 @@
         "3.0.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\extend@3.0.2\\node_modules\\extend"
+        "node_modules/.pnpm/extend@3.0.2/node_modules/extend"
       ],
       "license": "MIT",
       "author": "Stefan Thomas",
@@ -1061,7 +1480,7 @@
         "3.1.3"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\fast-deep-equal@3.1.3\\node_modules\\fast-deep-equal"
+        "node_modules/.pnpm/fast-deep-equal@3.1.3/node_modules/fast-deep-equal"
       ],
       "license": "MIT",
       "author": "Evgeny Poberezkin",
@@ -1074,7 +1493,7 @@
         "6.5.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\fdir@6.5.0_picomatch@4.0.7\\node_modules\\fdir"
+        "node_modules/.pnpm/fdir@6.5.0_picomatch@4.0.7/node_modules/fdir"
       ],
       "license": "MIT",
       "author": "thecodrr",
@@ -1082,12 +1501,25 @@
       "description": "The fastest directory crawler & globbing alternative to glob, fast-glob, & tiny-glob. Crawls 1m files in < 1s"
     },
     {
+      "name": "get-nonce",
+      "versions": [
+        "1.0.1"
+      ],
+      "paths": [
+        "node_modules/.pnpm/get-nonce@1.0.1/node_modules/get-nonce"
+      ],
+      "license": "MIT",
+      "author": "Anton Korzunov",
+      "homepage": "https://github.com/theKashey/get-nonce",
+      "description": "returns nonce"
+    },
+    {
       "name": "hast-util-to-jsx-runtime",
       "versions": [
         "2.3.6"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\hast-util-to-jsx-runtime@2.3.6\\node_modules\\hast-util-to-jsx-runtime"
+        "node_modules/.pnpm/hast-util-to-jsx-runtime@2.3.6/node_modules/hast-util-to-jsx-runtime"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1100,7 +1532,7 @@
         "3.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\hast-util-whitespace@3.0.0\\node_modules\\hast-util-whitespace"
+        "node_modules/.pnpm/hast-util-whitespace@3.0.0/node_modules/hast-util-whitespace"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1113,7 +1545,7 @@
         "4.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\html-encoding-sniffer@4.0.0\\node_modules\\html-encoding-sniffer"
+        "node_modules/.pnpm/html-encoding-sniffer@4.0.0/node_modules/html-encoding-sniffer"
       ],
       "license": "MIT",
       "author": "Domenic Denicola",
@@ -1126,7 +1558,7 @@
         "3.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\html-url-attributes@3.0.1\\node_modules\\html-url-attributes"
+        "node_modules/.pnpm/html-url-attributes@3.0.1/node_modules/html-url-attributes"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1139,7 +1571,7 @@
         "7.0.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\http-proxy-agent@7.0.2\\node_modules\\http-proxy-agent"
+        "node_modules/.pnpm/http-proxy-agent@7.0.2/node_modules/http-proxy-agent"
       ],
       "license": "MIT",
       "author": "Nathan Rajlich",
@@ -1152,7 +1584,7 @@
         "7.0.6"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\https-proxy-agent@7.0.6_supports-color@10.2.2\\node_modules\\https-proxy-agent"
+        "node_modules/.pnpm/https-proxy-agent@7.0.6_supports-color@10.2.2/node_modules/https-proxy-agent"
       ],
       "license": "MIT",
       "author": "Nathan Rajlich",
@@ -1165,7 +1597,7 @@
         "0.6.3"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\iconv-lite@0.6.3\\node_modules\\iconv-lite"
+        "node_modules/.pnpm/iconv-lite@0.6.3/node_modules/iconv-lite"
       ],
       "license": "MIT",
       "author": "Alexander Shtuchkin",
@@ -1178,7 +1610,7 @@
         "1.2.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\index-to-position@1.2.0\\node_modules\\index-to-position"
+        "node_modules/.pnpm/index-to-position@1.2.0/node_modules/index-to-position"
       ],
       "license": "MIT",
       "author": "Sindre Sorhus",
@@ -1191,7 +1623,7 @@
         "0.2.7"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\inline-style-parser@0.2.7\\node_modules\\inline-style-parser"
+        "node_modules/.pnpm/inline-style-parser@0.2.7/node_modules/inline-style-parser"
       ],
       "license": "MIT",
       "homepage": "https://github.com/remarkablemark/inline-style-parser#readme",
@@ -1203,7 +1635,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\is-alphabetical@2.0.1\\node_modules\\is-alphabetical"
+        "node_modules/.pnpm/is-alphabetical@2.0.1/node_modules/is-alphabetical"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1216,7 +1648,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\is-alphanumerical@2.0.1\\node_modules\\is-alphanumerical"
+        "node_modules/.pnpm/is-alphanumerical@2.0.1/node_modules/is-alphanumerical"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1229,7 +1661,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\is-decimal@2.0.1\\node_modules\\is-decimal"
+        "node_modules/.pnpm/is-decimal@2.0.1/node_modules/is-decimal"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1242,7 +1674,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\is-hexadecimal@2.0.1\\node_modules\\is-hexadecimal"
+        "node_modules/.pnpm/is-hexadecimal@2.0.1/node_modules/is-hexadecimal"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1255,7 +1687,7 @@
         "4.1.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\is-plain-obj@4.1.0\\node_modules\\is-plain-obj"
+        "node_modules/.pnpm/is-plain-obj@4.1.0/node_modules/is-plain-obj"
       ],
       "license": "MIT",
       "author": "Sindre Sorhus",
@@ -1268,7 +1700,7 @@
         "1.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\is-potential-custom-element-name@1.0.1\\node_modules\\is-potential-custom-element-name"
+        "node_modules/.pnpm/is-potential-custom-element-name@1.0.1/node_modules/is-potential-custom-element-name"
       ],
       "license": "MIT",
       "author": "Mathias Bynens",
@@ -1281,7 +1713,7 @@
         "2.7.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\jiti@2.7.0\\node_modules\\jiti"
+        "node_modules/.pnpm/jiti@2.7.0/node_modules/jiti"
       ],
       "license": "MIT",
       "homepage": "https://github.com/unjs/jiti#readme",
@@ -1293,7 +1725,7 @@
         "1.1.6"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\js-levenshtein@1.1.6\\node_modules\\js-levenshtein"
+        "node_modules/.pnpm/js-levenshtein@1.1.6/node_modules/js-levenshtein"
       ],
       "license": "MIT",
       "author": "Gustaf Andersson",
@@ -1306,7 +1738,7 @@
         "4.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\js-tokens@4.0.0\\node_modules\\js-tokens"
+        "node_modules/.pnpm/js-tokens@4.0.0/node_modules/js-tokens"
       ],
       "license": "MIT",
       "author": "Simon Lydell",
@@ -1319,7 +1751,7 @@
         "4.3.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\js-yaml@4.3.2\\node_modules\\js-yaml"
+        "node_modules/.pnpm/js-yaml@4.3.2/node_modules/js-yaml"
       ],
       "license": "MIT",
       "author": "Vladimir Zapparov",
@@ -1332,7 +1764,7 @@
         "26.1.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\jsdom@26.1.0\\node_modules\\jsdom"
+        "node_modules/.pnpm/jsdom@26.1.0/node_modules/jsdom"
       ],
       "license": "MIT",
       "homepage": "https://github.com/jsdom/jsdom#readme",
@@ -1344,7 +1776,7 @@
         "1.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\json-schema-traverse@1.0.0\\node_modules\\json-schema-traverse"
+        "node_modules/.pnpm/json-schema-traverse@1.0.0/node_modules/json-schema-traverse"
       ],
       "license": "MIT",
       "author": "Evgeny Poberezkin",
@@ -1357,7 +1789,7 @@
         "3.1.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\longest-streak@3.1.0\\node_modules\\longest-streak"
+        "node_modules/.pnpm/longest-streak@3.1.0/node_modules/longest-streak"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1370,7 +1802,7 @@
         "1.5.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\lz-string@1.5.0\\node_modules\\lz-string"
+        "node_modules/.pnpm/lz-string@1.5.0/node_modules/lz-string"
       ],
       "license": "MIT",
       "author": "pieroxy",
@@ -1384,8 +1816,8 @@
         "1.4.5"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\magic-string@0.30.21\\node_modules\\magic-string",
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\magic-string@1.4.5\\node_modules\\magic-string"
+        "node_modules/.pnpm/magic-string@0.30.21/node_modules/magic-string",
+        "node_modules/.pnpm/magic-string@1.4.5/node_modules/magic-string"
       ],
       "license": "MIT",
       "author": "Rich Harris",
@@ -1398,7 +1830,7 @@
         "3.0.4"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\markdown-table@3.0.4\\node_modules\\markdown-table"
+        "node_modules/.pnpm/markdown-table@3.0.4/node_modules/markdown-table"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1411,7 +1843,7 @@
         "3.0.4"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\mdast-util-find-and-replace@3.0.4\\node_modules\\mdast-util-find-and-replace"
+        "node_modules/.pnpm/mdast-util-find-and-replace@3.0.4/node_modules/mdast-util-find-and-replace"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1424,7 +1856,7 @@
         "2.1.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\mdast-util-from-markdown@2.1.0\\node_modules\\mdast-util-from-markdown"
+        "node_modules/.pnpm/mdast-util-from-markdown@2.1.0/node_modules/mdast-util-from-markdown"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1437,7 +1869,7 @@
         "3.1.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\mdast-util-gfm@3.1.0\\node_modules\\mdast-util-gfm"
+        "node_modules/.pnpm/mdast-util-gfm@3.1.0/node_modules/mdast-util-gfm"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1450,7 +1882,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\mdast-util-gfm-autolink-literal@2.0.1\\node_modules\\mdast-util-gfm-autolink-literal"
+        "node_modules/.pnpm/mdast-util-gfm-autolink-literal@2.0.1/node_modules/mdast-util-gfm-autolink-literal"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1463,7 +1895,7 @@
         "2.1.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\mdast-util-gfm-footnote@2.1.0\\node_modules\\mdast-util-gfm-footnote"
+        "node_modules/.pnpm/mdast-util-gfm-footnote@2.1.0/node_modules/mdast-util-gfm-footnote"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1476,7 +1908,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\mdast-util-gfm-strikethrough@2.0.1\\node_modules\\mdast-util-gfm-strikethrough"
+        "node_modules/.pnpm/mdast-util-gfm-strikethrough@2.0.1/node_modules/mdast-util-gfm-strikethrough"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1489,7 +1921,7 @@
         "2.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\mdast-util-gfm-table@2.0.0\\node_modules\\mdast-util-gfm-table"
+        "node_modules/.pnpm/mdast-util-gfm-table@2.0.0/node_modules/mdast-util-gfm-table"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1502,7 +1934,7 @@
         "2.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\mdast-util-gfm-task-list-item@2.0.0\\node_modules\\mdast-util-gfm-task-list-item"
+        "node_modules/.pnpm/mdast-util-gfm-task-list-item@2.0.0/node_modules/mdast-util-gfm-task-list-item"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1515,7 +1947,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\mdast-util-mdx-expression@2.0.1\\node_modules\\mdast-util-mdx-expression"
+        "node_modules/.pnpm/mdast-util-mdx-expression@2.0.1/node_modules/mdast-util-mdx-expression"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1528,7 +1960,7 @@
         "3.2.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\mdast-util-mdx-jsx@3.2.0\\node_modules\\mdast-util-mdx-jsx"
+        "node_modules/.pnpm/mdast-util-mdx-jsx@3.2.0/node_modules/mdast-util-mdx-jsx"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1541,7 +1973,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\mdast-util-mdxjs-esm@2.0.1\\node_modules\\mdast-util-mdxjs-esm"
+        "node_modules/.pnpm/mdast-util-mdxjs-esm@2.0.1/node_modules/mdast-util-mdxjs-esm"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1554,7 +1986,7 @@
         "4.1.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\mdast-util-phrasing@4.1.0\\node_modules\\mdast-util-phrasing"
+        "node_modules/.pnpm/mdast-util-phrasing@4.1.0/node_modules/mdast-util-phrasing"
       ],
       "license": "MIT",
       "author": "Victor Felder",
@@ -1567,7 +1999,7 @@
         "13.2.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\mdast-util-to-hast@13.2.1\\node_modules\\mdast-util-to-hast"
+        "node_modules/.pnpm/mdast-util-to-hast@13.2.1/node_modules/mdast-util-to-hast"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1580,7 +2012,7 @@
         "2.2.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\mdast-util-to-markdown@2.2.1\\node_modules\\mdast-util-to-markdown"
+        "node_modules/.pnpm/mdast-util-to-markdown@2.2.1/node_modules/mdast-util-to-markdown"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1593,7 +2025,7 @@
         "4.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\mdast-util-to-string@4.0.0\\node_modules\\mdast-util-to-string"
+        "node_modules/.pnpm/mdast-util-to-string@4.0.0/node_modules/mdast-util-to-string"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1606,7 +2038,7 @@
         "4.0.3"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark@4.0.3\\node_modules\\micromark"
+        "node_modules/.pnpm/micromark@4.0.3/node_modules/micromark"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1619,7 +2051,7 @@
         "2.0.4"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-core-commonmark@2.0.4\\node_modules\\micromark-core-commonmark"
+        "node_modules/.pnpm/micromark-core-commonmark@2.0.4/node_modules/micromark-core-commonmark"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1632,7 +2064,7 @@
         "3.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-extension-gfm@3.0.0\\node_modules\\micromark-extension-gfm"
+        "node_modules/.pnpm/micromark-extension-gfm@3.0.0/node_modules/micromark-extension-gfm"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1645,7 +2077,7 @@
         "2.1.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-extension-gfm-autolink-literal@2.1.0\\node_modules\\micromark-extension-gfm-autolink-literal"
+        "node_modules/.pnpm/micromark-extension-gfm-autolink-literal@2.1.0/node_modules/micromark-extension-gfm-autolink-literal"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1658,7 +2090,7 @@
         "2.1.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-extension-gfm-footnote@2.1.0\\node_modules\\micromark-extension-gfm-footnote"
+        "node_modules/.pnpm/micromark-extension-gfm-footnote@2.1.0/node_modules/micromark-extension-gfm-footnote"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1671,7 +2103,7 @@
         "2.1.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-extension-gfm-strikethrough@2.1.0\\node_modules\\micromark-extension-gfm-strikethrough"
+        "node_modules/.pnpm/micromark-extension-gfm-strikethrough@2.1.0/node_modules/micromark-extension-gfm-strikethrough"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1684,7 +2116,7 @@
         "2.1.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-extension-gfm-table@2.1.2\\node_modules\\micromark-extension-gfm-table"
+        "node_modules/.pnpm/micromark-extension-gfm-table@2.1.2/node_modules/micromark-extension-gfm-table"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1697,7 +2129,7 @@
         "2.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-extension-gfm-tagfilter@2.0.0\\node_modules\\micromark-extension-gfm-tagfilter"
+        "node_modules/.pnpm/micromark-extension-gfm-tagfilter@2.0.0/node_modules/micromark-extension-gfm-tagfilter"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1710,7 +2142,7 @@
         "2.1.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-extension-gfm-task-list-item@2.1.0\\node_modules\\micromark-extension-gfm-task-list-item"
+        "node_modules/.pnpm/micromark-extension-gfm-task-list-item@2.1.0/node_modules/micromark-extension-gfm-task-list-item"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1723,7 +2155,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-factory-destination@2.0.1\\node_modules\\micromark-factory-destination"
+        "node_modules/.pnpm/micromark-factory-destination@2.0.1/node_modules/micromark-factory-destination"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1736,7 +2168,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-factory-label@2.0.1\\node_modules\\micromark-factory-label"
+        "node_modules/.pnpm/micromark-factory-label@2.0.1/node_modules/micromark-factory-label"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1749,7 +2181,7 @@
         "2.1.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-factory-space@2.1.0\\node_modules\\micromark-factory-space"
+        "node_modules/.pnpm/micromark-factory-space@2.1.0/node_modules/micromark-factory-space"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1762,7 +2194,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-factory-title@2.0.1\\node_modules\\micromark-factory-title"
+        "node_modules/.pnpm/micromark-factory-title@2.0.1/node_modules/micromark-factory-title"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1775,7 +2207,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-factory-whitespace@2.0.1\\node_modules\\micromark-factory-whitespace"
+        "node_modules/.pnpm/micromark-factory-whitespace@2.0.1/node_modules/micromark-factory-whitespace"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1788,7 +2220,7 @@
         "2.1.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-util-character@2.1.1\\node_modules\\micromark-util-character"
+        "node_modules/.pnpm/micromark-util-character@2.1.1/node_modules/micromark-util-character"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1801,7 +2233,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-util-chunked@2.0.1\\node_modules\\micromark-util-chunked"
+        "node_modules/.pnpm/micromark-util-chunked@2.0.1/node_modules/micromark-util-chunked"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1814,7 +2246,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-util-classify-character@2.0.1\\node_modules\\micromark-util-classify-character"
+        "node_modules/.pnpm/micromark-util-classify-character@2.0.1/node_modules/micromark-util-classify-character"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1827,7 +2259,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-util-combine-extensions@2.0.1\\node_modules\\micromark-util-combine-extensions"
+        "node_modules/.pnpm/micromark-util-combine-extensions@2.0.1/node_modules/micromark-util-combine-extensions"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1840,7 +2272,7 @@
         "2.0.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-util-decode-numeric-character-reference@2.0.2\\node_modules\\micromark-util-decode-numeric-character-reference"
+        "node_modules/.pnpm/micromark-util-decode-numeric-character-reference@2.0.2/node_modules/micromark-util-decode-numeric-character-reference"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1853,7 +2285,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-util-decode-string@2.0.1\\node_modules\\micromark-util-decode-string"
+        "node_modules/.pnpm/micromark-util-decode-string@2.0.1/node_modules/micromark-util-decode-string"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1866,7 +2298,7 @@
         "1.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-util-edit-map@1.0.0\\node_modules\\micromark-util-edit-map"
+        "node_modules/.pnpm/micromark-util-edit-map@1.0.0/node_modules/micromark-util-edit-map"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1879,7 +2311,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-util-encode@2.0.1\\node_modules\\micromark-util-encode"
+        "node_modules/.pnpm/micromark-util-encode@2.0.1/node_modules/micromark-util-encode"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1892,7 +2324,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-util-html-tag-name@2.0.1\\node_modules\\micromark-util-html-tag-name"
+        "node_modules/.pnpm/micromark-util-html-tag-name@2.0.1/node_modules/micromark-util-html-tag-name"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1905,7 +2337,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-util-normalize-identifier@2.0.1\\node_modules\\micromark-util-normalize-identifier"
+        "node_modules/.pnpm/micromark-util-normalize-identifier@2.0.1/node_modules/micromark-util-normalize-identifier"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1918,7 +2350,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-util-resolve-all@2.0.1\\node_modules\\micromark-util-resolve-all"
+        "node_modules/.pnpm/micromark-util-resolve-all@2.0.1/node_modules/micromark-util-resolve-all"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1931,7 +2363,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-util-sanitize-uri@2.0.1\\node_modules\\micromark-util-sanitize-uri"
+        "node_modules/.pnpm/micromark-util-sanitize-uri@2.0.1/node_modules/micromark-util-sanitize-uri"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1944,7 +2376,7 @@
         "2.1.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-util-subtokenize@2.1.0\\node_modules\\micromark-util-subtokenize"
+        "node_modules/.pnpm/micromark-util-subtokenize@2.1.0/node_modules/micromark-util-subtokenize"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1957,7 +2389,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-util-symbol@2.0.1\\node_modules\\micromark-util-symbol"
+        "node_modules/.pnpm/micromark-util-symbol@2.0.1/node_modules/micromark-util-symbol"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1970,7 +2402,7 @@
         "2.0.3"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\micromark-util-types@2.0.3\\node_modules\\micromark-util-types"
+        "node_modules/.pnpm/micromark-util-types@2.0.3/node_modules/micromark-util-types"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -1983,7 +2415,7 @@
         "2.1.3"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\ms@2.1.3\\node_modules\\ms"
+        "node_modules/.pnpm/ms@2.1.3/node_modules/ms"
       ],
       "license": "MIT",
       "homepage": "https://github.com/vercel/ms#readme",
@@ -1995,7 +2427,7 @@
         "3.3.20"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\nanoid@3.3.20\\node_modules\\nanoid"
+        "node_modules/.pnpm/nanoid@3.3.20/node_modules/nanoid"
       ],
       "license": "MIT",
       "author": "Andrey Sitnik",
@@ -2008,7 +2440,7 @@
         "2.2.28"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\nwsapi@2.2.28\\node_modules\\nwsapi"
+        "node_modules/.pnpm/nwsapi@2.2.28/node_modules/nwsapi"
       ],
       "license": "MIT",
       "author": "Diego Perini",
@@ -2021,7 +2453,7 @@
         "3.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\obug@3.0.0\\node_modules\\obug"
+        "node_modules/.pnpm/obug@3.0.0/node_modules/obug"
       ],
       "license": "MIT",
       "author": "Kevin Deng",
@@ -2034,7 +2466,7 @@
         "7.10.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\openapi-typescript@7.10.1_typescript@5.9.3\\node_modules\\openapi-typescript"
+        "node_modules/.pnpm/openapi-typescript@7.10.1_typescript@5.9.3/node_modules/openapi-typescript"
       ],
       "license": "MIT",
       "author": "Drew Powers",
@@ -2047,7 +2479,7 @@
         "4.0.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\parse-entities@4.0.2\\node_modules\\parse-entities"
+        "node_modules/.pnpm/parse-entities@4.0.2/node_modules/parse-entities"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -2060,7 +2492,7 @@
         "8.3.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\parse-json@8.3.0\\node_modules\\parse-json"
+        "node_modules/.pnpm/parse-json@8.3.0/node_modules/parse-json"
       ],
       "license": "MIT",
       "author": "Sindre Sorhus",
@@ -2073,7 +2505,7 @@
         "7.3.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\parse5@7.3.0\\node_modules\\parse5"
+        "node_modules/.pnpm/parse5@7.3.0/node_modules/parse5"
       ],
       "license": "MIT",
       "author": "Ivan Nikulin",
@@ -2086,7 +2518,7 @@
         "4.0.7"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\picomatch@4.0.7\\node_modules\\picomatch"
+        "node_modules/.pnpm/picomatch@4.0.7/node_modules/picomatch"
       ],
       "license": "MIT",
       "author": "Jon Schlinkert",
@@ -2099,7 +2531,7 @@
         "8.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\pluralize@8.0.0\\node_modules\\pluralize"
+        "node_modules/.pnpm/pluralize@8.0.0/node_modules/pluralize"
       ],
       "license": "MIT",
       "author": "Blake Embrey",
@@ -2112,7 +2544,7 @@
         "8.5.32"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\postcss@8.5.32\\node_modules\\postcss"
+        "node_modules/.pnpm/postcss@8.5.32/node_modules/postcss"
       ],
       "license": "MIT",
       "author": "Andrey Sitnik",
@@ -2125,7 +2557,7 @@
         "27.5.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\pretty-format@27.5.1\\node_modules\\pretty-format"
+        "node_modules/.pnpm/pretty-format@27.5.1/node_modules/pretty-format"
       ],
       "license": "MIT",
       "author": "James Kyle",
@@ -2138,7 +2570,7 @@
         "7.2.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\property-information@7.2.0\\node_modules\\property-information"
+        "node_modules/.pnpm/property-information@7.2.0/node_modules/property-information"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -2151,7 +2583,7 @@
         "2.3.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\punycode@2.3.1\\node_modules\\punycode"
+        "node_modules/.pnpm/punycode@2.3.1/node_modules/punycode"
       ],
       "license": "MIT",
       "author": "Mathias Bynens",
@@ -2164,7 +2596,7 @@
         "19.3.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\react@19.3.1\\node_modules\\react"
+        "node_modules/.pnpm/react@19.3.1/node_modules/react"
       ],
       "license": "MIT",
       "homepage": "https://react.dev/",
@@ -2176,7 +2608,7 @@
         "19.3.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\react-dom@19.3.1_react@19.3.1\\node_modules\\react-dom"
+        "node_modules/.pnpm/react-dom@19.3.1_react@19.3.1/node_modules/react-dom"
       ],
       "license": "MIT",
       "homepage": "https://react.dev/",
@@ -2188,7 +2620,7 @@
         "17.0.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\react-is@17.0.2\\node_modules\\react-is"
+        "node_modules/.pnpm/react-is@17.0.2/node_modules/react-is"
       ],
       "license": "MIT",
       "homepage": "https://reactjs.org/",
@@ -2200,7 +2632,7 @@
         "10.1.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\react-markdown@10.1.0_@types+react@19.3.0_react@19.3.1\\node_modules\\react-markdown"
+        "node_modules/.pnpm/react-markdown@10.1.0_@types+react@19.3.0_react@19.3.1/node_modules/react-markdown"
       ],
       "license": "MIT",
       "author": "Espen Hovlandsdal",
@@ -2208,12 +2640,51 @@
       "description": "React component to render markdown"
     },
     {
+      "name": "react-remove-scroll",
+      "versions": [
+        "2.7.2"
+      ],
+      "paths": [
+        "node_modules/.pnpm/react-remove-scroll@2.7.2_@types+react@19.3.0_react@19.3.1/node_modules/react-remove-scroll"
+      ],
+      "license": "MIT",
+      "author": "Anton Korzunov",
+      "homepage": "https://github.com/theKashey/react-remove-scroll#readme",
+      "description": "Disables scroll outside of `children` node."
+    },
+    {
+      "name": "react-remove-scroll-bar",
+      "versions": [
+        "2.3.8"
+      ],
+      "paths": [
+        "node_modules/.pnpm/react-remove-scroll-bar@2.3_4bc8444c555b29ac9388a23b7e4da306/node_modules/react-remove-scroll-bar"
+      ],
+      "license": "MIT",
+      "author": "Anton Korzunov",
+      "homepage": "https://github.com/theKashey/react-remove-scroll-bar#readme",
+      "description": "Removes body scroll without content _shake_"
+    },
+    {
+      "name": "react-style-singleton",
+      "versions": [
+        "2.2.3"
+      ],
+      "paths": [
+        "node_modules/.pnpm/react-style-singleton@2.2.3_@types+react@19.3.0_react@19.3.1/node_modules/react-style-singleton"
+      ],
+      "license": "MIT",
+      "author": "Anton Korzunov",
+      "homepage": "https://github.com/theKashey/react-style-singleton#readme",
+      "description": "Just create a single stylesheet..."
+    },
+    {
       "name": "remark-gfm",
       "versions": [
         "4.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\remark-gfm@4.0.1\\node_modules\\remark-gfm"
+        "node_modules/.pnpm/remark-gfm@4.0.1/node_modules/remark-gfm"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -2226,7 +2697,7 @@
         "11.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\remark-parse@11.0.0\\node_modules\\remark-parse"
+        "node_modules/.pnpm/remark-parse@11.0.0/node_modules/remark-parse"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -2239,7 +2710,7 @@
         "11.1.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\remark-rehype@11.1.2\\node_modules\\remark-rehype"
+        "node_modules/.pnpm/remark-rehype@11.1.2/node_modules/remark-rehype"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -2252,7 +2723,7 @@
         "11.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\remark-stringify@11.0.0\\node_modules\\remark-stringify"
+        "node_modules/.pnpm/remark-stringify@11.0.0/node_modules/remark-stringify"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -2265,7 +2736,7 @@
         "2.0.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\require-from-string@2.0.2\\node_modules\\require-from-string"
+        "node_modules/.pnpm/require-from-string@2.0.2/node_modules/require-from-string"
       ],
       "license": "MIT",
       "author": "Vsevolod Strukchinsky",
@@ -2278,7 +2749,7 @@
         "1.2.15"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\rolldown@1.2.15\\node_modules\\rolldown"
+        "node_modules/.pnpm/rolldown@1.2.15/node_modules/rolldown"
       ],
       "license": "MIT",
       "homepage": "https://rolldown.rs/",
@@ -2290,7 +2761,7 @@
         "0.8.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\rrweb-cssom@0.8.0\\node_modules\\rrweb-cssom"
+        "node_modules/.pnpm/rrweb-cssom@0.8.0/node_modules/rrweb-cssom"
       ],
       "license": "MIT",
       "author": "Nikita Vasilyev",
@@ -2303,7 +2774,7 @@
         "2.1.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\safer-buffer@2.1.2\\node_modules\\safer-buffer"
+        "node_modules/.pnpm/safer-buffer@2.1.2/node_modules/safer-buffer"
       ],
       "license": "MIT",
       "author": "Nikita Skovoroda",
@@ -2316,7 +2787,7 @@
         "0.28.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\scheduler@0.28.0\\node_modules\\scheduler"
+        "node_modules/.pnpm/scheduler@0.28.0/node_modules/scheduler"
       ],
       "license": "MIT",
       "homepage": "https://react.dev/",
@@ -2328,7 +2799,7 @@
         "1.7.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\seroval@1.7.2\\node_modules\\seroval"
+        "node_modules/.pnpm/seroval@1.7.2/node_modules/seroval"
       ],
       "license": "MIT",
       "author": "Alexis Munsayac",
@@ -2341,7 +2812,7 @@
         "1.7.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\seroval-plugins@1.7.2_seroval@1.7.2\\node_modules\\seroval-plugins"
+        "node_modules/.pnpm/seroval-plugins@1.7.2_seroval@1.7.2/node_modules/seroval-plugins"
       ],
       "license": "MIT",
       "author": "Alexis Munsayac",
@@ -2354,7 +2825,7 @@
         "2.0.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\space-separated-tokens@2.0.2\\node_modules\\space-separated-tokens"
+        "node_modules/.pnpm/space-separated-tokens@2.0.2/node_modules/space-separated-tokens"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -2367,7 +2838,7 @@
         "4.3.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\std-env@4.3.0\\node_modules\\std-env"
+        "node_modules/.pnpm/std-env@4.3.0/node_modules/std-env"
       ],
       "license": "MIT",
       "homepage": "https://github.com/unjs/std-env#readme",
@@ -2379,7 +2850,7 @@
         "4.0.4"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\stringify-entities@4.0.4\\node_modules\\stringify-entities"
+        "node_modules/.pnpm/stringify-entities@4.0.4/node_modules/stringify-entities"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -2392,7 +2863,7 @@
         "1.1.21"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\style-to-js@1.1.21\\node_modules\\style-to-js"
+        "node_modules/.pnpm/style-to-js@1.1.21/node_modules/style-to-js"
       ],
       "license": "MIT",
       "author": "Mark",
@@ -2405,7 +2876,7 @@
         "1.0.14"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\style-to-object@1.0.14\\node_modules\\style-to-object"
+        "node_modules/.pnpm/style-to-object@1.0.14/node_modules/style-to-object"
       ],
       "license": "MIT",
       "author": "Mark",
@@ -2418,7 +2889,7 @@
         "10.2.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\supports-color@10.2.2\\node_modules\\supports-color"
+        "node_modules/.pnpm/supports-color@10.2.2/node_modules/supports-color"
       ],
       "license": "MIT",
       "author": "Sindre Sorhus",
@@ -2431,7 +2902,7 @@
         "3.2.4"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\symbol-tree@3.2.4\\node_modules\\symbol-tree"
+        "node_modules/.pnpm/symbol-tree@3.2.4/node_modules/symbol-tree"
       ],
       "license": "MIT",
       "author": "Joris van der Wel",
@@ -2444,7 +2915,7 @@
         "3.7.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\tailwind-merge@3.7.0\\node_modules\\tailwind-merge"
+        "node_modules/.pnpm/tailwind-merge@3.7.0/node_modules/tailwind-merge"
       ],
       "license": "MIT",
       "author": "Dany Castillo",
@@ -2457,7 +2928,7 @@
         "4.3.3"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\tailwindcss@4.3.3\\node_modules\\tailwindcss"
+        "node_modules/.pnpm/tailwindcss@4.3.3/node_modules/tailwindcss"
       ],
       "license": "MIT",
       "homepage": "https://tailwindcss.com",
@@ -2469,7 +2940,7 @@
         "2.3.3"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\tapable@2.3.3\\node_modules\\tapable"
+        "node_modules/.pnpm/tapable@2.3.3/node_modules/tapable"
       ],
       "license": "MIT",
       "author": "Tobias Koppers @sokra",
@@ -2482,7 +2953,7 @@
         "6.2.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\tinybench@6.2.2\\node_modules\\tinybench"
+        "node_modules/.pnpm/tinybench@6.2.2/node_modules/tinybench"
       ],
       "license": "MIT",
       "homepage": "https://github.com/tinylibs/tinybench#readme",
@@ -2494,7 +2965,7 @@
         "1.3.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\tinyexec@1.3.1\\node_modules\\tinyexec"
+        "node_modules/.pnpm/tinyexec@1.3.1/node_modules/tinyexec"
       ],
       "license": "MIT",
       "author": "James Garbutt",
@@ -2507,7 +2978,7 @@
         "0.2.17"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\tinyglobby@0.2.17\\node_modules\\tinyglobby"
+        "node_modules/.pnpm/tinyglobby@0.2.17/node_modules/tinyglobby"
       ],
       "license": "MIT",
       "author": "Superchupu",
@@ -2520,7 +2991,7 @@
         "6.1.86"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\tldts@6.1.86\\node_modules\\tldts"
+        "node_modules/.pnpm/tldts@6.1.86/node_modules/tldts"
       ],
       "license": "MIT",
       "author": "Rémi Berson",
@@ -2533,7 +3004,7 @@
         "6.1.86"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\tldts-core@6.1.86\\node_modules\\tldts-core"
+        "node_modules/.pnpm/tldts-core@6.1.86/node_modules/tldts-core"
       ],
       "license": "MIT",
       "author": "Rémi Berson",
@@ -2546,7 +3017,7 @@
         "5.1.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\tr46@5.1.1\\node_modules\\tr46"
+        "node_modules/.pnpm/tr46@5.1.1/node_modules/tr46"
       ],
       "license": "MIT",
       "author": "Sebastian Mayr",
@@ -2559,7 +3030,7 @@
         "3.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\trim-lines@3.0.1\\node_modules\\trim-lines"
+        "node_modules/.pnpm/trim-lines@3.0.1/node_modules/trim-lines"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -2572,7 +3043,7 @@
         "2.2.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\trough@2.2.0\\node_modules\\trough"
+        "node_modules/.pnpm/trough@2.2.0/node_modules/trough"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -2585,7 +3056,7 @@
         "6.21.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\undici-types@6.21.0\\node_modules\\undici-types"
+        "node_modules/.pnpm/undici-types@6.21.0/node_modules/undici-types"
       ],
       "license": "MIT",
       "homepage": "https://undici.nodejs.org",
@@ -2597,7 +3068,7 @@
         "11.0.5"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\unified@11.0.5\\node_modules\\unified"
+        "node_modules/.pnpm/unified@11.0.5/node_modules/unified"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -2610,7 +3081,7 @@
         "6.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\unist-util-is@6.0.1\\node_modules\\unist-util-is"
+        "node_modules/.pnpm/unist-util-is@6.0.1/node_modules/unist-util-is"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -2623,7 +3094,7 @@
         "5.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\unist-util-position@5.0.0\\node_modules\\unist-util-position"
+        "node_modules/.pnpm/unist-util-position@5.0.0/node_modules/unist-util-position"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -2636,7 +3107,7 @@
         "4.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\unist-util-stringify-position@4.0.0\\node_modules\\unist-util-stringify-position"
+        "node_modules/.pnpm/unist-util-stringify-position@4.0.0/node_modules/unist-util-stringify-position"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -2649,7 +3120,7 @@
         "5.2.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\unist-util-visit@5.2.0\\node_modules\\unist-util-visit"
+        "node_modules/.pnpm/unist-util-visit@5.2.0/node_modules/unist-util-visit"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -2662,7 +3133,7 @@
         "6.1.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\unist-util-visit-parents@6.1.0\\node_modules\\unist-util-visit-parents"
+        "node_modules/.pnpm/unist-util-visit-parents@6.1.0/node_modules/unist-util-visit-parents"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -2675,7 +3146,7 @@
         "1.0.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\uri-js-replace@1.0.2\\node_modules\\uri-js-replace"
+        "node_modules/.pnpm/uri-js-replace@1.0.2/node_modules/uri-js-replace"
       ],
       "license": "MIT",
       "author": "https://github.com/andreinwald",
@@ -2683,12 +3154,38 @@
       "description": "Replacement for abandoned library URI.js (uri-js)"
     },
     {
+      "name": "use-callback-ref",
+      "versions": [
+        "1.3.3"
+      ],
+      "paths": [
+        "node_modules/.pnpm/use-callback-ref@1.3.3_@types+react@19.3.0_react@19.3.1/node_modules/use-callback-ref"
+      ],
+      "license": "MIT",
+      "author": "theKashey",
+      "homepage": "https://github.com/theKashey/use-callback-ref#readme",
+      "description": "The same useRef, but with callback"
+    },
+    {
+      "name": "use-sidecar",
+      "versions": [
+        "1.1.3"
+      ],
+      "paths": [
+        "node_modules/.pnpm/use-sidecar@1.1.3_@types+react@19.3.0_react@19.3.1/node_modules/use-sidecar"
+      ],
+      "license": "MIT",
+      "author": "theKashey",
+      "homepage": "https://github.com/theKashey/use-sidecar",
+      "description": "Sidecar code splitting utils"
+    },
+    {
       "name": "use-sync-external-store",
       "versions": [
         "1.7.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\use-sync-external-store@1.7.0_react@19.3.1\\node_modules\\use-sync-external-store"
+        "node_modules/.pnpm/use-sync-external-store@1.7.0_react@19.3.1/node_modules/use-sync-external-store"
       ],
       "license": "MIT",
       "homepage": "https://github.com/react/react#readme",
@@ -2700,7 +3197,7 @@
         "6.0.3"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\vfile@6.0.3\\node_modules\\vfile"
+        "node_modules/.pnpm/vfile@6.0.3/node_modules/vfile"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -2713,7 +3210,7 @@
         "4.0.3"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\vfile-message@4.0.3\\node_modules\\vfile-message"
+        "node_modules/.pnpm/vfile-message@4.0.3/node_modules/vfile-message"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -2726,7 +3223,7 @@
         "8.3.4"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\vite@8.3.4_@types+node@22.20.5_jiti@2.7.0\\node_modules\\vite"
+        "node_modules/.pnpm/vite@8.3.4_@types+node@22.20.5_jiti@2.7.0/node_modules/vite"
       ],
       "license": "MIT",
       "author": "Evan You",
@@ -2739,7 +3236,7 @@
         "5.0.5"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\vitest@5.0.5_@types+node@22_21bdf4aae02595fcc03e6bdba53cb4d9\\node_modules\\vitest"
+        "node_modules/.pnpm/vitest@5.0.5_@types+node@22_21bdf4aae02595fcc03e6bdba53cb4d9/node_modules/vitest"
       ],
       "license": "MIT",
       "author": "Anthony Fu",
@@ -2752,7 +3249,7 @@
         "5.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\w3c-xmlserializer@5.0.0\\node_modules\\w3c-xmlserializer"
+        "node_modules/.pnpm/w3c-xmlserializer@5.0.0/node_modules/w3c-xmlserializer"
       ],
       "license": "MIT",
       "homepage": "https://github.com/jsdom/w3c-xmlserializer#readme",
@@ -2764,7 +3261,7 @@
         "3.1.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\whatwg-encoding@3.1.1\\node_modules\\whatwg-encoding"
+        "node_modules/.pnpm/whatwg-encoding@3.1.1/node_modules/whatwg-encoding"
       ],
       "license": "MIT",
       "author": "Domenic Denicola",
@@ -2777,7 +3274,7 @@
         "4.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\whatwg-mimetype@4.0.0\\node_modules\\whatwg-mimetype"
+        "node_modules/.pnpm/whatwg-mimetype@4.0.0/node_modules/whatwg-mimetype"
       ],
       "license": "MIT",
       "author": "Domenic Denicola",
@@ -2790,7 +3287,7 @@
         "14.2.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\whatwg-url@14.2.0\\node_modules\\whatwg-url"
+        "node_modules/.pnpm/whatwg-url@14.2.0/node_modules/whatwg-url"
       ],
       "license": "MIT",
       "author": "Sebastian Mayr",
@@ -2803,7 +3300,7 @@
         "3.2.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\why-is-node-running@3.2.1\\node_modules\\why-is-node-running"
+        "node_modules/.pnpm/why-is-node-running@3.2.1/node_modules/why-is-node-running"
       ],
       "license": "MIT",
       "author": "Mathias Buus",
@@ -2816,7 +3313,7 @@
         "8.22.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\ws@8.22.0\\node_modules\\ws"
+        "node_modules/.pnpm/ws@8.22.0/node_modules/ws"
       ],
       "license": "MIT",
       "author": "Einar Otto Stangvik",
@@ -2829,7 +3326,7 @@
         "2.2.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\xmlchars@2.2.0\\node_modules\\xmlchars"
+        "node_modules/.pnpm/xmlchars@2.2.0/node_modules/xmlchars"
       ],
       "license": "MIT",
       "author": "Louis-Dominique Dubeau",
@@ -2842,7 +3339,7 @@
         "2.0.4"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\zwitch@2.0.4\\node_modules\\zwitch"
+        "node_modules/.pnpm/zwitch@2.0.4/node_modules/zwitch"
       ],
       "license": "MIT",
       "author": "Titus Wormer",
@@ -2857,7 +3354,7 @@
         "2.5.15"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@biomejs+biome@2.5.15\\node_modules\\@biomejs\\biome"
+        "node_modules/.pnpm/@biomejs+biome@2.5.15/node_modules/@biomejs/biome"
       ],
       "license": "MIT OR Apache-2.0",
       "author": "Emanuele Stoppa",
@@ -2870,7 +3367,7 @@
         "2.5.15"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@biomejs+cli-win32-x64@2.5.15\\node_modules\\@biomejs\\cli-win32-x64"
+        "node_modules/.pnpm/@biomejs+cli-win32-x64@2.5.15/node_modules/@biomejs/cli-win32-x64"
       ],
       "license": "MIT OR Apache-2.0",
       "homepage": "https://biomejs.dev"
@@ -2883,7 +3380,7 @@
         "5.1.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@csstools+color-helpers@5.1.0\\node_modules\\@csstools\\color-helpers"
+        "node_modules/.pnpm/@csstools+color-helpers@5.1.0/node_modules/@csstools/color-helpers"
       ],
       "license": "MIT-0",
       "homepage": "https://github.com/csstools/postcss-plugins/tree/main/packages/color-helpers#readme",
@@ -2897,7 +3394,7 @@
         "1.64.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@playwright+test@1.64.1\\node_modules\\@playwright\\test"
+        "node_modules/.pnpm/@playwright+test@1.64.1/node_modules/@playwright/test"
       ],
       "license": "Apache-2.0",
       "author": "Microsoft Corporation",
@@ -2910,7 +3407,7 @@
         "5.3.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\aria-query@5.3.0\\node_modules\\aria-query"
+        "node_modules/.pnpm/aria-query@5.3.0/node_modules/aria-query"
       ],
       "license": "Apache-2.0",
       "author": "Jesse Beach",
@@ -2923,7 +3420,7 @@
         "0.7.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\class-variance-authority@0.7.1\\node_modules\\class-variance-authority"
+        "node_modules/.pnpm/class-variance-authority@0.7.1/node_modules/class-variance-authority"
       ],
       "license": "Apache-2.0",
       "author": "Joe Bell",
@@ -2936,7 +3433,7 @@
         "2.1.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\detect-libc@2.1.2\\node_modules\\detect-libc"
+        "node_modules/.pnpm/detect-libc@2.1.2/node_modules/detect-libc"
       ],
       "license": "Apache-2.0",
       "author": "Lovell Fuller",
@@ -2949,7 +3446,7 @@
         "1.4.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\expect-type@1.4.0\\node_modules\\expect-type"
+        "node_modules/.pnpm/expect-type@1.4.0/node_modules/expect-type"
       ],
       "license": "Apache-2.0",
       "homepage": "https://github.com/mmkal/expect-type#readme"
@@ -2960,7 +3457,7 @@
         "1.64.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\playwright@1.64.1\\node_modules\\playwright"
+        "node_modules/.pnpm/playwright@1.64.1/node_modules/playwright"
       ],
       "license": "Apache-2.0",
       "author": "Microsoft Corporation",
@@ -2973,7 +3470,7 @@
         "1.64.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\playwright-core@1.64.1\\node_modules\\playwright-core"
+        "node_modules/.pnpm/playwright-core@1.64.1/node_modules/playwright-core"
       ],
       "license": "Apache-2.0",
       "author": "Microsoft Corporation",
@@ -2986,7 +3483,7 @@
         "5.9.3"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\typescript@5.9.3\\node_modules\\typescript"
+        "node_modules/.pnpm/typescript@5.9.3/node_modules/typescript"
       ],
       "license": "Apache-2.0",
       "author": "Microsoft Corp.",
@@ -2999,7 +3496,7 @@
         "5.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\xml-name-validator@5.0.0\\node_modules\\xml-name-validator"
+        "node_modules/.pnpm/xml-name-validator@5.0.0/node_modules/xml-name-validator"
       ],
       "license": "Apache-2.0",
       "author": "Domenic Denicola",
@@ -3012,7 +3509,7 @@
         "0.0.43"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\yaml-ast-parser@0.0.43\\node_modules\\yaml-ast-parser"
+        "node_modules/.pnpm/yaml-ast-parser@0.0.43/node_modules/yaml-ast-parser"
       ],
       "license": "Apache-2.0",
       "homepage": "https://github.com/mulesoft-labs/yaml-ast-parser"
@@ -3025,7 +3522,7 @@
         "1.4.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\@ungap+structured-clone@1.4.0\\node_modules\\@ungap\\structured-clone"
+        "node_modules/.pnpm/@ungap+structured-clone@1.4.0/node_modules/@ungap/structured-clone"
       ],
       "license": "ISC",
       "author": "Andrea Giammarchi",
@@ -3038,7 +3535,7 @@
         "4.2.11"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\graceful-fs@4.2.11\\node_modules\\graceful-fs"
+        "node_modules/.pnpm/graceful-fs@4.2.11/node_modules/graceful-fs"
       ],
       "license": "ISC",
       "homepage": "https://github.com/isaacs/node-graceful-fs#readme",
@@ -3050,7 +3547,7 @@
         "10.4.3"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\lru-cache@10.4.3\\node_modules\\lru-cache"
+        "node_modules/.pnpm/lru-cache@10.4.3/node_modules/lru-cache"
       ],
       "license": "ISC",
       "author": "Isaac Z. Schlueter",
@@ -3058,12 +3555,25 @@
       "description": "A cache object that deletes the least-recently-used items."
     },
     {
+      "name": "lucide-react",
+      "versions": [
+        "1.73.0"
+      ],
+      "paths": [
+        "node_modules/.pnpm/lucide-react@1.73.0_@types+react@19.3.0_react@19.3.1/node_modules/lucide-react"
+      ],
+      "license": "ISC",
+      "author": "Eric Fennis",
+      "homepage": "https://lucide.dev",
+      "description": "A Lucide icon library package for React applications."
+    },
+    {
       "name": "minimatch",
       "versions": [
         "5.1.9"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\minimatch@5.1.9\\node_modules\\minimatch"
+        "node_modules/.pnpm/minimatch@5.1.9/node_modules/minimatch"
       ],
       "license": "ISC",
       "author": "Isaac Z. Schlueter",
@@ -3076,7 +3586,7 @@
         "1.1.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\picocolors@1.1.1\\node_modules\\picocolors"
+        "node_modules/.pnpm/picocolors@1.1.1/node_modules/picocolors"
       ],
       "license": "ISC",
       "author": "Alexey Raspopov",
@@ -3089,7 +3599,7 @@
         "6.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\saxes@6.0.0\\node_modules\\saxes"
+        "node_modules/.pnpm/saxes@6.0.0/node_modules/saxes"
       ],
       "license": "ISC",
       "author": "Louis-Dominique Dubeau",
@@ -3102,7 +3612,7 @@
         "21.1.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\yargs-parser@21.1.1\\node_modules\\yargs-parser"
+        "node_modules/.pnpm/yargs-parser@21.1.1/node_modules/yargs-parser"
       ],
       "license": "ISC",
       "author": "Ben Coe",
@@ -3117,7 +3627,7 @@
         "2.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\argparse@2.0.1\\node_modules\\argparse"
+        "node_modules/.pnpm/argparse@2.0.1/node_modules/argparse"
       ],
       "license": "Python-2.0",
       "homepage": "https://github.com/nodeca/argparse#readme",
@@ -3131,7 +3641,7 @@
         "6.0.1"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\entities@6.0.1\\node_modules\\entities"
+        "node_modules/.pnpm/entities@6.0.1/node_modules/entities"
       ],
       "license": "BSD-2-Clause",
       "author": "Felix Boehm",
@@ -3144,7 +3654,7 @@
         "7.0.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\webidl-conversions@7.0.0\\node_modules\\webidl-conversions"
+        "node_modules/.pnpm/webidl-conversions@7.0.0/node_modules/webidl-conversions"
       ],
       "license": "BSD-2-Clause",
       "author": "Domenic Denicola",
@@ -3159,7 +3669,7 @@
         "5.2.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\isbot@5.2.2\\node_modules\\isbot"
+        "node_modules/.pnpm/isbot@5.2.2/node_modules/isbot"
       ],
       "license": "Unlicense",
       "homepage": "https://isbot.js.org",
@@ -3174,8 +3684,8 @@
         "1.33.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\lightningcss@1.32.0\\node_modules\\lightningcss",
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\lightningcss@1.33.0\\node_modules\\lightningcss"
+        "node_modules/.pnpm/lightningcss@1.32.0/node_modules/lightningcss",
+        "node_modules/.pnpm/lightningcss@1.33.0/node_modules/lightningcss"
       ],
       "license": "MPL-2.0",
       "homepage": "https://github.com/parcel-bundler/lightningcss#readme",
@@ -3188,8 +3698,8 @@
         "1.33.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\lightningcss-win32-x64-msvc@1.32.0\\node_modules\\lightningcss-win32-x64-msvc",
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\lightningcss-win32-x64-msvc@1.33.0\\node_modules\\lightningcss-win32-x64-msvc"
+        "node_modules/.pnpm/lightningcss-win32-x64-msvc@1.32.0/node_modules/lightningcss-win32-x64-msvc",
+        "node_modules/.pnpm/lightningcss-win32-x64-msvc@1.33.0/node_modules/lightningcss-win32-x64-msvc"
       ],
       "license": "MPL-2.0",
       "homepage": "https://github.com/parcel-bundler/lightningcss#readme",
@@ -3203,7 +3713,7 @@
         "1.2.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\source-map-js@1.2.2\\node_modules\\source-map-js"
+        "node_modules/.pnpm/source-map-js@1.2.2/node_modules/source-map-js"
       ],
       "license": "BSD-3-Clause",
       "author": "Valentin 7rulnik Semirulnik",
@@ -3216,12 +3726,27 @@
         "5.1.2"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\tough-cookie@5.1.2\\node_modules\\tough-cookie"
+        "node_modules/.pnpm/tough-cookie@5.1.2/node_modules/tough-cookie"
       ],
       "license": "BSD-3-Clause",
       "author": "Jeremy Stashewsky",
       "homepage": "https://github.com/salesforce/tough-cookie",
       "description": "RFC6265 Cookies and Cookie Jar for node.js"
+    }
+  ],
+  "0BSD": [
+    {
+      "name": "tslib",
+      "versions": [
+        "2.9.1"
+      ],
+      "paths": [
+        "node_modules/.pnpm/tslib@2.9.1/node_modules/tslib"
+      ],
+      "license": "0BSD",
+      "author": "Microsoft Corp.",
+      "homepage": "https://www.typescriptlang.org/",
+      "description": "Runtime library for TypeScript helper functions"
     }
   ],
   "(MIT OR CC0-1.0)": [
@@ -3231,7 +3756,7 @@
         "4.41.0"
       ],
       "paths": [
-        "E:\\agent-project\\.tools\\tuskrag-work\\frontend\\node_modules\\.pnpm\\type-fest@4.41.0\\node_modules\\type-fest"
+        "node_modules/.pnpm/type-fest@4.41.0/node_modules/type-fest"
       ],
       "license": "(MIT OR CC0-1.0)",
       "author": "Sindre Sorhus",

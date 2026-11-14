@@ -1,3 +1,5 @@
+import { Label } from "@tuskrag/ui/label";
+import { Checkbox } from "@tuskrag/ui/checkbox";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   type ACLMode,
@@ -16,7 +18,7 @@ import {
 } from "@tuskrag/api-client";
 import { Button } from "@tuskrag/ui/button";
 import { Input } from "@tuskrag/ui/input";
-import { Select } from "@tuskrag/ui/select";
+import { Select, SelectItem } from "@tuskrag/ui/select";
 import { type FormEvent, useState } from "react";
 
 function aclErrorMessage(error: unknown): string {
@@ -152,7 +154,7 @@ function UserGroupsEditor({ identity }: { identity: Identity }) {
         </p>
       )}
       <form onSubmit={handleCreate} className="flex flex-wrap items-end gap-2">
-        <label className="block space-y-1">
+        <Label className="block space-y-1">
           <span>新建用户组</span>
           <Input
             aria-label="新建用户组名称"
@@ -160,7 +162,7 @@ function UserGroupsEditor({ identity }: { identity: Identity }) {
             onChange={(e) => setGroupName(e.target.value)}
             placeholder="例如：finance-team"
           />
-        </label>
+        </Label>
         <Button type="submit" disabled={create.isPending}>
           创建用户组
         </Button>
@@ -223,12 +225,12 @@ function UserGroupsEditor({ identity }: { identity: Identity }) {
                     aria-label="选择加入组的用户"
                     className="w-auto px-2 py-1"
                     value={selectedUserId || String(candidates[0]?.id ?? "")}
-                    onChange={(e) => setSelectedUserId(e.target.value)}
+                    onValueChange={(value) => setSelectedUserId(value)}
                   >
                     {candidates.map((u) => (
-                      <option key={u.id} value={String(u.id)}>
+                      <SelectItem key={u.id} value={String(u.id)}>
                         {u.display_name} (#{u.id})
-                      </option>
+                      </SelectItem>
                     ))}
                   </Select>
                   <Button
@@ -379,18 +381,22 @@ function DocumentACLEditor({
       {acl.isPending && <p className="mt-1 text-muted-foreground">加载中...</p>}
       {acl.data && (
         <div className="mt-2 space-y-3">
-          <label className="block space-y-1">
+          <Label className="block space-y-1">
             <span>访问模式</span>
             <Select
               aria-label={`文档 ${documentTitle} 访问模式`}
               className="w-auto px-2 py-1"
               value={mode}
-              onChange={(e) => setDraftMode(e.target.value as ACLMode)}
+              onValueChange={(value) => setDraftMode(value as ACLMode)}
             >
-              <option value="inherit_kb">继承知识库成员 (inherit_kb)</option>
-              <option value="restricted">仅指定主体可见 (restricted)</option>
+              <SelectItem value="inherit_kb">
+                继承知识库成员 (inherit_kb)
+              </SelectItem>
+              <SelectItem value="restricted">
+                仅指定主体可见 (restricted)
+              </SelectItem>
             </Select>
-          </label>
+          </Label>
 
           {mode === "restricted" && (
             <div className="grid gap-3 md:grid-cols-2">
@@ -398,18 +404,17 @@ function DocumentACLEditor({
                 <p className="font-medium">允许的用户</p>
                 <div className="mt-1 space-y-1">
                   {(users.data ?? []).map((u) => (
-                    <label key={u.id} className="flex items-center gap-2">
-                      <Input
-                        type="checkbox"
+                    <Label key={u.id} className="flex items-center gap-2">
+                      <Checkbox
                         checked={subjects.some(
                           (s) => s.type === "user" && s.id === u.id,
                         )}
-                        onChange={() => toggleSubject("user", u.id)}
+                        onCheckedChange={() => toggleSubject("user", u.id)}
                       />
                       <span>
                         {u.display_name} (#{u.id})
                       </span>
-                    </label>
+                    </Label>
                   ))}
                 </div>
               </div>
@@ -417,16 +422,15 @@ function DocumentACLEditor({
                 <p className="font-medium">允许的用户组</p>
                 <div className="mt-1 space-y-1">
                   {(groups.data ?? []).map((g) => (
-                    <label key={g.id} className="flex items-center gap-2">
-                      <Input
-                        type="checkbox"
+                    <Label key={g.id} className="flex items-center gap-2">
+                      <Checkbox
                         checked={subjects.some(
                           (s) => s.type === "group" && s.id === g.id,
                         )}
-                        onChange={() => toggleSubject("group", g.id)}
+                        onCheckedChange={() => toggleSubject("group", g.id)}
                       />
                       <span>{g.name}</span>
-                    </label>
+                    </Label>
                   ))}
                 </div>
               </div>

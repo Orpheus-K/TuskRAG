@@ -161,9 +161,12 @@ describe("UserGroupsPanel & DocumentACLButton", () => {
     await waitFor(() => {
       expect(screen.getByLabelText("文档 秘密文档 访问模式")).toBeTruthy();
     });
-    fireEvent.change(screen.getByLabelText("文档 秘密文档 访问模式"), {
-      target: { value: "restricted" },
+    fireEvent.keyDown(screen.getByLabelText("文档 秘密文档 访问模式"), {
+      key: "ArrowDown",
     });
+    fireEvent.click(
+      await screen.findByRole("option", { name: /仅指定主体可见/ }),
+    );
     fireEvent.click(screen.getByLabelText("security"));
     fireEvent.click(screen.getByText("保存文档权限"));
 

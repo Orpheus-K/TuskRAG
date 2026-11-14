@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @source "../../../apps/web/src";
+@source "./components";
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -86,13 +87,22 @@
   user-select: none;
 }
 
-.tusk-ide-shell[data-sidebar-collapsed="true"] .tusk-sidebar-label {
-  display: none;
-}
+@media (min-width: 768px) {
+  .tusk-ide-shell[data-sidebar-collapsed="true"] .tusk-sidebar-label {
+    display: none;
+  }
 
-.tusk-ide-shell[data-sidebar-collapsed="true"] .tusk-sidebar-item {
-  justify-content: center;
-  padding-inline: 0.5rem;
+  .tusk-ide-shell[data-sidebar-collapsed="true"] .tusk-sidebar-item {
+    justify-content: center;
+    padding-inline: 0.5rem;
+  }
+
+  .tusk-ide-shell > aside {
+    grid-column: 1;
+  }
+  .tusk-ide-shell > :not(aside) {
+    grid-column: 2;
+  }
 }
 
 @media (max-width: 767px) {
@@ -100,10 +110,17 @@
   .tusk-ide-shell[data-sidebar-collapsed="true"] {
     grid-template-columns: minmax(0, 1fr);
   }
+  .tusk-split-group {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  .tusk-split-handle {
+    display: none;
+  }
 }
 
 .tusk-split-group {
   display: grid;
+  width: 100%;
   grid-template-columns: var(--split-template, minmax(0, 1fr));
   min-height: 0;
   transition: grid-template-columns 180ms cubic-bezier(0.2, 0, 0, 1);

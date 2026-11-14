@@ -1,3 +1,5 @@
+import { ArrowRight } from "lucide-react";
+import { HeadingPath } from "@tuskrag/ui/heading-path";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   type AnswerDone,
@@ -58,100 +60,105 @@ export function AnswerView({
   return (
     <Card className="p-5">
       <article aria-label="回答" className="space-y-4">
-      {state.question && (
-        <h2 className="break-words font-medium">{state.question}</h2>
-      )}
-      <p role="status" className="text-sm text-muted-foreground">
-        {state.phase === "loading"
-          ? state.text
-            ? "正在生成回答"
-            : state.steps && state.steps.length > 0
-              ? `Agentic 检索中（第 ${state.steps.length} 步）`
-              : "正在查找依据"
-          : state.phase === "cancelled"
-            ? "已停止，未保存不完整回答。"
-            : state.done?.outcome === "refused"
-              ? "证据不足，无法回答。"
-              : state.done?.outcome === "unsupported"
-                ? "回答未引用有效证据，请核对原文。"
-                : state.done?.outcome === "truncated"
-                  ? "回答达到长度限制，内容不完整。"
-                  : "回答完成"}
-      </p>
-      {state.degraded.length > 0 && (
-        <p className="text-xs text-muted-foreground">
-          {state.degraded.includes("rerank") && "检索结果未经重排。"}
-          {state.degraded.includes("context_budget") &&
-            "部分依据超出上下文预算。"}
-          {state.degraded.includes("rewrite") &&
-            "追问改写失败，已使用原问题检索。"}
+        {state.question && (
+          <h2 className="break-words font-medium">{state.question}</h2>
+        )}
+        <p role="status" className="text-sm text-muted-foreground">
+          {state.phase === "loading"
+            ? state.text
+              ? "正在生成回答"
+              : state.steps && state.steps.length > 0
+                ? `Agentic 检索中（第 ${state.steps.length} 步）`
+                : "正在查找依据"
+            : state.phase === "cancelled"
+              ? "已停止，未保存不完整回答。"
+              : state.done?.outcome === "refused"
+                ? "证据不足，无法回答。"
+                : state.done?.outcome === "unsupported"
+                  ? "回答未引用有效证据，请核对原文。"
+                  : state.done?.outcome === "truncated"
+                    ? "回答达到长度限制，内容不完整。"
+                    : "回答完成"}
         </p>
-      )}
-      {state.steps && state.steps.length > 0 && (
-        <ol
-          aria-label="Agentic 检索步骤"
-          className="space-y-1 rounded-md bg-muted/40 px-3 py-2 text-xs text-muted-foreground"
-        >
-          {state.steps.map((s) => (
-            <li key={s.step}>
-              #{s.step} <code>{s.tool}</code>（{s.args_summary}）→{" "}
-              {s.result_count} 条结果
-            </li>
-          ))}
-        </ol>
-      )}
-      <div className="whitespace-pre-wrap break-words leading-7">
-        {[...state.text.matchAll(/(\[\d+\])|([^[]+|\[)/g)].map((match) => {
-          const part = match[0],
-            n = /^\[(\d+)\]$/.exec(part)?.[1],
-            item = n
-              ? state.evidence.find((e) => e.n === Number(n))
-              : undefined;
-          return item && state.cited.includes(item.n) ? (
-            <Button
-              key={`${match.index}-${part}`}
-              type="button"
-              size="xs"
-              variant="outline"
-              className="mx-0.5 h-6 px-1.5 text-xs underline"
-              aria-label={`引用 ${item.n}：${item.title}`}
-              onClick={() => onEvidence(item)}
-            >
-              {part}
-            </Button>
-          ) : (
-            part
-          );
-        })}
-      </div>
-      {state.cited.length > 0 && (
-        <ul aria-label="引用来源" className="space-y-2 border-t pt-4">
-          {state.evidence
-            .filter((e) => state.cited.includes(e.n))
-            .map((item) => (
-              <li key={item.id}>
-                <Button
-                  type="button"
-                  size="xs"
-                  variant="ghost"
-                  className="h-auto justify-start px-1 py-0.5 text-left text-sm font-normal underline"
-                  onClick={() => onEvidence(item)}
-                >
-                  [{item.n}] {item.title} · {item.heading_path.join(" › ")}
-                  {item.pages && ` · 第 ${item.pages[0]}—${item.pages[1]} 页`}
-                </Button>
+        {state.degraded.length > 0 && (
+          <p className="text-xs text-muted-foreground">
+            {state.degraded.includes("rerank") && "检索结果未经重排。"}
+            {state.degraded.includes("context_budget") &&
+              "部分依据超出上下文预算。"}
+            {state.degraded.includes("rewrite") &&
+              "追问改写失败，已使用原问题检索。"}
+          </p>
+        )}
+        {state.steps && state.steps.length > 0 && (
+          <ol
+            aria-label="Agentic 检索步骤"
+            className="space-y-1 rounded-md bg-muted/40 px-3 py-2 text-xs text-muted-foreground"
+          >
+            {state.steps.map((s) => (
+              <li key={s.step}>
+                #{s.step} <code>{s.tool}</code>（{s.args_summary}）
+                <ArrowRight
+                  aria-hidden="true"
+                  className="inline size-3.5 align-middle"
+                />{" "}
+                {s.result_count} 条结果
               </li>
             ))}
-        </ul>
-      )}
-      {saved && state.done && (
-        <FeedbackForm
-          key={state.done.message_id}
-          id={state.done.message_id}
-          initial={feedback}
-          identity={identity}
-        />
-      )}
+          </ol>
+        )}
+        <div className="whitespace-pre-wrap break-words leading-7">
+          {[...state.text.matchAll(/(\[\d+\])|([^[]+|\[)/g)].map((match) => {
+            const part = match[0],
+              n = /^\[(\d+)\]$/.exec(part)?.[1],
+              item = n
+                ? state.evidence.find((e) => e.n === Number(n))
+                : undefined;
+            return item && state.cited.includes(item.n) ? (
+              <Button
+                key={`${match.index}-${part}`}
+                type="button"
+                size="xs"
+                variant="outline"
+                className="mx-0.5 h-6 px-1.5 text-xs underline"
+                aria-label={`引用 ${item.n}：${item.title}`}
+                onClick={() => onEvidence(item)}
+              >
+                {part}
+              </Button>
+            ) : (
+              part
+            );
+          })}
+        </div>
+        {state.cited.length > 0 && (
+          <ul aria-label="引用来源" className="space-y-2 border-t pt-4">
+            {state.evidence
+              .filter((e) => state.cited.includes(e.n))
+              .map((item) => (
+                <li key={item.id}>
+                  <Button
+                    type="button"
+                    size="xs"
+                    variant="ghost"
+                    className="h-auto justify-start px-1 py-0.5 text-left text-sm font-normal underline"
+                    onClick={() => onEvidence(item)}
+                  >
+                    [{item.n}] {item.title} ·{" "}
+                    <HeadingPath parts={item.heading_path} />
+                    {item.pages && ` · 第 ${item.pages[0]}—${item.pages[1]} 页`}
+                  </Button>
+                </li>
+              ))}
+          </ul>
+        )}
+        {saved && state.done && (
+          <FeedbackForm
+            key={state.done.message_id}
+            id={state.done.message_id}
+            initial={feedback}
+            identity={identity}
+          />
+        )}
       </article>
     </Card>
   );

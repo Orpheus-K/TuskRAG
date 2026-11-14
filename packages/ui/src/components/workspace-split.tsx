@@ -34,6 +34,10 @@ function buildGridTemplate(
   collapsed: Record<string, boolean>,
 ): string {
   const tracks: string[] = [];
+  const fixedCount = panes.filter(
+    (p) => p.defaultWidth !== undefined && !collapsed[p.id],
+  ).length;
+  const maxShare = Math.floor(66 / Math.max(1, fixedCount));
   panes.forEach((pane, idx) => {
     const isCollapsed = Boolean(collapsed[pane.id]);
     if (idx > 0) {
@@ -43,7 +47,7 @@ function buildGridTemplate(
       tracks.push("0px");
     } else if (pane.defaultWidth !== undefined) {
       const w = widths[pane.id] ?? pane.defaultWidth;
-      tracks.push(`${w}px`);
+      tracks.push(`min(var(--pane-${pane.id}, ${w}px), ${maxShare}%)`);
     } else {
       tracks.push("minmax(0, 1fr)");
     }
@@ -162,7 +166,12 @@ export function WorkspaceSplit({
     const isRightTarget = targetPane.id === rightPane?.id;
     const startX = event.clientX;
     const startWidth =
-      widthsRef.current[targetPane.id] ?? targetPane.defaultWidth ?? 320;
+      (isRightTarget
+        ? event.currentTarget.nextElementSibling
+        : event.currentTarget.previousElementSibling
+      )?.getBoundingClientRect().width ??
+      targetPane.defaultWidth ??
+      320;
     const minW = targetPane.minWidth ?? 220;
     const maxW = targetPane.maxWidth ?? 680;
 
@@ -176,10 +185,7 @@ export function WorkspaceSplit({
       const raw = isRightTarget ? startWidth - delta : startWidth + delta;
       const clamped = Math.max(minW, Math.min(maxW, Math.round(raw)));
       widthsRef.current[targetPane.id] = clamped;
-      container.style.setProperty(
-        "--split-template",
-        buildGridTemplate(panes, widthsRef.current, collapsed),
-      );
+      container.style.setProperty(`--pane-${targetPane.id}`, `${clamped}px`);
     };
 
     const onUp = () => {
@@ -187,6 +193,7 @@ export function WorkspaceSplit({
       delete handleEl.dataset.active;
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onUp);
       if (storageKey) {
         try {
           window.localStorage.setItem(
@@ -201,27 +208,27 @@ export function WorkspaceSplit({
 
     window.addEventListener("pointermove", onMove);
     window.addEventListener("pointerup", onUp);
+    window.addEventListener("pointercancel", onUp);
   };
 
-  const collapsiblePanes = panes.filter((p) => p.collapsible);
+  const collapsiblePanes = panes.filter(
+    (p) => p.collapsible && collapsed[p.id],
+  );
 
   return (
     <div className={cn("flex min-h-0 flex-col gap-3", className)}>
       {collapsiblePanes.length > 0 ? (
         <div className="flex flex-wrap items-center justify-end gap-2">
-          {collapsiblePanes.map((pane) => {
-            const isCollapsed = Boolean(collapsed[pane.id]);
-            return (
-              <Button
-                key={pane.id}
-                size="xs"
-                variant={isCollapsed ? "outline" : "secondary"}
-                onClick={() => toggleCollapse(pane.id)}
-              >
-                {isCollapsed ? `展开${pane.title}` : `收起${pane.title}`}
-              </Button>
-            );
-          })}
+          {collapsiblePanes.map((pane) => (
+            <Button
+              key={pane.id}
+              size="xs"
+              variant="outline"
+              onClick={() => toggleCollapse(pane.id)}
+            >
+              展开{pane.title}
+            </Button>
+          ))}
         </div>
       ) : null}
 
@@ -257,28 +264,32 @@ export function WorkspaceSplit({
             handleEl,
             <section
               key={pane.id}
+              aria-hidden={isCollapsed}
+              inert={isCollapsed}
               aria-label={pane.title}
               className="tusk-split-pane rounded-xl border border-border bg-surface p-4"
               data-collapsed={isCollapsed ? "true" : "false"}
             >
-              <div className="mb-3 flex items-center justify-between gap-2 border-b pb-2.5">
-                <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {pane.title}
-                </h2>
-                <div className="flex items-center gap-1.5">
-                  {pane.actions}
-                  {pane.collapsible ? (
-                    <Button
-                      aria-label={`收起${pane.title}`}
-                      size="xs"
-                      variant="ghost"
-                      onClick={() => toggleCollapse(pane.id)}
-                    >
-                      收起
-                    </Button>
-                  ) : null}
+              {(pane.collapsible || pane.actions) && (
+                <div className="mb-3 flex items-center justify-between gap-2 border-b pb-2.5">
+                  <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {pane.title}
+                  </h2>
+                  <div className="flex items-center gap-1.5">
+                    {pane.actions}
+                    {pane.collapsible ? (
+                      <Button
+                        aria-label={`收起${pane.title}`}
+                        size="xs"
+                        variant="ghost"
+                        onClick={() => toggleCollapse(pane.id)}
+                      >
+                        收起
+                      </Button>
+                    ) : null}
+                  </div>
                 </div>
-              </div>
+              )}
               {pane.content}
             </section>,
           ];

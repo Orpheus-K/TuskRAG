@@ -75,7 +75,8 @@ it("saves all settings with the returned ETag, including zero threshold, and can
   change("默认返回条数", "5");
   change(/重排提供方编号/, "9");
   change("默认重排模型", "rank");
-  change("重排候选数", "20");
+  fireEvent.keyDown(screen.getByLabelText("重排候选数"), { key: "ArrowDown" });
+  fireEvent.click(await screen.findByRole("option", { name: "20" }));
   change("最低重排分数（可留空）", "0");
   fireEvent.click(
     screen.getByLabelText("重排服务暂不可用时允许返回未重排结果"),

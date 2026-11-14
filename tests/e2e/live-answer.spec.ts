@@ -26,10 +26,14 @@ for (const width of [1280, 375]) {
     await page.getByLabel("密码", { exact: true }).fill(password);
     await page.getByRole("button", { name: "登录", exact: true }).click();
     await page.locator('a[href^="/kb/1/answer"]').click();
-    if (process.env.TUSKRAG_LIVE_QA_MODEL_ID)
+    if (process.env.TUSKRAG_LIVE_QA_MODEL_ID) {
+      await page.getByLabel("回答模型").click();
       await page
-        .getByLabel("回答模型")
-        .selectOption(process.env.TUSKRAG_LIVE_QA_MODEL_ID);
+        .locator(
+          `[role="option"][data-value="${process.env.TUSKRAG_LIVE_QA_MODEL_ID}"]`,
+        )
+        .click();
+    }
     if (width === 375) {
       const history = await page
         .getByRole("complementary", { name: "会话历史" })

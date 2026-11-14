@@ -91,7 +91,7 @@ export function EvaluationRunCompare({
         {base.data?.name} · 运行对比
       </h1>
       <p className="text-sm text-muted-foreground">
-        比较两次服务端执行结果。差值为当前减基线；任一汇总指标下降超过两百分点即未通过回归门禁。
+        差值为当前减基线；任一汇总指标下降超过两百分点即未通过回归门禁。
       </p>
       {base.data?.status === "archived" && (
         <p role="status">知识库已归档，仍可查看历史对比。</p>

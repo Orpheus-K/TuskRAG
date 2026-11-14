@@ -68,11 +68,13 @@ for (const width of [1280, 375]) {
       page.getByRole("heading", { name: "逐题结果", exact: true }),
     ).toBeVisible();
     expect(posts).toBe(1);
-    await page.getByText("q1 · 有答案题 · 存在降级", { exact: true }).click();
+    await page.getByRole("button", { name: "q1 · 有答案题 · 存在降级", exact: true }).click();
     await expect(
-      page.locator("details[open]").getByText("降级：rerank", { exact: true }),
+      page
+        .locator('[data-state="open"][data-slot="collapsible-content"]')
+        .getByText("降级：rerank", { exact: true }),
     ).toBeVisible();
-    await page.getByText("配置摘要与阶段耗时", { exact: true }).click();
+    await page.getByRole("button", { name: "配置摘要与阶段耗时", exact: true }).click();
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
@@ -84,7 +86,7 @@ for (const width of [1280, 375]) {
     });
     await page.getByRole("link", { name: "下一页题目" }).click();
     await page.reload();
-    await page.getByText("q21 · 无答案题 · 存在降级", { exact: true }).click();
+    await page.getByRole("button", { name: "q21 · 无答案题 · 存在降级", exact: true }).click();
     await expect(
       page.getByText("无答案题，不计算检索相关性指标。", { exact: true }),
     ).toBeVisible();

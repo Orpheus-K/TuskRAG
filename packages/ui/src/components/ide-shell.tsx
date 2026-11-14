@@ -1,3 +1,4 @@
+import { Menu, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 
 import { cn } from "../lib/utils";
@@ -63,9 +64,11 @@ export function IdeShell({
             onClick={() => setCollapsed((v) => !v)}
             title={collapsed ? "展开侧边栏" : "折叠侧边栏"}
           >
-            <span aria-hidden="true" className="text-xs font-mono">
-              {collapsed ? "»" : "«"}
-            </span>
+            {collapsed ? (
+              <PanelLeftOpen aria-hidden="true" className="h-4 w-4" />
+            ) : (
+              <PanelLeftClose aria-hidden="true" className="h-4 w-4" />
+            )}
           </Button>
         </div>
 
@@ -88,6 +91,7 @@ export function IdeShell({
               variant="outline"
               onClick={() => setMobileMenuOpen((v) => !v)}
             >
+              <Menu aria-hidden="true" className="h-3.5 w-3.5" />
               菜单
             </Button>
             {topbarLeft}

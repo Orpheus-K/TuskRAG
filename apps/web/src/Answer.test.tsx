@@ -354,9 +354,12 @@ it("supports agentic mode and renders retrieval step timeline", async () => {
     capturedMode = body.mode;
     return response(stepEvent + retrieval + delta + citations + done);
   });
-  fireEvent.change(await screen.findByLabelText("问答模式"), {
-    target: { value: "agentic" },
+  fireEvent.keyDown(await screen.findByLabelText("问答模式"), {
+    key: "ArrowDown",
   });
+  fireEvent.click(
+    await screen.findByRole("option", { name: /Agentic 多步推理/ }),
+  );
   fireEvent.change(screen.getByLabelText("你的问题"), {
     target: { value: "申请期限是几天？" },
   });

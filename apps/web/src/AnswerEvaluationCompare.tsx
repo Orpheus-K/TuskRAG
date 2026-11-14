@@ -150,9 +150,6 @@ export function AnswerEvaluationCompare({
       <h1 className="break-words text-3xl font-semibold">
         {base.data?.name} · 生成评测对比
       </h1>
-      <p className="text-sm text-muted-foreground">
-        从可见生成评测报告中选择基线与当前版本，对比引用合规、拒答与无依据率变化。
-      </p>
 
       {list.isPending ? (
         <p role="status">正在加载生成报告列表</p>

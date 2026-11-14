@@ -1,3 +1,8 @@
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@tuskrag/ui/collapsible";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import {
@@ -188,7 +193,7 @@ export function EvaluationCompare({
         {base.data?.name} · 报告对比
       </h1>
       <p className="text-sm text-muted-foreground">
-        选择基线和当前报告。差值为当前减基线；任一汇总指标下降超过两百分点即未通过回归门禁。外部导入报告的对比不证明模型质量。
+        差值为当前减基线；任一汇总指标下降超过两百分点即未通过回归门禁。外部导入报告的对比不证明模型质量。
       </p>
       <div className="space-y-2 rounded-xl border p-5">
         <p className="break-all text-sm">基线：{baseline || "尚未选择"}</p>
@@ -349,25 +354,27 @@ export function ComparisonResult({
         题。指标原值和差值不包含尚未实现的引用、拒答评测。
       </p>
       {result.rows?.map((row) => (
-        <details
+        <Collapsible
           key={`${result.baseline_digest}:${result.current_digest}:${row.id}`}
           className="rounded-lg border p-4"
         >
-          <summary className="cursor-pointer break-words">
+          <CollapsibleTrigger className="cursor-pointer break-words">
             {row.id} · {row.evidence_changed ? "证据已变化" : "证据未变化"}
-          </summary>
-          <div className="mt-4 space-y-4">
-            <Difference
-              before={row.baseline.metrics}
-              after={row.current.metrics}
-              delta={row.delta}
-            />
-            <div className="grid gap-4 sm:grid-cols-2">
-              <EvidenceResult title="基线结果" row={row.baseline} />
-              <EvidenceResult title="当前结果" row={row.current} />
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div className="mt-4 space-y-4">
+              <Difference
+                before={row.baseline.metrics}
+                after={row.current.metrics}
+                delta={row.delta}
+              />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <EvidenceResult title="基线结果" row={row.baseline} />
+                <EvidenceResult title="当前结果" row={row.current} />
+              </div>
             </div>
-          </div>
-        </details>
+          </CollapsibleContent>
+        </Collapsible>
       ))}
       <nav className="flex flex-wrap gap-4" aria-label="逐题差异分页">
         {offset > 0 && (

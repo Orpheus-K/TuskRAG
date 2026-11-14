@@ -1,3 +1,9 @@
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@tuskrag/ui/collapsible";
+import { Label } from "@tuskrag/ui/label";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import {
@@ -215,16 +221,15 @@ export function Evaluation({
         生成评测
       </Link>
       <p className="text-sm text-muted-foreground">
-        查看 CLI
-        评测报告。导入报告不代表服务端执行或验证了模型质量；从评测集页面可启动后台运行。
+        外部导入的报告未经服务端验证。
       </p>
       {base.data?.status === "archived" ? (
         <p role="status">知识库已归档，报告仅供查看。</p>
       ) : (
         <form className="space-y-3 rounded-xl border p-5" onSubmit={submit}>
-          <label className="block text-sm" htmlFor="eval-file">
+          <Label className="block text-sm" htmlFor="eval-file">
             完整报告 JSON（最大 8 MiB）
-          </label>
+          </Label>
           <Input
             id="eval-file"
             name="report"
@@ -336,22 +341,26 @@ export function ReportDetail({
         {data.source === "executed" ? "服务端执行" : "外部导入"}
       </p>
       <Summary value={report.summary} />
-      <details>
-        <summary className="cursor-pointer text-sm">配置摘要与阶段耗时</summary>
-        <p className="mt-3 break-all text-xs">
-          数据集 SHA-256：{report.dataset_sha256}
-          <br />
-          配置 SHA-256：{report.config_sha256}
-        </p>
-        <ul className="mt-3 text-sm">
-          {Object.entries(report.latency_ms_p50_p95).map(([stage, pair]) => (
-            <li key={stage} className="break-words">
-              {stage}：p50 {pair[0]?.toFixed(2)} ms / p95 {pair[1]?.toFixed(2)}{" "}
-              ms
-            </li>
-          ))}
-        </ul>
-      </details>
+      <Collapsible>
+        <CollapsibleTrigger className="cursor-pointer text-sm">
+          配置摘要与阶段耗时
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <p className="mt-3 break-all text-xs">
+            数据集 SHA-256：{report.dataset_sha256}
+            <br />
+            配置 SHA-256：{report.config_sha256}
+          </p>
+          <ul className="mt-3 text-sm">
+            {Object.entries(report.latency_ms_p50_p95).map(([stage, pair]) => (
+              <li key={stage} className="break-words">
+                {stage}：p50 {pair[0]?.toFixed(2)} ms / p95{" "}
+                {pair[1]?.toFixed(2)} ms
+              </li>
+            ))}
+          </ul>
+        </CollapsibleContent>
+      </Collapsible>
       <p className="text-xs text-muted-foreground">
         报告仅含题号及证据标识，不含问题与文档正文。未实现的引用、拒答指标不显示为零。
       </p>
@@ -359,42 +368,44 @@ export function ReportDetail({
         <p role="alert">逐题页码超出范围，请返回第一页。</p>
       ) : (
         rows.slice(start, start + 20).map((row) => (
-          <details key={row.id} className="rounded-lg border p-3">
-            <summary className="cursor-pointer break-words">
+          <Collapsible key={row.id} className="rounded-lg border p-3">
+            <CollapsibleTrigger className="cursor-pointer break-words">
               {row.id} · {row.metrics === null ? "无答案题" : "有答案题"}
               {row.degraded?.length ? " · 存在降级" : ""}
-            </summary>
-            <div className="mt-3 space-y-3">
-              <Metrics value={row.metrics} />
-              {Boolean(row.degraded?.length) && (
-                <p className="break-words text-sm">
-                  降级：{row.degraded?.join("、")}
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div className="mt-3 space-y-3">
+                <Metrics value={row.metrics} />
+                {Boolean(row.degraded?.length) && (
+                  <p className="break-words text-sm">
+                    降级：{row.degraded?.join("、")}
+                  </p>
+                )}
+                <p className="text-sm">
+                  总耗时：{row.timings_ms.total?.toFixed(2)} ms
                 </p>
-              )}
-              <p className="text-sm">
-                总耗时：{row.timings_ms.total?.toFixed(2)} ms
-              </p>
-              {(["fused", "ranked"] as const).map((kind) => (
-                <div key={kind}>
-                  <h3 className="text-sm font-medium">
-                    {kind === "fused" ? "融合候选" : "最终排序"}
-                  </h3>
-                  {!row[kind]?.length ? (
-                    <p className="text-sm">无证据</p>
-                  ) : (
-                    <p className="whitespace-pre-wrap break-words text-sm">
-                      {row[kind]
-                        ?.map(
-                          (e, index) =>
-                            `${index + 1}. 文档 ${e.DocumentID} · 节 ${e.SectionID} · 块 ${e.ChunkID}${e.PageStart > 0 ? ` · 页 ${e.PageStart}–${e.PageEnd}` : " · 无页码"}`,
-                        )
-                        .join("\n")}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </details>
+                {(["fused", "ranked"] as const).map((kind) => (
+                  <div key={kind}>
+                    <h3 className="text-sm font-medium">
+                      {kind === "fused" ? "融合候选" : "最终排序"}
+                    </h3>
+                    {!row[kind]?.length ? (
+                      <p className="text-sm">无证据</p>
+                    ) : (
+                      <p className="whitespace-pre-wrap break-words text-sm">
+                        {row[kind]
+                          ?.map(
+                            (e, index) =>
+                              `${index + 1}. 文档 ${e.DocumentID} · 节 ${e.SectionID} · 块 ${e.ChunkID}${e.PageStart > 0 ? ` · 页 ${e.PageStart}–${e.PageEnd}` : " · 无页码"}`,
+                          )
+                          .join("\n")}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
         ))
       )}
       {onPage ? (

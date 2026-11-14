@@ -1,3 +1,4 @@
+import { HeadingPath } from "@tuskrag/ui/heading-path";
 import { useQuery } from "@tanstack/react-query";
 import {
   getDocumentContents,
@@ -240,7 +241,7 @@ export function DocumentPreview({
               {content.section.heading || "未命名节"}
             </h4>
             <p className="text-xs text-muted-foreground">
-              {content.section.heading_path.join(" › ")}
+              <HeadingPath parts={content.section.heading_path} />
               {content.section.pages &&
                 ` · 第 ${content.section.pages[0]}—${content.section.pages[1]} 页`}
             </p>

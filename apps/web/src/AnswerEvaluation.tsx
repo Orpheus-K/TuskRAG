@@ -1,3 +1,4 @@
+import { Label } from "@tuskrag/ui/label";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import {
@@ -192,16 +193,13 @@ export function AnswerEvaluation({
       <h1 className="break-words text-3xl font-semibold">
         {base.data?.name} · 生成评测
       </h1>
-      <p className="text-sm text-muted-foreground">
-        查看与导入 CLI 生成的 E6 生成与引用质量评测报告。
-      </p>
       {base.data?.status === "archived" ? (
         <p role="status">知识库已归档，报告仅供查看。</p>
       ) : (
         <form className="space-y-3 rounded-xl border p-5" onSubmit={submit}>
-          <label className="block text-sm" htmlFor="answer-eval-file">
+          <Label className="block text-sm" htmlFor="answer-eval-file">
             完整 E6 生成评测报告 JSON（最大 8 MiB）
-          </label>
+          </Label>
           <Input
             id="answer-eval-file"
             name="report"

@@ -118,12 +118,15 @@ describe("KnowledgeMembersPanel", () => {
 
     await waitFor(() => {
       expect(screen.getByText("Alice")).toBeTruthy();
-      expect(screen.getByText("Bob (#11)")).toBeTruthy();
+      expect(
+        screen.getByRole("combobox", { name: "选择租户用户" }).textContent,
+      ).toContain("Bob (#11)");
     });
 
-    fireEvent.change(screen.getByLabelText("知识库出域策略"), {
-      target: { value: "allow" },
+    fireEvent.keyDown(screen.getByLabelText("知识库出域策略"), {
+      key: "ArrowDown",
     });
+    fireEvent.click(await screen.findByRole("option", { name: /允许出域/ }));
     fireEvent.click(screen.getByText("保存出域策略"));
 
     await waitFor(() => {

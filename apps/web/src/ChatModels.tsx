@@ -7,16 +7,12 @@ import {
 } from "@tuskrag/api-client";
 import { Alert } from "@tuskrag/ui/alert";
 import { Button } from "@tuskrag/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@tuskrag/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@tuskrag/ui/card";
+import { Dialog } from "@tuskrag/ui/dialog";
 import { Field } from "@tuskrag/ui/field";
 import { Input } from "@tuskrag/ui/input";
-import { Select } from "@tuskrag/ui/select";
+import { Select, SelectItem } from "@tuskrag/ui/select";
+import { Plus } from "lucide-react";
 import { type FormEvent, useState } from "react";
 
 export function ChatModels({ identity }: { identity: Identity }) {
@@ -67,57 +63,19 @@ export function ChatModels({ identity }: { identity: Identity }) {
   return (
     <Card>
       <CardHeader className="flex-row flex-wrap items-center justify-between space-y-0 gap-3">
-        <div>
-          <CardTitle>回答模型</CardTitle>
-          <CardDescription>配置用于生成知识库回答的模型。</CardDescription>
-        </div>
-        <Button
-          onClick={() => setShow(!show)}
-          size="xs"
-          type="button"
-          variant="outline"
-        >
-          {show ? "收起回答模型配置" : "配置回答模型"}
-        </Button>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        {models.isPending && (
-          <p className="text-sm text-muted-foreground" role="status">
-            正在加载回答模型
-          </p>
-        )}
-        {models.isError && (
-          <Alert className="flex items-center justify-between gap-2" variant="danger">
-            <span>回答模型加载失败。</span>
-            <Button
-              onClick={() => void models.refetch()}
-              size="xs"
-              variant="outline"
-            >
-              重试
+        <CardTitle>回答模型</CardTitle>
+        <Dialog
+          onOpenChange={setShow}
+          open={show}
+          title="添加回答模型"
+          trigger={
+            <Button size="xs" variant="outline">
+              <Plus aria-hidden="true" className="h-3.5 w-3.5" />
+              配置回答模型
             </Button>
-          </Alert>
-        )}
-        {models.data?.length === 0 && (
-          <p className="text-sm text-muted-foreground">尚未配置回答模型。</p>
-        )}
-        {models.data && models.data.length > 0 && (
-          <ul className="space-y-1.5 text-sm">
-            {models.data.map((model) => (
-              <li
-                className="rounded-md border bg-surface-subtle px-3 py-1.5"
-                key={model.id}
-              >
-                {model.name} · {model.model}
-              </li>
-            ))}
-          </ul>
-        )}
-        {show && (
-          <form
-            className="grid gap-3 border-t pt-4"
-            onSubmit={(event) => void save(event)}
-          >
+          }
+        >
+          <form className="grid gap-3" onSubmit={(event) => void save(event)}>
             {(
               [
                 ["name", "显示名称", "例如：知识助手"],
@@ -154,8 +112,10 @@ export function ChatModels({ identity }: { identity: Identity }) {
                 id="chat-locality"
                 name="locality"
               >
-                <option value="external">组织外部（需要允许出域）</option>
-                <option value="internal">组织内部</option>
+                <SelectItem value="external">
+                  组织外部（需要允许出域）
+                </SelectItem>
+                <SelectItem value="internal">组织内部</SelectItem>
               </Select>
             </Field>
             <Button disabled={saving} size="sm" type="submit">
@@ -163,6 +123,43 @@ export function ChatModels({ identity }: { identity: Identity }) {
             </Button>
             {error && <Alert variant="danger">{error}</Alert>}
           </form>
+        </Dialog>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {models.isPending && (
+          <p className="text-sm text-muted-foreground" role="status">
+            正在加载回答模型
+          </p>
+        )}
+        {models.isError && (
+          <Alert
+            className="flex items-center justify-between gap-2"
+            variant="danger"
+          >
+            <span>回答模型加载失败。</span>
+            <Button
+              onClick={() => void models.refetch()}
+              size="xs"
+              variant="outline"
+            >
+              重试
+            </Button>
+          </Alert>
+        )}
+        {models.data?.length === 0 && (
+          <p className="text-sm text-muted-foreground">尚未配置回答模型。</p>
+        )}
+        {models.data && models.data.length > 0 && (
+          <ul className="space-y-1.5 text-sm">
+            {models.data.map((model) => (
+              <li
+                className="rounded-md border bg-surface-subtle px-3 py-1.5"
+                key={model.id}
+              >
+                {model.name} · {model.model}
+              </li>
+            ))}
+          </ul>
         )}
       </CardContent>
     </Card>

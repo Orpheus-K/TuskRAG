@@ -83,9 +83,6 @@ export function EvaluationHistory({
       <h1 className="text-3xl font-semibold break-words">
         {base.data?.name} · 运行历史
       </h1>
-      <p className="text-sm text-muted-foreground">
-        按运行编号升序排列，仅显示当前有权查看的运行。打开详情可跟踪状态；新增运行请从首页查看。
-      </p>
       {base.data?.status === "archived" && (
         <p role="status">知识库已归档，历史仅供查看。</p>
       )}

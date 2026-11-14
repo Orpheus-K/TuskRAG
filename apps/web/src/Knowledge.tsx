@@ -1,3 +1,12 @@
+import { HeadingPath } from "@tuskrag/ui/heading-path";
+import { ConfirmAction } from "@tuskrag/ui/confirm-action";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@tuskrag/ui/collapsible";
+import { Label } from "@tuskrag/ui/label";
+import { Checkbox } from "@tuskrag/ui/checkbox";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import {
@@ -17,7 +26,7 @@ import {
 } from "@tuskrag/api-client";
 import { Button } from "@tuskrag/ui/button";
 import { Input } from "@tuskrag/ui/input";
-import { Select } from "@tuskrag/ui/select";
+import { Select, SelectItem } from "@tuskrag/ui/select";
 import { type FormEvent, useRef, useState } from "react";
 import { DocumentACLButton, UserGroupsPanel } from "./DocumentACL";
 import type { PreviewTarget } from "./DocumentPreview";
@@ -289,15 +298,7 @@ export function KnowledgeDetail({
   }
 
   async function removeDocument(documentId: number, title: string) {
-    if (
-      deleting !== null ||
-      uploading ||
-      retrying !== null ||
-      !window.confirm(
-        `删除“${title}”？文档将立即从检索结果中移除，原文件在后台清理。`,
-      )
-    )
-      return;
+    if (deleting !== null || uploading || retrying !== null) return;
     setDeleting(documentId);
     setDeleteMessage("");
     setDeleteError("");
@@ -470,9 +471,9 @@ export function KnowledgeDetail({
             </Link>
           </div>
           <form className="mt-4 space-y-3" onSubmit={submitSearch}>
-            <label className="block text-sm font-medium" htmlFor="search-query">
+            <Label className="block text-sm font-medium" htmlFor="search-query">
               问题或关键词
-            </label>
+            </Label>
             <Input
               id="search-query"
               maxLength={4096}
@@ -485,61 +486,62 @@ export function KnowledgeDetail({
             >
               {search.isFetching ? "正在检索" : "检索"}
             </Button>
-            <details className="text-sm">
-              <summary className="cursor-pointer">重排配置</summary>
-              <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                <label className="space-y-1">
-                  <span>重排方式</span>
-                  <Select
-                    name="rerank-mode"
-                    value={rerankMode}
-                    onChange={(event) =>
-                      setRerankMode(event.currentTarget.value)
-                    }
-                  >
-                    <option value="inherit">使用知识库配置</option>
-                    <option value="off">本次关闭重排</option>
-                    <option value="custom">本次自定义重排</option>
-                  </Select>
-                </label>
-                <label className="flex items-center gap-2 pt-5">
-                  <Input
-                    type="checkbox"
-                    name="rerank-fallback"
-                    disabled={rerankMode !== "custom"}
-                  />
-                  <span>服务不可用时允许返回未重排结果</span>
-                </label>
-                <label className="space-y-1">
-                  <span>模型提供方</span>
-                  <Select
-                    name="rerank-provider"
-                    disabled={rerankMode !== "custom"}
-                    required={rerankMode === "custom"}
-                  >
-                    <option value="">选择已配置提供方</option>
-                    {providers.data?.map((space) => (
-                      <option key={space.id} value={space.provider_id}>
-                        {space.provider_name}
-                      </option>
-                    ))}
-                  </Select>
-                </label>
-                <label className="space-y-1">
-                  <span>重排模型</span>
-                  <Input
-                    name="rerank-model"
-                    disabled={rerankMode !== "custom"}
-                    required={rerankMode === "custom"}
-                    maxLength={200}
-                    placeholder="bge-reranker-v2-m3"
-                  />
-                </label>
-              </div>
-              {rerankMode === "custom" && providers.isError && (
-                <p role="alert">模型提供方加载失败。</p>
-              )}
-            </details>
+            <Collapsible className="text-sm">
+              <CollapsibleTrigger className="cursor-pointer">
+                重排配置
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  <Label className="space-y-1">
+                    <span>重排方式</span>
+                    <Select
+                      name="rerank-mode"
+                      value={rerankMode}
+                      onValueChange={(value) => setRerankMode(value)}
+                    >
+                      <SelectItem value="inherit">使用知识库配置</SelectItem>
+                      <SelectItem value="off">本次关闭重排</SelectItem>
+                      <SelectItem value="custom">本次自定义重排</SelectItem>
+                    </Select>
+                  </Label>
+                  <Label className="flex items-center gap-2 pt-5">
+                    <Checkbox
+                      name="rerank-fallback"
+                      disabled={rerankMode !== "custom"}
+                    />
+                    <span>服务不可用时允许返回未重排结果</span>
+                  </Label>
+                  <Label className="space-y-1">
+                    <span>模型提供方</span>
+                    <Select
+                      name="rerank-provider"
+                      placeholder="选择已配置提供方"
+                      disabled={rerankMode !== "custom"}
+                      required={rerankMode === "custom"}
+                    >
+                      {providers.data?.map((space) => (
+                        <SelectItem key={space.id} value={space.provider_id}>
+                          {space.provider_name}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                  </Label>
+                  <Label className="space-y-1">
+                    <span>重排模型</span>
+                    <Input
+                      name="rerank-model"
+                      disabled={rerankMode !== "custom"}
+                      required={rerankMode === "custom"}
+                      maxLength={200}
+                      placeholder="bge-reranker-v2-m3"
+                    />
+                  </Label>
+                </div>
+                {rerankMode === "custom" && providers.isError && (
+                  <p role="alert">模型提供方加载失败。</p>
+                )}
+              </CollapsibleContent>
+            </Collapsible>
           </form>
           {search.isError && (
             <p role="alert" className="mt-4 text-sm">
@@ -567,7 +569,7 @@ export function KnowledgeDetail({
                         {item.document.title}
                       </h3>
                       <p className="text-xs text-muted-foreground">
-                        {item.section.heading_path.join(" › ")}
+                        <HeadingPath parts={item.section.heading_path} />
                         {item.pages &&
                           ` · 第 ${item.pages[0]}—${item.pages[1]} 页`}
                       </p>
@@ -602,14 +604,14 @@ export function KnowledgeDetail({
             className="mt-8 space-y-3 rounded-xl border p-5"
             onSubmit={submitUpload}
           >
-            <label
+            <Label
               className="block text-sm font-medium"
               htmlFor="document-upload"
             >
               {versionTarget
                 ? `上传 ${versionTarget.title} 的新版本`
                 : "上传文档"}
-            </label>
+            </Label>
             <Input
               id="document-upload"
               ref={uploadInput}
@@ -634,13 +636,12 @@ export function KnowledgeDetail({
               </p>
             )}
             {file && /\.(csv|docx|xlsx|pdf)$/i.test(file.name) && (
-              <label className="flex items-start gap-2 text-sm">
-                <Input
-                  type="checkbox"
+              <Label className="flex items-start gap-2 text-sm">
+                <Checkbox
                   checked={confirmFirstRowHeaders}
                   disabled={uploading}
-                  onChange={(event) => {
-                    setConfirmFirstRowHeaders(event.currentTarget.checked);
+                  onCheckedChange={(checked) => {
+                    setConfirmFirstRowHeaders(checked);
                     uploadKey.current = null;
                     setUploadError("");
                   }}
@@ -648,21 +649,20 @@ export function KnowledgeDetail({
                 <span>
                   确认此文件中所有表格的首行都是表头；未确认的表格无法入库。
                 </span>
-              </label>
+              </Label>
             )}
-            <label className="flex items-center gap-2 text-sm">
-              <Input
-                type="checkbox"
+            <Label className="flex items-center gap-2 text-sm">
+              <Checkbox
                 checked={allowDuplicate}
                 disabled={uploading}
-                onChange={(event) => {
-                  setAllowDuplicate(event.currentTarget.checked);
+                onCheckedChange={(checked) => {
+                  setAllowDuplicate(checked);
                   uploadKey.current = null;
                   setUploadError("");
                 }}
               />
               仍导入相同内容
-            </label>
+            </Label>
             {uploadError && (
               <p role="alert" className="text-sm">
                 {uploadError}
@@ -900,16 +900,22 @@ export function KnowledgeDetail({
                   >
                     上传新版本
                   </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    disabled={
-                      uploading || deleting !== null || retrying !== null
+                  <ConfirmAction
+                    title={`删除“${item.title}”？`}
+                    description="文档将立即从检索结果中移除，原文件在后台清理。"
+                    onConfirm={() => void removeDocument(item.id, item.title)}
+                    trigger={
+                      <Button
+                        variant="outline"
+                        disabled={
+                          uploading || deleting !== null || retrying !== null
+                        }
+                      >
+                        {deleting === item.id ? "正在删除" : "删除文档"}
+                      </Button>
                     }
-                    onClick={() => void removeDocument(item.id, item.title)}
-                  >
-                    {deleting === item.id ? "正在删除" : "删除文档"}
-                  </Button>
+                  />
+
                   <DocumentACLButton
                     identity={identity}
                     kbId={id}

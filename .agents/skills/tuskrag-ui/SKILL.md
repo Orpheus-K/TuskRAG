@@ -1,38 +1,16 @@
 ---
 name: tuskrag-ui
-description: TuskRAG 前端 UI/UX 与组件复用规范：要求采用清爽 IDE 式左侧导航 + 纯 CSS 驱动的可折叠可拖拽多栏（左-中-右-右）工作台布局，禁止业务页面直接编写原生 HTML 表单/按钮/表格标签，必须复用 `@tuskrag/ui`。
+description: 开发或评审 TuskRAG React 控制台的导航、响应式分栏与共享组件，验证生产样式及控件复用率。
 ---
 
-# TuskRAG 界面与组件开发规范
+# 控制台布局与验收
 
-在 `apps/web` 新增、重构或评审界面时，**必须遵循以下约束**（与 [.agents/rules/code.md](../../rules/code.md) 一致）：
+- 登录后使用 `IdeShell`。全局入口及知识库上下文放左侧导航，导航项只指向已注册路由；顶部显示当前位置。服务正常或检查中不显示状态，仅在不可用时显示徽标和重新检查。账号信息与退出登录放在侧栏底部的账号菜单（`DropdownMenu`），业务页面不放会话操作。窄屏菜单保留文字标签，包括从已折叠的桌面导航切换到手机的情况。
+- 使用 `WorkspaceSplit` 承载主区和辅助面板。主区省略 `defaultWidth`，辅助面板给出稳定 ID、标题、默认宽度及范围。总览使用知识库列表和模型配置两个面板。按任务需要设置面板数量。
+- 按形态选择容器：需要持续对照的列表与配置用面板；新建、添加这类一次性表单用 `Dialog`，由标题区或卡片头的按钮打开，成功后关闭，失败时保留输入和错误；不可逆操作用 `ConfirmAction`；账号等低频全局操作用 `DropdownMenu`。
+- CSS Grid 分配剩余宽度并限制辅助栏占比。拖动时只改目标栏的 CSS 变量，开始时读取一次宽度，结束时保存。小屏按内容顺序排列，折叠时禁止访问隐藏控件。
+- 在 [共享组件](../../../packages/ui/UPSTREAM.md) 中选择 Button、Input、Textarea、Select、Field、DataTable、Card 和状态提示。业务页面不直接声明原生交互控件；文档预览的 Markdown 表格保留内容语义。共享组件不依赖业务 API，颜色使用语义变量，控件提供可访问名称。
+- [主题入口](../../../packages/ui/src/styles.css) 必须扫描应用与共享组件源码。构建后针对产物执行 `pnpm test:e2e tests/e2e/workspace-layout.spec.ts`，使用 `TUSKRAG_E2E_BASE_URL` 指定产物地址。检查桌面横向位置、新建对话框、账号菜单、拖动、刷新恢复、折叠和手机菜单及溢出。
+- 在仓库根目录运行 `node scripts/ui-reuse.mjs`。报告生产 TSX 中共享组件种数、跨文件复用种数、JSX 调用点数，以及交互控件调用数和直接使用原生控件的次数。控件封装率为共享调用数除以两者之和。类型、前端测试与构建命令见 [package.json](../../../package.json)。
 
-## 1. 布局架构：清爽 IDE 式多栏工作台
-- **全局壳层（`IdeShell`）**：
-  - 登录后统一使用 `@tuskrag/ui/ide-shell`：左侧可折叠导航栏（全局入口 + 当前知识库上下文分组子菜单）+ 顶部状态与面包屑栏 + 全宽自适应主工作区。
-  - **禁止**在已登录页面中恢复顶部堆叠操作栏或把所有设置/表格纵向长滚动塞进单栏 `max-w-*` 容器。
-- **多栏可折叠/可拖拽工作区（`WorkspaceSplit`）**：
-  - 支持 2 栏（左-右）、3 栏（左-中-右）乃至 4 栏（左-中-右-右）工作台。
-  - **性能硬约束**：折叠通过 `data-collapsed="true"` + CSS `grid-template-columns` 选择器与 `transition` 实现；拖拽通过分隔条 `pointermove` 直接更新容器 CSS 自定义属性 `--split-template`，**禁止**在拖拽过程中触发 React `setState` 或 JavaScript 几何重算循环，仅在 `pointerup` 时写入 `localStorage`。
-  - 主工作栏省略 `defaultWidth` 保持 `minmax(0, 1fr)` 自适应；辅助/检查器面板配置 `defaultWidth`、`minWidth`、`maxWidth` 与 `collapsible: true`。
-
-## 2. 组件封装与零原生控件原则
-- **禁止在 `apps/web/src/*.tsx` 业务代码中直接编写原生交互/结构控件**：
-  - `<input>` → `@tuskrag/ui/input` (`Input`)
-  - `<textarea>` → `@tuskrag/ui/textarea` (`Textarea`)
-  - `<select>` → `@tuskrag/ui/select` (`Select`)
-  - `<button>` → `@tuskrag/ui/button` (`Button`)
-  - `<table>`（Markdown 渲染映射除外）→ `@tuskrag/ui/data-table` (`DataTable` / `DataTableRow` / `DataTableCell`)
-- **通用组合必须复用 `@tuskrag/ui`**：
-  - 表单域：`@tuskrag/ui/field` (`Field`)
-  - 卡片容器：`@tuskrag/ui/card` (`Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`)
-  - 标题栏：`@tuskrag/ui/section-header` (`SectionHeader`)
-  - 状态标签与提示：`@tuskrag/ui/badge` (`Badge`)、`@tuskrag/ui/alert` (`Alert`)、`@tuskrag/ui/empty-state` (`EmptyState`)
-- **共享 UI 边界**：`packages/ui` 不得导入 `@tuskrag/api-client` 或任何业务状态。新增基础组件时须在 `packages/ui/package.json` 导出并更新 [packages/ui/UPSTREAM.md](../../../packages/ui/UPSTREAM.md)。
-
-## 3. 视觉与可访问性基线
-- 仅使用 [packages/ui/src/styles.css](../../../packages/ui/src/styles.css) 定义的语义 Token（`bg-background` / `bg-surface` / `bg-surface-subtle` / `border-border` / `text-muted-foreground` / `text-danger`），保持 Vercel/Linear 风格的细边框、低噪点与亮暗主题自适应。
-- 所有表单控件必须绑定可见 `label`（或 `aria-label`），状态反馈必须保留 `role="status"` / `role="alert"`。
-
-## 4. 验收检查
-- 改动完成后必须通过：`pnpm typecheck`、`pnpm test:web`、`pnpm build:web`，并核对业务目录下原生 `<input|select|textarea|button>` 残留数为 `0`。
+- 选择器、勾选、折叠、对话框、下拉菜单和确认对话框统一使用共享的 shadcn/ui 风格 Radix 组件。图标只用 `lucide-react`：导航 16px、按钮内 14–16px，装饰图标加 `aria-hidden`，仅图标的按钮必须有 `aria-label`；不用字母缩写或字符充当图标。审查共享组件的实际交互和浏览器渲染，不能只查业务标签。页面标题、字段标签和按钮已说明的内容不再增加小字；保留错误、权限、限制与不可逆操作的后果。

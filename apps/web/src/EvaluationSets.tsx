@@ -1,3 +1,5 @@
+import { Label } from "@tuskrag/ui/label";
+import { Checkbox } from "@tuskrag/ui/checkbox";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import {
@@ -108,14 +110,14 @@ function SetForm({
       }}
     >
       <fieldset disabled={disabled} className="min-w-0 space-y-4">
-        <label className="block space-y-1 text-sm">
+        <Label className="block space-y-1 text-sm">
           <span>题集名称</span>
           <Input
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
           />
-        </label>
+        </Label>
       </fieldset>
       <div className="flex flex-wrap items-center gap-2">
         <span>
@@ -163,15 +165,15 @@ function SetForm({
       <fieldset disabled={disabled} className="min-w-0 space-y-4">
         {current && (
           <div className="space-y-4 rounded-lg border p-4">
-            <label className="block space-y-1 text-sm">
+            <Label className="block space-y-1 text-sm">
               <span>题号</span>
               <Input
                 value={current.id}
                 onChange={(e) => update({ id: e.target.value })}
                 required
               />
-            </label>
-            <label className="block space-y-1 text-sm">
+            </Label>
+            <Label className="block space-y-1 text-sm">
               <span>问题</span>
               <Textarea
                 rows={3}
@@ -179,15 +181,14 @@ function SetForm({
                 onChange={(e) => update({ question: e.target.value })}
                 required
               />
-            </label>
-            <label className="flex items-center gap-2 text-sm">
-              <Input
-                type="checkbox"
+            </Label>
+            <Label className="flex items-center gap-2 text-sm">
+              <Checkbox
                 checked={current.answerable}
-                onChange={(e) => update({ answerable: e.target.checked })}
+                onCheckedChange={(checked) => update({ answerable: checked })}
               />
               应有答案
-            </label>
+            </Label>
             {!current.answerable && (
               <p className="text-sm text-muted-foreground">
                 无答案题不保存期望位置。
@@ -210,7 +211,7 @@ function SetForm({
                         ["page", "页码"],
                       ] as const
                     ).map(([field, label]) => (
-                      <label key={field} className="space-y-1 text-sm">
+                      <Label key={field} className="space-y-1 text-sm">
                         <span>{label}</span>
                         <Input
                           type="number"
@@ -228,7 +229,7 @@ function SetForm({
                             })
                           }
                         />
-                      </label>
+                      </Label>
                     ))}
                     <Button
                       type="button"
@@ -267,21 +268,21 @@ function SetForm({
                 </Button>
               </section>
             )}
-            <label className="block space-y-1 text-sm">
+            <Label className="block space-y-1 text-sm">
               <span>参考答案（可选）</span>
               <Textarea
                 rows={3}
                 value={current.reference_answer}
                 onChange={(e) => update({ reference_answer: e.target.value })}
               />
-            </label>
-            <label className="block space-y-1 text-sm">
+            </Label>
+            <Label className="block space-y-1 text-sm">
               <span>标签（逗号分隔）</span>
               <Input
                 value={current.tags}
                 onChange={(e) => update({ tags: e.target.value })}
               />
-            </label>
+            </Label>
           </div>
         )}
       </fieldset>
@@ -401,7 +402,7 @@ export function EvaluationSets({
         {base.data?.name} · 评测集
       </h1>
       <p className="text-sm text-muted-foreground">
-        维护问题、期望位置与参考答案。保存后可运行指定修订，未保存的草稿不参与评测。
+        评测使用已保存的题集修订。
       </p>
       {archived && <p role="status">知识库已归档，题集仅供查看。</p>}
       <section aria-label="题集列表" className="space-y-3">

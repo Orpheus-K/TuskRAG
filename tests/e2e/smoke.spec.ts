@@ -5,7 +5,10 @@ test("serves the console on a deep route and preserves API 404s", async ({
   request,
 }) => {
   await page.goto("/kb/42/documents");
-  await expect(page.getByText("服务已就绪", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "登录 TuskRAG" }),
+  ).toBeVisible();
+  await expect(page.getByText("服务已就绪")).toHaveCount(0);
   await page.reload();
   await expect(
     page.getByRole("heading", { name: "登录 TuskRAG" }),
@@ -41,10 +44,12 @@ test("configures a model, creates a knowledge base, restores a session, and sign
   await expect(
     page.getByRole("listitem").filter({ hasText: providerName }),
   ).toBeVisible();
+  await page.getByRole("button", { name: "新建知识库" }).click();
   await page.getByLabel("知识库名称").fill(knowledgeName);
+  await page.getByLabel("嵌入模型", { exact: true }).click();
   await page
-    .getByLabel("嵌入模型", { exact: true })
-    .selectOption({ label: `${providerName} · test-embedding · 64 维` });
+    .getByRole("option", { name: `${providerName} · test-embedding · 64 维` })
+    .click();
   await page.getByRole("button", { name: "创建知识库", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: knowledgeName }),
@@ -79,7 +84,9 @@ test("configures a model, creates a knowledge base, restores a session, and sign
     375,
   );
   await page.getByRole("link", { name: "返回知识库" }).click();
-  await page.getByRole("button", { name: "退出登录" }).click();
+  await page.getByRole("button", { name: "展开菜单" }).click();
+  await page.getByRole("button", { name: "账号菜单" }).click();
+  await page.getByRole("menuitem", { name: "退出登录" }).click();
   await expect(
     page.getByRole("heading", { name: "登录 TuskRAG" }),
   ).toBeVisible();
@@ -283,9 +290,9 @@ test("confirms document deletion on mobile", async ({ page }) => {
     deleted = true;
     return route.fulfill({ status: 202, json: { status: "deleting" } });
   });
-  page.once("dialog", (dialog) => dialog.accept());
   await page.goto("/kb/5/documents");
   await page.getByRole("button", { name: "删除文档" }).click();
+  await page.getByRole("button", { name: "确认删除" }).click();
   await expect(
     page.getByText("已移除 制度.csv，后台正在清理原文件。"),
   ).toBeVisible();
@@ -440,6 +447,7 @@ test("search results stay readable on desktop and mobile", async ({
     route.fulfill({
       json: {
         status: "ok",
+        retrieval_revision: 1,
         degraded: ["rerank"],
         trace_id: "test",
         evidence: [

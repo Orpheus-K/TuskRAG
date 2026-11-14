@@ -4,7 +4,7 @@
     "services/core/go.mod": "38bc19c51bbc088ea620f2c5b926310066ad843f82aafe06d516ceabdded289b",
     "services/core/go.sum": "3e79b195b0c7881641dff7e6b761bbf552c58cead0ac9502b2f37bee4203a750",
     "services/parser/uv.lock": "3feb31fac6481a200a2e316ae16a0a451be9574d591622ba869648cfb0d9fab4",
-    "pnpm-lock.yaml": "60c5794f4fe0e991b2f28078e86fb30213f9c42b627b10fd1b089e9e8a49e5b6"
+    "pnpm-lock.yaml": "df303931304ae42c6c4fdd8c1c262c60e3e9613f8d303d069ded76e7c717edb3"
   },
   "parserDistributions": [
     {

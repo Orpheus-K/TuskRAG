@@ -77,9 +77,11 @@ for (const width of [1280, 375]) {
         exact: true,
       }),
     ).toBeVisible();
-    await page.getByText("q1 · 证据已变化", { exact: true }).click();
+    await page.getByRole("button", { name: "q1 · 证据已变化", exact: true }).click();
     await expect(
-      page.locator("details[open]").getByText("-0.1000", { exact: true }),
+      page
+        .locator('[data-state="open"][data-slot="collapsible-content"]')
+        .getByText("-0.1000", { exact: true }),
     ).toBeVisible();
     expect(
       await page.evaluate(
@@ -104,7 +106,7 @@ for (const width of [1280, 375]) {
     ).toBeVisible();
     await page.getByRole("button", { name: "下一页差异" }).click();
     await page.reload();
-    await page.getByText("q21 · 证据已变化", { exact: true }).click();
+    await page.getByRole("button", { name: "q21 · 证据已变化", exact: true }).click();
     await expect(
       page.getByText("无答案题，指标与差值不适用。", { exact: true }),
     ).toBeVisible();

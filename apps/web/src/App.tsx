@@ -1,4 +1,8 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  type QueryClient,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import {
   ApiError,
@@ -22,15 +26,38 @@ import {
   CardHeader,
   CardTitle,
 } from "@tuskrag/ui/card";
+import { Dialog } from "@tuskrag/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@tuskrag/ui/dropdown-menu";
 import { EmptyState } from "@tuskrag/ui/empty-state";
 import { Field } from "@tuskrag/ui/field";
 import { IdeShell, IdeSidebarGroup } from "@tuskrag/ui/ide-shell";
 import { Input } from "@tuskrag/ui/input";
 import { SectionHeader } from "@tuskrag/ui/section-header";
 import { WorkspaceSplit } from "@tuskrag/ui/workspace-split";
+import {
+  ChevronsUpDown,
+  CircleUser,
+  FileText,
+  FlaskConical,
+  KeyRound,
+  LibraryBig,
+  LogOut,
+  type LucideIcon,
+  MessagesSquare,
+  Plus,
+  RefreshCw,
+  ShieldCheck,
+} from "lucide-react";
 import { createContext, type FormEvent, useEffect, useState } from "react";
 import { ChatModels } from "./ChatModels";
-import { Setup } from "./Setup";
+import { CreateKnowledgeBase, EmbeddingModels } from "./Setup";
 
 export const IdentityContext = createContext<Identity | null>(null);
 
@@ -44,18 +71,28 @@ function messageFor(error: unknown): string {
   return "暂时无法完成操作，请检查服务状态后重试。";
 }
 
+async function forgetSession(queryClient: QueryClient) {
+  await queryClient.cancelQueries({ queryKey: ["identity"] });
+  queryClient.removeQueries({ queryKey: ["knowledge-bases"] });
+  queryClient.removeQueries({ queryKey: ["knowledge-base"] });
+  queryClient.removeQueries({ queryKey: ["documents"] });
+  queryClient.removeQueries({ queryKey: ["search"] });
+  queryClient.removeQueries({ queryKey: ["embedding-spaces"] });
+  queryClient.setQueryData(["identity"], null);
+}
+
 function SidebarNavItem({
   to,
   params,
   search,
-  icon,
+  icon: Icon,
   label,
   active,
 }: {
   to: string;
   params?: Record<string, string>;
   search?: Record<string, unknown>;
-  icon: string;
+  icon: LucideIcon;
   label: string;
   active?: boolean;
 }) {
@@ -66,17 +103,14 @@ function SidebarNavItem({
           ? "bg-accent font-medium text-accent-foreground"
           : "text-muted-foreground hover:bg-muted hover:text-foreground"
       }`}
+      aria-label={label}
+      aria-current={active ? "page" : undefined}
       params={params as never}
       search={search as never}
       title={label}
       to={to as never}
     >
-      <span
-        aria-hidden="true"
-        className="flex h-5 w-5 shrink-0 items-center justify-center rounded border border-border/70 bg-surface text-[11px] font-mono"
-      >
-        {icon}
-      </span>
+      <Icon aria-hidden="true" className="h-4 w-4 shrink-0" />
       <span className="tusk-sidebar-label truncate">{label}</span>
     </Link>
   );
@@ -148,15 +182,9 @@ function LoginForm({ onLogin }: { onLogin: (identity: Identity) => void }) {
 
   return (
     <section className="mx-auto w-full max-w-md py-12 sm:py-20">
-      <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-        企业知识空间
-      </p>
       <h1 className="mt-2 text-2xl font-semibold tracking-tight">
         登录 TuskRAG
       </h1>
-      <p className="mt-2 text-sm leading-6 text-muted-foreground">
-        使用管理员提供的租户编号和账号登录。
-      </p>
       <Card className="mt-6">
         <CardContent className="pt-6">
           <form className="space-y-4" onSubmit={submit}>
@@ -202,12 +230,7 @@ function LoginForm({ onLogin }: { onLogin: (identity: Identity) => void }) {
               </p>
             ) : null}
             <Field htmlFor="login" label="账号">
-              <Input
-                autoComplete="username"
-                id="login"
-                name="login"
-                required
-              />
+              <Input autoComplete="username" id="login" name="login" required />
             </Field>
             <Field htmlFor="password" label="密码">
               <Input
@@ -231,8 +254,7 @@ function LoginForm({ onLogin }: { onLogin: (identity: Identity) => void }) {
 
 export function Workspace({ identity }: { identity: Identity }) {
   const queryClient = useQueryClient();
-  const [loggingOut, setLoggingOut] = useState(false);
-  const [error, setError] = useState("");
+  const [creating, setCreating] = useState(false);
   const knowledgeBases = useQuery({
     queryKey: ["knowledge-bases", identity.tenant_id, identity.user_id],
     queryFn: ({ signal }) => listKnowledgeBases(signal),
@@ -245,59 +267,29 @@ export function Workspace({ identity }: { identity: Identity }) {
     viewer: "查看者",
   };
 
-  async function forgetSession() {
-    await queryClient.cancelQueries({ queryKey: ["identity"] });
-    queryClient.removeQueries({ queryKey: ["knowledge-bases"] });
-    queryClient.removeQueries({ queryKey: ["knowledge-base"] });
-    queryClient.removeQueries({ queryKey: ["documents"] });
-    queryClient.removeQueries({ queryKey: ["search"] });
-    queryClient.removeQueries({ queryKey: ["embedding-spaces"] });
-    queryClient.setQueryData(["identity"], null);
-  }
-
-  async function signOut() {
-    setLoggingOut(true);
-    setError("");
-    try {
-      await logout(identity.csrf_token);
-      await forgetSession();
-    } catch (cause) {
-      if (cause instanceof ApiError && cause.status === 401) {
-        await forgetSession();
-      } else {
-        setError(messageFor(cause));
-      }
-    } finally {
-      setLoggingOut(false);
-    }
-  }
-
   const kbListContent = (
     <div className="space-y-5">
       <SectionHeader
         actions={
-          <div className="flex flex-wrap items-center gap-2">
-            <Button asChild size="sm" variant="outline">
-              <Link to="/admin">平台治理</Link>
-            </Button>
-            <Button asChild size="sm" variant="outline">
-              <Link to="/api-keys">API Key 管理</Link>
-            </Button>
-            <Button
-              disabled={loggingOut}
-              onClick={() => void signOut()}
-              size="sm"
-              variant="outline"
-            >
-              {loggingOut ? "正在退出" : "退出登录"}
-            </Button>
-          </div>
+          <Dialog
+            onOpenChange={setCreating}
+            open={creating}
+            title="新建知识库"
+            trigger={
+              <Button size="sm">
+                <Plus aria-hidden="true" className="h-4 w-4" />
+                新建知识库
+              </Button>
+            }
+          >
+            <CreateKnowledgeBase
+              identity={identity}
+              onCreated={() => setCreating(false)}
+            />
+          </Dialog>
         }
-        description="查看你有权访问的知识库，点击进入文档管理或直接提问。"
-        eyebrow={`租户 ${identity.tenant_id}`}
         title="知识库"
       />
-      {error && <Alert variant="danger">{error}</Alert>}
       {knowledgeBases.isPending ? (
         <Alert variant="info">正在加载知识库</Alert>
       ) : knowledgeBases.isError ? (
@@ -311,7 +303,7 @@ export function Workspace({ identity }: { identity: Identity }) {
                 </p>
                 <Button
                   className="mt-4"
-                  onClick={() => void forgetSession()}
+                  onClick={() => void forgetSession(queryClient)}
                   variant="outline"
                 >
                   重新登录
@@ -339,7 +331,7 @@ export function Workspace({ identity }: { identity: Identity }) {
           title="暂无知识库"
         />
       ) : (
-        <ul className="grid gap-4 sm:grid-cols-2">
+        <ul className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr))]">
           {knowledgeBases.data.map((item) => (
             <li key={item.id}>
               <Card className="h-full transition-colors hover:border-foreground/25">
@@ -398,12 +390,13 @@ export function Workspace({ identity }: { identity: Identity }) {
   const configPanelContent = (
     <div className="space-y-4">
       <ChatModels identity={identity} />
-      <Setup identity={identity} />
+      <EmbeddingModels identity={identity} />
     </div>
   );
 
   return (
     <WorkspaceSplit
+      className="lg:min-h-[calc(100dvh-5.5rem)]"
       panes={[
         {
           id: "kb-main",
@@ -411,9 +404,9 @@ export function Workspace({ identity }: { identity: Identity }) {
           content: kbListContent,
         },
         {
-          id: "kb-setup",
-          title: "模型与创建",
-          defaultWidth: 420,
+          id: "kb-models",
+          title: "模型配置",
+          defaultWidth: 320,
           minWidth: 300,
           maxWidth: 640,
           collapsible: true,
@@ -450,148 +443,171 @@ export function App() {
     },
     retry: false,
   });
-  const status = readiness.isPending
-    ? "正在检查"
-    : readiness.isError
-      ? "服务不可用"
-      : "服务已就绪";
+  const [loggingOut, setLoggingOut] = useState(false);
+  const [logoutError, setLogoutError] = useState("");
 
-  const readinessBadge = (
-    <Badge
-      role="status"
-      variant={
-        readiness.isPending
-          ? "neutral"
-          : readiness.isError
-            ? "danger"
-            : "success"
+  async function signOut(identity: Identity) {
+    setLoggingOut(true);
+    setLogoutError("");
+    try {
+      await logout(identity.csrf_token);
+      await forgetSession(queryClient);
+    } catch (cause) {
+      if (cause instanceof ApiError && cause.status === 401) {
+        await forgetSession(queryClient);
+      } else {
+        setLogoutError(messageFor(cause));
       }
-    >
-      {status}
+    } finally {
+      setLoggingOut(false);
+    }
+  }
+
+  const unavailableBadge = readiness.isError ? (
+    <Badge role="status" variant="danger">
+      服务不可用
     </Badge>
-  );
+  ) : null;
 
   if (currentIdentity.data) {
     const identity = currentIdentity.data;
+    const globalNav = [
+      { to: "/", icon: LibraryBig, label: "知识库", active: pathname === "/" },
+      {
+        to: "/admin",
+        icon: ShieldCheck,
+        label: "平台治理",
+        active: pathname === "/admin",
+      },
+      {
+        to: "/api-keys",
+        icon: KeyRound,
+        label: "API Key",
+        active: pathname === "/api-keys",
+      },
+    ];
+    const kbNav = activeKbId
+      ? [
+          {
+            to: "/kb/$kbId/documents",
+            search: { cursor: 0 },
+            icon: FileText,
+            label: "文档与检索",
+            active: pathname.endsWith("/documents"),
+          },
+          {
+            to: "/kb/$kbId/answer",
+            icon: MessagesSquare,
+            label: "知识问答",
+            active: pathname.endsWith("/answer"),
+          },
+          {
+            to: "/kb/$kbId/eval",
+            search: { cursor: "", digest: "", row: 0 },
+            icon: FlaskConical,
+            label: "评测中心",
+            active:
+              pathname.includes("/eval") ||
+              pathname.includes("/answer-evaluation"),
+          },
+          {
+            to: "/kb/$kbId/rebuild",
+            search: { job: 0 },
+            icon: RefreshCw,
+            label: "嵌入重建",
+            active: pathname.endsWith("/rebuild"),
+          },
+        ]
+      : [];
+    const currentPage = [...globalNav, ...kbNav].find((item) => item.active);
     return (
       <IdentityContext.Provider value={identity}>
         <IdeShell
           brand={
             <Link
+              aria-label="TuskRAG"
               className="flex items-center gap-2 text-sm font-semibold tracking-tight"
               to="/"
             >
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">
-                T
+                <LibraryBig aria-hidden="true" className="size-4" />
               </span>
               <span className="tusk-sidebar-label">TuskRAG</span>
             </Link>
           }
           sidebarFooter={
-            <div className="space-y-0.5 px-1">
-              <p className="tusk-sidebar-label truncate text-xs font-medium text-foreground">
-                用户 #{identity.user_id}
-              </p>
-              <p className="tusk-sidebar-label truncate text-[11px] text-muted-foreground">
-                租户 {identity.tenant_id}
-              </p>
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  aria-label="账号菜单"
+                  className="tusk-sidebar-item h-auto w-full justify-start gap-2.5 px-2.5 py-1.5"
+                  title="账号菜单"
+                  variant="ghost"
+                >
+                  <CircleUser aria-hidden="true" className="h-5 w-5 shrink-0" />
+                  <span className="tusk-sidebar-label min-w-0 flex-1 text-left">
+                    <span className="block truncate text-xs font-medium">
+                      用户 #{identity.user_id}
+                    </span>
+                    <span className="block truncate text-[11px] font-normal text-muted-foreground">
+                      租户 {identity.tenant_id}
+                    </span>
+                  </span>
+                  <ChevronsUpDown
+                    aria-hidden="true"
+                    className="tusk-sidebar-label h-3.5 w-3.5 shrink-0 text-muted-foreground"
+                  />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" side="top">
+                <DropdownMenuLabel>
+                  用户 #{identity.user_id} · 租户 {identity.tenant_id}
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  disabled={loggingOut}
+                  onSelect={() => void signOut(identity)}
+                >
+                  <LogOut aria-hidden="true" className="h-4 w-4" />
+                  退出登录
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           }
           sidebarNav={
             <div className="space-y-3">
               <IdeSidebarGroup title="工作台">
-                <SidebarNavItem
-                  active={pathname === "/"}
-                  icon="KB"
-                  label="知识库总览"
-                  to="/"
-                />
-                <SidebarNavItem
-                  active={pathname === "/admin"}
-                  icon="AD"
-                  label="平台治理"
-                  to="/admin"
-                />
-                <SidebarNavItem
-                  active={pathname === "/api-keys"}
-                  icon="AK"
-                  label="API Key 管理"
-                  to="/api-keys"
-                />
+                {globalNav.map((item) => (
+                  <SidebarNavItem key={item.to} {...item} />
+                ))}
               </IdeSidebarGroup>
-
               {activeKbId ? (
                 <IdeSidebarGroup title={`知识库 #${activeKbId}`}>
-                  <SidebarNavItem
-                    active={pathname.endsWith("/documents")}
-                    icon="DOC"
-                    label="文档与入库"
-                    params={{ kbId: activeKbId }}
-                    search={{ cursor: 0 }}
-                    to="/kb/$kbId/documents"
-                  />
-                  <SidebarNavItem
-                    active={pathname.endsWith("/answer")}
-                    icon="QA"
-                    label="知识问答"
-                    params={{ kbId: activeKbId }}
-                    to="/kb/$kbId/answer"
-                  />
-                  <SidebarNavItem
-                    active={pathname.endsWith("/config")}
-                    icon="CFG"
-                    label="配置与重建"
-                    params={{ kbId: activeKbId }}
-                    to="/kb/$kbId/config"
-                  />
-                  <SidebarNavItem
-                    active={pathname.endsWith("/members")}
-                    icon="USR"
-                    label="成员权限"
-                    params={{ kbId: activeKbId }}
-                    to="/kb/$kbId/members"
-                  />
-                  <SidebarNavItem
-                    active={pathname.includes("/eval")}
-                    icon="EVL"
-                    label="评测中心"
-                    params={{ kbId: activeKbId }}
-                    search={{ cursor: "", digest: "", row: 0 }}
-                    to="/kb/$kbId/eval"
-                  />
-                  <SidebarNavItem
-                    active={pathname.endsWith("/trace")}
-                    icon="TRC"
-                    label="检索追踪"
-                    params={{ kbId: activeKbId }}
-                    to="/kb/$kbId/trace"
-                  />
+                  {kbNav.map((item) => (
+                    <SidebarNavItem
+                      key={item.to}
+                      params={{ kbId: activeKbId }}
+                      {...item}
+                    />
+                  ))}
                 </IdeSidebarGroup>
               ) : null}
             </div>
           }
           topbarLeft={
             <span className="truncate text-xs text-muted-foreground">
-              {activeKbId ? `知识库 #${activeKbId}` : "控制台"}
+              {[activeKbId ? `知识库 #${activeKbId}` : null, currentPage?.label]
+                .filter(Boolean)
+                .join(" / ")}
             </span>
           }
-          topbarRight={
-            <div className="flex items-center gap-2">
-              {readiness.isError ? (
-                <Button
-                  onClick={() => void readiness.refetch()}
-                  size="xs"
-                  variant="outline"
-                >
-                  重新检查
-                </Button>
-              ) : null}
-              {readinessBadge}
-            </div>
-          }
+          topbarRight={unavailableBadge}
         >
           {readiness.isError && (
-            <Alert className="mb-4 flex items-center justify-between gap-3" variant="warning">
+            <Alert
+              className="mb-4 flex items-center justify-between gap-3"
+              variant="warning"
+            >
               <span>基础服务暂不可用。</span>
               <Button
                 onClick={() => void readiness.refetch()}
@@ -600,6 +616,11 @@ export function App() {
               >
                 重新检查
               </Button>
+            </Alert>
+          )}
+          {logoutError && (
+            <Alert className="mb-4" variant="danger">
+              {logoutError}
             </Alert>
           )}
           <Outlet />
@@ -612,7 +633,7 @@ export function App() {
     <main className="mx-auto flex min-h-screen max-w-5xl flex-col px-6 py-8 sm:px-10">
       <header className="flex items-center justify-between border-b pb-6">
         <span className="text-lg font-semibold tracking-tight">TuskRAG</span>
-        {readinessBadge}
+        {unavailableBadge}
       </header>
       {readiness.isError && (
         <div className="mt-5 flex items-center gap-3 text-sm text-muted-foreground">

@@ -98,10 +98,8 @@ describe("AdminGovernancePage", () => {
 
     fireEvent.click(screen.getByText("租户出域上限"));
     await waitFor(() => {
-      const select = screen.getByLabelText(
-        /egress_policy_max/,
-      ) as HTMLSelectElement;
-      expect(select.value).toBe("internal_only");
+      const select = screen.getByLabelText(/egress_policy_max/);
+      expect(select.textContent).toContain("internal_only");
     });
 
     expect(fetchMock).toHaveBeenCalled();

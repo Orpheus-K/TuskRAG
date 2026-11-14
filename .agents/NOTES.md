@@ -2,6 +2,10 @@
 
 ## 当前快照（2026-11-14 M5 生产化与全里程碑收官）
 
+- **A13 控制台功能分区（2026-11-14）**：退出登录移入侧栏底部账号菜单；新建知识库、添加嵌入/回答模型改为对话框，总览为列表 + 模型配置两栏；服务正常时不显示状态，仅不可用时提示；图标统一 lucide-react（新增 `Dialog`、`DropdownMenu` 共享组件）；侧栏移除指向未注册路由的“配置与重建/成员权限/检索追踪”，改为文档与检索、知识问答、评测中心、嵌入重建。`pnpm typecheck`、`pnpm test:web`（18 文件 122 项）、`pnpm build:web`、产物上的 workspace-layout 浏览器回归（模拟数据）通过；`ui-reuse` 34 种共享组件、23 种跨文件复用、原生控件 0。smoke 用例已按新入口改写但未运行（需真实后端）。前端许可清单已增量更新。规则见 [UI 技能](skills/tuskrag-ui/SKILL.md)。
+
+- **A13 控制台布局**：生产构建已补齐共享组件样式扫描，知识库总览采用左导航、列表、新建和模型配置四栏。类型检查、122 项前端测试通过；生产地址通过 workspace-layout 浏览器回归（模拟身份与业务数据）。全局控件已迁移到 Tailwind + Radix 组合，清理了重复说明。27 种共享组件、22 种跨文件复用；18 项产物浏览器回归与 3 项线上模拟数据回归通过。复用统计和复验命令见 [UI 技能](skills/tuskrag-ui/SKILL.md)。
+
 - **M5（生产化：Compose 编排、可观测、运维命令与故障验证）完成**：
   - **可观测与运维**：新增 `GET /metrics`（[metrics.go](../services/core/internal/httpapi/metrics.go)，Prometheus 文本格式 + 回环/`TUSKRAG_METRICS_TOKEN` 鉴权）、`tuskrag ops diagnose <tenant-id>`、`tuskrag ops rotate-master-key <tenant-id>` 与 `tuskrag ops reindex <tenant-id> --kb <kb-id>`（[ops_m5.go](../services/core/internal/operations/ops_m5.go) + [operations.go](../services/core/cmd/tuskrag/operations.go)）。
   - **部署编排与 SBOM**：新增 [Dockerfile](../deploy/Dockerfile)、[docker-compose.lite.yml](../deploy/compose/docker-compose.lite.yml)、[docker-compose.standard.yml](../deploy/compose/docker-compose.standard.yml)、[docker-compose.model-node.yml](../deploy/compose/docker-compose.model-node.yml)、[docker-compose.legacy-office.yml](../deploy/compose/docker-compose.legacy-office.yml)、[prometheus-alerts.yml](../deploy/compose/prometheus-alerts.yml) 与 [sbom.sh](../deploy/linux/sbom.sh)；更新 [deploy/README.md](../deploy/README.md)、[09 部署运维与可观测](../docs/09-部署运维与可观测.md) 与 [12 开发计划与里程碑](../docs/12-开发计划与里程碑.md)。

@@ -1,3 +1,5 @@
+import { Label } from "@tuskrag/ui/label";
+import { Checkbox } from "@tuskrag/ui/checkbox";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ApiError,
@@ -10,7 +12,7 @@ import {
 } from "@tuskrag/api-client";
 import { Button } from "@tuskrag/ui/button";
 import { Input } from "@tuskrag/ui/input";
-import { Select } from "@tuskrag/ui/select";
+import { Select, SelectItem } from "@tuskrag/ui/select";
 import { type FormEvent, useState } from "react";
 
 function accessDenied(error: unknown) {
@@ -250,7 +252,7 @@ function ConfigForm({
     <form onSubmit={submit}>
       <fieldset disabled={disabled} className="space-y-4">
         <legend className="sr-only">检索默认参数</legend>
-        <label className="block space-y-1 text-sm">
+        <Label className="block space-y-1 text-sm">
           <span>默认返回条数</span>
           <Input
             name="config-top-k"
@@ -261,18 +263,17 @@ function ConfigForm({
             required
             defaultValue={saved?.top_k ?? 8}
           />
-        </label>
-        <label className="flex items-center gap-2 text-sm">
-          <Input
-            type="checkbox"
+        </Label>
+        <Label className="flex items-center gap-2 text-sm">
+          <Checkbox
             checked={rerank}
-            onChange={(event) => setRerank(event.currentTarget.checked)}
+            onCheckedChange={(checked) => setRerank(checked)}
           />
           <span>默认启用重排</span>
-        </label>
+        </Label>
         <fieldset disabled={!rerank} className="grid gap-4 sm:grid-cols-2">
           <legend className="sr-only">默认重排设置</legend>
-          <label className="block space-y-1 text-sm">
+          <Label className="block space-y-1 text-sm">
             <span>重排提供方编号</span>
             <Input
               name="config-provider"
@@ -285,8 +286,8 @@ function ConfigForm({
             <span className="text-xs text-muted-foreground">
               填写平台管理员提供的编号。
             </span>
-          </label>
-          <label className="block space-y-1 text-sm">
+          </Label>
+          <Label className="block space-y-1 text-sm">
             <span>默认重排模型</span>
             <Input
               name="config-model"
@@ -294,19 +295,19 @@ function ConfigForm({
               required={rerank}
               defaultValue={saved?.reranker?.model ?? ""}
             />
-          </label>
-          <label className="block space-y-1 text-sm">
+          </Label>
+          <Label className="block space-y-1 text-sm">
             <span>重排候选数</span>
             <Select
               name="config-top-n"
               defaultValue={saved?.reranker?.top_n ?? 30}
             >
-              <option value={20}>20</option>
-              <option value={30}>30</option>
-              <option value={50}>50</option>
+              <SelectItem value={20}>20</SelectItem>
+              <SelectItem value={30}>30</SelectItem>
+              <SelectItem value={50}>50</SelectItem>
             </Select>
-          </label>
-          <label className="block space-y-1 text-sm">
+          </Label>
+          <Label className="block space-y-1 text-sm">
             <span>最低重排分数（可留空）</span>
             <Input
               name="config-min-score"
@@ -314,15 +315,14 @@ function ConfigForm({
               step="any"
               defaultValue={saved?.reranker?.min_score ?? ""}
             />
-          </label>
-          <label className="flex items-center gap-2 text-sm sm:col-span-2">
-            <Input
+          </Label>
+          <Label className="flex items-center gap-2 text-sm sm:col-span-2">
+            <Checkbox
               name="config-fallback"
-              type="checkbox"
               defaultChecked={saved?.reranker?.fallback ?? false}
             />
             <span>重排服务暂不可用时允许返回未重排结果</span>
-          </label>
+          </Label>
         </fieldset>
         {error && (
           <p role="alert" className="text-sm">

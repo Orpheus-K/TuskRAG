@@ -46,7 +46,8 @@ it("shows an unavailable dependency and recovers after retry", async () => {
 
   await screen.findByText("服务不可用");
   fireEvent.click(screen.getByRole("button", { name: "重新检查" }));
-  await screen.findByText("服务已就绪");
+  await vi.waitFor(() => expect(screen.queryByText("服务不可用")).toBeNull());
+  expect(screen.queryByText("服务已就绪")).toBeNull();
   expect(checks).toBe(2);
 });
 
@@ -111,7 +112,11 @@ it("shows the workspace after login and returns to login after logout", async ()
   });
   fireEvent.click(screen.getByRole("button", { name: "登录" }));
   await screen.findByRole("heading", { name: "暂无知识库" });
-  fireEvent.click(screen.getByRole("button", { name: "退出登录" }));
+  expect(screen.queryByText("服务已就绪")).toBeNull();
+  fireEvent.keyDown(screen.getByRole("button", { name: "账号菜单" }), {
+    key: "Enter",
+  });
+  fireEvent.click(await screen.findByRole("menuitem", { name: "退出登录" }));
   await screen.findByRole("heading", { name: "登录 TuskRAG" });
 });
 
@@ -163,13 +168,17 @@ it("reuses the same creation key after a failed request", async () => {
     }),
   );
   mount();
-  await screen.findByRole("option", { name: "provider · embed · 64 维" });
+  fireEvent.click(await screen.findByRole("button", { name: "新建知识库" }));
+  await screen.findByLabelText("知识库名称");
   fireEvent.change(screen.getByLabelText("知识库名称"), {
     target: { value: "test" },
   });
-  fireEvent.change(screen.getByLabelText("嵌入模型", { exact: true }), {
-    target: { value: "3" },
+  fireEvent.keyDown(screen.getByLabelText("嵌入模型", { exact: true }), {
+    key: "ArrowDown",
   });
+  fireEvent.click(
+    await screen.findByRole("option", { name: /provider · embed/ }),
+  );
   fireEvent.click(screen.getByRole("button", { name: "创建知识库" }));
   await screen.findByRole("alert");
   fireEvent.click(screen.getByRole("button", { name: "创建知识库" }));
@@ -418,9 +427,6 @@ it("uploads a confirmed new version to the selected document", async () => {
 
 it("confirms deletion and removes displayed evidence", async () => {
   window.history.replaceState(null, "", "/kb/5/documents");
-  vi.spyOn(window, "confirm")
-    .mockReturnValueOnce(false)
-    .mockReturnValueOnce(true);
   let deleted = false;
   let deleteCalls = 0;
   vi.stubGlobal(
@@ -514,8 +520,10 @@ it("confirms deletion and removes displayed evidence", async () => {
   fireEvent.click(screen.getByRole("button", { name: "检索" }));
   await screen.findByText("可检索的制度内容");
   fireEvent.click(screen.getByRole("button", { name: "删除文档" }));
+  fireEvent.click(screen.getByRole("button", { name: "取消" }));
   expect(deleteCalls).toBe(0);
   fireEvent.click(screen.getByRole("button", { name: "删除文档" }));
+  fireEvent.click(screen.getByRole("button", { name: "确认删除" }));
   await screen.findByText("已移除 制度.csv，后台正在清理原文件。");
   expect(deleteCalls).toBe(1);
   expect(screen.queryByText("可检索的制度内容")).toBeNull();

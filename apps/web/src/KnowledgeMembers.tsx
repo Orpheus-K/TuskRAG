@@ -1,3 +1,4 @@
+import { Label } from "@tuskrag/ui/label";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ApiError,
@@ -12,7 +13,7 @@ import {
   setKnowledgeBaseMember,
 } from "@tuskrag/api-client";
 import { Button } from "@tuskrag/ui/button";
-import { Select } from "@tuskrag/ui/select";
+import { Select, SelectItem } from "@tuskrag/ui/select";
 import { type FormEvent, useState } from "react";
 
 const roleLabels: Record<KnowledgeBaseRole, string> = {
@@ -197,20 +198,20 @@ function MembersAndEgressEditor({
       <div className="space-y-3">
         <h3 className="text-sm font-semibold">数据出域策略</h3>
         <div className="flex flex-wrap items-end gap-3">
-          <label className="block min-w-[220px] space-y-1 text-sm">
+          <Label className="block min-w-[220px] space-y-1 text-sm">
             <span>知识库出域策略</span>
             <Select
               aria-label="知识库出域策略"
               value={policy}
-              onChange={(e) => setPolicy(e.target.value as EgressPolicy)}
+              onValueChange={(value) => setPolicy(value as EgressPolicy)}
             >
-              <option value="deny">{egressLabels.deny}</option>
-              <option value="internal_only">
+              <SelectItem value="deny">{egressLabels.deny}</SelectItem>
+              <SelectItem value="internal_only">
                 {egressLabels.internal_only}
-              </option>
-              <option value="allow">{egressLabels.allow}</option>
+              </SelectItem>
+              <SelectItem value="allow">{egressLabels.allow}</SelectItem>
             </Select>
-          </label>
+          </Label>
           <Button
             type="button"
             disabled={updatePolicy.isPending}
@@ -250,17 +251,17 @@ function MembersAndEgressEditor({
                     className="h-8 w-auto px-2 py-1"
                     value={member.role}
                     disabled={saveMember.isPending}
-                    onChange={(e) =>
+                    onValueChange={(value) =>
                       saveMember.mutate({
                         userId: member.user_id,
-                        role: e.target.value as KnowledgeBaseRole,
+                        role: value as KnowledgeBaseRole,
                       })
                     }
                   >
-                    <option value="owner">{roleLabels.owner}</option>
-                    <option value="admin">{roleLabels.admin}</option>
-                    <option value="editor">{roleLabels.editor}</option>
-                    <option value="viewer">{roleLabels.viewer}</option>
+                    <SelectItem value="owner">{roleLabels.owner}</SelectItem>
+                    <SelectItem value="admin">{roleLabels.admin}</SelectItem>
+                    <SelectItem value="editor">{roleLabels.editor}</SelectItem>
+                    <SelectItem value="viewer">{roleLabels.viewer}</SelectItem>
                   </Select>
                   <Button
                     type="button"
@@ -281,35 +282,35 @@ function MembersAndEgressEditor({
             onSubmit={handleAddMember}
             className="flex flex-wrap items-end gap-3 pt-2"
           >
-            <label className="block min-w-[200px] space-y-1 text-sm">
+            <Label className="block min-w-[200px] space-y-1 text-sm">
               <span>添加租户成员</span>
               <Select
                 aria-label="选择租户用户"
                 value={selectedUserId || String(candidateUsers[0]?.id ?? "")}
-                onChange={(e) => setSelectedUserId(e.target.value)}
+                onValueChange={(value) => setSelectedUserId(value)}
               >
                 {candidateUsers.map((u) => (
-                  <option key={u.id} value={String(u.id)}>
+                  <SelectItem key={u.id} value={String(u.id)}>
                     {u.display_name} (#{u.id})
-                  </option>
+                  </SelectItem>
                 ))}
               </Select>
-            </label>
-            <label className="block min-w-[180px] space-y-1 text-sm">
+            </Label>
+            <Label className="block min-w-[180px] space-y-1 text-sm">
               <span>分配角色</span>
               <Select
                 aria-label="新成员角色"
                 value={selectedRole}
-                onChange={(e) =>
-                  setSelectedRole(e.target.value as KnowledgeBaseRole)
+                onValueChange={(value) =>
+                  setSelectedRole(value as KnowledgeBaseRole)
                 }
               >
-                <option value="viewer">{roleLabels.viewer}</option>
-                <option value="editor">{roleLabels.editor}</option>
-                <option value="admin">{roleLabels.admin}</option>
-                <option value="owner">{roleLabels.owner}</option>
+                <SelectItem value="viewer">{roleLabels.viewer}</SelectItem>
+                <SelectItem value="editor">{roleLabels.editor}</SelectItem>
+                <SelectItem value="admin">{roleLabels.admin}</SelectItem>
+                <SelectItem value="owner">{roleLabels.owner}</SelectItem>
               </Select>
-            </label>
+            </Label>
             <Button type="submit" disabled={saveMember.isPending}>
               添加成员
             </Button>

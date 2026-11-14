@@ -1,3 +1,5 @@
+import { Label } from "@tuskrag/ui/label";
+import { Checkbox } from "@tuskrag/ui/checkbox";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ApiError,
@@ -10,16 +12,12 @@ import {
 } from "@tuskrag/api-client";
 import { Alert } from "@tuskrag/ui/alert";
 import { Button } from "@tuskrag/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@tuskrag/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@tuskrag/ui/card";
+import { Dialog } from "@tuskrag/ui/dialog";
 import { Field } from "@tuskrag/ui/field";
 import { Input } from "@tuskrag/ui/input";
-import { Select } from "@tuskrag/ui/select";
+import { Select, SelectItem } from "@tuskrag/ui/select";
+import { Plus } from "lucide-react";
 import { type FormEvent, useRef, useState } from "react";
 
 function errorMessage(error: unknown): string {
@@ -39,9 +37,11 @@ function errorMessage(error: unknown): string {
 function ModelForm({
   identity,
   onSaved,
+  onRefresh,
 }: {
   identity: Identity;
   onSaved: () => void;
+  onRefresh: () => void;
 }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -91,7 +91,7 @@ function ModelForm({
       onSaved();
     } catch (cause) {
       setError(`${errorMessage(cause)} 如连接中断，请先查看已保存的配置。`);
-      onSaved();
+      onRefresh();
     } finally {
       const field = form.elements.namedItem("api_key");
       if (field instanceof HTMLInputElement) field.value = "";
@@ -100,7 +100,7 @@ function ModelForm({
   }
 
   return (
-    <form className="mt-4 space-y-3 border-t pt-4" onSubmit={submit}>
+    <form className="space-y-3" onSubmit={submit}>
       <div className="grid gap-3 sm:grid-cols-2">
         <Field htmlFor="provider-name" label="提供方名称">
           <Input
@@ -116,8 +116,8 @@ function ModelForm({
             id="provider-locality"
             name="locality"
           >
-            <option value="internal">内部网络</option>
-            <option value="external">外部网络（HTTPS）</option>
+            <SelectItem value="internal">内部网络</SelectItem>
+            <SelectItem value="external">外部网络（HTTPS）</SelectItem>
           </Select>
         </Field>
         <Field
@@ -150,8 +150,8 @@ function ModelForm({
         </Field>
         <Field htmlFor="model-distance" label="距离计算">
           <Select defaultValue="cosine" id="model-distance" name="distance">
-            <option value="cosine">余弦距离</option>
-            <option value="ip">内积</option>
+            <SelectItem value="cosine">余弦距离</SelectItem>
+            <SelectItem value="ip">内积</SelectItem>
           </Select>
         </Field>
         <Field htmlFor="model-key" label="API 密钥（可选）">
@@ -164,10 +164,10 @@ function ModelForm({
           />
         </Field>
       </div>
-      <label className="flex items-center gap-2 text-sm">
-        <Input defaultChecked name="normalized" type="checkbox" />
+      <Label className="flex items-center gap-2 text-sm">
+        <Checkbox defaultChecked name="normalized" />
         <span>向量归一化</span>
-      </label>
+      </Label>
       <p className="text-xs leading-5 text-muted-foreground">
         保存配置不会验证模型连接。API 密钥需要服务器配置加密主密钥。
       </p>
@@ -243,23 +243,20 @@ function KnowledgeBaseForm({
           <Select
             defaultValue=""
             id="kb-space"
+            placeholder="选择嵌入模型"
             name="embedding_space_id"
             required
           >
-            <option disabled value="">
-              选择嵌入模型
-            </option>
             {spaces.map((space) => (
-              <option key={space.id} value={space.id}>
+              <SelectItem key={space.id} value={space.id}>
                 {space.provider_name} · {space.model} · {space.dimensions} 维
-              </option>
+              </SelectItem>
             ))}
           </Select>
         </Field>
       </div>
       <p className="text-xs leading-5 text-muted-foreground">
-        新知识库默认仅允许内部语言、嵌入和重排模型；VLM
-        不可用。出域策略管理尚未开放。
+        新知识库默认仅允许使用内部模型。
       </p>
       {error && <Alert variant="danger">{error}</Alert>}
       <Button disabled={busy || spaces.length === 0} size="sm" type="submit">
@@ -269,92 +266,114 @@ function KnowledgeBaseForm({
   );
 }
 
-export function Setup({ identity }: { identity: Identity }) {
-  const queryClient = useQueryClient();
-  const [showModelForm, setShowModelForm] = useState(false);
-  const spaces = useQuery({
+function useEmbeddingSpaces(identity: Identity) {
+  return useQuery({
     queryKey: ["embedding-spaces", identity.tenant_id, identity.user_id],
     queryFn: ({ signal }) => listEmbeddingSpaces(signal),
     retry: false,
   });
+}
+
+export function EmbeddingModels({ identity }: { identity: Identity }) {
+  const queryClient = useQueryClient();
+  const [showModelForm, setShowModelForm] = useState(false);
+  const spaces = useEmbeddingSpaces(identity);
   function refreshModels() {
     void queryClient.invalidateQueries({ queryKey: ["embedding-spaces"] });
   }
   return (
-    <div className="grid gap-4">
-      <Card>
-        <CardHeader className="flex-row flex-wrap items-center justify-between space-y-0 gap-3">
-          <div>
-            <CardTitle>嵌入模型</CardTitle>
-            <CardDescription>配置用于知识库的模型和向量空间。</CardDescription>
+    <Card>
+      <CardHeader className="flex-row flex-wrap items-center justify-between space-y-0 gap-3">
+        <CardTitle>嵌入模型</CardTitle>
+        <Dialog
+          onOpenChange={setShowModelForm}
+          open={showModelForm}
+          title="添加嵌入模型"
+          trigger={
+            <Button size="xs" variant="outline">
+              <Plus aria-hidden="true" className="h-3.5 w-3.5" />
+              配置模型
+            </Button>
+          }
+        >
+          <ModelForm
+            identity={identity}
+            onRefresh={refreshModels}
+            onSaved={() => {
+              refreshModels();
+              setShowModelForm(false);
+            }}
+          />
+        </Dialog>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {spaces.isPending ? (
+          <p className="text-sm text-muted-foreground" role="status">
+            正在加载模型
+          </p>
+        ) : spaces.isError ? (
+          <div className="space-y-2">
+            <Alert variant="danger">{errorMessage(spaces.error)}</Alert>
+            <Button
+              onClick={() => void spaces.refetch()}
+              size="xs"
+              variant="outline"
+            >
+              重试加载模型
+            </Button>
           </div>
-          <Button
-            onClick={() => setShowModelForm(!showModelForm)}
-            size="xs"
-            type="button"
-            variant="outline"
-          >
-            {showModelForm ? "收起配置" : "配置模型"}
-          </Button>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {spaces.isPending ? (
-            <p className="text-sm text-muted-foreground" role="status">
-              正在加载模型
-            </p>
-          ) : spaces.isError ? (
-            <div className="space-y-2">
-              <Alert variant="danger">{errorMessage(spaces.error)}</Alert>
-              <Button
-                onClick={() => void spaces.refetch()}
-                size="xs"
-                variant="outline"
+        ) : spaces.data.length === 0 ? (
+          <p className="text-sm text-muted-foreground">尚未配置嵌入模型。</p>
+        ) : (
+          <ul className="space-y-1.5 text-sm">
+            {spaces.data.map((space) => (
+              <li
+                className="rounded-md border bg-surface-subtle px-3 py-1.5"
+                key={space.id}
               >
-                重试加载模型
-              </Button>
-            </div>
-          ) : spaces.data.length === 0 ? (
-            <p className="text-sm text-muted-foreground">尚未配置嵌入模型。</p>
-          ) : (
-            <ul className="space-y-1.5 text-sm">
-              {spaces.data.map((space) => (
-                <li
-                  className="rounded-md border bg-surface-subtle px-3 py-1.5"
-                  key={space.id}
-                >
-                  {space.provider_name} · {space.model} · {space.dimensions} 维
-                  {space.has_credential ? " · 已保存密钥" : ""}
-                </li>
-              ))}
-            </ul>
-          )}
-          {showModelForm && (
-            <ModelForm identity={identity} onSaved={refreshModels} />
-          )}
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>新建知识库</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {spaces.data ? (
-            <KnowledgeBaseForm
-              identity={identity}
-              spaces={spaces.data}
-              onSaved={() =>
-                void queryClient.invalidateQueries({
-                  queryKey: ["knowledge-bases"],
-                })
-              }
-            />
-          ) : (
-            <p className="text-sm text-muted-foreground">
-              加载模型配置后可创建知识库。
-            </p>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+                {space.provider_name} · {space.model} · {space.dimensions} 维
+                {space.has_credential ? " · 已保存密钥" : ""}
+              </li>
+            ))}
+          </ul>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+export function CreateKnowledgeBase({
+  identity,
+  onCreated,
+}: {
+  identity: Identity;
+  onCreated: () => void;
+}) {
+  const queryClient = useQueryClient();
+  const spaces = useEmbeddingSpaces(identity);
+  if (spaces.isError) {
+    return (
+      <div className="space-y-3">
+        <Alert variant="danger">{errorMessage(spaces.error)}</Alert>
+        <Button
+          onClick={() => void spaces.refetch()}
+          size="xs"
+          variant="outline"
+        >
+          重试加载模型
+        </Button>
+      </div>
+    );
+  }
+  if (!spaces.data) return <Alert variant="info">正在加载模型</Alert>;
+  return (
+    <KnowledgeBaseForm
+      identity={identity}
+      spaces={spaces.data}
+      onSaved={() => {
+        void queryClient.invalidateQueries({ queryKey: ["knowledge-bases"] });
+        onCreated();
+      }}
+    />
   );
 }

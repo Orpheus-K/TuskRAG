@@ -1,3 +1,4 @@
+import { Label } from "@tuskrag/ui/label";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import {
@@ -15,15 +16,11 @@ import { Alert } from "@tuskrag/ui/alert";
 import { Button } from "@tuskrag/ui/button";
 import { Card } from "@tuskrag/ui/card";
 import { SectionHeader } from "@tuskrag/ui/section-header";
-import { Select } from "@tuskrag/ui/select";
+import { Select, SelectItem } from "@tuskrag/ui/select";
 import { Textarea } from "@tuskrag/ui/textarea";
 import { WorkspaceSplit } from "@tuskrag/ui/workspace-split";
 import { type FormEvent, useEffect, useRef, useState } from "react";
-import {
-  type AnswerState,
-  AnswerView,
-  emptyAnswer,
-} from "./AnswerView";
+import { type AnswerState, AnswerView, emptyAnswer } from "./AnswerView";
 import type { PreviewTarget } from "./DocumentPreview";
 import { Preview } from "./Preview";
 
@@ -265,7 +262,10 @@ export function AnswerPage({
         </p>
       )}
       {conversations.isError && (
-        <Alert className="flex items-center justify-between gap-2" variant="danger">
+        <Alert
+          className="flex items-center justify-between gap-2"
+          variant="danger"
+        >
           <span>会话列表不可用。</span>
           <Button
             type="button"
@@ -373,7 +373,11 @@ export function AnswerPage({
               />
             ) : message.status === "running" ? (
               !active.current && (
-                <p key={message.id} role="status" className="text-sm text-muted-foreground">
+                <p
+                  key={message.id}
+                  role="status"
+                  className="text-sm text-muted-foreground"
+                >
                   另一窗口正在回答，请稍候。
                 </p>
               )
@@ -395,9 +399,8 @@ export function AnswerPage({
           identity={identity}
           saved={Boolean(state.done)}
           feedback={
-            history.data?.messages.find(
-              (m) => m.id === state.done?.message_id,
-            )?.feedback
+            history.data?.messages.find((m) => m.id === state.done?.message_id)
+              ?.feedback
           }
         />
       )}
@@ -405,45 +408,45 @@ export function AnswerPage({
         <Alert variant="warning">知识库已归档，不能发起问答。</Alert>
       ) : (
         <Card className="p-4">
-          <form
-            onSubmit={(event) => void submit(event)}
-            className="space-y-4"
-          >
+          <form onSubmit={(event) => void submit(event)} className="space-y-4">
             <div className="grid gap-3 sm:grid-cols-2">
-              <label className="block space-y-1.5 text-xs font-medium">
+              <Label className="block space-y-1.5 text-xs font-medium">
                 <span>回答模型</span>
                 <Select
                   value={modelID}
-                  onChange={(event) => setModel(Number(event.target.value))}
+                  onValueChange={(value) => setModel(Number(value))}
                   disabled={conversation > 0 || running || !models.data?.length}
                 >
                   {!models.data?.length && (
-                    <option value={0}>暂无可用模型</option>
+                    <SelectItem value={0}>暂无可用模型</SelectItem>
                   )}
                   {models.data?.map((item) => (
-                    <option key={item.id} value={item.id}>
+                    <SelectItem key={item.id} value={item.id}>
                       {item.name} · {item.model}
-                    </option>
+                    </SelectItem>
                   ))}
                 </Select>
-              </label>
-              <label className="block space-y-1.5 text-xs font-medium">
+              </Label>
+              <Label className="block space-y-1.5 text-xs font-medium">
                 <span>问答模式</span>
                 <Select
                   aria-label="问答模式"
                   value={mode}
                   disabled={running}
-                  onChange={(event) =>
-                    setMode(event.target.value as "standard" | "agentic")
+                  onValueChange={(value) =>
+                    setMode(value as "standard" | "agentic")
                   }
                 >
-                  <option value="standard">标准模式 (Standard)</option>
-                  <option value="agentic">Agentic 多步推理</option>
+                  <SelectItem value="standard">标准模式 (Standard)</SelectItem>
+                  <SelectItem value="agentic">Agentic 多步推理</SelectItem>
                 </Select>
-              </label>
+              </Label>
             </div>
             {models.isError && (
-              <Alert className="flex items-center justify-between gap-2" variant="danger">
+              <Alert
+                className="flex items-center justify-between gap-2"
+                variant="danger"
+              >
                 <span>无法加载回答模型。</span>
                 <Button
                   type="button"
@@ -460,7 +463,7 @@ export function AnswerPage({
                 请管理员在知识库首页配置回答模型。
               </p>
             )}
-            <label className="block space-y-1.5 text-xs font-medium">
+            <Label className="block space-y-1.5 text-xs font-medium">
               <span>你的问题</span>
               <Textarea
                 ref={questionRef}
@@ -473,7 +476,7 @@ export function AnswerPage({
                 }
                 required
               />
-            </label>
+            </Label>
             <div className="flex gap-3">
               <Button
                 disabled={
@@ -529,7 +532,6 @@ export function AnswerPage({
             </Button>
           </div>
         }
-        description="依据知识库回答，点击引用查看原文。会话仅自己可见。"
         title={`${base.data.name} · 问答`}
       />
       <WorkspaceSplit

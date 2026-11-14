@@ -1,3 +1,4 @@
+import { Label } from "./label";
 import type { ReactNode } from "react";
 
 import { cn } from "../lib/utils";
@@ -21,12 +22,12 @@ export function Field({
 }: FieldProps) {
   return (
     <div className={cn("space-y-1.5", className)}>
-      <label
+      <Label
         className="block text-xs font-medium text-foreground/90"
         htmlFor={htmlFor}
       >
         {label}
-      </label>
+      </Label>
       {children}
       {hint ? (
         <p className="text-xs leading-relaxed text-muted-foreground">{hint}</p>

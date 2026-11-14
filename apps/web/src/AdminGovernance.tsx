@@ -1,3 +1,4 @@
+import { Label } from "@tuskrag/ui/label";
 import { Link } from "@tanstack/react-router";
 import {
   ApiError,
@@ -26,7 +27,7 @@ import { Badge } from "@tuskrag/ui/badge";
 import { Button } from "@tuskrag/ui/button";
 import { DataTable, DataTableCell, DataTableRow } from "@tuskrag/ui/data-table";
 import { Input } from "@tuskrag/ui/input";
-import { Select } from "@tuskrag/ui/select";
+import { Select, SelectItem } from "@tuskrag/ui/select";
 import { useCallback, useEffect, useState } from "react";
 
 export function AdminGovernancePage({ identity }: { identity: Identity }) {
@@ -241,9 +242,6 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
     <section className="py-10">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <p className="text-sm text-muted-foreground">
-            租户 {identity.tenant_id}
-          </p>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight">
             平台治理中心
           </h1>
@@ -287,18 +285,22 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
         </Button>
       </div>
 
-      {error ? <Alert className="mt-4" variant="danger">{error}</Alert> : null}
+      {error ? (
+        <Alert className="mt-4" variant="danger">
+          {error}
+        </Alert>
+      ) : null}
 
       {!forbidden && tab === "audit" ? (
         <div className="mt-6 space-y-4">
           <div className="flex flex-wrap items-end gap-3">
             <div>
-              <label
+              <Label
                 className="block text-xs font-medium text-muted-foreground"
                 htmlFor="audit-action"
               >
                 动作过滤
-              </label>
+              </Label>
               <Input
                 id="audit-action"
                 className="mt-1"
@@ -308,47 +310,38 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
               />
             </div>
             <div>
-              <label
+              <Label
                 className="block text-xs font-medium text-muted-foreground"
                 htmlFor="audit-result"
               >
                 结果
-              </label>
+              </Label>
               <Select
                 id="audit-result"
                 className="mt-1"
-                value={resultFilter}
-                onChange={(e) => setResultFilter(e.target.value)}
+                value={resultFilter || "all"}
+                onValueChange={(value) =>
+                  setResultFilter(value === "all" ? "" : value)
+                }
               >
-                <option value="">全部</option>
-                <option value="allow">allow</option>
-                <option value="deny">deny</option>
-                <option value="error">error</option>
+                <SelectItem value="all">全部</SelectItem>
+                <SelectItem value="allow">allow</SelectItem>
+                <SelectItem value="deny">deny</SelectItem>
+                <SelectItem value="error">error</SelectItem>
               </Select>
             </div>
-            <Button
-              onClick={() => void loadLogs()}
-              disabled={loadingLogs}
-            >
+            <Button onClick={() => void loadLogs()} disabled={loadingLogs}>
               查询
             </Button>
-            <Button
-              variant="outline"
-              onClick={() => void onExport("jsonl")}
-            >
+            <Button variant="outline" onClick={() => void onExport("jsonl")}>
               导出 JSONL
             </Button>
-            <Button
-              variant="outline"
-              onClick={() => void onExport("csv")}
-            >
+            <Button variant="outline" onClick={() => void onExport("csv")}>
               导出 CSV
             </Button>
           </div>
 
-          <DataTable
-            headers={["ID", "时间", "操作者", "动作", "对象", "结果"]}
-          >
+          <DataTable headers={["ID", "时间", "操作者", "动作", "对象", "结果"]}>
             {logs.length === 0 ? (
               <DataTableRow>
                 <td
@@ -404,12 +397,12 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
             />
             <Select
               value={providerLocality}
-              onChange={(e) =>
-                setProviderLocality(e.target.value as "internal" | "external")
+              onValueChange={(value) =>
+                setProviderLocality(value as "internal" | "external")
               }
             >
-              <option value="internal">internal</option>
-              <option value="external">external</option>
+              <SelectItem value="internal">internal</SelectItem>
+              <SelectItem value="external">external</SelectItem>
             </Select>
             <Input
               type="password"
@@ -512,27 +505,25 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
           onSubmit={(e) => void onSaveEgress(e)}
         >
           <div>
-            <label
+            <Label
               className="block text-sm font-medium"
               htmlFor="tenant-egress-max"
             >
               租户最高出域策略（egress_policy_max）
-            </label>
+            </Label>
             <Select
               id="tenant-egress-max"
               className="mt-2"
               value={egressMax}
-              onChange={(e) =>
-                setEgressMax(
-                  e.target.value as "deny" | "internal_only" | "allow",
-                )
+              onValueChange={(value) =>
+                setEgressMax(value as "deny" | "internal_only" | "allow")
               }
             >
-              <option value="deny">deny（禁止任何模型调用）</option>
-              <option value="internal_only">
+              <SelectItem value="deny">deny（禁止任何模型调用）</SelectItem>
+              <SelectItem value="internal_only">
                 internal_only（仅允许内网模型）
-              </option>
-              <option value="allow">allow（允许内网与外部模型）</option>
+              </SelectItem>
+              <SelectItem value="allow">allow（允许内网与外部模型）</SelectItem>
             </Select>
           </div>
           <Button type="submit">保存租户出域上限</Button>

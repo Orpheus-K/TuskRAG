@@ -1,3 +1,5 @@
+import { Label } from "@tuskrag/ui/label";
+import { Checkbox } from "@tuskrag/ui/checkbox";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import {
@@ -117,8 +119,7 @@ export function APIKeysPage({ identity }: { identity: Identity }) {
             API Key 管理
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            为外部 Agent
-            与系统集成签发范围受限的访问密钥，创建后仅显示一次明文。
+            密钥明文仅在创建时显示一次。
           </p>
         </div>
         <Link className="text-sm underline" to="/">
@@ -176,7 +177,7 @@ export function APIKeysPage({ identity }: { identity: Identity }) {
       >
         <h2 className="font-semibold">签发新密钥</h2>
         <div className="grid gap-4 sm:grid-cols-3">
-          <label className="block space-y-1 text-sm">
+          <Label className="block space-y-1 text-sm">
             <span>密钥名称</span>
             <Input
               aria-label="密钥名称"
@@ -184,8 +185,8 @@ export function APIKeysPage({ identity }: { identity: Identity }) {
               onChange={(e) => setName(e.target.value)}
               placeholder="例如：agent-prod"
             />
-          </label>
-          <label className="block space-y-1 text-sm">
+          </Label>
+          <Label className="block space-y-1 text-sm">
             <span>每分钟限速 (RPM)</span>
             <Input
               aria-label="每分钟限速"
@@ -194,8 +195,8 @@ export function APIKeysPage({ identity }: { identity: Identity }) {
               value={rpm}
               onChange={(e) => setRpm(e.target.value)}
             />
-          </label>
-          <label className="block space-y-1 text-sm">
+          </Label>
+          <Label className="block space-y-1 text-sm">
             <span>月度 Token 配额（0 不限）</span>
             <Input
               aria-label="月度 Token 配额"
@@ -204,10 +205,10 @@ export function APIKeysPage({ identity }: { identity: Identity }) {
               value={quota}
               onChange={(e) => setQuota(e.target.value)}
             />
-          </label>
+          </Label>
         </div>
 
-        <label className="block space-y-1 text-sm">
+        <Label className="block space-y-1 text-sm">
           <span>IP 白名单（可选，逗号分隔 IP 或 CIDR）</span>
           <Input
             aria-label="IP 白名单"
@@ -215,20 +216,19 @@ export function APIKeysPage({ identity }: { identity: Identity }) {
             onChange={(e) => setIpAllowlist(e.target.value)}
             placeholder="例如：10.0.0.0/8, 192.168.1.10"
           />
-        </label>
+        </Label>
 
         <div>
           <p className="font-medium">允许的动作范围</p>
           <div className="mt-2 flex flex-wrap gap-3">
             {allActions.map((act) => (
-              <label key={act.id} className="flex items-center gap-1.5 text-sm">
-                <Input
-                  type="checkbox"
+              <Label key={act.id} className="flex items-center gap-1.5 text-sm">
+                <Checkbox
                   checked={actions.includes(act.id)}
-                  onChange={() => toggleAction(act.id)}
+                  onCheckedChange={() => toggleAction(act.id)}
                 />
                 <span>{act.label}</span>
-              </label>
+              </Label>
             ))}
           </div>
         </div>
@@ -240,14 +240,16 @@ export function APIKeysPage({ identity }: { identity: Identity }) {
             </p>
             <div className="mt-2 flex flex-wrap gap-3">
               {kbs.data.map((kb) => (
-                <label key={kb.id} className="flex items-center gap-1.5 text-sm">
-                  <Input
-                    type="checkbox"
+                <Label
+                  key={kb.id}
+                  className="flex items-center gap-1.5 text-sm"
+                >
+                  <Checkbox
                     checked={selectedKBs.includes(kb.id)}
-                    onChange={() => toggleKB(kb.id)}
+                    onCheckedChange={() => toggleKB(kb.id)}
                   />
                   <span>{kb.name}</span>
-                </label>
+                </Label>
               ))}
             </div>
           </div>

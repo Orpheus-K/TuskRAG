@@ -122,8 +122,16 @@ for (const width of [1280, 375]) {
       kb_ids: [5],
       options: { debug: true },
     });
-    await page.getByText("重排配置", { exact: true }).click();
-    await page.getByLabel("重排方式").selectOption("off");
+    await page.getByRole("button", { name: "重排配置", exact: true }).click();
+    const mode = page.getByLabel("重排方式");
+    await expect(mode.locator("svg.lucide-chevron-down")).toBeVisible();
+    await mode.click();
+    await expect(
+      page
+        .getByRole("option", { name: "使用知识库配置" })
+        .locator("svg.lucide-check"),
+    ).toBeVisible();
+    await page.locator('[role="option"][data-value="off"]').click();
     await page.getByRole("button", { name: "检索", exact: true }).click();
     await expect.poll(() => requests.length).toBe(2);
     expect(requests.at(-1)).toEqual({
@@ -131,8 +139,10 @@ for (const width of [1280, 375]) {
       kb_ids: [5],
       options: { debug: true, rerank: false },
     });
-    await page.getByLabel("重排方式").selectOption("custom");
-    await page.getByLabel("模型提供方").selectOption("9");
+    await page.getByLabel("重排方式").click();
+    await page.locator('[role="option"][data-value="custom"]').click();
+    await page.getByLabel("模型提供方").click();
+    await page.locator('[role="option"][data-value="9"]').click();
     await page.getByLabel("重排模型").fill("rank");
     await page.getByRole("button", { name: "检索", exact: true }).click();
     await expect.poll(() => requests.length).toBe(3);
@@ -145,7 +155,9 @@ for (const width of [1280, 375]) {
         reranker: { provider_id: 9, model: "rank", top_n: 30, fallback: false },
       },
     });
-    await page.getByText("检索调试 · 1 个可见候选").click();
+    await page
+      .getByRole("button", { name: "检索调试 · 1 个可见候选", exact: true })
+      .click();
     await expect(
       page.getByRole("columnheader", { name: "BM25 排名 / 分数" }),
     ).toBeVisible();
