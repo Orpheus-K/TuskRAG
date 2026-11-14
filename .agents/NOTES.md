@@ -16,7 +16,9 @@
   - **M4-3（`ece2d92`）**：Agentic QA 模式（`mode=agentic`、`step` SSE 事件、6 步 / 30s / 20k token 硬上限与 `truncated` 显式截断）与可选节摘要（迁移 [00035_kb_section_summary.sql](../services/core/internal/db/migrations/00035_kb_section_summary.sql)，`SchemaVersion = 35`）。
   - **M4-4（`4aa6a27`、`c16dded`）**：Python 解析器新增 PPTX / HTML 解析与 `tuskrag-parse render`（Windows 非 PDF 套件 `86 passed`，云端 Ubuntu `test-host.invalid` `.venv` 运行 `test_pptx_html_render.py` / `test_cli.py` / `test_pdf.py` `24 passed in 6.24s`，含 `V07` 恶意样本）；Go 侧新增 `models/vlm.go`、`ingest/vlm_reparse.go`、`kb/url_import.go` 与 `httpapi/url_import.go`（`POST /api/v1/kbs/{kb}/documents:import-url` + SSRF 防护）。
   - **M4-5（本轮收尾）**：同步 OpenAPI 与 `@tuskrag/api-client`（`step` SSE、`mode` 参数、`importDocumentURL`）；控制台接入 `APIKeys.tsx` MCP Streamable HTTP 配置片段、`Answer.tsx` / `AnswerView.tsx` Agentic 模式切换与步骤时间线、`Knowledge.tsx` `.pptx/.html/.htm` 上传与 URL 导入表单；补充评测与验证记录 [E5 报告](../docs/eval-reports/2026-11-14-e5-vlm-reparse-and-parsers.md) 与 [E7 报告](../docs/eval-reports/2026-11-14-e7-agentic-and-mcp.md)。
-  - **未运行项**：真实外部 VLM 扫描件消融（`E5`）与真实多跳题集 `standard` vs `agentic` 大模型消融（`E7`）待配置真实 VLM/LLM 推理配额后补跑；本地 Windows `biome` 因系统退出码 `0xC0000142` 无法启动。
+  - **真实模型消融补跑（2026-11-14，`gemini-3.8-flash-high`）**：
+    - `E5`（`TestRealVLMReparseAblation`）：2 页纯图像扫描 PNG 基线 `0/6` → VLM 重解析后 `6/6` 关键事实命中（`322` 字符 / `7` 块，消耗 `2619` tokens，`13.30s` `PASS`）。
+    - `E7`（`TestRealAgenticVsStandardAblationPostgres`，云端隔离 PG17 `256.06s` `PASS`）：4 篇跨文档 4 题 13 事实对比下，`standard`（`13/13` 命中、引用 `4/4`、`avg=15006ms`/`p95=23539ms`）与 `agentic`（`13/13` 命中、引用 `4/4`、`avg_steps=6.00`、`truncated=4`、`avg=48653.8ms`/`p95=58263ms`）均通过；证实小语料默认 `standard` 更优，`agentic` 截断兜底与引用校验在真实模型下工作正常。
 
 ## 前序快照（2026-11-13）
 
