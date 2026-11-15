@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"slices"
 	"strconv"
 	"strings"
@@ -274,6 +275,7 @@ func (w *Worker) recordFailure(ctx context.Context, job ClaimedJob, failure *Pro
 	if _, valid := failurePolicy(failure.Code); !valid {
 		return errors.New("job handler returned an invalid failure code")
 	}
+	slog.Error("worker job failed", "job_id", job.Lease.JobID, "kind", job.Kind, "tenant_id", job.Lease.TenantID, "code", failure.Code, "error", failure.Cause)
 	failureCtx, cancelFailure := w.databaseContext(ctx)
 	defer cancelFailure()
 	var err error
