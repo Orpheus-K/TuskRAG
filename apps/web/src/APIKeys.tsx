@@ -1,5 +1,3 @@
-import { Label } from "@tuskrag/ui/label";
-import { Checkbox } from "@tuskrag/ui/checkbox";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import {
@@ -11,7 +9,10 @@ import {
   revokeAPIKey,
 } from "@tuskrag/api-client";
 import { Button } from "@tuskrag/ui/button";
+import { Checkbox } from "@tuskrag/ui/checkbox";
+import { ConfirmAction } from "@tuskrag/ui/confirm-action";
 import { Input } from "@tuskrag/ui/input";
+import { Label } from "@tuskrag/ui/label";
 import { type FormEvent, useState } from "react";
 
 const allActions = [
@@ -296,14 +297,21 @@ export function APIKeysPage({ identity }: { identity: Identity }) {
                   </p>
                 </div>
                 {!k.revoked_at && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    disabled={revoke.isPending}
-                    onClick={() => revoke.mutate(k.id)}
-                  >
-                    吊销
-                  </Button>
+                  <ConfirmAction
+                    trigger={
+                      <Button
+                        type="button"
+                        variant="outline"
+                        disabled={revoke.isPending}
+                      >
+                        吊销
+                      </Button>
+                    }
+                    title={`吊销 API Key「${k.name}」`}
+                    description="吊销后该密钥将立即永久失效且无法恢复，使用此密钥的 Agent 将无法继续访问。"
+                    confirmLabel="确认吊销"
+                    onConfirm={() => revoke.mutate(k.id)}
+                  />
                 )}
               </li>
             ))}

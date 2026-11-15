@@ -1,5 +1,3 @@
-import { Label } from "@tuskrag/ui/label";
-import { Checkbox } from "@tuskrag/ui/checkbox";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ApiError,
@@ -11,7 +9,16 @@ import {
   saveKnowledgeConfig,
 } from "@tuskrag/api-client";
 import { Button } from "@tuskrag/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@tuskrag/ui/card";
+import { Checkbox } from "@tuskrag/ui/checkbox";
 import { Input } from "@tuskrag/ui/input";
+import { Label } from "@tuskrag/ui/label";
 import { Select, SelectItem } from "@tuskrag/ui/select";
 import { type FormEvent, useState } from "react";
 
@@ -49,35 +56,25 @@ export function KnowledgeConfigPanel({
   identity: Identity;
   base: KnowledgeBase;
 }) {
-  const [open, setOpen] = useState(false);
-  const [hasOpened, setHasOpened] = useState(false);
   if (base.role !== "owner" && base.role !== "admin") return null;
   return (
-    <section className="mt-6">
-      <Button
-        variant="outline"
-        aria-expanded={open}
-        aria-controls="knowledge-config"
-        onClick={() => {
-          setHasOpened(true);
-          setOpen(!open);
-        }}
-      >
-        检索默认配置
-      </Button>
-      {hasOpened && (
-        <div hidden={!open}>
-          <ConfigEditor
-            key={`${identity.tenant_id}:${identity.user_id}:${base.id}`}
-            identity={identity}
-            base={base}
-          />
-        </div>
-      )}
-    </section>
+    <Card aria-labelledby="knowledge-config-title" role="region">
+      <CardHeader>
+        <CardTitle id="knowledge-config-title">检索默认配置</CardTitle>
+        <CardDescription>
+          保存后用于后续检索；单次检索的自定义参数仍优先。
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ConfigEditor
+          key={`${identity.tenant_id}:${identity.user_id}:${base.id}`}
+          identity={identity}
+          base={base}
+        />
+      </CardContent>
+    </Card>
   );
 }
-
 function ConfigEditor({
   identity,
   base,
@@ -132,20 +129,20 @@ function ConfigEditor({
   }
   if (accessDenied(config.error) || accessDenied(save.error)) {
     return (
-      <p className="mt-4 text-sm" role="alert">
+      <p className="text-sm text-danger" role="alert">
         {errorMessage(accessDenied(save.error) ? save.error : config.error)}
       </p>
     );
   }
   if (config.isPending)
     return (
-      <p className="mt-4 text-sm" role="status">
+      <p className="text-sm text-muted-foreground" role="status">
         正在加载检索配置
       </p>
     );
   if (!config.data)
     return (
-      <div className="mt-4 space-y-3">
+      <div className="space-y-3">
         <p role="alert">无法加载检索配置。</p>
         <Button
           variant="outline"
@@ -163,15 +160,11 @@ function ConfigEditor({
     (save.error instanceof ApiError &&
       save.error.code === "knowledge_base_archived");
   return (
-    <div id="knowledge-config" className="mt-4 space-y-4 rounded-xl border p-5">
-      <h2 className="text-lg font-medium">知识库检索默认值</h2>
-      <p className="text-sm text-muted-foreground">
+    <div id="knowledge-config" className="space-y-4">
+      <p className="text-xs text-muted-foreground">
         {config.data.config.revision === 0
           ? "尚未保存配置，当前默认返回 8 条且不重排。"
           : `当前修订 ${config.data.config.revision}`}
-      </p>
-      <p className="text-sm text-muted-foreground">
-        保存后用于后续检索；单次自定义参数仍优先。
       </p>
       {archived && (
         <p role="status" className="text-sm">
@@ -198,7 +191,8 @@ function ConfigEditor({
       />
       {!save.isPending && (
         <Button
-          variant="outline"
+          size="sm"
+          variant="ghost"
           disabled={config.isFetching}
           onClick={() => void reload()}
         >
@@ -262,6 +256,7 @@ function ConfigForm({
             step={1}
             required
             defaultValue={saved?.top_k ?? 8}
+            className="max-w-40"
           />
         </Label>
         <Label className="flex items-center gap-2 text-sm">
@@ -271,7 +266,10 @@ function ConfigForm({
           />
           <span>默认启用重排</span>
         </Label>
-        <fieldset disabled={!rerank} className="grid gap-4 sm:grid-cols-2">
+        <fieldset
+          disabled={!rerank}
+          className="grid gap-4 rounded-lg border bg-muted/30 p-4 disabled:opacity-60 sm:grid-cols-2"
+        >
           <legend className="sr-only">默认重排设置</legend>
           <Label className="block space-y-1 text-sm">
             <span>重排提供方编号</span>
@@ -325,7 +323,7 @@ function ConfigForm({
           </Label>
         </fieldset>
         {error && (
-          <p role="alert" className="text-sm">
+          <p role="alert" className="text-sm text-danger">
             {error}
           </p>
         )}

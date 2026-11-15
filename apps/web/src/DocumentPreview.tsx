@@ -1,4 +1,3 @@
-import { HeadingPath } from "@tuskrag/ui/heading-path";
 import { useQuery } from "@tanstack/react-query";
 import {
   getDocumentContents,
@@ -6,7 +5,8 @@ import {
   readSection,
 } from "@tuskrag/api-client";
 import { Button } from "@tuskrag/ui/button";
-import { useEffect, useRef, useState } from "react";
+import { HeadingPath } from "@tuskrag/ui/heading-path";
+import { useState } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -22,21 +22,14 @@ export type PreviewTarget = {
 export function DocumentPreview({
   identity,
   target,
-  onClose,
 }: {
   identity: Identity;
   target: PreviewTarget;
-  onClose: () => void;
 }) {
   const [cursor, setCursor] = useState(0);
-  const previewRef = useRef<HTMLElement | null>(null);
   const [sectionId, setSectionId] = useState<number | null>(
     target.initialSection ?? null,
   );
-  useEffect(() => {
-    previewRef.current?.scrollIntoView?.({ block: "start" });
-    previewRef.current?.focus({ preventScroll: true });
-  }, []);
   const contents = useQuery({
     queryKey: [
       "document-contents",
@@ -123,119 +116,131 @@ export function DocumentPreview({
     gcTime: 0,
   });
 
+  const articles =
+    sectionId !== null &&
+    contents.data &&
+    !contents.isError &&
+    !contents.isFetching &&
+    section.data &&
+    !section.isError &&
+    !section.isFetching &&
+    (!showContext ||
+      (!previous.isError && !previous.isPending && !previous.isFetching))
+      ? showContext && previous.data
+        ? [previous.data, section.data]
+        : [section.data]
+      : [];
+
   return (
     <section
-      ref={previewRef}
-      tabIndex={-1}
-      className="mt-6 space-y-4 rounded-xl border p-5"
+      className="grid gap-5 md:h-full md:grid-cols-[minmax(12rem,17rem)_minmax(0,1fr)]"
       aria-label="文档目录与正文"
     >
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <h3 className="min-w-0 break-words text-lg font-medium">
-          {target.title} · 目录
-        </h3>
-        <Button type="button" variant="outline" onClick={onClose}>
-          关闭预览
-        </Button>
-      </div>
-      {contents.isPending && (
-        <p role="status" className="text-sm">
-          正在加载目录
-        </p>
-      )}
-      {contents.isError && (
-        <p role="alert" className="text-sm">
-          目录不可用，文档可能已更新或权限已变化。
-        </p>
-      )}
-      {contents.data && !contents.isError && (
-        <>
-          {contents.data.sections.length === 0 ? (
-            <p className="text-sm text-muted-foreground">此页没有目录项。</p>
-          ) : (
-            <ul className="space-y-2">
-              {contents.data.sections.map((item) => (
-                <li
-                  key={item.id}
-                  style={{
-                    paddingInlineStart: `${Math.min(item.level, 5) * 0.5}rem`,
-                  }}
-                >
+      <div className="space-y-3 md:min-h-0 md:overflow-y-auto md:border-r md:pr-4">
+        <h3 className="text-xs font-semibold text-muted-foreground">目录</h3>
+        {contents.isPending && (
+          <p role="status" className="text-sm text-muted-foreground">
+            正在加载目录
+          </p>
+        )}
+        {contents.isError && (
+          <p role="alert" className="text-sm text-danger">
+            目录不可用，文档可能已更新或权限已变化。
+          </p>
+        )}
+        {contents.data && !contents.isError && (
+          <>
+            {contents.data.sections.length === 0 ? (
+              <p className="text-sm text-muted-foreground">此页没有目录项。</p>
+            ) : (
+              <ul className="space-y-0.5">
+                {contents.data.sections.map((item) => (
+                  <li
+                    key={item.id}
+                    style={{
+                      paddingInlineStart: `${Math.max(Math.min(item.level, 5) - 1, 0) * 0.75}rem`,
+                    }}
+                  >
+                    <Button
+                      type="button"
+                      size="xs"
+                      variant={sectionId === item.id ? "secondary" : "ghost"}
+                      className="h-auto w-full justify-start whitespace-normal break-words px-2 py-1 text-left font-normal"
+                      aria-label={`查看 ${item.heading || "未命名节"}`}
+                      aria-current={sectionId === item.id ? "true" : undefined}
+                      onClick={() => setSectionId(item.id)}
+                    >
+                      <span className="min-w-0 flex-1">
+                        {item.heading || "未命名节"}
+                      </span>
+                      {item.pages && (
+                        <span className="shrink-0 text-muted-foreground">
+                          {item.pages[0]}—{item.pages[1]} 页
+                        </span>
+                      )}
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {(cursor > 0 || contents.data.next_cursor !== null) && (
+              <nav className="flex flex-wrap gap-2" aria-label="目录分页">
+                {cursor > 0 && (
                   <Button
                     type="button"
                     size="xs"
-                    variant="ghost"
-                    className="h-auto justify-start whitespace-normal break-words px-1 py-0.5 text-left font-normal underline"
-                    aria-label={`查看 ${item.heading || "未命名节"}`}
-                    onClick={() => setSectionId(item.id)}
+                    variant="outline"
+                    onClick={() => setCursor(0)}
                   >
-                    {item.heading || "未命名节"}
+                    目录首页
                   </Button>
-                  {item.pages && (
-                    <span className="ml-2 text-xs text-muted-foreground">
-                      第 {item.pages[0]}—{item.pages[1]} 页
-                    </span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
-          <nav className="flex flex-wrap gap-3" aria-label="目录分页">
-            {cursor > 0 && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setCursor(0)}
-              >
-                目录首页
-              </Button>
+                )}
+                {contents.data.next_cursor !== null && (
+                  <Button
+                    type="button"
+                    size="xs"
+                    variant="outline"
+                    onClick={() => setCursor(contents.data.next_cursor ?? 0)}
+                  >
+                    目录下一页
+                  </Button>
+                )}
+              </nav>
             )}
-            {contents.data.next_cursor !== null && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setCursor(contents.data.next_cursor ?? 0)}
-              >
-                目录下一页
-              </Button>
-            )}
-          </nav>
-        </>
-      )}
-      {sectionId !== null && section.isFetching && (
-        <p role="status" className="text-sm">
-          正在加载正文
-        </p>
-      )}
-      {sectionId !== null && section.isError && (
-        <p role="alert" className="text-sm">
-          正文不可用，文档可能已更新或权限已变化。
-        </p>
-      )}
-      {showContext && previous.isFetching && (
-        <p role="status" className="text-sm">
-          正在加载引用上文
-        </p>
-      )}
-      {showContext && previous.isError && (
-        <p role="alert" className="text-sm">
-          引用上文不可用，文档可能已更新或权限已变化。
-        </p>
-      )}
-      {sectionId !== null &&
-        contents.data &&
-        !contents.isError &&
-        !contents.isFetching &&
-        section.data &&
-        !section.isError &&
-        !section.isFetching &&
-        (!showContext ||
-          (!previous.isError && !previous.isPending && !previous.isFetching)) &&
-        (showContext && previous.data
-          ? [previous.data, section.data]
-          : [section.data]
-        ).map((content) => (
-          <article key={content.section.id} className="space-y-2 border-t pt-4">
+          </>
+        )}
+      </div>
+      <div className="min-w-0 space-y-4 md:min-h-0 md:overflow-y-auto">
+        {sectionId === null && (
+          <p className="text-sm text-muted-foreground">
+            选择目录中的章节查看正文。
+          </p>
+        )}
+        {sectionId !== null && section.isFetching && (
+          <p role="status" className="text-sm text-muted-foreground">
+            正在加载正文
+          </p>
+        )}
+        {sectionId !== null && section.isError && (
+          <p role="alert" className="text-sm text-danger">
+            正文不可用，文档可能已更新或权限已变化。
+          </p>
+        )}
+        {showContext && previous.isFetching && (
+          <p role="status" className="text-sm text-muted-foreground">
+            正在加载引用上文
+          </p>
+        )}
+        {showContext && previous.isError && (
+          <p role="alert" className="text-sm text-danger">
+            引用上文不可用，文档可能已更新或权限已变化。
+          </p>
+        )}
+        {articles.map((content) => (
+          <article
+            key={content.section.id}
+            className="space-y-2 border-t pt-4 first:border-t-0 first:pt-0"
+          >
             <h4 className="break-words font-medium">
               {content.section.id !== sectionId && "上文 · "}
               {content.section.heading || "未命名节"}
@@ -245,7 +250,7 @@ export function DocumentPreview({
               {content.section.pages &&
                 ` · 第 ${content.section.pages[0]}—${content.section.pages[1]} 页`}
             </p>
-            <div className="space-y-3 break-words text-sm">
+            <div className="space-y-3 break-words text-sm leading-relaxed">
               <Markdown
                 skipHtml
                 disallowedElements={["img"]}
@@ -289,6 +294,7 @@ export function DocumentPreview({
             </div>
           </article>
         ))}
+      </div>
     </section>
   );
 }

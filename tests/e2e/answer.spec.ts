@@ -165,6 +165,10 @@ for (const width of [1280, 375]) {
       path: `test-results/conversation-${width}.png`,
       fullPage: true,
     });
+    await page
+      .getByRole("dialog")
+      .getByRole("button", { name: "关闭" })
+      .click();
     await page.getByLabel("你的问题").fill("那火星呢？");
     await page.getByRole("button", { name: "提问", exact: true }).click();
     await expect(page.getByText("证据不足，无法回答。")).toBeVisible();

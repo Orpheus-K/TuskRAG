@@ -1,5 +1,3 @@
-import { Label } from "@tuskrag/ui/label";
-import { Checkbox } from "@tuskrag/ui/checkbox";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   type ACLMode,
@@ -17,8 +15,20 @@ import {
   setDocumentACL,
 } from "@tuskrag/api-client";
 import { Button } from "@tuskrag/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@tuskrag/ui/card";
+import { Checkbox } from "@tuskrag/ui/checkbox";
+import { ConfirmAction } from "@tuskrag/ui/confirm-action";
+import { Dialog } from "@tuskrag/ui/dialog";
 import { Input } from "@tuskrag/ui/input";
+import { Label } from "@tuskrag/ui/label";
 import { Select, SelectItem } from "@tuskrag/ui/select";
+import { Lock, Trash2 } from "lucide-react";
 import { type FormEvent, useState } from "react";
 
 function aclErrorMessage(error: unknown): string {
@@ -32,30 +42,20 @@ function aclErrorMessage(error: unknown): string {
 }
 
 export function UserGroupsPanel({ identity }: { identity: Identity }) {
-  const [open, setOpen] = useState(false);
-  const [hasOpened, setHasOpened] = useState(false);
   return (
-    <section className="mt-4">
-      <Button
-        variant="outline"
-        aria-expanded={open}
-        aria-controls="user-groups-panel"
-        onClick={() => {
-          setHasOpened(true);
-          setOpen(!open);
-        }}
-      >
-        用户组管理
-      </Button>
-      {hasOpened && (
-        <div hidden={!open}>
-          <UserGroupsEditor identity={identity} />
-        </div>
-      )}
-    </section>
+    <Card aria-labelledby="user-groups-title" role="region">
+      <CardHeader>
+        <CardTitle id="user-groups-title">用户组管理</CardTitle>
+        <CardDescription>
+          用户组在租户内共享，可在文档权限中授权给整组成员。
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <UserGroupsEditor identity={identity} />
+      </CardContent>
+    </Card>
   );
 }
-
 function UserGroupsEditor({ identity }: { identity: Identity }) {
   const queryClient = useQueryClient();
   const [groupName, setGroupName] = useState("");
@@ -143,18 +143,17 @@ function UserGroupsEditor({ identity }: { identity: Identity }) {
     create.mutate(trimmed);
   }
 
+  const activeGroup = groups.data?.find((g) => g.id === activeGroupId);
+
   return (
-    <div
-      id="user-groups-panel"
-      className="mt-4 space-y-4 rounded-md border p-4 text-sm"
-    >
+    <div id="user-groups-panel" className="space-y-4 text-sm">
       {error && (
-        <p role="alert" className="text-destructive">
+        <p role="alert" className="text-danger">
           {error}
         </p>
       )}
       <form onSubmit={handleCreate} className="flex flex-wrap items-end gap-2">
-        <Label className="block space-y-1">
+        <Label className="block min-w-0 flex-1 space-y-1.5 text-xs font-medium">
           <span>新建用户组</span>
           <Input
             aria-label="新建用户组名称"
@@ -163,50 +162,85 @@ function UserGroupsEditor({ identity }: { identity: Identity }) {
             placeholder="例如：finance-team"
           />
         </Label>
-        <Button type="submit" disabled={create.isPending}>
+        <Button
+          type="submit"
+          variant="outline"
+          disabled={create.isPending || !groupName.trim()}
+        >
           创建用户组
         </Button>
       </form>
 
+      {groups.isPending && (
+        <p role="status" className="text-muted-foreground">
+          正在加载用户组
+        </p>
+      )}
+      {groups.data?.length === 0 && (
+        <p className="text-muted-foreground">暂无用户组。</p>
+      )}
       {groups.data && groups.data.length > 0 && (
-        <div className="space-y-3 border-t pt-3">
-          <div className="flex flex-wrap gap-2">
+        <div className="grid gap-4 md:grid-cols-[minmax(10rem,14rem)_minmax(0,1fr)]">
+          <ul className="space-y-0.5" aria-label="用户组列表">
             {groups.data.map((g) => (
-              <div key={g.id} className="flex items-center gap-1">
+              <li key={g.id} className="flex items-center gap-1">
                 <Button
                   type="button"
-                  variant={activeGroupId === g.id ? "default" : "outline"}
+                  size="sm"
+                  variant={activeGroupId === g.id ? "secondary" : "ghost"}
+                  className="min-w-0 flex-1 justify-start truncate"
+                  aria-current={activeGroupId === g.id ? "true" : undefined}
                   onClick={() => setSelectedGroupId(g.id)}
                 >
                   {g.name}
                 </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  aria-label={`删除用户组 ${g.name}`}
-                  onClick={() => removeGroup.mutate(g.id)}
-                >
-                  删
-                </Button>
-              </div>
+                <ConfirmAction
+                  title={`删除用户组“${g.name}”？`}
+                  description="使用该用户组授权的文档将不再对组成员可见。"
+                  onConfirm={() => removeGroup.mutate(g.id)}
+                  trigger={
+                    <Button
+                      type="button"
+                      size="icon"
+                      variant="ghost"
+                      aria-label={`删除用户组 ${g.name}`}
+                      disabled={removeGroup.isPending}
+                    >
+                      <Trash2 aria-hidden="true" className="h-3.5 w-3.5" />
+                    </Button>
+                  }
+                />
+              </li>
             ))}
-          </div>
+          </ul>
 
           {activeGroupId !== null && (
-            <div className="space-y-2 rounded-md border p-3">
-              <p className="font-medium">组成员</p>
+            <section
+              aria-label="组成员"
+              className="space-y-3 rounded-lg border p-3"
+            >
+              <p className="text-xs font-semibold text-muted-foreground">
+                {activeGroup ? `${activeGroup.name} · 组成员` : "组成员"}
+              </p>
+              {groupMembers.data?.length === 0 && (
+                <p className="text-muted-foreground">该组暂无成员。</p>
+              )}
               <ul className="divide-y">
                 {(groupMembers.data ?? []).map((m) => (
                   <li
                     key={m.user_id}
-                    className="flex items-center justify-between py-1.5"
+                    className="flex items-center justify-between gap-2 py-1.5"
                   >
-                    <span>
-                      {m.display_name} (#{m.user_id})
+                    <span className="min-w-0 truncate">
+                      {m.display_name}
+                      <span className="ml-1.5 text-xs text-muted-foreground">
+                        #{m.user_id}
+                      </span>
                     </span>
                     <Button
                       type="button"
-                      variant="outline"
+                      size="xs"
+                      variant="ghost"
                       onClick={() =>
                         removeMember.mutate({
                           groupId: activeGroupId,
@@ -220,10 +254,10 @@ function UserGroupsEditor({ identity }: { identity: Identity }) {
                 ))}
               </ul>
               {candidates.length > 0 && (
-                <div className="flex flex-wrap items-end gap-2 pt-2">
+                <div className="flex flex-wrap items-center gap-2 border-t pt-3">
                   <Select
                     aria-label="选择加入组的用户"
-                    className="w-auto px-2 py-1"
+                    className="h-8 w-auto min-w-40"
                     value={selectedUserId || String(candidates[0]?.id ?? "")}
                     onValueChange={(value) => setSelectedUserId(value)}
                   >
@@ -235,6 +269,7 @@ function UserGroupsEditor({ identity }: { identity: Identity }) {
                   </Select>
                   <Button
                     type="button"
+                    size="sm"
                     onClick={() => {
                       const uid = Number(selectedUserId || candidates[0]?.id);
                       if (uid > 0) {
@@ -249,14 +284,13 @@ function UserGroupsEditor({ identity }: { identity: Identity }) {
                   </Button>
                 </div>
               )}
-            </div>
+            </section>
           )}
         </div>
       )}
     </div>
   );
 }
-
 export function DocumentACLButton({
   identity,
   kbId,
@@ -273,26 +307,27 @@ export function DocumentACLButton({
   const [open, setOpen] = useState(false);
   if (role !== "owner" && role !== "admin") return null;
   return (
-    <>
-      <Button
-        type="button"
-        variant="outline"
-        onClick={() => setOpen((prev) => !prev)}
-      >
-        {open ? "收起权限" : "文档权限"}
-      </Button>
-      {open && (
-        <DocumentACLEditor
-          identity={identity}
-          kbId={kbId}
-          documentId={documentId}
-          documentTitle={documentTitle}
-        />
-      )}
-    </>
+    <Dialog
+      open={open}
+      onOpenChange={setOpen}
+      title={`文档权限 · ${documentTitle}`}
+      className="w-[min(40rem,94vw)]"
+      trigger={
+        <Button type="button" size="sm" variant="ghost">
+          <Lock aria-hidden="true" className="h-3.5 w-3.5" />
+          文档权限
+        </Button>
+      }
+    >
+      <DocumentACLEditor
+        identity={identity}
+        kbId={kbId}
+        documentId={documentId}
+        documentTitle={documentTitle}
+      />
+    </Dialog>
   );
 }
-
 function DocumentACLEditor({
   identity,
   kbId,
@@ -366,26 +401,33 @@ function DocumentACLEditor({
   }
 
   return (
-    <div className="mt-2 w-full rounded-md border bg-muted/20 p-3 text-sm">
-      <p className="font-medium">文档权限：{documentTitle}</p>
+    <div className="space-y-3 text-sm">
       {error && (
-        <p role="alert" className="mt-1 text-destructive">
+        <p role="alert" className="text-danger">
           {error}
         </p>
       )}
       {status && (
-        <p role="status" className="mt-1 text-emerald-700">
+        <p role="status" className="text-emerald-700 dark:text-emerald-300">
           {status}
         </p>
       )}
-      {acl.isPending && <p className="mt-1 text-muted-foreground">加载中...</p>}
+      {acl.isPending && (
+        <p role="status" className="text-muted-foreground">
+          正在加载文档权限
+        </p>
+      )}
+      {acl.isError && !error && (
+        <p role="alert" className="text-danger">
+          {aclErrorMessage(acl.error)}
+        </p>
+      )}
       {acl.data && (
-        <div className="mt-2 space-y-3">
-          <Label className="block space-y-1">
+        <div className="space-y-4">
+          <Label className="block space-y-1.5 text-xs font-medium">
             <span>访问模式</span>
             <Select
               aria-label={`文档 ${documentTitle} 访问模式`}
-              className="w-auto px-2 py-1"
               value={mode}
               onValueChange={(value) => setDraftMode(value as ACLMode)}
             >
@@ -399,10 +441,12 @@ function DocumentACLEditor({
           </Label>
 
           {mode === "restricted" && (
-            <div className="grid gap-3 md:grid-cols-2">
-              <div>
-                <p className="font-medium">允许的用户</p>
-                <div className="mt-1 space-y-1">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-lg border p-3">
+                <p className="text-xs font-semibold text-muted-foreground">
+                  允许的用户
+                </p>
+                <div className="mt-2 max-h-56 space-y-1.5 overflow-y-auto">
                   {(users.data ?? []).map((u) => (
                     <Label key={u.id} className="flex items-center gap-2">
                       <Checkbox
@@ -418,9 +462,14 @@ function DocumentACLEditor({
                   ))}
                 </div>
               </div>
-              <div>
-                <p className="font-medium">允许的用户组</p>
-                <div className="mt-1 space-y-1">
+              <div className="rounded-lg border p-3">
+                <p className="text-xs font-semibold text-muted-foreground">
+                  允许的用户组
+                </p>
+                <div className="mt-2 max-h-56 space-y-1.5 overflow-y-auto">
+                  {groups.data?.length === 0 && (
+                    <p className="text-muted-foreground">暂无用户组。</p>
+                  )}
                   {(groups.data ?? []).map((g) => (
                     <Label key={g.id} className="flex items-center gap-2">
                       <Checkbox
@@ -437,13 +486,15 @@ function DocumentACLEditor({
             </div>
           )}
 
-          <Button
-            type="button"
-            disabled={save.isPending}
-            onClick={() => save.mutate()}
-          >
-            {save.isPending ? "保存中..." : "保存文档权限"}
-          </Button>
+          <div className="flex justify-end">
+            <Button
+              type="button"
+              disabled={save.isPending}
+              onClick={() => save.mutate()}
+            >
+              {save.isPending ? "保存中..." : "保存文档权限"}
+            </Button>
+          </div>
         </div>
       )}
     </div>

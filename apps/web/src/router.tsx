@@ -14,7 +14,7 @@ import { KnowledgeDetail } from "./Knowledge";
 
 function InvalidAddress() {
   return (
-    <section className="py-12">
+    <section className="py-6">
       <p role="alert">页面地址无效。</p>
       <Link className="mt-4 inline-block text-sm underline" to="/">
         返回知识库
@@ -353,6 +353,26 @@ const rebuildRoute = createRoute({
     );
   },
 });
+const settingsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "kb/$kbId/settings",
+  errorComponent: InvalidAddress,
+  component: () => {
+    const identity = useContext(IdentityContext);
+    const { kbId } = settingsRoute.useParams();
+    const id = Number(kbId);
+    if (!identity) throw new Error("authenticated identity is required");
+    if (!/^[1-9]\d*$/.test(kbId) || !Number.isSafeInteger(id))
+      return <InvalidAddress />;
+    return (
+      <KnowledgeSettingsPage
+        key={`${identity.tenant_id}:${identity.user_id}:${id}`}
+        identity={identity}
+        id={id}
+      />
+    );
+  },
+});
 const answerRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "kb/$kbId/answer",
@@ -507,6 +527,7 @@ const routeTree = rootRoute.addChildren([
   answerEvalRoute,
   answerEvalCompareRoute,
   rebuildRoute,
+  settingsRoute,
   runCompareRoute,
   historyRoute,
   runRoute,
@@ -537,4 +558,5 @@ import { APIKeysPage } from "./APIKeys";
 import { EvaluationHistory } from "./EvaluationHistory";
 import { EvaluationRun } from "./EvaluationRun";
 import { EvaluationRunCompare } from "./EvaluationRunCompare";
+import { KnowledgeSettingsPage } from "./KnowledgeSettings";
 import { RebuildPage } from "./Rebuild";

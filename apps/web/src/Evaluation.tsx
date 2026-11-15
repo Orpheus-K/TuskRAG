@@ -1,9 +1,3 @@
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@tuskrag/ui/collapsible";
-import { Label } from "@tuskrag/ui/label";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import {
@@ -18,9 +12,29 @@ import {
   listEvalReports,
   type StoredEvalReport,
 } from "@tuskrag/api-client";
+import { Alert } from "@tuskrag/ui/alert";
+import { Badge } from "@tuskrag/ui/badge";
 import { Button } from "@tuskrag/ui/button";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@tuskrag/ui/collapsible";
+import { Dialog } from "@tuskrag/ui/dialog";
+import { EmptyState } from "@tuskrag/ui/empty-state";
+import { Field } from "@tuskrag/ui/field";
 import { Input } from "@tuskrag/ui/input";
-import type { FormEvent } from "react";
+import { SectionHeader } from "@tuskrag/ui/section-header";
+import { WorkspaceSplit } from "@tuskrag/ui/workspace-split";
+import {
+  GitCompare,
+  History,
+  ListChecks,
+  MessageSquareText,
+  RefreshCw,
+  Upload,
+} from "lucide-react";
+import { type FormEvent, useState } from "react";
 
 function errorText(error: unknown) {
   if (error instanceof ApiError) {
@@ -87,6 +101,7 @@ export function Evaluation({
   onSelect: (digest: string) => void;
 }) {
   const client = useQueryClient();
+  const [importing, setImporting] = useState(false);
   const scope = ["eval", identity.tenant_id, identity.user_id, id];
   const base = useQuery({
     queryKey: ["knowledge-base", identity.tenant_id, identity.user_id, id],
@@ -120,6 +135,7 @@ export function Evaluation({
     onSuccess: async (result) => {
       client.setQueryData([...scope, "report", result.digest], result);
       await client.invalidateQueries({ queryKey: [...scope, "list"] });
+      setImporting(false);
       onSelect(result.digest);
     },
   });
@@ -135,184 +151,273 @@ export function Evaluation({
     [401, 403, 404].includes(upload.error.status);
   if (failure || revoked)
     return (
-      <section className="space-y-4 py-12">
+      <section className="space-y-4 py-6">
         <p role="alert">{errorText(failure || upload.error)}</p>
-        <Button
-          onClick={() => {
-            upload.reset();
-            void base.refetch();
-            if (admin) {
-              void list.refetch();
-              if (digest) void detail.refetch();
-            }
-          }}
-        >
-          重新加载报告
-        </Button>
-        <Link
-          to="/kb/$kbId/eval"
-          params={{ kbId: String(id) }}
-          search={{ cursor: "", digest: "", row: 0 }}
-          onClick={() => {
-            upload.reset();
-            void client.invalidateQueries({ queryKey: scope });
-          }}
-        >
-          返回报告列表
-        </Link>
-        <Link to="/">返回知识库</Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            onClick={() => {
+              upload.reset();
+              void base.refetch();
+              if (admin) {
+                void list.refetch();
+                if (digest) void detail.refetch();
+              }
+            }}
+          >
+            重新加载报告
+          </Button>
+          <Button asChild variant="outline">
+            <Link
+              to="/kb/$kbId/eval"
+              params={{ kbId: String(id) }}
+              search={{ cursor: "", digest: "", row: 0 }}
+              onClick={() => {
+                upload.reset();
+                void client.invalidateQueries({ queryKey: scope });
+              }}
+            >
+              返回报告列表
+            </Link>
+          </Button>
+          <Button asChild variant="ghost">
+            <Link to="/">返回知识库</Link>
+          </Button>
+        </div>
       </section>
     );
   if (base.isPending)
     return (
-      <p role="status" className="py-12">
+      <p role="status" className="py-6 text-sm text-muted-foreground">
         正在加载知识库
       </p>
     );
   if (!admin)
     return (
-      <p role="alert" className="py-12">
+      <p role="alert" className="py-6">
         当前账号无评测报告权限。
       </p>
     );
-  return (
-    <section className="space-y-6 py-12">
-      <Link
-        to="/kb/$kbId/documents"
-        params={{ kbId: String(id) }}
-        search={{ cursor: 0 }}
-        className="text-sm underline"
-      >
-        返回文档
-      </Link>
-      <Link
-        className="inline-block text-sm underline"
-        to="/kb/$kbId/eval/history"
-        params={{ kbId: String(id) }}
-        search={{ cursor: 0 }}
-      >
-        运行历史
-      </Link>
-      <h1 className="break-words text-3xl font-semibold">
-        {base.data?.name} · 评测报告
-      </h1>
-      <Link
-        className="inline-block text-sm underline"
-        to="/kb/$kbId/eval/compare"
-        params={{ kbId: String(id) }}
-        search={{ baseline: digest, current: "", cursor: "", offset: 0 }}
-      >
-        对比两份报告
-      </Link>
-      <Link
-        className="ml-4 inline-block text-sm underline"
-        to="/kb/$kbId/eval/sets"
-        params={{ kbId: String(id) }}
-        search={{ cursor: 0, set: 0 }}
-      >
-        管理评测集
-      </Link>
-      <Link
-        className="ml-4 inline-block text-sm underline"
-        to="/kb/$kbId/answer-evaluation"
-        params={{ kbId: String(id) }}
-        search={{ cursor: "", digest: "", row: 0 }}
-      >
-        生成评测
-      </Link>
-      <p className="text-sm text-muted-foreground">
-        外部导入的报告未经服务端验证。
-      </p>
-      {base.data?.status === "archived" ? (
-        <p role="status">知识库已归档，报告仅供查看。</p>
-      ) : (
-        <form className="space-y-3 rounded-xl border p-5" onSubmit={submit}>
-          <Label className="block text-sm" htmlFor="eval-file">
-            完整报告 JSON（最大 8 MiB）
-          </Label>
-          <Input
-            id="eval-file"
-            name="report"
-            type="file"
-            accept=".json,application/json"
-            required
-            disabled={upload.isPending}
-          />
-          <Button type="submit" disabled={upload.isPending}>
-            {upload.isPending ? "正在导入" : "导入报告"}
-          </Button>
-          {upload.isError && <p role="alert">{errorText(upload.error)}</p>}
-          {upload.isSuccess && (
-            <p role="status">报告已导入。相同内容自动去重。</p>
-          )}
-        </form>
-      )}
-      <div className="flex flex-wrap items-center gap-4">
-        <h2 className="text-xl font-medium">可见报告</h2>
-        <Link
-          to="/kb/$kbId/eval"
-          params={{ kbId: String(id) }}
-          search={{ cursor: "", digest: "", row: 0 }}
-          onClick={() => {
-            void client.invalidateQueries({ queryKey: scope });
-            upload.reset();
-          }}
-          className="text-sm underline"
-        >
-          刷新首页
-        </Link>
-      </div>
-      <p className="text-xs text-muted-foreground">
-        按报告摘要排序；失效证据对应的报告不会显示。新增报告请刷新首页。
-      </p>
+  const archived = base.data?.status === "archived";
+  const listPane = (
+    <div className="space-y-3">
       {list.isPending ? (
-        <p role="status">正在加载报告列表</p>
+        <p role="status" className="text-sm text-muted-foreground">
+          正在加载报告列表
+        </p>
       ) : list.data?.items?.length === 0 ? (
-        <p>暂无可见报告。</p>
+        <p className="text-sm text-muted-foreground">暂无可见报告。</p>
       ) : (
-        <ul className="space-y-3">
-          {list.data?.items?.map((item) => (
-            <li key={item.digest} className="space-y-3 rounded-xl border p-5">
-              <Link
-                to="/kb/$kbId/eval"
-                params={{ kbId: String(id) }}
-                search={{ cursor, digest: item.digest, row: 0 }}
-                className="block break-words font-medium underline"
-              >
-                {item.dataset_version} · {item.mode} · {item.model_label}
-              </Link>
-              <p className="break-all text-xs text-muted-foreground">
-                外部导入 ·{" "}
-                {item.model_kind === "stub" ? "模型替身" : "真实模型标记"} ·{" "}
-                {item.created_at} · {item.digest.slice(0, 12)}
-              </p>
-              <Summary value={item.summary} />
-            </li>
-          ))}
+        <ul className="space-y-2" aria-label="报告列表">
+          {list.data?.items?.map((item) => {
+            const selected = item.digest === digest;
+            return (
+              <li key={item.digest}>
+                <Link
+                  to="/kb/$kbId/eval"
+                  params={{ kbId: String(id) }}
+                  search={{ cursor, digest: item.digest, row: 0 }}
+                  aria-current={selected ? "page" : undefined}
+                  className={`block space-y-2 rounded-lg border p-3 transition-colors hover:border-foreground/25 ${
+                    selected ? "border-foreground/40 bg-muted/60" : ""
+                  }`}
+                >
+                  <span className="block break-words text-sm font-medium">
+                    {item.dataset_version} · {item.mode} · {item.model_label}
+                  </span>
+                  <span className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+                    <Badge>外部导入</Badge>
+                    <Badge
+                      variant={
+                        item.model_kind === "stub" ? "warning" : "neutral"
+                      }
+                    >
+                      {item.model_kind === "stub" ? "模型替身" : "真实模型标记"}
+                    </Badge>
+                    <span className="break-all">
+                      {item.created_at} · {item.digest.slice(0, 12)}
+                    </span>
+                  </span>
+                  <Summary value={item.summary} />
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       )}
       {list.data?.next_cursor && (
-        <Link
-          to="/kb/$kbId/eval"
-          params={{ kbId: String(id) }}
-          search={{ cursor: list.data.next_cursor, digest: "", row: 0 }}
-          className="inline-block underline"
-        >
-          下一页报告
-        </Link>
+        <Button asChild size="xs" variant="outline">
+          <Link
+            to="/kb/$kbId/eval"
+            params={{ kbId: String(id) }}
+            search={{ cursor: list.data.next_cursor, digest: "", row: 0 }}
+          >
+            下一页报告
+          </Link>
+        </Button>
       )}
-      {digest &&
-        (detail.isPending ? (
-          <p role="status">正在加载逐题结果</p>
-        ) : detail.data ? (
-          <ReportDetail
-            key={digest}
-            data={detail.data}
-            id={id}
-            cursor={cursor}
-            rowPage={rowPage}
-          />
-        ) : null)}
+    </div>
+  );
+  const detailPane = !digest ? (
+    <EmptyState
+      title="未选择报告"
+      description="从报告列表中选择一份报告查看指标与逐题结果。"
+    />
+  ) : detail.isPending ? (
+    <p role="status" className="text-sm text-muted-foreground">
+      正在加载逐题结果
+    </p>
+  ) : detail.data ? (
+    <ReportDetail
+      key={digest}
+      data={detail.data}
+      id={id}
+      cursor={cursor}
+      rowPage={rowPage}
+    />
+  ) : null;
+  return (
+    <section className="space-y-5">
+      <SectionHeader
+        title={`${base.data?.name} · 评测报告`}
+        actions={
+          <>
+            <Button asChild size="sm" variant="ghost">
+              <Link
+                to="/kb/$kbId/eval/history"
+                params={{ kbId: String(id) }}
+                search={{ cursor: 0 }}
+              >
+                <History aria-hidden="true" className="h-3.5 w-3.5" />
+                运行历史
+              </Link>
+            </Button>
+            <Button asChild size="sm" variant="ghost">
+              <Link
+                to="/kb/$kbId/eval/sets"
+                params={{ kbId: String(id) }}
+                search={{ cursor: 0, set: 0 }}
+              >
+                <ListChecks aria-hidden="true" className="h-3.5 w-3.5" />
+                管理评测集
+              </Link>
+            </Button>
+            <Button asChild size="sm" variant="ghost">
+              <Link
+                to="/kb/$kbId/answer-evaluation"
+                params={{ kbId: String(id) }}
+                search={{ cursor: "", digest: "", row: 0 }}
+              >
+                <MessageSquareText aria-hidden="true" className="h-3.5 w-3.5" />
+                生成评测
+              </Link>
+            </Button>
+            <Button asChild size="sm" variant="outline">
+              <Link
+                to="/kb/$kbId/eval/compare"
+                params={{ kbId: String(id) }}
+                search={{
+                  baseline: digest,
+                  current: "",
+                  cursor: "",
+                  offset: 0,
+                }}
+              >
+                <GitCompare aria-hidden="true" className="h-3.5 w-3.5" />
+                对比两份报告
+              </Link>
+            </Button>
+            {!archived && (
+              <Dialog
+                open={importing}
+                onOpenChange={(open) => {
+                  if (upload.isPending) return;
+                  setImporting(open);
+                  if (!open) upload.reset();
+                }}
+                title="导入评测报告"
+                description="外部导入的报告未经服务端验证；相同内容自动去重。"
+                trigger={
+                  <Button size="sm">
+                    <Upload aria-hidden="true" className="h-3.5 w-3.5" />
+                    导入报告
+                  </Button>
+                }
+              >
+                <form className="space-y-4" onSubmit={submit}>
+                  <Field
+                    htmlFor="eval-file"
+                    label="完整报告 JSON（最大 8 MiB）"
+                  >
+                    <Input
+                      id="eval-file"
+                      name="report"
+                      type="file"
+                      accept=".json,application/json"
+                      required
+                      disabled={upload.isPending}
+                    />
+                  </Field>
+                  {upload.isError && (
+                    <Alert variant="danger">{errorText(upload.error)}</Alert>
+                  )}
+                  <div className="flex justify-end gap-2 border-t pt-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={upload.isPending}
+                      onClick={() => {
+                        setImporting(false);
+                        upload.reset();
+                      }}
+                    >
+                      取消
+                    </Button>
+                    <Button type="submit" disabled={upload.isPending}>
+                      {upload.isPending ? "正在导入" : "开始导入"}
+                    </Button>
+                  </div>
+                </form>
+              </Dialog>
+            )}
+          </>
+        }
+      />
+      {archived && (
+        <Alert variant="warning">知识库已归档，报告仅供查看。</Alert>
+      )}
+      {upload.isSuccess && <Alert>报告已导入。相同内容自动去重。</Alert>}
+      <WorkspaceSplit
+        className="lg:min-h-[calc(100dvh-11rem)]"
+        panes={[
+          {
+            id: "eval-reports",
+            title: "可见报告",
+            defaultWidth: 380,
+            minWidth: 300,
+            maxWidth: 560,
+            collapsible: true,
+            actions: (
+              <Button asChild size="xs" variant="ghost">
+                <Link
+                  to="/kb/$kbId/eval"
+                  params={{ kbId: String(id) }}
+                  search={{ cursor: "", digest: "", row: 0 }}
+                  onClick={() => {
+                    void client.invalidateQueries({ queryKey: scope });
+                    upload.reset();
+                  }}
+                >
+                  <RefreshCw aria-hidden="true" className="h-3.5 w-3.5" />
+                  刷新列表
+                </Link>
+              </Button>
+            ),
+            content: listPane,
+          },
+          { id: "eval-detail", title: "选中报告", content: detailPane },
+        ]}
+        storageKey={`tuskrag.eval.${identity.tenant_id}`}
+      />
     </section>
   );
 }
@@ -334,8 +439,8 @@ export function ReportDetail({
   const rows = report.rows ?? [];
   const start = rowPage * 20;
   return (
-    <section className="space-y-4 rounded-xl border p-5" aria-label="报告详情">
-      <h2 className="text-xl font-medium">逐题结果</h2>
+    <section className="space-y-4" aria-label="报告详情">
+      <h2 className="text-lg font-semibold">逐题结果</h2>
       <p className="break-words text-sm">
         {report.dataset_version} · {report.model_label} · {report.mode} ·
         {data.source === "executed" ? "服务端执行" : "外部导入"}
@@ -409,7 +514,7 @@ export function ReportDetail({
         ))
       )}
       {onPage ? (
-        <nav aria-label="逐题分页" className="flex flex-wrap gap-4">
+        <nav aria-label="逐题分页" className="flex flex-wrap gap-2">
           <Button
             variant="outline"
             disabled={rowPage === 0}
@@ -433,33 +538,39 @@ export function ReportDetail({
           </Button>
         </nav>
       ) : (
-        <nav aria-label="逐题分页" className="flex flex-wrap gap-4">
+        <nav aria-label="逐题分页" className="flex flex-wrap gap-2">
           {rowPage > 0 && (
-            <Link
-              to="/kb/$kbId/eval"
-              params={{ kbId: String(id) }}
-              search={{ cursor, digest: data.digest, row: 0 }}
-            >
-              逐题第一页
-            </Link>
+            <Button asChild size="xs" variant="outline">
+              <Link
+                to="/kb/$kbId/eval"
+                params={{ kbId: String(id) }}
+                search={{ cursor, digest: data.digest, row: 0 }}
+              >
+                逐题第一页
+              </Link>
+            </Button>
           )}
           {rowPage > 0 && (
-            <Link
-              to="/kb/$kbId/eval"
-              params={{ kbId: String(id) }}
-              search={{ cursor, digest: data.digest, row: rowPage - 1 }}
-            >
-              上一页题目
-            </Link>
+            <Button asChild size="xs" variant="outline">
+              <Link
+                to="/kb/$kbId/eval"
+                params={{ kbId: String(id) }}
+                search={{ cursor, digest: data.digest, row: rowPage - 1 }}
+              >
+                上一页题目
+              </Link>
+            </Button>
           )}
           {start + 20 < rows.length && (
-            <Link
-              to="/kb/$kbId/eval"
-              params={{ kbId: String(id) }}
-              search={{ cursor, digest: data.digest, row: rowPage + 1 }}
-            >
-              下一页题目
-            </Link>
+            <Button asChild size="xs" variant="outline">
+              <Link
+                to="/kb/$kbId/eval"
+                params={{ kbId: String(id) }}
+                search={{ cursor, digest: data.digest, row: rowPage + 1 }}
+              >
+                下一页题目
+              </Link>
+            </Button>
           )}
         </nav>
       )}

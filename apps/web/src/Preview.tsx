@@ -1,5 +1,5 @@
 import type { Identity } from "@tuskrag/api-client";
-import { Button } from "@tuskrag/ui/button";
+import { Dialog } from "@tuskrag/ui/dialog";
 import { Component, lazy, type ReactNode, Suspense } from "react";
 import type { PreviewTarget } from "./DocumentPreview";
 
@@ -9,7 +9,7 @@ const DocumentPreview = lazy(() =>
   })),
 );
 class PreviewBoundary extends Component<
-  { children: ReactNode; onClose: () => void },
+  { children: ReactNode },
   { failed: boolean }
 > {
   state = { failed: false };
@@ -19,50 +19,56 @@ class PreviewBoundary extends Component<
   render() {
     if (this.state.failed)
       return (
-        <section className="mt-6 rounded-xl border p-5">
-          <p role="alert" className="text-sm">
-            预览加载失败，请刷新页面后重试。
-          </p>
-          <Button
-            className="mt-3"
-            type="button"
-            variant="outline"
-            onClick={this.props.onClose}
-          >
-            关闭预览
-          </Button>
-        </section>
+        <p role="alert" className="text-sm text-danger">
+          预览加载失败，请刷新页面后重试。
+        </p>
       );
     return this.props.children;
   }
 }
+
+/** Reads a document's table of contents and sections in a modal dialog. */
 export function Preview({
   identity,
   target,
+  stale = false,
   onClose,
 }: {
   identity: Identity;
   target: PreviewTarget;
+  /** The listed version changed after the dialog was opened. */
+  stale?: boolean;
   onClose: () => void;
 }) {
   return (
-    <PreviewBoundary
-      key={`${target.id}:${target.versionId}:${target.initialSection ?? 0}`}
-      onClose={onClose}
+    <Dialog
+      open
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+      title={target.title}
+      className={stale ? "" : "h-[86dvh] w-[min(72rem,94vw)]"}
+      bodyClassName={stale ? "" : "md:overflow-hidden"}
     >
-      <Suspense
-        fallback={
-          <p role="status" className="mt-6 text-sm">
-            正在加载预览
-          </p>
-        }
-      >
-        <DocumentPreview
-          identity={identity}
-          target={target}
-          onClose={onClose}
-        />
-      </Suspense>
-    </PreviewBoundary>
+      {stale ? (
+        <p role="status" className="text-sm">
+          文档已更新或不再可见，请重新打开目录。
+        </p>
+      ) : (
+        <PreviewBoundary
+          key={`${target.id}:${target.versionId}:${target.initialSection ?? 0}`}
+        >
+          <Suspense
+            fallback={
+              <p role="status" className="text-sm text-muted-foreground">
+                正在加载预览
+              </p>
+            }
+          >
+            <DocumentPreview identity={identity} target={target} />
+          </Suspense>
+        </PreviewBoundary>
+      )}
+    </Dialog>
   );
 }

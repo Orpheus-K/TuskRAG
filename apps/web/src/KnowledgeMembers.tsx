@@ -1,4 +1,3 @@
-import { Label } from "@tuskrag/ui/label";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ApiError,
@@ -13,6 +12,14 @@ import {
   setKnowledgeBaseMember,
 } from "@tuskrag/api-client";
 import { Button } from "@tuskrag/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@tuskrag/ui/card";
+import { Label } from "@tuskrag/ui/label";
 import { Select, SelectItem } from "@tuskrag/ui/select";
 import { type FormEvent, useState } from "react";
 
@@ -54,35 +61,23 @@ export function KnowledgeMembersPanel({
   identity: Identity;
   base: KnowledgeBase;
 }) {
-  const [open, setOpen] = useState(false);
-  const [hasOpened, setHasOpened] = useState(false);
   if (base.role !== "owner") return null;
   return (
-    <section className="mt-4">
-      <Button
-        variant="outline"
-        aria-expanded={open}
-        aria-controls="knowledge-members"
-        onClick={() => {
-          setHasOpened(true);
-          setOpen(!open);
-        }}
-      >
-        成员与出域策略
-      </Button>
-      {hasOpened && (
-        <div hidden={!open}>
-          <MembersAndEgressEditor
-            key={`${identity.tenant_id}:${identity.user_id}:${base.id}`}
-            identity={identity}
-            base={base}
-          />
-        </div>
-      )}
-    </section>
+    <Card aria-labelledby="knowledge-members-title" role="region">
+      <CardHeader>
+        <CardTitle id="knowledge-members-title">成员与出域策略</CardTitle>
+        <CardDescription>仅知识库所有者可管理。</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <MembersAndEgressEditor
+          key={`${identity.tenant_id}:${identity.user_id}:${base.id}`}
+          identity={identity}
+          base={base}
+        />
+      </CardContent>
+    </Card>
   );
 }
-
 function MembersAndEgressEditor({
   identity,
   base,
@@ -180,10 +175,7 @@ function MembersAndEgressEditor({
   }
 
   return (
-    <div
-      id="knowledge-members"
-      className="mt-4 space-y-6 rounded-md border p-4"
-    >
+    <div id="knowledge-members" className="space-y-6">
       {errorMessage && (
         <p role="alert" className="text-sm text-destructive">
           {errorMessage}

@@ -288,8 +288,12 @@ it("removes saved answers and source preview when history authorization fails", 
   fireEvent.click(screen.getByRole("button", { name: "引用 1：申请制度" }));
   await screen.findByRole("heading", { name: "流程" });
   revoked = true;
-  fireEvent.click(screen.getByRole("button", { name: "有帮助" }));
-  fireEvent.click(screen.getByRole("button", { name: "保存反馈" }));
+  // The source preview is modal, so the feedback controls behind it are
+  // aria-hidden; the history refresh still has to clear the open preview.
+  fireEvent.click(screen.getByRole("button", { name: "有帮助", hidden: true }));
+  fireEvent.click(
+    screen.getByRole("button", { name: "保存反馈", hidden: true }),
+  );
   await screen.findByText("会话不可用，权限或历史引用可能已变化。");
   expect(screen.queryByText("申请期限为五天", { exact: false })).toBeNull();
   expect(screen.queryByRole("heading", { name: "流程" })).toBeNull();

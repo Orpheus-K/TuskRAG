@@ -69,7 +69,8 @@ test("configures a model, creates a knowledge base, restores a session, and sign
   await page.reload();
   await expect(page.getByText("此知识库暂无文档。")).toBeVisible();
   await page.setViewportSize({ width: 375, height: 800 });
-  await page.getByLabel("上传文档").setInputFiles({
+  await page.getByRole("button", { name: "上传文档" }).click();
+  await page.getByLabel("选择文件").setInputFiles({
     name: "sample.csv",
     mimeType: "text/csv",
     buffer: Buffer.from("name,value\nexample,1\n"),
@@ -83,7 +84,6 @@ test("configures a model, creates a knowledge base, restores a session, and sign
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(
     375,
   );
-  await page.getByRole("link", { name: "返回知识库" }).click();
   await page.getByRole("button", { name: "展开菜单" }).click();
   await page.getByRole("button", { name: "账号菜单" }).click();
   await page.getByRole("menuitem", { name: "退出登录" }).click();
@@ -213,7 +213,7 @@ test("uploads a document revision on mobile", async ({ page }, testInfo) => {
   );
   await page.goto("/kb/5/documents");
   await page.getByRole("button", { name: "上传新版本" }).click();
-  const input = page.getByLabel("上传 员工差旅报销制度.csv 的新版本");
+  const input = page.getByLabel("选择新版本文件");
   await input.setInputFiles({
     name: "修订.csv",
     mimeType: "text/csv",
@@ -228,8 +228,7 @@ test("uploads a document revision on mobile", async ({ page }, testInfo) => {
     375,
   );
   await page
-    .locator("form")
-    .filter({ has: input })
+    .getByRole("dialog")
     .getByRole("button", { name: "上传新版本" })
     .click();
   await expect(
@@ -349,9 +348,9 @@ test("polls active documents and stops after the version becomes terminal", asyn
     });
   });
   await page.goto("/kb/5/documents");
-  await expect(page.getByText("最新版本：等待处理")).toBeVisible();
+  await expect(page.getByText("等待处理", { exact: true })).toBeVisible();
   await page.clock.runFor(3100);
-  await expect(page.getByText("最新版本：处理失败")).toBeVisible();
+  await expect(page.getByText("处理失败", { exact: true })).toBeVisible();
   expect(requests).toBe(2);
   await page.clock.runFor(10000);
   expect(requests).toBe(2);
@@ -571,7 +570,8 @@ for (const sample of [
       },
     );
     await page.goto("/kb/5/documents");
-    await page.getByLabel("上传文档").setInputFiles({
+    await page.getByRole("button", { name: "上传文档" }).click();
+    await page.getByLabel("选择文件").setInputFiles({
       name: sample.name,
       mimeType: sample.mime,
       buffer: Buffer.from(sample.data),
@@ -647,7 +647,7 @@ test("retries a recoverable document job on mobile", async ({ page }) => {
   await expect(
     page.getByText("已重新排队 制度.pdf，等待后台处理。"),
   ).toBeVisible();
-  await expect(page.getByText("最新版本：等待处理")).toBeVisible();
+  await expect(page.getByText("等待处理", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "重新处理" })).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(
     375,
@@ -752,7 +752,7 @@ test("opens a current document section without rendering source HTML", async ({
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(
     375,
   );
-  await page.getByRole("button", { name: "关闭预览" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "关闭" }).click();
   version = 10;
   await page.getByRole("button", { name: "查看目录" }).click();
   await expect(
@@ -815,6 +815,6 @@ test("keeps the document list usable if the preview module fails to load", async
   await expect(page.getByRole("alert")).toHaveText(
     "预览加载失败，请刷新页面后重试。",
   );
-  await page.getByRole("button", { name: "关闭预览" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "关闭" }).click();
   await expect(page.getByRole("heading", { name: "制度.pdf" })).toBeVisible();
 });

@@ -50,12 +50,13 @@ for (const width of [1280, 375]) {
     });
     await page.goto("/kb/5/eval");
     await expect(page.getByText("暂无可见报告。")).toBeVisible();
+    await page.getByRole("button", { name: "导入报告", exact: true }).click();
     await page.getByLabel("完整报告 JSON（最大 8 MiB）").setInputFiles({
       name: "broken.json",
       mimeType: "application/json",
       buffer: Buffer.from("{}"),
     });
-    await page.getByRole("button", { name: "导入报告", exact: true }).click();
+    await page.getByRole("button", { name: "开始导入", exact: true }).click();
     await expect(page.getByRole("alert")).toBeVisible();
     expect(posts).toBe(0);
     await page.getByLabel("完整报告 JSON（最大 8 MiB）").setInputFiles({
@@ -63,18 +64,22 @@ for (const width of [1280, 375]) {
       mimeType: "application/json",
       buffer: Buffer.from(JSON.stringify(report)),
     });
-    await page.getByRole("button", { name: "导入报告", exact: true }).click();
+    await page.getByRole("button", { name: "开始导入", exact: true }).click();
     await expect(
       page.getByRole("heading", { name: "逐题结果", exact: true }),
     ).toBeVisible();
     expect(posts).toBe(1);
-    await page.getByRole("button", { name: "q1 · 有答案题 · 存在降级", exact: true }).click();
+    await page
+      .getByRole("button", { name: "q1 · 有答案题 · 存在降级", exact: true })
+      .click();
     await expect(
       page
         .locator('[data-state="open"][data-slot="collapsible-content"]')
         .getByText("降级：rerank", { exact: true }),
     ).toBeVisible();
-    await page.getByRole("button", { name: "配置摘要与阶段耗时", exact: true }).click();
+    await page
+      .getByRole("button", { name: "配置摘要与阶段耗时", exact: true })
+      .click();
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
@@ -86,12 +91,14 @@ for (const width of [1280, 375]) {
     });
     await page.getByRole("link", { name: "下一页题目" }).click();
     await page.reload();
-    await page.getByRole("button", { name: "q21 · 无答案题 · 存在降级", exact: true }).click();
+    await page
+      .getByRole("button", { name: "q21 · 无答案题 · 存在降级", exact: true })
+      .click();
     await expect(
       page.getByText("无答案题，不计算检索相关性指标。", { exact: true }),
     ).toBeVisible();
     revoked = true;
-    await page.getByRole("link", { name: "刷新首页" }).click();
+    await page.getByRole("link", { name: "刷新列表" }).click();
     await expect(
       page.getByText("当前账号无评测报告权限。", { exact: true }),
     ).toBeVisible();

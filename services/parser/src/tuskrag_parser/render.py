@@ -79,7 +79,9 @@ def render_pdf_pages(
         scale = dpi / 72.0
         for page_num in pages:
             if page_num > total_pages:
-                raise InvalidDocument(f"page {page_num} out of range (1..{total_pages})")
+                raise InvalidDocument(
+                    f"page {page_num} out of range (1..{total_pages})"
+                )
             page = doc[page_num - 1]
             bitmap = page.render(scale=scale)
             pil_image = bitmap.to_pil()

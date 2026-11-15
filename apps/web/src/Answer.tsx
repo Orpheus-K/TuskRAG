@@ -1,6 +1,4 @@
-import { Label } from "@tuskrag/ui/label";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
 import {
   type AnswerEvidence,
   ApiError,
@@ -15,6 +13,7 @@ import {
 import { Alert } from "@tuskrag/ui/alert";
 import { Button } from "@tuskrag/ui/button";
 import { Card } from "@tuskrag/ui/card";
+import { Label } from "@tuskrag/ui/label";
 import { SectionHeader } from "@tuskrag/ui/section-header";
 import { Select, SelectItem } from "@tuskrag/ui/select";
 import { Textarea } from "@tuskrag/ui/textarea";
@@ -55,7 +54,8 @@ export function AnswerPage({
     [preview, setPreview] = useState<PreviewTarget | null>(null);
   const active = useRef<AbortController | null>(null),
     activeConversation = useRef(0),
-    questionRef = useRef<HTMLTextAreaElement>(null);
+    questionRef = useRef<HTMLTextAreaElement>(null),
+    formRef = useRef<HTMLFormElement>(null);
   const conversations = useQuery({
     queryKey: [
       "conversations",
@@ -234,13 +234,13 @@ export function AnswerPage({
   }
   if (base.isPending)
     return (
-      <p role="status" className="py-12">
+      <p role="status" className="py-6 text-sm text-muted-foreground">
         正在加载知识库
       </p>
     );
   if (base.isError)
     return (
-      <p role="alert" className="py-12">
+      <p role="alert" className="py-6">
         知识库不可用或访问权限已变化。
       </p>
     );
@@ -407,8 +407,12 @@ export function AnswerPage({
       {base.data.status === "archived" ? (
         <Alert variant="warning">知识库已归档，不能发起问答。</Alert>
       ) : (
-        <Card className="p-4">
-          <form onSubmit={(event) => void submit(event)} className="space-y-4">
+        <div className="sticky bottom-0 -mx-4 -mb-4 rounded-b-xl border-t bg-surface px-4 pb-4 pt-4">
+          <form
+            ref={formRef}
+            onSubmit={(event) => void submit(event)}
+            className="space-y-3"
+          >
             <div className="grid gap-3 sm:grid-cols-2">
               <Label className="block space-y-1.5 text-xs font-medium">
                 <span>回答模型</span>
@@ -460,7 +464,7 @@ export function AnswerPage({
             )}
             {models.data?.length === 0 && (
               <p className="text-sm text-muted-foreground">
-                请管理员在知识库首页配置回答模型。
+                请管理员在知识库总览的“模型配置”中添加回答模型。
               </p>
             )}
             <Label className="block space-y-1.5 text-xs font-medium">
@@ -471,13 +475,23 @@ export function AnswerPage({
                 value={question}
                 maxLength={4096}
                 onChange={(event) => setQuestion(event.target.value)}
+                onKeyDown={(event) => {
+                  if (
+                    event.key === "Enter" &&
+                    (event.ctrlKey || event.metaKey) &&
+                    !event.nativeEvent.isComposing
+                  ) {
+                    event.preventDefault();
+                    formRef.current?.requestSubmit();
+                  }
+                }}
                 placeholder={
                   conversation ? "继续追问…" : "例如：申请需要准备哪些材料？"
                 }
                 required
               />
             </Label>
-            <div className="flex gap-3">
+            <div className="flex items-center gap-3">
               <Button
                 disabled={
                   !modelID || !question.trim() || running || historyBlocked
@@ -498,9 +512,12 @@ export function AnswerPage({
                   停止回答
                 </Button>
               )}
+              <span className="ml-auto hidden text-xs text-muted-foreground sm:inline">
+                Ctrl + Enter 发送
+              </span>
             </div>
           </form>
-        </Card>
+        </div>
       )}
       {!history.isError && preview && (
         <Preview
@@ -515,26 +532,9 @@ export function AnswerPage({
 
   return (
     <section className="space-y-4">
-      <SectionHeader
-        actions={
-          <div className="flex flex-wrap gap-2">
-            <Button asChild size="xs" variant="outline">
-              <Link to="/">选择知识库</Link>
-            </Button>
-            <Button asChild size="xs" variant="outline">
-              <Link
-                to="/kb/$kbId/documents"
-                params={{ kbId: String(id) }}
-                search={{ cursor: 0 }}
-              >
-                查看文档
-              </Link>
-            </Button>
-          </div>
-        }
-        title={`${base.data.name} · 问答`}
-      />
+      <SectionHeader title={`${base.data.name} · 问答`} />
       <WorkspaceSplit
+        className="lg:min-h-[calc(100dvh-9rem)]"
         panes={[
           {
             id: "answer-history",

@@ -6,11 +6,13 @@ export function ConfirmAction({
   trigger,
   title,
   description,
+  confirmLabel = "确认删除",
   onConfirm,
 }: {
   trigger: ReactElement;
   title: string;
   description: string;
+  confirmLabel?: string;
   onConfirm: () => void;
 }) {
   return (
@@ -29,7 +31,7 @@ export function ConfirmAction({
             </Dialog.Cancel>
             <Dialog.Action asChild>
               <Button variant="destructive" onClick={onConfirm}>
-                确认删除
+                {confirmLabel}
               </Button>
             </Dialog.Action>
           </div>

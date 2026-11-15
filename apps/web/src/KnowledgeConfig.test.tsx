@@ -40,7 +40,8 @@ function mount(value = base) {
   );
 }
 function open() {
-  fireEvent.click(screen.getByRole("button", { name: "检索默认配置" }));
+  // The panel is rendered expanded on the settings page.
+  expect(screen.getByRole("heading", { name: "检索默认配置" })).toBeTruthy();
 }
 function change(label: string | RegExp, value: string) {
   fireEvent.change(screen.getByLabelText(label), { target: { value } });
@@ -101,7 +102,7 @@ it("saves all settings with the returned ETag, including zero threshold, and can
   expect(requests[1]).toEqual({ retrieval: { top_k: 5 } });
 });
 
-it("keeps drafts on conflict, collapse and failed reload; only explicit reload accepts a new revision", async () => {
+it("keeps drafts on conflict and failed reload; only explicit reload accepts a new revision", async () => {
   let reads = 0,
     writes = 0;
   vi.stubGlobal(
@@ -132,9 +133,6 @@ it("keeps drafts on conflict, collapse and failed reload; only explicit reload a
     "disabled",
     true,
   );
-  open();
-  open();
-  expect(screen.getByLabelText("默认返回条数")).toHaveProperty("value", "5");
   fireEvent.click(
     screen.getByRole("button", { name: "载入最新配置（放弃当前修改）" }),
   );
@@ -211,7 +209,7 @@ it.each(["viewer", "editor"])(
     const fetch = vi.fn();
     vi.stubGlobal("fetch", fetch);
     mount({ ...base, role });
-    expect(screen.queryByRole("button", { name: "检索默认配置" })).toBeNull();
+    expect(screen.queryByRole("heading", { name: "检索默认配置" })).toBeNull();
     expect(fetch).not.toHaveBeenCalled();
   },
 );

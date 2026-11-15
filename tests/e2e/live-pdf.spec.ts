@@ -68,7 +68,10 @@ for (const width of [1280, 375]) {
         path: `test-results/cross-page-${width}-${number}.png`,
         fullPage: true,
       });
-      await page.getByRole("button", { name: "关闭预览" }).click();
+      await page
+        .getByRole("dialog")
+        .getByRole("button", { name: "关闭" })
+        .click();
     }
     await page.reload();
     await expect(page.getByText("回答完成", { exact: true })).toBeVisible();

@@ -237,10 +237,10 @@ it("shows a failed latest version without hiding the existing version", async ()
   mount();
   await screen.findByRole("heading", { name: "员工手册" });
   expect(screen.getByRole("heading", { name: "制度.docx" })).toBeTruthy();
-  expect(screen.getByText("最新版本：处理失败")).toBeTruthy();
+  expect(screen.getByText("处理失败")).toBeTruthy();
   expect(screen.getByText("已有生效版本")).toBeTruthy();
   expect(screen.getByText("文件解析失败")).toBeTruthy();
-  expect(screen.queryByLabelText("上传文档")).toBeNull();
+  expect(screen.queryByRole("button", { name: "上传文档" })).toBeNull();
   expect(
     screen.getByRole("link", { name: "下一页" }).getAttribute("href"),
   ).toBe("/kb/5/documents?cursor=7");
@@ -315,8 +315,9 @@ it("retries an upload with the same key after an interrupted request", async () 
   );
   mount();
   await screen.findByRole("heading", { name: "员工手册" });
+  fireEvent.click(screen.getByRole("button", { name: "上传文档" }));
   expect(screen.getByText(/上传后进入处理队列/)).toBeTruthy();
-  fireEvent.change(screen.getByLabelText("上传文档"), {
+  fireEvent.change(screen.getByLabelText("选择文件"), {
     target: {
       files: [new File(["a,b\n1,2\n"], "test.csv", { type: "text/csv" })],
     },
@@ -413,7 +414,10 @@ it("uploads a confirmed new version to the selected document", async () => {
   await screen.findByRole("heading", { name: "制度.csv" });
   fireEvent.click(screen.getByRole("button", { name: "上传新版本" }));
   expect(screen.getByText(/处理期间继续使用当前生效版本/)).toBeTruthy();
-  const input = screen.getByLabelText("上传 制度.csv 的新版本");
+  expect(
+    screen.getByRole("dialog", { name: "上传新版本 · 制度.csv" }),
+  ).toBeTruthy();
+  const input = screen.getByLabelText("选择新版本文件");
   fireEvent.change(input, {
     target: { files: [new File(["a,b\n1,2\n"], "revision.csv")] },
   });

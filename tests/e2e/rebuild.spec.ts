@@ -26,6 +26,21 @@ for (const width of [1280, 375]) {
           egress_policy: "deny",
           created_at: "2026-11-07T00:00:00Z",
         };
+      else if (path === "/api/v1/admin/embedding-spaces")
+        body = {
+          items: [3, 4].map((id) => ({
+            id,
+            provider_id: 1,
+            provider_name: "provider",
+            base_url: "http://127.0.0.1:9000",
+            locality: "internal",
+            model: `embed-${id}`,
+            dimensions: 64,
+            normalized: true,
+            distance: "cosine",
+            has_credential: false,
+          })),
+        };
       else if (revoked) {
         await route.fulfill({
           status: 403,

@@ -69,7 +69,6 @@ function preview(prior: "ok" | "revoked" | "changed") {
           initialSection: 11,
           includePrevious: true,
         }}
-        onClose={() => {}}
       />
     </QueryClientProvider>,
   );

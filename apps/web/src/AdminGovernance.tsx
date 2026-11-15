@@ -1,4 +1,3 @@
-import { Label } from "@tuskrag/ui/label";
 import { Link } from "@tanstack/react-router";
 import {
   ApiError,
@@ -25,8 +24,10 @@ import {
 import { Alert } from "@tuskrag/ui/alert";
 import { Badge } from "@tuskrag/ui/badge";
 import { Button } from "@tuskrag/ui/button";
+import { ConfirmAction } from "@tuskrag/ui/confirm-action";
 import { DataTable, DataTableCell, DataTableRow } from "@tuskrag/ui/data-table";
 import { Input } from "@tuskrag/ui/input";
+import { Label } from "@tuskrag/ui/label";
 import { Select, SelectItem } from "@tuskrag/ui/select";
 import { useCallback, useEffect, useState } from "react";
 
@@ -254,7 +255,7 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
         </Link>
       </div>
 
-      <div className="mt-6 flex gap-2 border-b border-border pb-3">
+      <div className="mt-6 flex flex-wrap gap-2 border-b border-border pb-3">
         <Button
           size="sm"
           variant={tab === "audit" ? "default" : "secondary"}
@@ -484,13 +485,16 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
                     >
                       编辑
                     </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => void onDeleteProvider(p.id)}
-                    >
-                      删除
-                    </Button>
+                    <ConfirmAction
+                      trigger={
+                        <Button size="sm" variant="destructive">
+                          删除
+                        </Button>
+                      }
+                      title={`删除模型供应商「${p.name}」`}
+                      description="删除后无法恢复；若仍有知识库或模型引用此供应商，删除将被拒绝。"
+                      onConfirm={() => void onDeleteProvider(p.id)}
+                    />
                   </div>
                 </div>
               );
@@ -535,7 +539,7 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
 
       {!forbidden && tab === "sso" ? (
         <div className="mt-6 space-y-6">
-          <div className="flex items-center justify-between rounded-xl border border-border bg-surface p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4">
             <div>
               <div className="font-medium">禁用本地密码登录</div>
               <p className="text-xs text-muted-foreground">
@@ -630,7 +634,7 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
             {oidcProviders.map((p) => (
               <div
                 key={p.id}
-                className="flex items-center justify-between rounded-xl border border-border bg-surface p-4"
+                className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4"
               >
                 <div>
                   <div className="flex flex-wrap items-center gap-2 font-medium">
@@ -641,10 +645,15 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
                     {p.issuer_url} · client: {p.client_id}
                   </div>
                 </div>
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  onClick={() => {
+                <ConfirmAction
+                  trigger={
+                    <Button size="sm" variant="destructive">
+                      删除
+                    </Button>
+                  }
+                  title={`删除 OIDC 身份源「${p.name}」`}
+                  description="删除后使用该身份源的用户将无法继续通过 SSO 登录。"
+                  onConfirm={() => {
                     void (async () => {
                       setError("");
                       try {
@@ -655,9 +664,7 @@ export function AdminGovernancePage({ identity }: { identity: Identity }) {
                       }
                     })();
                   }}
-                >
-                  删除
-                </Button>
+                />
               </div>
             ))}
           </div>

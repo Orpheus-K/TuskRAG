@@ -3,13 +3,12 @@ from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
 import olefile
-import pypdfium2 as pdfium
+import pypdfium2 as pdfium  # type: ignore[import-untyped]
 import pytest
 from jsonschema import Draft202012Validator, FormatChecker
 
 from tuskrag_parser.html_parser import parse_html
 from tuskrag_parser.limits import (
-    EncryptedDocument,
     InvalidDocument,
     InvalidLimits,
     LimitExceeded,
@@ -70,9 +69,19 @@ def test_parse_pptx_valid_and_schema(tmp_path: Path) -> None:
     doc = json.loads((out_dir / "parsed.json").read_text(encoding="utf-8"))
     VALIDATOR.validate(doc)
     assert len(doc["pages"]) == 1
-    assert doc["pages"][0]["blocks"][0] == {"type": "heading", "level": 1, "text": "Q3 Review"}
-    assert doc["pages"][0]["blocks"][1] == {"type": "paragraph", "text": "Revenue grew 25%."}
-    assert doc["pages"][0]["blocks"][2] == {"type": "table", "cells": [["Region", "ARR"], ["APAC", "10M"]]}
+    assert doc["pages"][0]["blocks"][0] == {
+        "type": "heading",
+        "level": 1,
+        "text": "Q3 Review",
+    }
+    assert doc["pages"][0]["blocks"][1] == {
+        "type": "paragraph",
+        "text": "Revenue grew 25%.",
+    }
+    assert doc["pages"][0]["blocks"][2] == {
+        "type": "table",
+        "cells": [["Region", "ARR"], ["APAC", "10M"]],
+    }
 
 
 def test_parse_html_strips_scripts_and_validates(tmp_path: Path) -> None:
@@ -102,7 +111,10 @@ def test_parse_html_strips_scripts_and_validates(tmp_path: Path) -> None:
     assert "evil" not in texts
     assert blocks[0] == {"type": "heading", "level": 1, "text": "Travel Policy"}
     assert blocks[1] == {"type": "paragraph", "text": "Hotel cap is 500 RMB."}
-    assert blocks[2] == {"type": "table", "cells": [["City", "Cap"], ["Beijing", "700"]]}
+    assert blocks[2] == {
+        "type": "table",
+        "cells": [["City", "Cap"], ["Beijing", "700"]],
+    }
 
 
 def test_v07_malicious_inputs(tmp_path: Path) -> None:
@@ -128,7 +140,11 @@ def test_v07_malicious_inputs(tmp_path: Path) -> None:
 
     # 4. Zip bomb (high compression ratio)
     bomb = tmp_path / "bomb.pptx"
-    big_xml = "<p:sld xmlns:p='http://schemas.openxmlformats.org/presentationml/2006/main'>" + (" " * 500_000) + "</p:sld>"
+    big_xml = (
+        "<p:sld xmlns:p='http://schemas.openxmlformats.org/presentationml/2006/main'>"
+        + (" " * 500_000)
+        + "</p:sld>"
+    )
     _build_minimal_pptx(bomb, big_xml)
     with pytest.raises(LimitExceeded):
         parse_pptx(bomb, tmp_path / "o4", Limits(max_compression_ratio=5))

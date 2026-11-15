@@ -1,4 +1,3 @@
-import { Label } from "@tuskrag/ui/label";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import {
@@ -11,6 +10,7 @@ import {
   startEvalRun,
 } from "@tuskrag/api-client";
 import { Button } from "@tuskrag/ui/button";
+import { Label } from "@tuskrag/ui/label";
 import { Select, SelectItem } from "@tuskrag/ui/select";
 import { useState } from "react";
 import { ReportDetail } from "./Evaluation";
@@ -225,13 +225,15 @@ export function EvaluationRun({
               </section>
             ) : (
               result.data && (
-                <ReportDetail
-                  data={result.data}
-                  id={id}
-                  cursor=""
-                  rowPage={row}
-                  onPage={(row) => onChange({ row })}
-                />
+                <div className="rounded-xl border p-5">
+                  <ReportDetail
+                    data={result.data}
+                    id={id}
+                    cursor=""
+                    rowPage={row}
+                    onPage={(row) => onChange({ row })}
+                  />
+                </div>
               )
             ))}
         </>

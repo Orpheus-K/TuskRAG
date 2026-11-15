@@ -7,6 +7,7 @@ import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import {
   ApiError,
   getIdentity,
+  getKnowledgeBase,
   getPublicOIDCProviders,
   getReadiness,
   type Identity,
@@ -53,6 +54,7 @@ import {
   MessagesSquare,
   Plus,
   RefreshCw,
+  Settings,
   ShieldCheck,
 } from "lucide-react";
 import { createContext, type FormEvent, useEffect, useState } from "react";
@@ -331,7 +333,7 @@ export function Workspace({ identity }: { identity: Identity }) {
           title="暂无知识库"
         />
       ) : (
-        <ul className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr))]">
+        <ul className="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(min(100%,18rem),1fr))]">
           {knowledgeBases.data.map((item) => (
             <li key={item.id}>
               <Card className="h-full transition-colors hover:border-foreground/25">
@@ -359,24 +361,30 @@ export function Workspace({ identity }: { identity: Identity }) {
                     编号 {item.id} · {roleLabels[item.role]}
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="flex items-center gap-3 pt-2">
+                <CardContent className="flex items-center gap-2 pt-2">
                   <Button asChild size="xs" variant="outline">
                     <Link
                       params={{ kbId: String(item.id) }}
                       search={{ cursor: 0 }}
                       to="/kb/$kbId/documents"
                     >
+                      <FileText aria-hidden="true" className="h-3.5 w-3.5" />
                       文档管理
                     </Link>
                   </Button>
                   {item.status === "active" && (
-                    <Link
-                      className="text-xs font-medium underline underline-offset-4"
-                      params={{ kbId: String(item.id) }}
-                      to="/kb/$kbId/answer"
-                    >
-                      提问
-                    </Link>
+                    <Button asChild size="xs" variant="ghost">
+                      <Link
+                        params={{ kbId: String(item.id) }}
+                        to="/kb/$kbId/answer"
+                      >
+                        <MessagesSquare
+                          aria-hidden="true"
+                          className="h-3.5 w-3.5"
+                        />
+                        提问
+                      </Link>
+                    </Button>
                   )}
                 </CardContent>
               </Card>
@@ -443,6 +451,23 @@ export function App() {
     },
     retry: false,
   });
+  const identityValue = currentIdentity.data;
+  // Shares the page query (same key) so the shell can hide owner/admin-only
+  // entries; the knowledge base name stays inside page-level access checks.
+  const activeBase = useQuery({
+    queryKey: [
+      "knowledge-base",
+      identityValue?.tenant_id,
+      identityValue?.user_id,
+      Number(activeKbId),
+    ],
+    queryFn: ({ signal }) => getKnowledgeBase(Number(activeKbId), signal),
+    enabled: Boolean(identityValue && activeKbId),
+    retry: false,
+    gcTime: 0,
+  });
+  const canManageKb =
+    activeBase.data?.role === "owner" || activeBase.data?.role === "admin";
   const [loggingOut, setLoggingOut] = useState(false);
   const [logoutError, setLogoutError] = useState("");
 
@@ -501,22 +526,32 @@ export function App() {
             label: "知识问答",
             active: pathname.endsWith("/answer"),
           },
-          {
-            to: "/kb/$kbId/eval",
-            search: { cursor: "", digest: "", row: 0 },
-            icon: FlaskConical,
-            label: "评测中心",
-            active:
-              pathname.includes("/eval") ||
-              pathname.includes("/answer-evaluation"),
-          },
-          {
-            to: "/kb/$kbId/rebuild",
-            search: { job: 0 },
-            icon: RefreshCw,
-            label: "嵌入重建",
-            active: pathname.endsWith("/rebuild"),
-          },
+          ...(canManageKb
+            ? [
+                {
+                  to: "/kb/$kbId/eval",
+                  search: { cursor: "", digest: "", row: 0 },
+                  icon: FlaskConical,
+                  label: "评测中心",
+                  active:
+                    pathname.includes("/eval") ||
+                    pathname.includes("/answer-evaluation"),
+                },
+                {
+                  to: "/kb/$kbId/rebuild",
+                  search: { job: 0 },
+                  icon: RefreshCw,
+                  label: "嵌入重建",
+                  active: pathname.endsWith("/rebuild"),
+                },
+                {
+                  to: "/kb/$kbId/settings",
+                  icon: Settings,
+                  label: "知识库设置",
+                  active: pathname.endsWith("/settings"),
+                },
+              ]
+            : []),
         ]
       : [];
     const currentPage = [...globalNav, ...kbNav].find((item) => item.active);

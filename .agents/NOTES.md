@@ -1,6 +1,24 @@
 # 接续项目迭代
 
-## 当前快照（2026-11-14 M5 生产化与全里程碑收官）
+## 当前快照（2026-11-15 A13 控制台完善与 E2E 补齐）
+
+- **知识库页面排版重整（2026-11-15，A13）**：文档页改为“文档列表 + 检索测试”双栏，上传/URL 导入/文档权限改为对话框，目录与正文预览改为左右分栏的模态框（问答引用共用）；检索默认配置、成员与出域、用户组移到新路由 `/kb/$kbId/settings`（侧栏“知识库设置”，与评测中心、嵌入重建一样只对 owner/admin 显示）；评测中心改为“报告列表 + 选中报告”主从布局，导入报告改为对话框；嵌入重建显示当前空间详情并列出可选空间；问答输入区吸底、支持 Ctrl+Enter。`pnpm typecheck`、`pnpm test:web`（19 文件 126 项）、`pnpm build:web`、改动文件 `biome check`、`ui-reuse`（35 种 / 27 跨文件 / 原生控件 0）通过；构建产物 + vite preview 上的模拟数据 Playwright 回归 31+6 项通过。未运行：需真实后端的 `smoke.spec.ts` 前两项与 `live-*`（相关选择器已同步更新）。
+
+- **云端 200k 分块（V08）+ 50 并发（V09）+ 内存基线（T17）实测完成（2026-11-15，[压测报告](../docs/eval-reports/2026-11-15-v08-v09-t17-benchmark.md)）**：
+  - 在 `test-host.invalid` 隔离环境（`test-postgres` PG17 `1.5 CPU / 1.5 GiB` + `tuskrag.latest` `GOMAXPROCS=2 GOMEMLIMIT=384MiB`，进程内确定性假模型）写入 200 文档 / 4,000 节 / 200,000 `chunk` + 200,000 `halfvec(1024)`（总库 `1163 MB`，建索引 `179s`）。
+  - **V08**（100 次顺序检索含 Rerank）：`errors=0`，`p50=72.36 ms`、`p95=109.84 ms`、`p99=153.70 ms`。
+  - **V09**（50 并发检索 16.8s）：`ok=406, errors=0, qps=24.15, p50=1977.63 ms, p95=2300.75 ms`；50 并发 SSE 问答（19.5s）：`ok=206, errors=0, qps=10.58, ttft_p50=4385.98 ms, total_p50=4626.96 ms, total_p95=5149.40 ms`。
+  - **T17**：`tuskrag.latest` 空载 `102.4 MiB` / 峰值 `190.8 MiB`（`VmHWM 190.3 MiB`）；PG17 空载 `671.8 MiB` / 峰值 `904.5 MiB`，合计峰值约 `1.07 GiB`（低于 `lite` 4 GiB 上限）。压测容器与临时文件已清理（`PORTS_CLEAN`）。
+
+- **控制台交互、代理与 E2E 回归完善（2026-11-15）**：
+  - **不可逆操作与响应式修复**：为 [ConfirmAction](../packages/ui/src/components/confirm-action.tsx) 增加可选 `confirmLabel`；[APIKeys.tsx](../apps/web/src/APIKeys.tsx) 吊销密钥与 [AdminGovernance.tsx](../apps/web/src/AdminGovernance.tsx) 删除模型供应商、删除 OIDC 身份源均接入 `ConfirmAction` 二次确认；修复 [AdminGovernance.tsx](../apps/web/src/AdminGovernance.tsx) 标签栏与操作行在窄屏下的 `flex-wrap` 换行。
+  - **Vite 代理前缀修复**：将 [vite.config.ts](../apps/web/vite.config.ts) 开发/预览代理前缀从 `"/api"` 修正为 `"/api/"`，避免前端路由 `/api-keys` 被误代理返回 502/404。
+  - **实测结果**：
+    - 本地：`pnpm typecheck`、`pnpm test:web`（18 文件 122 项）、`pnpm build:web`、`node scripts/ui-reuse.mjs`（35 种共享组件、25 种跨文件复用、418 次调用、228 次共享控件、0 次原生控件）及构建产物上的 [governance-and-keys.spec.ts](../tests/e2e/governance-and-keys.spec.ts)（4 项）+ [workspace-layout.spec.ts](../tests/e2e/workspace-layout.spec.ts)（1 项）5/5 通过。
+    - 云端 `test-host.invalid`（隔离 `test-postgres` PG17 `127.0.0.1:<db-port>` + `--memory=1024m --cpus=1.5` + `tuskrag.latest` `127.0.0.1:<http-port>`）：
+      - 5 个修改前端文件 `biome check` 0 错误 0 警告；Python 解析器修复 [test_pptx_html_render.py](../services/parser/tests/test_pptx_html_render.py) 未使用导入与 4 个文件 `ruff format` 后，`ruff check .`、`ruff format --check .`、`mypy src tests`（17 文件）及离线 `unshare --net` `pytest`（110 passed in 37.81s）全部通过。
+      - 35 项 PG 迁移、`bootstrap`、`/api/health/ready`（`{"status":"ok"}`）、`/metrics` 及真实后端端到端 [smoke.spec.ts](../tests/e2e/smoke.spec.ts)（**13/13 通过**，含真实登录、模型配置、建库、上传与退出）全部通过；测试后已销毁 `test-postgres` 并确认 `:<db-port>`/`:<http-port>` 释放。
+  - **未运行项**：`live-answer.spec.ts`、`live-pdf.spec.ts`（需真实外部模型凭据与 worker cgroup 委派）、百万块 `V08` 压测及 `V13` 跨版本滚动升级。
 
 - **A13 控制台功能分区（2026-11-14）**：退出登录移入侧栏底部账号菜单；新建知识库、添加嵌入/回答模型改为对话框，总览为列表 + 模型配置两栏；服务正常时不显示状态，仅不可用时提示；图标统一 lucide-react（新增 `Dialog`、`DropdownMenu` 共享组件）；侧栏移除指向未注册路由的“配置与重建/成员权限/检索追踪”，改为文档与检索、知识问答、评测中心、嵌入重建。`pnpm typecheck`、`pnpm test:web`（18 文件 122 项）、`pnpm build:web`、产物上的 workspace-layout 浏览器回归（模拟数据）通过；`ui-reuse` 34 种共享组件、23 种跨文件复用、原生控件 0。smoke 用例已按新入口改写但未运行（需真实后端）。前端许可清单已增量更新。规则见 [UI 技能](skills/tuskrag-ui/SKILL.md)。
 

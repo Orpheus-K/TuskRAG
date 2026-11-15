@@ -57,9 +57,12 @@ for (const width of [1280, 375]) {
         });
     });
     await page.goto("/kb/5/documents");
-    await page.getByRole("button", { name: "检索默认配置" }).waitFor();
+    await page.getByRole("heading", { name: "知识库配置验收" }).waitFor();
     expect(reads).toBe(0);
-    await page.getByRole("button", { name: "检索默认配置" }).click();
+    if (width < 768)
+      await page.getByRole("button", { name: "展开菜单" }).click();
+    await page.getByRole("link", { name: "知识库设置" }).click();
+    await page.getByRole("heading", { name: "检索默认配置" }).waitFor();
     await page.getByLabel("默认返回条数").fill("5");
     await page.getByLabel("默认启用重排").check();
     await page.getByLabel(/重排提供方编号/).fill("9");
