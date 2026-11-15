@@ -1,14 +1,18 @@
 package httpapi
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"io"
+	"log/slog"
 	"net/http/httptest"
 	"strings"
 	"testing"
 	"time"
 	"tuskrag.local/core/internal/answer"
+	"tuskrag.local/core/internal/indexing"
+	"tuskrag.local/core/internal/models"
 	"tuskrag.local/core/internal/retrieval"
 )
 
@@ -96,5 +100,45 @@ func TestAnswerErrorsAreSafe(t *testing.T) {
 		if strings.Contains(e.Message, "secret") || e.Code == "" {
 			t.Fatal(e)
 		}
+	}
+}
+
+func TestAnswerStreamErrorMappingsAndLogging(t *testing.T) {
+	cases := []struct {
+		err       error
+		code      string
+		retryable bool
+	}{
+		{models.ErrTokenizerMismatch, "model_invalid_response", false},
+		{models.ErrTokenizerUsageMissing, "model_invalid_response", false},
+		{indexing.ErrUnsupportedDistance, "unsupported_embedding", false},
+		{indexing.ErrIndexMissing, "dependency_unavailable", true},
+	}
+	for _, tc := range cases {
+		got := answerStreamError(tc.err)
+		if got.Code != tc.code || got.Retryable != tc.retryable || got.Message == "" {
+			t.Fatalf("unexpected mapping for %v: %+v", tc.err, got)
+		}
+	}
+
+	var logs bytes.Buffer
+	prev := slog.Default()
+	slog.SetDefault(slog.New(slog.NewTextHandler(&logs, nil)))
+	defer slog.SetDefault(prev)
+
+	service := answerFunc(func(context.Context, retrieval.Actor, answer.Request, func(answer.Event) error) error {
+		return errors.New("boom-detail")
+	})
+	app := New(Dependencies{Identity: uploadTestIdentity{}, Answers: service, InsecureLocalCookies: true})
+	response := httptest.NewRecorder()
+	request := searchRequest(`{"kb_id":7,"model_id":1,"question":"hello"}`)
+	request.URL.Path = "/api/v1/answers"
+	app.Handler.ServeHTTP(response, request)
+
+	if response.Code != 200 || !strings.Contains(response.Body.String(), `"code":"internal_error"`) {
+		t.Fatalf("expected internal_error SSE event, got %d %s", response.Code, response.Body.String())
+	}
+	if !strings.Contains(logs.String(), "answer stream failed") || !strings.Contains(logs.String(), "boom-detail") {
+		t.Fatalf("expected failure log with error detail, got %s", logs.String())
 	}
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/danielgtaylor/huma/v2/sse"
 	"tuskrag.local/core/internal/answer"
 	"tuskrag.local/core/internal/identity"
+	"tuskrag.local/core/internal/indexing"
 	"tuskrag.local/core/internal/models"
 	"tuskrag.local/core/internal/retrieval"
 	"tuskrag.local/core/internal/secrets"
@@ -110,7 +111,7 @@ func registerAnswerStream[I any](api huma.API, deps Dependencies, operation huma
 			if !joined {
 				// The response is already closed; report only sanitized failure metadata.
 				if err := <-finished; err != nil && !errors.Is(err, context.Canceled) {
-					slog.Error("answer stream stopped", "code", answerStreamError(err).Code, "trace_id", ctx.Value(traceKey{}))
+					slog.Error("answer stream stopped", "code", answerStreamError(err).Code, "trace_id", ctx.Value(traceKey{}), "error", err)
 				}
 			}
 		}()
@@ -138,7 +139,11 @@ func registerAnswerStream[I any](api huma.API, deps Dependencies, operation huma
 			case err := <-finished:
 				joined = true
 				if err != nil {
-					_ = send.Data(answerStreamError(err))
+					answerErr := answerStreamError(err)
+					if !errors.Is(err, context.Canceled) {
+						slog.Error("answer stream failed", "code", answerErr.Code, "trace_id", ctx.Value(traceKey{}), "error", err)
+					}
+					_ = send.Data(answerErr)
 				}
 				return
 			case event := <-events:
@@ -184,8 +189,12 @@ func answerStreamError(err error) AnswerError {
 		return AnswerError{Code: "cancelled", Message: "回答已取消"}
 	case errors.Is(err, models.ErrEgressDenied):
 		return AnswerError{Code: "egress_denied", Message: "知识库策略不允许调用此模型"}
-	case errors.Is(err, models.ErrInvalidResponse):
+	case errors.Is(err, models.ErrTokenizerMismatch), errors.Is(err, models.ErrTokenizerUsageMissing), errors.Is(err, models.ErrInvalidResponse):
 		return AnswerError{Code: "model_invalid_response", Message: "模型返回了无效或不完整的回答"}
+	case errors.Is(err, indexing.ErrUnsupportedDistance):
+		return AnswerError{Code: "unsupported_embedding", Message: "当前嵌入向量距离度量不受支持"}
+	case errors.Is(err, indexing.ErrIndexMissing), errors.Is(err, indexing.ErrIndexBusy), errors.Is(err, indexing.ErrIndexInvalid), errors.Is(err, indexing.ErrIndexConflict):
+		return AnswerError{Code: "dependency_unavailable", Message: "检索索引暂不可用，请重试", Retryable: true}
 	case errors.Is(err, models.ErrRuntimeUnavailable), errors.Is(err, secrets.ErrKeyUnavailable), errors.Is(err, secrets.ErrInvalidSecret):
 		return AnswerError{Code: "model_unavailable", Message: "回答模型配置不可用"}
 	case errors.Is(err, models.ErrRuntimeChanged), errors.Is(err, retrieval.ErrBindingChanged):
