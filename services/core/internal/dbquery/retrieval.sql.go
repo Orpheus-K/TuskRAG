@@ -39,6 +39,111 @@ func (q *Queries) AuditSearch(ctx context.Context, arg AuditSearchParams) error 
 	return err
 }
 
+const exactMatchChunks = `-- name: ExactMatchChunks :many
+SELECT c.id, c.document_id, c.version_id, c.section_id, c.ordinal, c.kind, c.token_count,
+       c.content, c.page_start, c.page_end, d.title, d.mime, s.heading_path,
+       COALESCE(d.trust_tier, k.trust_tier)::text AS trust_tier
+FROM chunk c
+JOIN knowledge_base k ON k.tenant_id = c.tenant_id AND k.id = c.kb_id
+JOIN kb_membership m ON m.tenant_id = k.tenant_id AND m.kb_id = k.id
+JOIN document d ON d.tenant_id = c.tenant_id AND d.kb_id = c.kb_id AND d.id = c.document_id
+JOIN document_version dv ON dv.tenant_id = c.tenant_id AND dv.kb_id = c.kb_id
+  AND dv.document_id = c.document_id AND dv.id = c.version_id
+JOIN section s ON s.tenant_id = c.tenant_id AND s.kb_id = c.kb_id
+  AND s.document_id = c.document_id AND s.version_id = c.version_id AND s.id = c.section_id
+WHERE c.tenant_id = $1 AND c.kb_id = $2
+  AND m.user_id = $3 AND k.status = 'active'
+  AND c.is_current AND NOT c.disabled AND c.access_tags && $4::text[]
+  AND d.deleted_at IS NULL
+  AND (d.acl_mode = 'inherit_kb' OR EXISTS (
+    SELECT 1 FROM document_acl a
+    WHERE a.tenant_id = d.tenant_id AND a.kb_id = d.kb_id AND a.document_id = d.id
+      AND (a.subject_type = 'user' AND a.subject_id = $3
+        OR a.subject_type = 'group' AND a.subject_id IN (
+          SELECT gm.group_id FROM user_group_member gm
+          WHERE gm.tenant_id = d.tenant_id AND gm.user_id = $3
+        ))
+  ))
+  AND d.current_version_id = c.version_id
+  AND dv.status IN ('ready', 'partial')
+  AND (
+    (NOT $5::boolean AND c.content ILIKE '%' || $6::text || '%' ESCAPE '\')
+    OR ($5::boolean AND c.content ~* $6::text)
+  )
+ORDER BY c.document_id, c.ordinal
+LIMIT $7
+`
+
+type ExactMatchChunksParams struct {
+	TenantID      int64
+	KbID          int64
+	UserID        int64
+	PrincipalTags []string
+	UseRegex      bool
+	Pattern       string
+	LimitCount    int32
+}
+
+type ExactMatchChunksRow struct {
+	ID          int64
+	DocumentID  int64
+	VersionID   int64
+	SectionID   int64
+	Ordinal     int32
+	Kind        string
+	TokenCount  int32
+	Content     string
+	PageStart   pgtype.Int4
+	PageEnd     pgtype.Int4
+	Title       string
+	Mime        string
+	HeadingPath []string
+	TrustTier   string
+}
+
+func (q *Queries) ExactMatchChunks(ctx context.Context, arg ExactMatchChunksParams) ([]ExactMatchChunksRow, error) {
+	rows, err := q.db.Query(ctx, exactMatchChunks,
+		arg.TenantID,
+		arg.KbID,
+		arg.UserID,
+		arg.PrincipalTags,
+		arg.UseRegex,
+		arg.Pattern,
+		arg.LimitCount,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ExactMatchChunksRow
+	for rows.Next() {
+		var i ExactMatchChunksRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.DocumentID,
+			&i.VersionID,
+			&i.SectionID,
+			&i.Ordinal,
+			&i.Kind,
+			&i.TokenCount,
+			&i.Content,
+			&i.PageStart,
+			&i.PageEnd,
+			&i.Title,
+			&i.Mime,
+			&i.HeadingPath,
+			&i.TrustTier,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getAuthorizedSearchScope = `-- name: GetAuthorizedSearchScope :one
 SELECT k.tenant_id, k.id AS kb_id, k.egress_policy, t.egress_policy_max
 FROM knowledge_base k
@@ -122,8 +227,10 @@ const listSectionChunksForAnswer = `-- name: ListSectionChunksForAnswer :many
 SELECT c.id, c.document_id, c.version_id, c.section_id, c.ordinal, c.kind, c.token_count,
        c.content, c.page_start, c.page_end, d.title, d.mime, s.heading_path,
        s.token_count AS section_token_count,
-       (c.is_current AND NOT c.disabled AND c.access_tags && $1::text[])::boolean AS allowed
+       (c.is_current AND NOT c.disabled AND c.access_tags && $1::text[])::boolean AS allowed,
+       COALESCE(d.trust_tier, k.trust_tier)::text AS trust_tier
 FROM chunk c
+JOIN knowledge_base k ON k.tenant_id = c.tenant_id AND k.id = c.kb_id
 JOIN document d ON d.tenant_id = c.tenant_id AND d.kb_id = c.kb_id AND d.id = c.document_id
 JOIN document_version dv ON dv.tenant_id = c.tenant_id AND dv.kb_id = c.kb_id
   AND dv.document_id = c.document_id AND dv.id = c.version_id
@@ -171,6 +278,7 @@ type ListSectionChunksForAnswerRow struct {
 	HeadingPath       []string
 	SectionTokenCount int32
 	Allowed           bool
+	TrustTier         string
 }
 
 func (q *Queries) ListSectionChunksForAnswer(ctx context.Context, arg ListSectionChunksForAnswerParams) ([]ListSectionChunksForAnswerRow, error) {
@@ -204,6 +312,7 @@ func (q *Queries) ListSectionChunksForAnswer(ctx context.Context, arg ListSectio
 			&i.HeadingPath,
 			&i.SectionTokenCount,
 			&i.Allowed,
+			&i.TrustTier,
 		); err != nil {
 			return nil, err
 		}
@@ -405,8 +514,10 @@ func (q *Queries) RecallHybrid(ctx context.Context, arg RecallHybridParams) ([]R
 
 const recheckSearchEvidence = `-- name: RecheckSearchEvidence :many
 SELECT c.id, c.document_id, c.version_id, c.section_id, c.ordinal, c.kind, c.token_count,
-       c.content, c.page_start, c.page_end, d.title, d.mime, s.heading_path
+       c.content, c.page_start, c.page_end, d.title, d.mime, s.heading_path,
+       COALESCE(d.trust_tier, k.trust_tier)::text AS trust_tier
 FROM chunk c
+JOIN knowledge_base k ON k.tenant_id = c.tenant_id AND k.id = c.kb_id
 JOIN document d ON d.tenant_id = c.tenant_id AND d.kb_id = c.kb_id AND d.id = c.document_id
 JOIN document_version dv ON dv.tenant_id = c.tenant_id AND dv.kb_id = c.kb_id
   AND dv.document_id = c.document_id AND dv.id = c.version_id
@@ -458,6 +569,7 @@ type RecheckSearchEvidenceRow struct {
 	Title       string
 	Mime        string
 	HeadingPath []string
+	TrustTier   string
 }
 
 func (q *Queries) RecheckSearchEvidence(ctx context.Context, arg RecheckSearchEvidenceParams) ([]RecheckSearchEvidenceRow, error) {
@@ -492,6 +604,7 @@ func (q *Queries) RecheckSearchEvidence(ctx context.Context, arg RecheckSearchEv
 			&i.Title,
 			&i.Mime,
 			&i.HeadingPath,
+			&i.TrustTier,
 		); err != nil {
 			return nil, err
 		}

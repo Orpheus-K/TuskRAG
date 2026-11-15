@@ -340,6 +340,66 @@ func (q *Queries) ListConversations(ctx context.Context, arg ListConversationsPa
 	return items, nil
 }
 
+const listNegativeFeedbackCandidates = `-- name: ListNegativeFeedbackCandidates :many
+SELECT m.id AS message_id, m.conversation_id, m.question, m.content AS answer,
+       m.evidence, m.outcome, f.correction, f.updated_at
+FROM answer_feedback f
+JOIN answer_message m ON m.tenant_id = f.tenant_id AND m.id = f.message_id
+JOIN conversation c ON c.tenant_id = m.tenant_id AND c.id = m.conversation_id
+WHERE f.tenant_id = $1
+  AND c.kb_id = $2
+  AND f.rating = -1
+  AND m.status = 'complete'
+ORDER BY f.updated_at DESC
+LIMIT $3
+`
+
+type ListNegativeFeedbackCandidatesParams struct {
+	TenantID   int64
+	KbID       int64
+	LimitCount int32
+}
+
+type ListNegativeFeedbackCandidatesRow struct {
+	MessageID      string
+	ConversationID int64
+	Question       string
+	Answer         string
+	Evidence       []byte
+	Outcome        pgtype.Text
+	Correction     string
+	UpdatedAt      pgtype.Timestamptz
+}
+
+func (q *Queries) ListNegativeFeedbackCandidates(ctx context.Context, arg ListNegativeFeedbackCandidatesParams) ([]ListNegativeFeedbackCandidatesRow, error) {
+	rows, err := q.db.Query(ctx, listNegativeFeedbackCandidates, arg.TenantID, arg.KbID, arg.LimitCount)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListNegativeFeedbackCandidatesRow
+	for rows.Next() {
+		var i ListNegativeFeedbackCandidatesRow
+		if err := rows.Scan(
+			&i.MessageID,
+			&i.ConversationID,
+			&i.Question,
+			&i.Answer,
+			&i.Evidence,
+			&i.Outcome,
+			&i.Correction,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const lockConversation = `-- name: LockConversation :one
 SELECT c.id, c.tenant_id, c.user_id, c.kb_id, c.model_id, c.title, c.created_at FROM conversation c
 JOIN knowledge_base k ON k.tenant_id=c.tenant_id AND k.id=c.kb_id

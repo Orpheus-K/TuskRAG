@@ -15,9 +15,10 @@ type Citation struct {
 	SectionID   int64    `json:"section_id,omitempty"`
 	HeadingPath []string `json:"heading_path,omitempty"`
 	Pages       []int32  `json:"pages,omitempty"`
+	TrustTier   string   `json:"trust_tier,omitempty"`
 }
 
-// ToolDefinitions returns the canonical 5 read-only MCP tools shared by /mcp and Agentic QA.
+// ToolDefinitions returns the canonical read-only MCP tools shared by /mcp and Agentic QA.
 func ToolDefinitions() []ToolDefinition {
 	return []ToolDefinition{
 		{
@@ -96,6 +97,20 @@ func ToolDefinitions() []ToolDefinition {
 					"after":    map[string]any{"type": "integer", "minimum": 0, "maximum": 10, "default": 1},
 				},
 				"required": []string{"chunk_id"},
+			},
+		},
+		{
+			Name:        "exact_match",
+			Description: "Exact substring or regex search across authorized chunks for clause numbers, IDs, or error codes.",
+			InputSchema: map[string]any{
+				"type": "object",
+				"properties": map[string]any{
+					"pattern":   map[string]any{"type": "string", "minLength": 1, "maxLength": 256},
+					"kb_ids":    map[string]any{"type": "array", "items": map[string]any{"type": "integer", "minimum": 1}},
+					"use_regex": map[string]any{"type": "boolean", "default": false},
+					"limit":     map[string]any{"type": "integer", "minimum": 1, "maximum": 30, "default": 10},
+				},
+				"required": []string{"pattern"},
 			},
 		},
 	}

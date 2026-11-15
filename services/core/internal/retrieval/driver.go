@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -61,6 +62,7 @@ type Candidate struct {
 	Title            string
 	Content          string
 	HeadingPath      []string
+	TrustTier        string `json:"TrustTier,omitempty"`
 	PageStart        *int32
 	PageEnd          *int32
 	Score            float64
@@ -242,6 +244,7 @@ func (d *Driver) recheck(ctx context.Context, actor Actor, kbID int64, binding B
 		candidate := Candidate{ChunkID: item.ChunkID, DocumentID: evidence.DocumentID, VersionID: evidence.VersionID,
 			SectionID: evidence.SectionID, Ordinal: evidence.Ordinal, Kind: evidence.Kind, TokenCount: evidence.TokenCount,
 			MIME: evidence.Mime, Title: evidence.Title, Content: evidence.Content, HeadingPath: evidence.HeadingPath,
+			TrustTier: evidence.TrustTier,
 			Score: item.Score, LexicalRank: item.LexicalRank, SemanticRank: item.SemanticRank,
 			LexicalScore: item.LexicalScore, SemanticDistance: item.SemanticDistance}
 		if evidence.PageStart.Valid != evidence.PageEnd.Valid {
@@ -271,6 +274,93 @@ func normalizeQuery(query string) (string, error) {
 		return "", ErrInvalidQuery
 	}
 	return query, nil
+}
+
+// ExactMatch performs a permission-filtered substring or regex match over current chunks
+// backed by the pg_trgm GIN index on chunk.content.
+func (d *Driver) ExactMatch(ctx context.Context, actor Actor, kbID int64, pattern string, useRegex bool, limit int) (_ []Candidate, resultErr error) {
+	pattern = strings.TrimSpace(pattern)
+	if pattern == "" || len(pattern) > 256 || !utf8.ValidString(pattern) || strings.IndexByte(pattern, 0) >= 0 {
+		return nil, ErrInvalidQuery
+	}
+	if limit <= 0 {
+		limit = 10
+	}
+	if limit > 30 {
+		limit = 30
+	}
+	sqlPattern := pattern
+	if useRegex {
+		if _, err := regexp.Compile(pattern); err != nil {
+			return nil, fmt.Errorf("%w: invalid regex pattern", ErrInvalidQuery)
+		}
+	} else {
+		replacer := strings.NewReplacer(`\`, `\\`, `%`, `\%`, `_`, `\_`)
+		sqlPattern = replacer.Replace(pattern)
+	}
+
+	tx, queries, err := d.begin(ctx, actor, kbID)
+	if err != nil {
+		return nil, err
+	}
+	defer rollback(tx, &resultErr)
+	if _, err := tx.Exec(ctx, `SET LOCAL statement_timeout = '3000ms'`); err != nil {
+		return nil, fmt.Errorf("set exact_match timeout: %w", err)
+	}
+	principal, err := PrincipalTags(ctx, queries, actor.TenantID, kbID, actor.UserID)
+	if err != nil {
+		return nil, err
+	}
+	rows, err := queries.ExactMatchChunks(ctx, dbquery.ExactMatchChunksParams{
+		TenantID:      actor.TenantID,
+		KbID:          kbID,
+		UserID:        actor.UserID,
+		PrincipalTags: principal,
+		UseRegex:      useRegex,
+		Pattern:       sqlPattern,
+		LimitCount:    int32(limit),
+	})
+	if err != nil {
+		return nil, fmt.Errorf("exact match chunks: %w", err)
+	}
+	result := make([]Candidate, 0, len(rows))
+	for _, r := range rows {
+		c := Candidate{
+			ChunkID:     r.ID,
+			DocumentID:  r.DocumentID,
+			VersionID:   r.VersionID,
+			SectionID:   r.SectionID,
+			Ordinal:     r.Ordinal,
+			Kind:        r.Kind,
+			TokenCount:  r.TokenCount,
+			MIME:        r.Mime,
+			Title:       r.Title,
+			Content:     r.Content,
+			HeadingPath: r.HeadingPath,
+			TrustTier:   r.TrustTier,
+			Score:       1.0,
+		}
+		if r.PageStart.Valid && r.PageEnd.Valid && r.Mime == "application/pdf" {
+			ps, pe := r.PageStart.Int32, r.PageEnd.Int32
+			c.PageStart, c.PageEnd = &ps, &pe
+		}
+		result = append(result, c)
+	}
+	hash := sha256.Sum256([]byte(pattern))
+	if err := queries.AuditSearch(ctx, dbquery.AuditSearchParams{
+		TenantID:      actor.TenantID,
+		UserID:        actor.UserID,
+		KbID:          kbID,
+		QueryHash:     hex.EncodeToString(hash[:]),
+		QueryBytes:    int32(len(pattern)),
+		EvidenceCount: int32(len(result)),
+	}); err != nil {
+		return nil, fmt.Errorf("audit exact match: %w", err)
+	}
+	if err := tx.Commit(ctx); err != nil {
+		return nil, fmt.Errorf("commit exact match: %w", err)
+	}
+	return result, nil
 }
 
 func (d *Driver) begin(ctx context.Context, actor Actor, kbID int64) (pgx.Tx, *dbquery.Queries, error) {

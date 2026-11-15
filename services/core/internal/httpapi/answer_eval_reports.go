@@ -95,4 +95,25 @@ func registerAnswerEvalReports(api huma.API, deps Dependencies) {
 		}
 		return &AnswerEvalReportOutput{Body: report}, nil
 	})
+	huma.Get(api, "/kbs/{kb}/answer-eval-reports/{digest}/acceptance", func(ctx context.Context, input *AnswerEvalReportPath) (*struct {
+		Body struct {
+			Markdown string `json:"markdown"`
+		}
+	}, error) {
+		if deps.AnswerReports == nil {
+			return nil, statusError(ctx, 503, "dependency_unavailable", "answer evaluation reports unavailable", true)
+		}
+		a := currentActor(ctx)
+		report, err := deps.AnswerReports.Get(ctx, retrieval.Actor{TenantID: a.TenantID, UserID: a.UserID}, input.ID, input.Digest)
+		if err != nil {
+			return nil, evalReportError(ctx, err)
+		}
+		out := &struct {
+			Body struct {
+				Markdown string `json:"markdown"`
+			}
+		}{}
+		out.Body.Markdown = eval.RenderAcceptanceReportMarkdown(nil, &report.Report)
+		return out, nil
+	})
 }

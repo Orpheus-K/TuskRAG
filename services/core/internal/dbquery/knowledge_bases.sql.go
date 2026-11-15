@@ -153,6 +153,26 @@ func (q *Queries) EmbeddingSpaceExists(ctx context.Context, arg EmbeddingSpaceEx
 	return exists, err
 }
 
+const getKnowledgeBaseTrustTier = `-- name: GetKnowledgeBaseTrustTier :one
+SELECT k.trust_tier
+FROM knowledge_base k
+JOIN kb_membership m ON m.tenant_id = k.tenant_id AND m.kb_id = k.id
+WHERE k.tenant_id = $1 AND k.id = $2 AND m.user_id = $3
+`
+
+type GetKnowledgeBaseTrustTierParams struct {
+	TenantID int64
+	KbID     int64
+	UserID   int64
+}
+
+func (q *Queries) GetKnowledgeBaseTrustTier(ctx context.Context, arg GetKnowledgeBaseTrustTierParams) (string, error) {
+	row := q.db.QueryRow(ctx, getKnowledgeBaseTrustTier, arg.TenantID, arg.KbID, arg.UserID)
+	var trust_tier string
+	err := row.Scan(&trust_tier)
+	return trust_tier, err
+}
+
 const getMemberRole = `-- name: GetMemberRole :one
 SELECT role FROM kb_membership
 WHERE tenant_id = $1 AND kb_id = $2 AND user_id = $3
@@ -500,6 +520,26 @@ func (q *Queries) SetKnowledgeBaseMember(ctx context.Context, arg SetKnowledgeBa
 		arg.Role,
 	)
 	return err
+}
+
+const setKnowledgeBaseTrustTier = `-- name: SetKnowledgeBaseTrustTier :execrows
+UPDATE knowledge_base
+SET trust_tier = $1
+WHERE tenant_id = $2 AND id = $3 AND status = 'active'
+`
+
+type SetKnowledgeBaseTrustTierParams struct {
+	TrustTier string
+	TenantID  int64
+	KbID      int64
+}
+
+func (q *Queries) SetKnowledgeBaseTrustTier(ctx context.Context, arg SetKnowledgeBaseTrustTierParams) (int64, error) {
+	result, err := q.db.Exec(ctx, setKnowledgeBaseTrustTier, arg.TrustTier, arg.TenantID, arg.KbID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
 }
 
 const tenantEgressPolicy = `-- name: TenantEgressPolicy :one

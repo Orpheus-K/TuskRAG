@@ -19,6 +19,11 @@ type EvalSetService interface {
 	Get(context.Context, retrieval.Actor, int64, int64, int32) (eval.StoredSet, error)
 }
 
+type FeedbackLoopService interface {
+	ListNegativeFeedbackCandidates(context.Context, retrieval.Actor, int64, int32) ([]eval.FeedbackCandidate, error)
+	PromoteFeedbackToEvalSet(context.Context, retrieval.Actor, int64, int64, eval.PromoteFeedbackRequest) (eval.StoredSet, error)
+}
+
 type CreateEvalSetInput struct {
 	KB             int64  `path:"kb" minimum:"1"`
 	CSRF           string `header:"X-CSRF-Token" required:"true"`
@@ -97,6 +102,48 @@ func registerEvalSets(api huma.API, deps Dependencies) {
 		}
 		a := currentActor(ctx)
 		result, err := deps.EvalSets.Get(ctx, retrieval.Actor{TenantID: a.TenantID, UserID: a.UserID}, input.KB, input.ID, input.Revision)
+		if err != nil {
+			return nil, evalSetError(ctx, err)
+		}
+		return evalSetOutput(result), nil
+	})
+	huma.Get(api, "/kbs/{kb}/feedback-candidates", func(ctx context.Context, input *struct {
+		KB    int64 `path:"kb" minimum:"1"`
+		Limit int32 `query:"limit" minimum:"1" maximum:"100" default:"20"`
+	}) (*struct {
+		Body struct {
+			Items []eval.FeedbackCandidate `json:"items"`
+		}
+	}, error) {
+		fl, ok := deps.EvalSets.(FeedbackLoopService)
+		if !ok || fl == nil {
+			return nil, statusError(ctx, 503, "dependency_unavailable", "feedback loop unavailable", true)
+		}
+		a := currentActor(ctx)
+		items, err := fl.ListNegativeFeedbackCandidates(ctx, retrieval.Actor{TenantID: a.TenantID, UserID: a.UserID}, input.KB, input.Limit)
+		if err != nil {
+			return nil, evalSetError(ctx, err)
+		}
+		out := &struct {
+			Body struct {
+				Items []eval.FeedbackCandidate `json:"items"`
+			}
+		}{}
+		out.Body.Items = items
+		return out, nil
+	})
+	huma.Post(api, "/kbs/{kb}/eval-sets/{set}/from-feedback", func(ctx context.Context, input *struct {
+		KB   int64  `path:"kb" minimum:"1"`
+		Set  int64  `path:"set" minimum:"1"`
+		CSRF string `header:"X-CSRF-Token" required:"true"`
+		Body eval.PromoteFeedbackRequest
+	}) (*EvalSetOutput, error) {
+		fl, ok := deps.EvalSets.(FeedbackLoopService)
+		if !ok || fl == nil {
+			return nil, statusError(ctx, 503, "dependency_unavailable", "feedback loop unavailable", true)
+		}
+		a := currentActor(ctx)
+		result, err := fl.PromoteFeedbackToEvalSet(ctx, retrieval.Actor{TenantID: a.TenantID, UserID: a.UserID}, input.KB, input.Set, input.Body)
 		if err != nil {
 			return nil, evalSetError(ctx, err)
 		}

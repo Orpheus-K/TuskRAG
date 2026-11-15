@@ -191,14 +191,18 @@ func New(deps Dependencies) API {
 	registerWorkspace(api, deps)
 	mux.HandleFunc("/api", apiNotFound)
 	mux.HandleFunc("/api/", apiNotFound)
-	if deps.APIKeys != nil {
+	if deps.APIKeys != nil || deps.OIDC != nil {
+		oauthAuth, _ := deps.OIDC.(mcpserver.MCPBearerAuthenticator)
 		mcpHandler := mcpserver.NewServer(mcpserver.Dependencies{
 			APIKeys:   deps.APIKeys,
+			OAuth:     oauthAuth,
 			Knowledge: deps.Knowledge,
 			Reader:    deps.Reader,
 			Search:    deps.Search,
 		})
 		mux.Handle("/mcp", mcpHandler)
+		mux.HandleFunc("/.well-known/oauth-protected-resource", mcpHandler.ServeProtectedResourceMetadata)
+		mux.HandleFunc("/.well-known/oauth-protected-resource/mcp", mcpHandler.ServeProtectedResourceMetadata)
 	} else {
 		mux.HandleFunc("/mcp", apiNotFound)
 	}
@@ -228,7 +232,7 @@ func serveSPA(api http.Handler, assets fs.FS) http.Handler {
 	files := http.FileServer(http.FS(assets))
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		cleanPath := path.Clean(r.URL.Path)
-		if cleanPath == "/api" || strings.HasPrefix(cleanPath, "/api/") || cleanPath == "/mcp" || strings.HasPrefix(cleanPath, "/mcp/") || cleanPath == "/metrics" {
+		if cleanPath == "/api" || strings.HasPrefix(cleanPath, "/api/") || cleanPath == "/mcp" || strings.HasPrefix(cleanPath, "/mcp/") || cleanPath == "/metrics" || strings.HasPrefix(cleanPath, "/.well-known/") {
 			api.ServeHTTP(w, r)
 			return
 		}

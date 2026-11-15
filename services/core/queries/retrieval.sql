@@ -114,8 +114,10 @@ FROM fused ORDER BY score DESC, chunk_id LIMIT 100;
 
 -- name: RecheckSearchEvidence :many
 SELECT c.id, c.document_id, c.version_id, c.section_id, c.ordinal, c.kind, c.token_count,
-       c.content, c.page_start, c.page_end, d.title, d.mime, s.heading_path
+       c.content, c.page_start, c.page_end, d.title, d.mime, s.heading_path,
+       COALESCE(d.trust_tier, k.trust_tier)::text AS trust_tier
 FROM chunk c
+JOIN knowledge_base k ON k.tenant_id = c.tenant_id AND k.id = c.kb_id
 JOIN document d ON d.tenant_id = c.tenant_id AND d.kb_id = c.kb_id AND d.id = c.document_id
 JOIN document_version dv ON dv.tenant_id = c.tenant_id AND dv.kb_id = c.kb_id
   AND dv.document_id = c.document_id AND dv.id = c.version_id
@@ -145,8 +147,10 @@ ORDER BY c.id FOR SHARE OF c, d, dv, s;
 SELECT c.id, c.document_id, c.version_id, c.section_id, c.ordinal, c.kind, c.token_count,
        c.content, c.page_start, c.page_end, d.title, d.mime, s.heading_path,
        s.token_count AS section_token_count,
-       (c.is_current AND NOT c.disabled AND c.access_tags && sqlc.arg(principal_tags)::text[])::boolean AS allowed
+       (c.is_current AND NOT c.disabled AND c.access_tags && sqlc.arg(principal_tags)::text[])::boolean AS allowed,
+       COALESCE(d.trust_tier, k.trust_tier)::text AS trust_tier
 FROM chunk c
+JOIN knowledge_base k ON k.tenant_id = c.tenant_id AND k.id = c.kb_id
 JOIN document d ON d.tenant_id = c.tenant_id AND d.kb_id = c.kb_id AND d.id = c.document_id
 JOIN document_version dv ON dv.tenant_id = c.tenant_id AND dv.kb_id = c.kb_id
   AND dv.document_id = c.document_id AND dv.id = c.version_id
@@ -174,3 +178,37 @@ INSERT INTO audit_log (tenant_id, actor_user_id, action, object_type, object_id,
 VALUES (sqlc.arg(tenant_id), sqlc.arg(user_id), 'retrieval.search', 'knowledge_base', sqlc.arg(kb_id), 'allow',
   jsonb_build_object('query_sha256', sqlc.arg(query_hash)::text, 'query_bytes', sqlc.arg(query_bytes)::integer,
     'evidence_count', sqlc.arg(evidence_count)::integer));
+
+-- name: ExactMatchChunks :many
+SELECT c.id, c.document_id, c.version_id, c.section_id, c.ordinal, c.kind, c.token_count,
+       c.content, c.page_start, c.page_end, d.title, d.mime, s.heading_path,
+       COALESCE(d.trust_tier, k.trust_tier)::text AS trust_tier
+FROM chunk c
+JOIN knowledge_base k ON k.tenant_id = c.tenant_id AND k.id = c.kb_id
+JOIN kb_membership m ON m.tenant_id = k.tenant_id AND m.kb_id = k.id
+JOIN document d ON d.tenant_id = c.tenant_id AND d.kb_id = c.kb_id AND d.id = c.document_id
+JOIN document_version dv ON dv.tenant_id = c.tenant_id AND dv.kb_id = c.kb_id
+  AND dv.document_id = c.document_id AND dv.id = c.version_id
+JOIN section s ON s.tenant_id = c.tenant_id AND s.kb_id = c.kb_id
+  AND s.document_id = c.document_id AND s.version_id = c.version_id AND s.id = c.section_id
+WHERE c.tenant_id = sqlc.arg(tenant_id) AND c.kb_id = sqlc.arg(kb_id)
+  AND m.user_id = sqlc.arg(user_id) AND k.status = 'active'
+  AND c.is_current AND NOT c.disabled AND c.access_tags && sqlc.arg(principal_tags)::text[]
+  AND d.deleted_at IS NULL
+  AND (d.acl_mode = 'inherit_kb' OR EXISTS (
+    SELECT 1 FROM document_acl a
+    WHERE a.tenant_id = d.tenant_id AND a.kb_id = d.kb_id AND a.document_id = d.id
+      AND (a.subject_type = 'user' AND a.subject_id = sqlc.arg(user_id)
+        OR a.subject_type = 'group' AND a.subject_id IN (
+          SELECT gm.group_id FROM user_group_member gm
+          WHERE gm.tenant_id = d.tenant_id AND gm.user_id = sqlc.arg(user_id)
+        ))
+  ))
+  AND d.current_version_id = c.version_id
+  AND dv.status IN ('ready', 'partial')
+  AND (
+    (NOT sqlc.arg(use_regex)::boolean AND c.content ILIKE '%' || sqlc.arg(pattern)::text || '%' ESCAPE '\')
+    OR (sqlc.arg(use_regex)::boolean AND c.content ~* sqlc.arg(pattern)::text)
+  )
+ORDER BY c.document_id, c.ordinal
+LIMIT sqlc.arg(limit_count);

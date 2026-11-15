@@ -3,6 +3,7 @@ package ingest
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -95,6 +96,12 @@ func (h *IngestHandler) Prepare(ctx context.Context, job jobs.ClaimedJob) (func(
 	if err != nil {
 		return nil, h.classify(ctx, job, ids, err)
 	}
+	if scan := ScanInjection(normalized.Markdown, "native"); scan.Detected {
+		if saveErr := h.saveInjectionFindings(ctx, job, ids, scan.Findings); saveErr != nil {
+			return nil, h.classify(ctx, job, ids, saveErr)
+		}
+		return nil, h.parse.failure(job, ids, jobs.QualityReview, errors.New("prompt injection pattern detected; requires review"))
+	}
 	headers := sourceTableHeaders(target.MIME, document.Meta.ParserProfile, target.ConfirmFirstRowHeaders, normalized)
 	plan, err := BuildPlan(ctx, PlanBuildRequest{Document: normalized, MIME: target.MIME,
 		EmbeddingSpaceID: target.SpaceID, EmbeddingProfile: target.Profile, ConfigRevision: target.Revision,
@@ -164,6 +171,23 @@ func (h *IngestHandler) target(ctx context.Context, job jobs.ClaimedJob, ids doc
 		return indexing.Check(ctx, tx, target.SpaceID, target.Profile.Dimensions, target.Profile.Distance)
 	})
 	return target, err
+}
+
+func (h *IngestHandler) saveInjectionFindings(ctx context.Context, job jobs.ClaimedJob, ids documentIDs, findings []InjectionFinding) error {
+	encoded, err := json.Marshal(findings)
+	if err != nil {
+		return fmt.Errorf("encode injection findings: %w", err)
+	}
+	return h.queue.WithLease(ctx, job.Lease, func(ctx context.Context, tx jobs.EffectsTx) error {
+		queries := dbquery.New(tx)
+		return queries.SaveDocumentVersionInjectionFindings(ctx, dbquery.SaveDocumentVersionInjectionFindingsParams{
+			TenantID:   job.Lease.TenantID,
+			KbID:       ids.KBID,
+			DocumentID: ids.DocumentID,
+			VersionID:  ids.VersionID,
+			Findings:   encoded,
+		})
+	})
 }
 
 func sourceTableHeaders(mime, profile string, confirmed bool, document NormalizedDocument) map[BlockPosition]int {

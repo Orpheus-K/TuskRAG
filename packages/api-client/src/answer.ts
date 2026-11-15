@@ -210,7 +210,7 @@ export async function streamConversation(
   csrf: string,
   signal: AbortSignal,
   onEvent: (event: AnswerEvent) => void,
-  mode?: "standard" | "agentic",
+  mode?: "standard" | "agentic" | "auto",
 ): Promise<void> {
   if (!positive(id)) throw new Error("invalid conversation");
   return streamAnswerAt(

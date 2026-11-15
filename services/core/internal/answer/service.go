@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"errors"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -25,7 +26,7 @@ type Request struct {
 	KnowledgeBaseID int64  `json:"kb_id" minimum:"1"`
 	ModelID         int64  `json:"model_id" minimum:"1"`
 	Question        string `json:"question" minLength:"1" maxLength:"4096"`
-	Mode            string `json:"mode,omitempty" enum:"standard,agentic"`
+	Mode            string `json:"mode,omitempty" enum:"standard,agentic,auto"`
 }
 type AnswerEvidence struct {
 	N           int      `json:"n"`
@@ -38,6 +39,7 @@ type AnswerEvidence struct {
 	SectionID   int64    `json:"section_id"`
 	HeadingPath []string `json:"heading_path" nullable:"false"`
 	Pages       []int32  `json:"pages" nullable:"true"`
+	TrustTier   string   `json:"trust_tier,omitempty"`
 }
 type RetrievalEvent struct {
 	Evidence          []AnswerEvidence `json:"evidence" nullable:"false"`
@@ -196,7 +198,11 @@ func (s *Service) stream(ctx context.Context, actor retrieval.Actor, request Req
 	if options.question != "" {
 		question = options.question
 	}
-	if request.Mode == "agentic" {
+	mode := request.Mode
+	if mode == "auto" {
+		mode = classifyQueryComplexity(question)
+	}
+	if mode == "agentic" {
 		return s.streamAgentic(ctx, actor, request, question, options, emit)
 	}
 	found, err := s.Search.Search(ctx, actor, retrieval.Request{KnowledgeBaseID: request.KnowledgeBaseID, Query: question, Limit: 0})
@@ -354,4 +360,30 @@ func (s *Service) stream(ctx context.Context, actor retrieval.Actor, request Req
 		return err
 	}
 	return send(Event{Done: &Done{MessageID: rand.Text(), Outcome: outcome, Usage: usage, PromptVersion: PromptVersion}})
+}
+
+var clauseCodePattern = regexp.MustCompile(`(?i)(?:第[0-9一二三四五六七八九十百]+[条章节款]|\b(?:ERR|CODE|GB/T|ISO)[-_ ]?[0-9A-Z]+)`)
+
+// classifyQueryComplexity routes complex multi-hop, comparative, structural, or exact-code
+// questions to agentic mode while keeping single-fact queries on standard mode.
+func classifyQueryComplexity(question string) string {
+	lower := strings.ToLower(strings.TrimSpace(question))
+	for _, kw := range []string{
+		"对比", "比较", "区别", "差异", "各自", "分别", "综合", "汇总", "目录", "章节",
+		"compare", "difference between", "versus", "vs.",
+	} {
+		if strings.Contains(lower, kw) {
+			return "agentic"
+		}
+	}
+	if clauseCodePattern.MatchString(question) {
+		return "agentic"
+	}
+	if strings.Count(question, "？")+strings.Count(question, "?") >= 2 {
+		return "agentic"
+	}
+	if len([]rune(question)) >= 80 && (strings.Contains(question, "以及") || strings.Contains(question, "并且") || strings.Contains(question, "同时")) {
+		return "agentic"
+	}
+	return "standard"
 }

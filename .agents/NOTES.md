@@ -1,6 +1,17 @@
 # 接续项目迭代
 
-## 当前快照（2026-11-15 A13 控制台完善与 E2E 补齐）
+## 当前快照（2026-11-15 高优先级研究功能 5.1–5.4 落地与云端验收）
+
+- **四项高优先级研究功能落地（2026-11-15，依据 [产品分析与方向](../docs/reports/2026-11-15-产品分析与方向.md) 第 5 节）**：
+  - **5.1 MCP OAuth 2.0 用户委派**：新增 [oidc_mcp.go](../services/core/internal/identity/oidc_mcp.go)（`AuthenticateMCPBearer`、`ListPublicOIDCIssuers`）、RFC 8707 audience/scope 校验与 OIDC 组同步、RFC 9728 `/.well-known/oauth-protected-resource`（含 `/mcp` 后缀）及 `WWW-Authenticate` `resource_metadata`（[server.go](../services/core/internal/mcpserver/server.go)、[httpapi.go](../services/core/internal/httpapi/httpapi.go)）；迁移 [00036_research_features.sql](../services/core/internal/db/migrations/00036_research_features.sql) 新增 `resolve_oidc_provider_tenant_by_issuer`、`list_public_oidc_issuers` 并为 `oidc_provider`/`oidc_auth_state` 设置 `NO FORCE ROW LEVEL SECURITY`（保持 `tuskrag_app` RLS 隔离）。
+  - **5.2 检索投毒与间接提示词注入防护**：新增 [injection.go](../services/core/internal/ingest/injection.go)（`ScanInjection` 规则扫描并在入库/VLM 重解析时写入 `document_version.injection_findings` 与 `QualityReview`）、KB/文档级 `trust_tier`（`trusted` / `standard` / `untrusted`，`PUT /kbs/{kb}/trust-tier` 与 `PUT /kbs/{kb}/documents/{doc}/trust-tier`），以及检索/问答/MCP 响应的 `trust_tier`、`content_role: "untrusted_data"` 与 `data_notice`；补充 [injection-guard-zh.json](../tests/eval/injection-guard-zh.json)。
+  - **5.3 Agentic 早停、复杂度路由与 `exact_match` 工具**：`pg_trgm` `ILIKE`/`~*` 精确/正则检索（[driver.go](../services/core/internal/retrieval/driver.go)、3000ms `statement_timeout`、继承 `access_tags && principal_tags` 与 `document_acl`）、MCP 工具 #6 `exact_match`（[tools.go](../services/core/internal/mcpserver/tools.go)）、`mode: "auto"` 复杂度路由、重复工具调用检测与连续无新证据早停（[agentic.go](../services/core/internal/answer/agentic.go)、[Answer.tsx](../apps/web/src/Answer.tsx)）。
+  - **5.4 评测闭环扩展**：逐题 Token/估算成本统计（[answer.go](../services/core/internal/eval/answer.go)）、负反馈转候选评测集与 Markdown 验收报告导出（[feedback_loop.go](../services/core/internal/eval/feedback_loop.go)、`GET /kbs/{kb}/feedback-candidates`、`POST /kbs/{kb}/eval-sets/{set}/from-feedback`、`GET /kbs/{kb}/answer-eval-reports/{digest}/acceptance`）。
+  - **契约与校验**：`sqlc generate`、`contracts/openapi.json`、`contracts/mcp-tools.json`、`packages/api-client/src/schema.ts`、`pnpm generate:client`、`pnpm typecheck`、`pnpm test:web`（19 文件 126 项）、`pnpm build:web` 全部通过。
+`db`、`identity`（含 `TestMCPOAuthBearerDelegationPostgres`、`TestOIDCPKCEGroupSyncAndLocalDisablePostgres`）、`mcpserver`、`ingest`、`retrieval`（含 `TestExactMatchACLAndTrustTierPostgres`、`TestLexicalDriverContractPostgres`）、`answer`、`eval`、`kb`、`httpapi`（含 `TestSyntheticZHEvaluation`、`TestUploadRemovesMultipartTemporaryFile`）**9/9 包全部 `PASS`**
+  - **未运行项**：Windows 本机 `biome check` 因沙箱 DLL 初始化退出码 `3221225794` 未完成，且本次未替换线上 `<deployment-path>` 运行时二进制。
+
+## 历史快照（2026-11-15 A13 控制台完善与 E2E 补齐）
 
 - **知识库页面排版重整（2026-11-15，A13）**：文档页改为“文档列表 + 检索测试”双栏，上传/URL 导入/文档权限改为对话框，目录与正文预览改为左右分栏的模态框（问答引用共用）；检索默认配置、成员与出域、用户组移到新路由 `/kb/$kbId/settings`（侧栏“知识库设置”，与评测中心、嵌入重建一样只对 owner/admin 显示）；评测中心改为“报告列表 + 选中报告”主从布局，导入报告改为对话框；嵌入重建显示当前空间详情并列出可选空间；问答输入区吸底、支持 Ctrl+Enter。`pnpm typecheck`、`pnpm test:web`（19 文件 126 项）、`pnpm build:web`、改动文件 `biome check`、`ui-reuse`（35 种 / 27 跨文件 / 原生控件 0）通过；构建产物 + vite preview 上的模拟数据 Playwright 回归 31+6 项通过。未运行：需真实后端的 `smoke.spec.ts` 前两项与 `live-*`（相关选择器已同步更新）。
 

@@ -638,7 +638,11 @@ func exchangeOIDCCode(ctx context.Context, tokenEndpoint, clientID, clientSecret
 }
 
 func verifyIDToken(ctx context.Context, jwksURI, idToken, expectedIssuer, expectedClientID, expectedNonce string) (map[string]any, error) {
-	parts := strings.Split(idToken, ".")
+	return verifyJWTWithAudiences(ctx, jwksURI, idToken, expectedIssuer, []string{expectedClientID}, expectedNonce)
+}
+
+func verifyJWTWithAudiences(ctx context.Context, jwksURI, rawToken, expectedIssuer string, allowedAudiences []string, expectedNonce string) (map[string]any, error) {
+	parts := strings.Split(rawToken, ".")
 	if len(parts) != 3 {
 		return nil, errors.New("invalid jwt format")
 	}
@@ -703,18 +707,31 @@ func verifyIDToken(ctx context.Context, jwksURI, idToken, expectedIssuer, expect
 	if strings.TrimRight(iss, "/") != strings.TrimRight(expectedIssuer, "/") {
 		return nil, errors.New("issuer mismatch")
 	}
-	if !audContains(claims["aud"], expectedClientID) {
+	if !audMatchesAny(claims["aud"], allowedAudiences) {
 		return nil, errors.New("audience mismatch")
 	}
+	now := time.Now().UTC().Unix()
 	exp, ok := claims["exp"].(float64)
-	if !ok || time.Now().UTC().Unix() >= int64(exp) {
+	if !ok || now >= int64(exp) {
 		return nil, errors.New("token expired")
+	}
+	if nbf, ok := claims["nbf"].(float64); ok && now+30 < int64(nbf) {
+		return nil, errors.New("token not yet valid")
 	}
 	nonce, _ := claims["nonce"].(string)
 	if expectedNonce != "" && nonce != expectedNonce {
 		return nil, errors.New("nonce mismatch")
 	}
 	return claims, nil
+}
+
+func audMatchesAny(aud any, targets []string) bool {
+	for _, target := range targets {
+		if target != "" && audContains(aud, target) {
+			return true
+		}
+	}
+	return false
 }
 
 func audContains(aud any, target string) bool {

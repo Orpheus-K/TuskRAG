@@ -187,6 +187,9 @@
           "title": {
             "type": "string"
           },
+          "trust_tier": {
+            "type": "string"
+          },
           "version_id": {
             "format": "int64",
             "type": "integer"
@@ -568,6 +571,10 @@
             "format": "int64",
             "type": "integer"
           },
+          "completion_tokens": {
+            "format": "int64",
+            "type": "integer"
+          },
           "degraded": {
             "items": {
               "type": "string"
@@ -582,6 +589,10 @@
               "boolean",
               "null"
             ]
+          },
+          "estimated_cost_usd": {
+            "format": "double",
+            "type": "number"
           },
           "evidence_chunk_counts": {
             "items": {
@@ -636,6 +647,10 @@
           "outcome": {
             "type": "string"
           },
+          "prompt_tokens": {
+            "format": "int64",
+            "type": "integer"
+          },
           "source_integrity": {
             "type": "boolean"
           },
@@ -645,6 +660,10 @@
               "type": "number"
             },
             "type": "object"
+          },
+          "total_tokens": {
+            "format": "int64",
+            "type": "integer"
           },
           "valid_citation": {
             "type": "boolean"
@@ -735,6 +754,14 @@
             "format": "int64",
             "type": "integer"
           },
+          "avg_cost_per_question_usd": {
+            "format": "double",
+            "type": "number"
+          },
+          "avg_tokens_per_question": {
+            "format": "double",
+            "type": "number"
+          },
           "cases": {
             "format": "int64",
             "type": "integer"
@@ -742,6 +769,10 @@
           "deterministic_cases": {
             "format": "int64",
             "type": "integer"
+          },
+          "estimated_cost_usd": {
+            "format": "double",
+            "type": "number"
           },
           "judged_claims": {
             "format": "int64",
@@ -751,6 +782,10 @@
             "$ref": "#/components/schemas/AnswerMetrics"
           },
           "supported_claims": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "total_tokens": {
             "format": "int64",
             "type": "integer"
           },
@@ -920,6 +955,9 @@
             "type": "integer"
           },
           "Title": {
+            "type": "string"
+          },
+          "TrustTier": {
             "type": "string"
           },
           "VersionID": {
@@ -1843,6 +1881,55 @@
         ],
         "type": "object"
       },
+      "FeedbackCandidate": {
+        "additionalProperties": false,
+        "properties": {
+          "answer": {
+            "type": "string"
+          },
+          "conversation_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "correction": {
+            "type": "string"
+          },
+          "document_ids": {
+            "items": {
+              "format": "int64",
+              "type": "integer"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "message_id": {
+            "type": "string"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "question": {
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message_id",
+          "conversation_id",
+          "question",
+          "answer",
+          "correction",
+          "outcome",
+          "document_ids",
+          "updated_at"
+        ],
+        "type": "object"
+      },
       "Filters": {
         "additionalProperties": false,
         "properties": {
@@ -2018,6 +2105,36 @@
               "$ref": "#/components/schemas/UserGroupBody"
             },
             "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "Get-kbs-by-kb-answer-eval-reports-by-digest-acceptanceResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "markdown": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "markdown"
+        ],
+        "type": "object"
+      },
+      "Get-kbs-by-kb-feedback-candidatesResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/FeedbackCandidate"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
           }
         },
         "required": [
@@ -2558,6 +2675,35 @@
         },
         "type": "object"
       },
+      "PromoteFeedbackRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "answerable": {
+            "type": "boolean"
+          },
+          "expected_doc_ids": {
+            "items": {
+              "format": "int64",
+              "type": "integer"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "message_id": {
+            "type": "string"
+          },
+          "reference_answer": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message_id",
+          "answerable"
+        ],
+        "type": "object"
+      },
       "ProviderConnectivityBody": {
         "additionalProperties": false,
         "properties": {
@@ -2709,6 +2855,41 @@
         "required": [
           "items",
           "next_cursor"
+        ],
+        "type": "object"
+      },
+      "Put-kbs-by-kb-documents-by-doc-trust-tierRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "trust_tier": {
+            "enum": [
+              "",
+              "trusted",
+              "standard",
+              "untrusted"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "trust_tier"
+        ],
+        "type": "object"
+      },
+      "Put-kbs-by-kb-trust-tierRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "trust_tier": {
+            "enum": [
+              "trusted",
+              "standard",
+              "untrusted"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "trust_tier"
         ],
         "type": "object"
       },
@@ -2952,7 +3133,8 @@
           "mode": {
             "enum": [
               "standard",
-              "agentic"
+              "agentic",
+              "auto"
             ],
             "type": "string"
           },
@@ -7139,6 +7321,60 @@
         "summary": "Get API v1 kbs by kb answer eval reports by digest"
       }
     },
+    "/api/v1/kbs/{kb}/answer-eval-reports/{digest}/acceptance": {
+      "get": {
+        "operationId": "get-api-v1-kbs-by-kb-answer-eval-reports-by-digest-acceptance",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "digest",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Get-kbs-by-kb-answer-eval-reports-by-digest-acceptanceResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Get API v1 kbs by kb answer eval reports by digest acceptance"
+      }
+    },
     "/api/v1/kbs/{kb}/config": {
       "get": {
         "operationId": "get-api-v1-kbs-by-kb-config",
@@ -7670,6 +7906,72 @@
             "session": []
           }
         ]
+      }
+    },
+    "/api/v1/kbs/{kb}/documents/{doc}/trust-tier": {
+      "put": {
+        "operationId": "put-api-v1-kbs-by-kb-documents-by-doc-trust-tier",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "doc",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Put-kbs-by-kb-documents-by-doc-trust-tierRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Put API v1 kbs by kb documents by doc trust tier"
       }
     },
     "/api/v1/kbs/{kb}/documents/{doc}/versions": {
@@ -8837,6 +9139,143 @@
         ]
       }
     },
+    "/api/v1/kbs/{kb}/eval-sets/{set}/from-feedback": {
+      "post": {
+        "operationId": "post-api-v1-kbs-by-kb-eval-sets-by-set-from-feedback",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "set",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PromoteFeedbackRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoredSet"
+                }
+              }
+            },
+            "description": "OK",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Post API v1 kbs by kb eval sets by set from feedback"
+      }
+    },
+    "/api/v1/kbs/{kb}/feedback-candidates": {
+      "get": {
+        "operationId": "get-api-v1-kbs-by-kb-feedback-candidates",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 20,
+              "format": "int32",
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Get-kbs-by-kb-feedback-candidatesResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Get API v1 kbs by kb feedback candidates"
+      }
+    },
     "/api/v1/kbs/{kb}/members": {
       "get": {
         "operationId": "get-api-v1-kbs-by-kb-members",
@@ -9255,6 +9694,62 @@
             "session": []
           }
         ]
+      }
+    },
+    "/api/v1/kbs/{kb}/trust-tier": {
+      "put": {
+        "operationId": "put-api-v1-kbs-by-kb-trust-tier",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kb",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-CSRF-Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Put-kbs-by-kb-trust-tierRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ],
+        "summary": "Put API v1 kbs by kb trust tier"
       }
     },
     "/api/v1/me": {

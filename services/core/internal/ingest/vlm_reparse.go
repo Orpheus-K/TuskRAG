@@ -20,9 +20,10 @@ type PageExtractor interface {
 }
 
 type VLMReparseResult struct {
-	Document  parser.Document
-	VLMPages  []int64
-	VLMTokens int
+	Document          parser.Document
+	VLMPages          []int64
+	VLMTokens         int
+	InjectionFindings []InjectionFinding
 }
 
 // LowScorePages returns sorted 1-based page numbers flagged by the PDF quality gate.
@@ -73,6 +74,7 @@ func ReparseLowScorePages(
 	copy(updatedPages, doc.Pages)
 
 	var vlmPages []int64
+	var findings []InjectionFinding
 	totalTokens := 0
 	for i := range updatedPages {
 		pageNo := updatedPages[i].Number
@@ -90,6 +92,9 @@ func ReparseLowScorePages(
 		if usage != nil {
 			totalTokens += usage.TotalTokens
 		}
+		if scan := ScanInjection(md, "vlm"); scan.Detected {
+			findings = append(findings, scan.Findings...)
+		}
 		updatedPages[i].Blocks = markdownToBlocks(md)
 		updatedPages[i].Signals.CharCount = int64(len([]rune(strings.TrimSpace(md))))
 		vlmPages = append(vlmPages, pageNo)
@@ -97,9 +102,10 @@ func ReparseLowScorePages(
 
 	doc.Pages = updatedPages
 	return VLMReparseResult{
-		Document:  doc,
-		VLMPages:  vlmPages,
-		VLMTokens: totalTokens,
+		Document:          doc,
+		VLMPages:          vlmPages,
+		VLMTokens:         totalTokens,
+		InjectionFindings: findings,
 	}, nil
 }
 

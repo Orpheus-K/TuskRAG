@@ -170,6 +170,7 @@ type Document struct {
 	Tags             []string
 	DeletedAt        pgtype.Timestamptz
 	CreatedAt        pgtype.Timestamptz
+	TrustTier        pgtype.Text
 }
 
 type DocumentAcl struct {
@@ -198,6 +199,7 @@ type DocumentVersion struct {
 	CreatedBy              int64
 	CreatedAt              pgtype.Timestamptz
 	ConfirmFirstRowHeaders bool
+	InjectionFindings      []byte
 }
 
 type EmbeddingRebuild struct {
@@ -353,6 +355,7 @@ type KnowledgeBase struct {
 	Status                string
 	CreatedAt             pgtype.Timestamptz
 	SectionSummaryEnabled bool
+	TrustTier             string
 }
 
 type LocalAccount struct {

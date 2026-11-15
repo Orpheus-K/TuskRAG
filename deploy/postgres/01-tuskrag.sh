@@ -9,6 +9,7 @@ psql --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" --set ON_ERROR_STOP=1 <
 \getenv migrator_password TUSKRAG_MIGRATOR_PASSWORD
 CREATE EXTENSION IF NOT EXISTS vector;
 CREATE EXTENSION IF NOT EXISTS pg_search;
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
 CREATE ROLE tuskrag_migrator LOGIN NOSUPERUSER NOBYPASSRLS PASSWORD :'migrator_password';
 CREATE ROLE tuskrag_app LOGIN NOSUPERUSER NOBYPASSRLS PASSWORD :'app_password';
 ALTER SCHEMA public OWNER TO tuskrag_migrator;

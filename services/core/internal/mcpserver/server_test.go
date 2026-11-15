@@ -150,8 +150,8 @@ func TestMCPStreamableHTTPAuthToolsAndScope(t *testing.T) {
 	if err := json.Unmarshal(listRec.Body.Bytes(), &listResp); err != nil {
 		t.Fatal(err)
 	}
-	if len(listResp.Result.Tools) != 5 {
-		t.Fatalf("expected 5 tools, got %d", len(listResp.Result.Tools))
+	if len(listResp.Result.Tools) != 6 {
+		t.Fatalf("expected 6 tools, got %d", len(listResp.Result.Tools))
 	}
 
 	// 4. All 5 tools execute and return citation / expected structure

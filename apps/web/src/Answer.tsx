@@ -49,7 +49,7 @@ export function AnswerPage({
   const [cursor, setCursor] = useState(0),
     [question, setQuestion] = useState(""),
     [model, setModel] = useState(0),
-    [mode, setMode] = useState<"standard" | "agentic">("standard"),
+    [mode, setMode] = useState<"standard" | "agentic" | "auto">("standard"),
     [state, setState] = useState<AnswerState>(emptyAnswer),
     [preview, setPreview] = useState<PreviewTarget | null>(null);
   const active = useRef<AbortController | null>(null),
@@ -187,7 +187,7 @@ export function AnswerPage({
             return { ...previous, phase: "complete", done: event.data };
           });
         },
-        mode === "agentic" ? "agentic" : undefined,
+        mode === "standard" ? undefined : mode,
       );
       if (activeConversation.current === selected) setQuestion("");
     } catch (error) {
@@ -438,10 +438,11 @@ export function AnswerPage({
                   value={mode}
                   disabled={running}
                   onValueChange={(value) =>
-                    setMode(value as "standard" | "agentic")
+                    setMode(value as "standard" | "agentic" | "auto")
                   }
                 >
                   <SelectItem value="standard">标准模式 (Standard)</SelectItem>
+                  <SelectItem value="auto">智能路由 (Auto)</SelectItem>
                   <SelectItem value="agentic">Agentic 多步推理</SelectItem>
                 </Select>
               </Label>

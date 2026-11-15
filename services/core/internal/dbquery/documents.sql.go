@@ -319,6 +319,66 @@ func (q *Queries) GetVisibleVersionUploadTarget(ctx context.Context, arg GetVisi
 	return i, err
 }
 
+const listKBChunksForEvalGeneration = `-- name: ListKBChunksForEvalGeneration :many
+SELECT c.id, c.document_id, c.section_id, c.content, d.title, s.heading_path
+FROM chunk c
+JOIN knowledge_base k ON k.tenant_id = c.tenant_id AND k.id = c.kb_id
+JOIN document d ON d.tenant_id = c.tenant_id AND d.kb_id = c.kb_id AND d.id = c.document_id
+JOIN document_version dv ON dv.tenant_id = c.tenant_id AND dv.kb_id = c.kb_id
+  AND dv.document_id = c.document_id AND dv.id = c.version_id
+JOIN section s ON s.tenant_id = c.tenant_id AND s.kb_id = c.kb_id
+  AND s.document_id = c.document_id AND s.version_id = c.version_id AND s.id = c.section_id
+WHERE c.tenant_id = $1 AND c.kb_id = $2
+  AND k.status = 'active' AND d.deleted_at IS NULL
+  AND d.current_version_id = c.version_id AND dv.status IN ('ready', 'partial')
+  AND c.is_current AND NOT c.disabled
+  AND c.token_count >= 20
+ORDER BY c.id DESC
+LIMIT $3
+`
+
+type ListKBChunksForEvalGenerationParams struct {
+	TenantID   int64
+	KbID       int64
+	LimitCount int32
+}
+
+type ListKBChunksForEvalGenerationRow struct {
+	ID          int64
+	DocumentID  int64
+	SectionID   int64
+	Content     string
+	Title       string
+	HeadingPath []string
+}
+
+func (q *Queries) ListKBChunksForEvalGeneration(ctx context.Context, arg ListKBChunksForEvalGenerationParams) ([]ListKBChunksForEvalGenerationRow, error) {
+	rows, err := q.db.Query(ctx, listKBChunksForEvalGeneration, arg.TenantID, arg.KbID, arg.LimitCount)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListKBChunksForEvalGenerationRow
+	for rows.Next() {
+		var i ListKBChunksForEvalGenerationRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.DocumentID,
+			&i.SectionID,
+			&i.Content,
+			&i.Title,
+			&i.HeadingPath,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listVisibleDocuments = `-- name: ListVisibleDocuments :many
 SELECT d.id, d.title, d.mime, d.current_version_id, COALESCE(current_version.status, '')::text AS current_status,
        v.id AS latest_version_id, v.status AS latest_status, v.byte_size,
@@ -723,6 +783,58 @@ func (q *Queries) QueueFailedDocumentVersion(ctx context.Context, arg QueueFaile
 		arg.DocumentID,
 		arg.VersionID,
 		arg.FailureCode,
+	)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
+
+const saveDocumentVersionInjectionFindings = `-- name: SaveDocumentVersionInjectionFindings :exec
+UPDATE document_version
+SET injection_findings = $1::jsonb
+WHERE tenant_id = $2 AND kb_id = $3
+  AND document_id = $4 AND id = $5
+`
+
+type SaveDocumentVersionInjectionFindingsParams struct {
+	Findings   []byte
+	TenantID   int64
+	KbID       int64
+	DocumentID int64
+	VersionID  int64
+}
+
+func (q *Queries) SaveDocumentVersionInjectionFindings(ctx context.Context, arg SaveDocumentVersionInjectionFindingsParams) error {
+	_, err := q.db.Exec(ctx, saveDocumentVersionInjectionFindings,
+		arg.Findings,
+		arg.TenantID,
+		arg.KbID,
+		arg.DocumentID,
+		arg.VersionID,
+	)
+	return err
+}
+
+const setDocumentTrustTier = `-- name: SetDocumentTrustTier :execrows
+UPDATE document
+SET trust_tier = $1::text
+WHERE tenant_id = $2 AND kb_id = $3 AND id = $4 AND deleted_at IS NULL
+`
+
+type SetDocumentTrustTierParams struct {
+	TrustTier  pgtype.Text
+	TenantID   int64
+	KbID       int64
+	DocumentID int64
+}
+
+func (q *Queries) SetDocumentTrustTier(ctx context.Context, arg SetDocumentTrustTierParams) (int64, error) {
+	result, err := q.db.Exec(ctx, setDocumentTrustTier,
+		arg.TrustTier,
+		arg.TenantID,
+		arg.KbID,
+		arg.DocumentID,
 	)
 	if err != nil {
 		return 0, err

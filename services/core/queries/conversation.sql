@@ -69,3 +69,16 @@ ON CONFLICT (tenant_id,message_id) DO UPDATE SET rating=EXCLUDED.rating,correcti
 INSERT INTO audit_log (tenant_id,actor_user_id,action,object_type,object_id,result,details)
 VALUES(sqlc.arg(tenant_id),sqlc.arg(user_id),sqlc.arg(action),'conversation',sqlc.arg(id),'allow',
   jsonb_build_object('message_id',sqlc.arg(message_id)::text));
+
+-- name: ListNegativeFeedbackCandidates :many
+SELECT m.id AS message_id, m.conversation_id, m.question, m.content AS answer,
+       m.evidence, m.outcome, f.correction, f.updated_at
+FROM answer_feedback f
+JOIN answer_message m ON m.tenant_id = f.tenant_id AND m.id = f.message_id
+JOIN conversation c ON c.tenant_id = m.tenant_id AND c.id = m.conversation_id
+WHERE f.tenant_id = sqlc.arg(tenant_id)
+  AND c.kb_id = sqlc.arg(kb_id)
+  AND f.rating = -1
+  AND m.status = 'complete'
+ORDER BY f.updated_at DESC
+LIMIT sqlc.arg(limit_count);

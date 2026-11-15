@@ -125,6 +125,46 @@ func (q *Queries) DeleteOIDCProvider(ctx context.Context, arg DeleteOIDCProvider
 	return result.RowsAffected(), nil
 }
 
+const getEnabledOIDCProviderByIssuer = `-- name: GetEnabledOIDCProviderByIssuer :one
+SELECT id, tenant_id, name, issuer_url, client_id, scopes, group_claim, enabled, created_at
+FROM oidc_provider
+WHERE tenant_id = $1 AND enabled = true AND rtrim(issuer_url, '/') = rtrim($2::text, '/')
+`
+
+type GetEnabledOIDCProviderByIssuerParams struct {
+	TenantID int64
+	Issuer   string
+}
+
+type GetEnabledOIDCProviderByIssuerRow struct {
+	ID         int64
+	TenantID   int64
+	Name       string
+	IssuerUrl  string
+	ClientID   string
+	Scopes     string
+	GroupClaim string
+	Enabled    bool
+	CreatedAt  pgtype.Timestamptz
+}
+
+func (q *Queries) GetEnabledOIDCProviderByIssuer(ctx context.Context, arg GetEnabledOIDCProviderByIssuerParams) (GetEnabledOIDCProviderByIssuerRow, error) {
+	row := q.db.QueryRow(ctx, getEnabledOIDCProviderByIssuer, arg.TenantID, arg.Issuer)
+	var i GetEnabledOIDCProviderByIssuerRow
+	err := row.Scan(
+		&i.ID,
+		&i.TenantID,
+		&i.Name,
+		&i.IssuerUrl,
+		&i.ClientID,
+		&i.Scopes,
+		&i.GroupClaim,
+		&i.Enabled,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const getOIDCIdentityUser = `-- name: GetOIDCIdentityUser :one
 SELECT i.user_id, u.disabled
 FROM oidc_identity i
@@ -309,6 +349,17 @@ func (q *Queries) ListOIDCProviders(ctx context.Context, tenantID int64) ([]List
 	return items, nil
 }
 
+const listPublicOIDCIssuers = `-- name: ListPublicOIDCIssuers :one
+SELECT list_public_oidc_issuers($1::bigint)::text[] AS issuers
+`
+
+func (q *Queries) ListPublicOIDCIssuers(ctx context.Context, tenantID pgtype.Int8) ([]string, error) {
+	row := q.db.QueryRow(ctx, listPublicOIDCIssuers, tenantID)
+	var issuers []string
+	err := row.Scan(&issuers)
+	return issuers, err
+}
+
 const listPublicOIDCProviders = `-- name: ListPublicOIDCProviders :many
 SELECT id, name
 FROM oidc_provider
@@ -369,6 +420,22 @@ SELECT COALESCE(resolve_oidc_auth_state_tenant($1), 0)::bigint AS tenant_id
 
 func (q *Queries) ResolveOIDCAuthStateTenant(ctx context.Context, state string) (int64, error) {
 	row := q.db.QueryRow(ctx, resolveOIDCAuthStateTenant, state)
+	var tenant_id int64
+	err := row.Scan(&tenant_id)
+	return tenant_id, err
+}
+
+const resolveOIDCProviderTenantByIssuer = `-- name: ResolveOIDCProviderTenantByIssuer :one
+SELECT COALESCE(resolve_oidc_provider_tenant_by_issuer($1::text, $2::bigint), 0)::bigint AS tenant_id
+`
+
+type ResolveOIDCProviderTenantByIssuerParams struct {
+	Issuer   string
+	TenantID pgtype.Int8
+}
+
+func (q *Queries) ResolveOIDCProviderTenantByIssuer(ctx context.Context, arg ResolveOIDCProviderTenantByIssuerParams) (int64, error) {
+	row := q.db.QueryRow(ctx, resolveOIDCProviderTenantByIssuer, arg.Issuer, arg.TenantID)
 	var tenant_id int64
 	err := row.Scan(&tenant_id)
 	return tenant_id, err

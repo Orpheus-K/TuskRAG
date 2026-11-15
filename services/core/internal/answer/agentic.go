@@ -23,10 +23,15 @@ const (
 const agentPlannerPrompt = `你是检索规划器。根据 question 和已有 observations，决定下一步操作。
 可用工具：
 - search: {"query": string, "top_k"?: int}
+- exact_match: {"pattern": string, "use_regex"?: bool, "limit"?: int}
 - list_documents: {"query"?: string, "tags"?: string[], "page"?: int}
 - get_toc: {"document_id": int}
 - read_section: {"section_id": int, "max_tokens"?: int}
 - get_neighbors: {"chunk_id": int, "before"?: int, "after"?: int}
+
+停止规则：
+- 一旦已有 observations 中的证据足以回答 question，或连续检索未带来新证据时，必须立即输出 {"action":"final"}。
+- 不要重复调用完全相同的工具和参数。
 
 只输出一个 JSON 对象，不要任何解释文字：
 调用工具时：{"action":"tool","tool":"<工具名>","args":{...}}
@@ -39,10 +44,12 @@ type agentPlan struct {
 }
 
 type agentObservation struct {
-	Step   int    `json:"step"`
-	Tool   string `json:"tool"`
-	Result any    `json:"result,omitempty"`
-	Error  string `json:"error,omitempty"`
+	Step             int    `json:"step"`
+	Tool             string `json:"tool"`
+	NewEvidenceCount int    `json:"new_evidence_count"`
+	TotalEvidence    int    `json:"total_evidence_count"`
+	Result           any    `json:"result,omitempty"`
+	Error            string `json:"error,omitempty"`
 }
 
 func (s *Service) effectiveAgentLimits() AgentLimits {
@@ -96,6 +103,8 @@ func (s *Service) streamAgentic(ctx context.Context, actor retrieval.Actor, requ
 		observations   []agentObservation
 		evidence       []AnswerEvidence
 		seenEvidence   = map[string]struct{}{}
+		calledTools    = map[string]struct{}{}
+		emptyNewSteps  int
 		evidenceTokens int
 		truncated      bool
 		degradedSet    = map[string]struct{}{}
@@ -131,6 +140,11 @@ func (s *Service) streamAgentic(ctx context.Context, actor retrieval.Actor, requ
 		if !ok || plan.Action != "tool" || plan.Tool == "" {
 			break
 		}
+		callKey := normalizeToolCallKey(plan.Tool, plan.Args)
+		if _, dup := calledTools[callKey]; dup {
+			break
+		}
+		calledTools[callKey] = struct{}{}
 
 		res, count, newEv, newCands, addedTokens, degraded, revOut, toolErr := s.runAgentTool(
 			ctx, actor, allowedKBs, request.KnowledgeBaseID, plan.Tool, plan.Args, seenEvidence, len(evidence),
@@ -145,7 +159,12 @@ func (s *Service) streamAgentic(ctx context.Context, actor retrieval.Actor, requ
 		evidence = append(evidence, newEv...)
 		evidenceTokens += addedTokens
 
-		obs := agentObservation{Step: step, Tool: plan.Tool}
+		obs := agentObservation{
+			Step:             step,
+			Tool:             plan.Tool,
+			NewEvidenceCount: len(newEv),
+			TotalEvidence:    len(evidence),
+		}
 		if toolErr != nil {
 			obs.Error = toolErr.Error()
 		} else {
@@ -160,6 +179,15 @@ func (s *Service) streamAgentic(ctx context.Context, actor retrieval.Actor, requ
 			ResultCount: count,
 		}}); err != nil {
 			return err
+		}
+
+		if toolErr == nil && len(newEv) == 0 {
+			emptyNewSteps++
+			if (len(evidence) > 0 && emptyNewSteps >= 1) || emptyNewSteps >= 2 {
+				break
+			}
+		} else {
+			emptyNewSteps = 0
 		}
 
 		if evidenceTokens >= limits.MaxEvidenceTokens || time.Since(started) >= limits.MaxDuration || step == limits.MaxSteps {
@@ -315,11 +343,60 @@ func (s *Service) runAgentTool(
 					SectionID:   cand.SectionID,
 					HeadingPath: cand.HeadingPath,
 					Pages:       pages,
+					TrustTier:   cand.TrustTier,
 				})
 				t, _ := s.CountTokens(ctx, cand.Content)
 				tokens += t
 			}
 			return map[string]any{"count": len(found.Candidates)}, len(found.Candidates), newEv, newCands, tokens, degraded, rev, nil
+		}
+		if toolName == "exact_match" {
+			type exactSearcher interface {
+				ExactMatch(context.Context, retrieval.Actor, int64, string, bool, int) ([]retrieval.Candidate, error)
+			}
+			es, ok := s.Search.(exactSearcher)
+			if !ok {
+				return nil, 0, nil, nil, 0, nil, 0, fmt.Errorf("agent tools unavailable for %q", toolName)
+			}
+			var args struct {
+				Pattern  string `json:"pattern"`
+				UseRegex bool   `json:"use_regex"`
+				Limit    int    `json:"limit"`
+			}
+			_ = json.Unmarshal(rawArgs, &args)
+			cands, matchErr := es.ExactMatch(ctx, actor, kbID, args.Pattern, args.UseRegex, args.Limit)
+			if matchErr != nil {
+				return nil, 0, nil, nil, 0, nil, 0, matchErr
+			}
+			for _, cand := range cands {
+				evID := fmt.Sprintf("c_%d", cand.ChunkID)
+				if _, exists := seen[evID]; exists {
+					continue
+				}
+				seen[evID] = struct{}{}
+				n := startIdx + len(newEv) + 1
+				var pages []int32
+				if cand.PageStart != nil && cand.PageEnd != nil {
+					pages = []int32{*cand.PageStart, *cand.PageEnd}
+				}
+				newCands = append(newCands, cand)
+				newEv = append(newEv, AnswerEvidence{
+					N:           n,
+					ID:          evID,
+					ChunkIDs:    []int64{cand.ChunkID},
+					Content:     cand.Content,
+					DocumentID:  cand.DocumentID,
+					VersionID:   cand.VersionID,
+					Title:       cand.Title,
+					SectionID:   cand.SectionID,
+					HeadingPath: cand.HeadingPath,
+					Pages:       pages,
+					TrustTier:   cand.TrustTier,
+				})
+				t, _ := s.CountTokens(ctx, cand.Content)
+				tokens += t
+			}
+			return map[string]any{"count": len(cands)}, len(cands), newEv, newCands, tokens, nil, 0, nil
 		}
 		return nil, 0, nil, nil, 0, nil, 0, fmt.Errorf("agent tools unavailable for %q", toolName)
 	}
@@ -332,7 +409,7 @@ func (s *Service) runAgentTool(
 
 	rawJSON, _ := json.Marshal(res)
 	switch toolName {
-	case "search":
+	case "search", "exact_match":
 		var parsed struct {
 			Evidence []struct {
 				ID          string   `json:"id"`
@@ -490,7 +567,7 @@ func normalizeAgentToolArgs(toolName string, kbID int64, raw json.RawMessage) js
 		_ = json.Unmarshal(raw, &args)
 	}
 	switch toolName {
-	case "search":
+	case "search", "exact_match":
 		args["kb_ids"] = []int64{kbID}
 	case "list_documents":
 		args["kb_id"] = kbID
@@ -530,4 +607,14 @@ func summarizeToolArgs(raw json.RawMessage) string {
 		return string(runes[:117]) + "..."
 	}
 	return trimmed
+}
+
+func normalizeToolCallKey(tool string, raw json.RawMessage) string {
+	var parsed any
+	if len(raw) > 0 && json.Unmarshal(raw, &parsed) == nil {
+		if canonical, err := json.Marshal(parsed); err == nil {
+			return tool + ":" + string(canonical)
+		}
+	}
+	return tool + ":" + strings.TrimSpace(string(raw))
 }

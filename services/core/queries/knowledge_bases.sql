@@ -85,3 +85,14 @@ UPDATE knowledge_base
 SET egress_policy = sqlc.arg(egress_policy)
 WHERE tenant_id = sqlc.arg(tenant_id) AND id = sqlc.arg(kb_id) AND status = 'active'
 RETURNING id, tenant_id, name, embedding_space_id, config_revision, egress_policy, status, created_at;
+
+-- name: SetKnowledgeBaseTrustTier :execrows
+UPDATE knowledge_base
+SET trust_tier = sqlc.arg(trust_tier)
+WHERE tenant_id = sqlc.arg(tenant_id) AND id = sqlc.arg(kb_id) AND status = 'active';
+
+-- name: GetKnowledgeBaseTrustTier :one
+SELECT k.trust_tier
+FROM knowledge_base k
+JOIN kb_membership m ON m.tenant_id = k.tenant_id AND m.kb_id = k.id
+WHERE k.tenant_id = sqlc.arg(tenant_id) AND k.id = sqlc.arg(kb_id) AND m.user_id = sqlc.arg(user_id);

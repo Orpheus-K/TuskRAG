@@ -135,6 +135,13 @@ func NewServiceWithMode(ctx context.Context, pool *pgxpool.Pool, vault *secrets.
 }
 
 // Search rechecks all evidence after model calls, including debug candidates.
+func (s *Service) ExactMatch(ctx context.Context, actor Actor, kbID int64, pattern string, useRegex bool, limit int) ([]Candidate, error) {
+	if s == nil || s.driver == nil {
+		return nil, errors.New("retrieval service unavailable")
+	}
+	return s.driver.ExactMatch(ctx, actor, kbID, pattern, useRegex, limit)
+}
+
 func (s *Service) Search(ctx context.Context, actor Actor, request Request) (Result, error) {
 	if s == nil || s.driver == nil || s.pool == nil || s.catalog == nil || s.count == nil || ctx == nil ||
 		actor.TenantID <= 0 || actor.UserID <= 0 || request.KnowledgeBaseID <= 0 || request.Limit < 0 || request.Limit > 30 {

@@ -220,6 +220,44 @@ func registerGovernanceACL(protected *huma.Group, deps Dependencies) {
 		}
 		return &struct{ Body DocumentACLBody }{Body: documentACLBody(acl)}, nil
 	})
+
+	type TrustTierService interface {
+		SetKnowledgeBaseTrustTier(context.Context, kb.Actor, int64, string) error
+		SetDocumentTrustTier(context.Context, kb.Actor, int64, int64, string) error
+	}
+	huma.Put(protected, "/kbs/{kb}/trust-tier", func(ctx context.Context, input *struct {
+		ID   int64  `path:"kb" minimum:"1"`
+		CSRF string `header:"X-CSRF-Token" required:"true"`
+		Body struct {
+			TrustTier string `json:"trust_tier" enum:"trusted,standard,untrusted"`
+		}
+	}) (*struct{}, error) {
+		tt, ok := deps.Knowledge.(TrustTierService)
+		if !ok || tt == nil {
+			return nil, statusError(ctx, http.StatusServiceUnavailable, "dependency_unavailable", "trust tier service unavailable", true)
+		}
+		if err := tt.SetKnowledgeBaseTrustTier(ctx, currentActor(ctx), input.ID, input.Body.TrustTier); err != nil {
+			return nil, knowledgeError(ctx, "set kb trust tier", err)
+		}
+		return &struct{}{}, nil
+	})
+	huma.Put(protected, "/kbs/{kb}/documents/{doc}/trust-tier", func(ctx context.Context, input *struct {
+		ID         int64  `path:"kb" minimum:"1"`
+		DocumentID int64  `path:"doc" minimum:"1"`
+		CSRF       string `header:"X-CSRF-Token" required:"true"`
+		Body       struct {
+			TrustTier string `json:"trust_tier" enum:",trusted,standard,untrusted"`
+		}
+	}) (*struct{}, error) {
+		tt, ok := deps.Knowledge.(TrustTierService)
+		if !ok || tt == nil {
+			return nil, statusError(ctx, http.StatusServiceUnavailable, "dependency_unavailable", "trust tier service unavailable", true)
+		}
+		if err := tt.SetDocumentTrustTier(ctx, currentActor(ctx), input.ID, input.DocumentID, input.Body.TrustTier); err != nil {
+			return nil, knowledgeError(ctx, "set document trust tier", err)
+		}
+		return &struct{}{}, nil
+	})
 }
 
 func documentACLBody(acl kb.DocumentACL) DocumentACLBody {

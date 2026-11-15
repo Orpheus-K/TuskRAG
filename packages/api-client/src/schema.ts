@@ -617,6 +617,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/kbs/{kb}/answer-eval-reports/{digest}/acceptance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 kbs by kb answer eval reports by digest acceptance */
+        get: operations["get-api-v1-kbs-by-kb-answer-eval-reports-by-digest-acceptance"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/kbs/{kb}/config": {
         parameters: {
             query?: never;
@@ -694,6 +711,23 @@ export interface paths {
         /** Get API v1 kbs by kb documents by doc ACL */
         get: operations["get-api-v1-kbs-by-kb-documents-by-doc-acl"];
         put: operations["set-document-acl"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kbs/{kb}/documents/{doc}/trust-tier": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Put API v1 kbs by kb documents by doc trust tier */
+        put: operations["put-api-v1-kbs-by-kb-documents-by-doc-trust-tier"];
         post?: never;
         delete?: never;
         options?: never;
@@ -902,6 +936,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/kbs/{kb}/eval-sets/{set}/from-feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post API v1 kbs by kb eval sets by set from feedback */
+        post: operations["post-api-v1-kbs-by-kb-eval-sets-by-set-from-feedback"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kbs/{kb}/feedback-candidates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API v1 kbs by kb feedback candidates */
+        get: operations["get-api-v1-kbs-by-kb-feedback-candidates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/kbs/{kb}/members": {
         parameters: {
             query?: never;
@@ -994,6 +1062,23 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["cancel-rebuild"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/kbs/{kb}/trust-tier": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Put API v1 kbs by kb trust tier */
+        put: operations["put-api-v1-kbs-by-kb-trust-tier"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1140,6 +1225,7 @@ export interface components {
             /** Format: int64 */
             section_id: number;
             title: string;
+            trust_tier?: string;
             /** Format: int64 */
             version_id: number;
         };
@@ -1238,8 +1324,12 @@ export interface components {
             answerable: boolean;
             /** Format: int64 */
             citation_count: number;
+            /** Format: int64 */
+            completion_tokens?: number;
             degraded: string[] | null;
             deterministic_pass: boolean | null;
+            /** Format: double */
+            estimated_cost_usd?: number;
             evidence_chunk_counts: number[] | null;
             evidence_documents: number[] | null;
             evidence_hit: boolean | null;
@@ -1252,10 +1342,14 @@ export interface components {
             /** Format: int64 */
             judge_unsupported?: number;
             outcome: string;
+            /** Format: int64 */
+            prompt_tokens?: number;
             source_integrity: boolean;
             timings_ms: {
                 [key: string]: number;
             };
+            /** Format: int64 */
+            total_tokens?: number;
             valid_citation: boolean;
         };
         AnswerRowComparison: {
@@ -1279,15 +1373,23 @@ export interface components {
         AnswerSummary: {
             /** Format: int64 */
             answerable_cases: number;
+            /** Format: double */
+            avg_cost_per_question_usd?: number;
+            /** Format: double */
+            avg_tokens_per_question?: number;
             /** Format: int64 */
             cases: number;
             /** Format: int64 */
             deterministic_cases: number;
+            /** Format: double */
+            estimated_cost_usd?: number;
             /** Format: int64 */
             judged_claims: number;
             metrics: components["schemas"]["AnswerMetrics"];
             /** Format: int64 */
             supported_claims: number;
+            /** Format: int64 */
+            total_tokens?: number;
             /** Format: int64 */
             unanswerable_cases: number;
         };
@@ -1345,6 +1447,7 @@ export interface components {
             /** Format: int64 */
             SemanticRank: number;
             Title: string;
+            TrustTier?: string;
             /** Format: int64 */
             VersionID: number;
         };
@@ -1580,6 +1683,18 @@ export interface components {
              */
             rating: -1 | 1;
         };
+        FeedbackCandidate: {
+            answer: string;
+            /** Format: int64 */
+            conversation_id: number;
+            correction: string;
+            document_ids: number[] | null;
+            message_id: string;
+            outcome: string;
+            question: string;
+            /** Format: date-time */
+            updated_at: string;
+        };
         Filters: {
             DocumentTags: string[] | null;
             MIMEs: string[] | null;
@@ -1614,6 +1729,12 @@ export interface components {
         };
         "Get-groupsResponse": {
             items: components["schemas"]["UserGroupBody"][];
+        };
+        "Get-kbs-by-kb-answer-eval-reports-by-digest-acceptanceResponse": {
+            markdown: string;
+        };
+        "Get-kbs-by-kb-feedback-candidatesResponse": {
+            items: components["schemas"]["FeedbackCandidate"][] | null;
         };
         "Get-kbs-by-kb-membersResponse": {
             items: components["schemas"]["KnowledgeBaseMemberBody"][];
@@ -1765,6 +1886,12 @@ export interface components {
             rerank?: boolean;
             reranker?: components["schemas"]["RerankOptions"];
         };
+        PromoteFeedbackRequest: {
+            answerable: boolean;
+            expected_doc_ids?: number[] | null;
+            message_id: string;
+            reference_answer?: string;
+        };
         ProviderConnectivityBody: {
             /** Format: int64 */
             latency_ms: number;
@@ -1806,6 +1933,14 @@ export interface components {
             items: components["schemas"]["PurgeJobBody"][] | null;
             /** Format: int64 */
             next_cursor: number | null;
+        };
+        "Put-kbs-by-kb-documents-by-doc-trust-tierRequest": {
+            /** @enum {string} */
+            trust_tier: "" | "trusted" | "standard" | "untrusted";
+        };
+        "Put-kbs-by-kb-trust-tierRequest": {
+            /** @enum {string} */
+            trust_tier: "trusted" | "standard" | "untrusted";
         };
         PutKnowledgeConfigInputBody: {
             retrieval: components["schemas"]["RetrievalConfig"];
@@ -1870,7 +2005,7 @@ export interface components {
             /** Format: int64 */
             kb_id: number;
             /** @enum {string} */
-            mode?: "standard" | "agentic";
+            mode?: "standard" | "agentic" | "auto";
             /** Format: int64 */
             model_id: number;
             question: string;
@@ -3946,6 +4081,38 @@ export interface operations {
             };
         };
     };
+    "get-api-v1-kbs-by-kb-answer-eval-reports-by-digest-acceptance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                kb: number;
+                digest: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Get-kbs-by-kb-answer-eval-reports-by-digest-acceptanceResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
     "get-api-v1-kbs-by-kb-config": {
         parameters: {
             query?: never;
@@ -4220,6 +4387,42 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["DocumentACLBody"];
                 };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "put-api-v1-kbs-by-kb-documents-by-doc-trust-tier": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+            };
+            path: {
+                kb: number;
+                doc: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Put-kbs-by-kb-documents-by-doc-trust-tierRequest"];
+            };
+        };
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Error */
             default: {
@@ -4814,6 +5017,78 @@ export interface operations {
             };
         };
     };
+    "post-api-v1-kbs-by-kb-eval-sets-by-set-from-feedback": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+            };
+            path: {
+                kb: number;
+                set: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PromoteFeedbackRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    ETag?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StoredSet"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "get-api-v1-kbs-by-kb-feedback-candidates": {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                kb: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Get-kbs-by-kb-feedback-candidatesResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
     "get-api-v1-kbs-by-kb-members": {
         parameters: {
             query?: never;
@@ -5039,6 +5314,41 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["CancelRebuildOutputBody"];
                 };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "put-api-v1-kbs-by-kb-trust-tier": {
+        parameters: {
+            query?: never;
+            header: {
+                "X-CSRF-Token": string;
+            };
+            path: {
+                kb: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Put-kbs-by-kb-trust-tierRequest"];
+            };
+        };
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Error */
             default: {

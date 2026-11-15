@@ -100,3 +100,14 @@ WHERE m.tenant_id = g.tenant_id
   AND m.user_id = sqlc.arg(user_id)
   AND g.source = 'oidc'
   AND NOT (g.id = ANY(sqlc.arg(keep_group_ids)::bigint[]));
+
+-- name: ResolveOIDCProviderTenantByIssuer :one
+SELECT COALESCE(resolve_oidc_provider_tenant_by_issuer(sqlc.arg(issuer)::text, sqlc.narg(tenant_id)::bigint), 0)::bigint AS tenant_id;
+
+-- name: GetEnabledOIDCProviderByIssuer :one
+SELECT id, tenant_id, name, issuer_url, client_id, scopes, group_claim, enabled, created_at
+FROM oidc_provider
+WHERE tenant_id = sqlc.arg(tenant_id) AND enabled = true AND rtrim(issuer_url, '/') = rtrim(sqlc.arg(issuer)::text, '/');
+
+-- name: ListPublicOIDCIssuers :one
+SELECT list_public_oidc_issuers(sqlc.narg(tenant_id)::bigint)::text[] AS issuers;

@@ -171,6 +171,40 @@
         ],
         "type": "object"
       }
+    },
+    {
+      "name": "exact_match",
+      "description": "Exact substring or regex search across authorized chunks for clause numbers, IDs, or error codes.",
+      "inputSchema": {
+        "properties": {
+          "kb_ids": {
+            "items": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "default": 10,
+            "maximum": 30,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "pattern": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "use_regex": {
+            "default": false,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "pattern"
+        ],
+        "type": "object"
+      }
     }
   ]
 }

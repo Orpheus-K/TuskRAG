@@ -69,6 +69,8 @@ type AnswerRunConfig struct {
 	ModelKind           string             `json:"model_kind"`
 	ParentBacktrack     *bool              `json:"parent_backtrack,omitempty"`
 	ContextBudgetTokens int                `json:"context_budget_tokens,omitempty"`
+	InputPricePer1MUSD  float64            `json:"input_price_per_1m_usd,omitempty"`
+	OutputPricePer1MUSD float64            `json:"output_price_per_1m_usd,omitempty"`
 	Judge               *AnswerJudgeConfig `json:"judge,omitempty"`
 }
 
@@ -93,6 +95,10 @@ type AnswerRow struct {
 	InvalidCitations    int                `json:"invalid_citations"`
 	JudgeClaims         *int               `json:"judge_claims,omitempty"`
 	JudgeUnsupported    *int               `json:"judge_unsupported,omitempty"`
+	PromptTokens        int                `json:"prompt_tokens,omitempty"`
+	CompletionTokens    int                `json:"completion_tokens,omitempty"`
+	TotalTokens         int                `json:"total_tokens,omitempty"`
+	EstimatedCostUSD    float64            `json:"estimated_cost_usd,omitempty"`
 	TimingsMS           map[string]float64 `json:"timings_ms"`
 }
 
@@ -108,13 +114,17 @@ type AnswerMetrics struct {
 }
 
 type AnswerSummary struct {
-	Cases              int           `json:"cases"`
-	AnswerableCases    int           `json:"answerable_cases"`
-	UnanswerableCases  int           `json:"unanswerable_cases"`
-	DeterministicCases int           `json:"deterministic_cases"`
-	JudgedClaims       int           `json:"judged_claims"`
-	SupportedClaims    int           `json:"supported_claims"`
-	Metrics            AnswerMetrics `json:"metrics"`
+	Cases                 int           `json:"cases"`
+	AnswerableCases       int           `json:"answerable_cases"`
+	UnanswerableCases     int           `json:"unanswerable_cases"`
+	DeterministicCases    int           `json:"deterministic_cases"`
+	JudgedClaims          int           `json:"judged_claims"`
+	SupportedClaims       int           `json:"supported_claims"`
+	TotalTokens           int           `json:"total_tokens,omitempty"`
+	AvgTokensPerQuestion  float64       `json:"avg_tokens_per_question,omitempty"`
+	EstimatedCostUSD      float64       `json:"estimated_cost_usd,omitempty"`
+	AvgCostPerQuestionUSD float64       `json:"avg_cost_per_question_usd,omitempty"`
+	Metrics               AnswerMetrics `json:"metrics"`
 }
 
 type AnswerReport struct {
@@ -395,6 +405,17 @@ func RunAnswer(ctx context.Context, streamer AnswerStreamer, judge CitationJudge
 			degraded = []string{}
 		}
 
+		var promptTokens, completionTokens, totalTokens int
+		if done.Usage != nil {
+			promptTokens = done.Usage.PromptTokens
+			completionTokens = done.Usage.CompletionTokens
+			totalTokens = done.Usage.TotalTokens
+		}
+		var estCost float64
+		if config.InputPricePer1MUSD > 0 || config.OutputPricePer1MUSD > 0 {
+			estCost = (float64(promptTokens)*config.InputPricePer1MUSD + float64(completionTokens)*config.OutputPricePer1MUSD) / 1_000_000.0
+		}
+
 		report.Rows = append(report.Rows, AnswerRow{
 			ID:                  q.ID,
 			Answerable:          q.Answerable,
@@ -411,6 +432,10 @@ func RunAnswer(ctx context.Context, streamer AnswerStreamer, judge CitationJudge
 			InvalidCitations:    citations.InvalidCount,
 			JudgeClaims:         judgeClaims,
 			JudgeUnsupported:    judgeUnsupported,
+			PromptTokens:        promptTokens,
+			CompletionTokens:    completionTokens,
+			TotalTokens:         totalTokens,
+			EstimatedCostUSD:    estCost,
 			TimingsMS:           timings,
 		})
 	}
@@ -504,6 +529,14 @@ func summarizeAnswerRows(rows []AnswerRow, judged bool) (AnswerSummary, error) {
 			s.JudgedClaims += *row.JudgeClaims
 			s.SupportedClaims += *row.JudgeClaims - *row.JudgeUnsupported
 		}
+		s.TotalTokens += row.TotalTokens
+		s.EstimatedCostUSD += row.EstimatedCostUSD
+	}
+	if s.Cases > 0 && s.TotalTokens > 0 {
+		s.AvgTokensPerQuestion = float64(s.TotalTokens) / float64(s.Cases)
+	}
+	if s.Cases > 0 && s.EstimatedCostUSD > 0 {
+		s.AvgCostPerQuestionUSD = s.EstimatedCostUSD / float64(s.Cases)
 	}
 
 	s.Metrics.ValidCitationRate = float64(validCitations) / float64(s.Cases)

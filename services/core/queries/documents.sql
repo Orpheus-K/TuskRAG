@@ -197,3 +197,31 @@ FROM document_version v
 WHERE v.tenant_id = sqlc.arg(tenant_id) AND v.kb_id = sqlc.arg(kb_id)
   AND v.document_id = sqlc.arg(document_id) AND v.id = sqlc.arg(version_id)
 FOR UPDATE OF v;
+
+-- name: SetDocumentTrustTier :execrows
+UPDATE document
+SET trust_tier = sqlc.narg(trust_tier)::text
+WHERE tenant_id = sqlc.arg(tenant_id) AND kb_id = sqlc.arg(kb_id) AND id = sqlc.arg(document_id) AND deleted_at IS NULL;
+
+-- name: SaveDocumentVersionInjectionFindings :exec
+UPDATE document_version
+SET injection_findings = sqlc.arg(findings)::jsonb
+WHERE tenant_id = sqlc.arg(tenant_id) AND kb_id = sqlc.arg(kb_id)
+  AND document_id = sqlc.arg(document_id) AND id = sqlc.arg(version_id);
+
+-- name: ListKBChunksForEvalGeneration :many
+SELECT c.id, c.document_id, c.section_id, c.content, d.title, s.heading_path
+FROM chunk c
+JOIN knowledge_base k ON k.tenant_id = c.tenant_id AND k.id = c.kb_id
+JOIN document d ON d.tenant_id = c.tenant_id AND d.kb_id = c.kb_id AND d.id = c.document_id
+JOIN document_version dv ON dv.tenant_id = c.tenant_id AND dv.kb_id = c.kb_id
+  AND dv.document_id = c.document_id AND dv.id = c.version_id
+JOIN section s ON s.tenant_id = c.tenant_id AND s.kb_id = c.kb_id
+  AND s.document_id = c.document_id AND s.version_id = c.version_id AND s.id = c.section_id
+WHERE c.tenant_id = sqlc.arg(tenant_id) AND c.kb_id = sqlc.arg(kb_id)
+  AND k.status = 'active' AND d.deleted_at IS NULL
+  AND d.current_version_id = c.version_id AND dv.status IN ('ready', 'partial')
+  AND c.is_current AND NOT c.disabled
+  AND c.token_count >= 20
+ORDER BY c.id DESC
+LIMIT sqlc.arg(limit_count);
