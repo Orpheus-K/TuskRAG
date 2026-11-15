@@ -154,6 +154,15 @@ def read_bookmarks(
     return result
 
 
+def _is_link_annotation(annot: dict[str, Any]) -> bool:
+    """Allow harmless hyperlink annotations (/Link) while keeping other annotations blocked."""
+    subtype = annot.get("data", {}).get("Subtype")
+    name = getattr(subtype, "name", None)
+    if isinstance(name, str):
+        return name == "Link"
+    return str(subtype).lstrip("/'") == "Link"
+
+
 def read_page(page: Any, native_page: Any, limits: Limits) -> Page:
     width, height = float(page.width), float(page.height)
     if (
@@ -170,7 +179,7 @@ def read_page(page: Any, native_page: Any, limits: Limits) -> Page:
     chars = page.chars
     if len(chars) > MAX_PAGE_CHARS:
         raise LimitExceeded
-    if page.annots:
+    if any(not _is_link_annotation(annot) for annot in (page.annots or ())):
         raise UnsupportedDocument
     tables = read_tables(page, limits)
     boxes = [table.box for table in tables]

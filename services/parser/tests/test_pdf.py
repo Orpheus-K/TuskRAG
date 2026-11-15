@@ -8,12 +8,14 @@ import pytest
 from jsonschema import Draft202012Validator, FormatChecker
 
 from tuskrag_parser import SCHEMA_VERSION, __version__
+from tuskrag_parser.limits import UnsupportedDocument, parse_limits
 from tuskrag_parser.pdf_parser import (
     PDF_DRIVER,
     Line,
     Page,
     assign_headings,
     image_coverage,
+    read_page,
 )
 
 FIXTURES = Path(__file__).parent / "fixtures" / "pdf"
@@ -172,3 +174,53 @@ def test_headings_without_bookmarks_follow_font_sizes() -> None:
     assign_headings([page], [])
     assert page.lines[0].heading_level == 1
     assert page.lines[1].heading_level is None
+
+
+class _FakePDFPage:
+    width = 595.0
+    height = 842.0
+    rotation = 0
+    bbox = (0, 0, 595.0, 842.0)
+    chars: list[dict[str, Any]] = []
+    images: list[dict[str, Any]] = []
+    objects: dict[str, list[dict[str, Any]]] = {}
+    rects: list[dict[str, Any]] = []
+    curves: list[dict[str, Any]] = []
+    lines: list[dict[str, Any]] = []
+    edges: list[dict[str, Any]] = []
+
+    def __init__(self, annots: list[dict[str, Any]]) -> None:
+        self.annots = annots
+
+    def find_tables(self, *args: Any, **kwargs: Any) -> list[Any]:
+        return []
+
+    def filter(self, *args: Any, **kwargs: Any) -> "_FakePDFPage":
+        return self
+
+    def extract_text_lines(self, *args: Any, **kwargs: Any) -> list[Any]:
+        return []
+
+
+class _FakeTextPage:
+    def get_text_bounded(self) -> str:
+        return ""
+
+    def close(self) -> None:
+        pass
+
+
+class _FakeNativePage:
+    def get_textpage(self) -> _FakeTextPage:
+        return _FakeTextPage()
+
+
+def test_read_page_allows_link_annotations_and_rejects_others() -> None:
+    limits = parse_limits("{}")
+    link_page = _FakePDFPage([{"data": {"Subtype": "/Link"}}])
+    extracted = read_page(link_page, _FakeNativePage(), limits)
+    assert extracted.lines == []
+
+    widget_page = _FakePDFPage([{"data": {"Subtype": "/Widget"}}])
+    with pytest.raises(UnsupportedDocument):
+        read_page(widget_page, _FakeNativePage(), limits)
