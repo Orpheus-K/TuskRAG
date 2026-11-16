@@ -174,3 +174,23 @@ def test_render_pdf_pages_and_spec(tmp_path: Path) -> None:
     assert len(rendered) == 2
     assert (tmp_path / "imgs" / "page-1.png").is_file()
     assert (tmp_path / "imgs" / "page-2.png").is_file()
+
+
+def test_xberg_html_keeps_chinese_div_text_between_heading_and_table(
+    tmp_path: Path,
+) -> None:
+    source = tmp_path / "sample.html"
+    source.write_text(
+        "<h1>差旅标准</h1><div>上海住宿上限 600 元。</div>"
+        "<table><tr><td>北京</td><td>700</td></tr></table>",
+        encoding="utf-8",
+    )
+    parse_html(source, tmp_path, Limits())
+    doc = json.loads((tmp_path / "parsed.json").read_text(encoding="utf-8"))
+    VALIDATOR.validate(doc)
+    blocks = doc["pages"][0]["blocks"]
+    assert blocks == [
+        {"type": "heading", "level": 1, "text": "差旅标准"},
+        {"type": "paragraph", "text": "上海住宿上限 600 元。"},
+        {"type": "table", "cells": [["北京", "700"]]},
+    ]

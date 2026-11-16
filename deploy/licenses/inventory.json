@@ -3,7 +3,7 @@
   "lockfiles": {
     "services/core/go.mod": "38bc19c51bbc088ea620f2c5b926310066ad843f82aafe06d516ceabdded289b",
     "services/core/go.sum": "3e79b195b0c7881641dff7e6b761bbf552c58cead0ac9502b2f37bee4203a750",
-    "services/parser/uv.lock": "3feb31fac6481a200a2e316ae16a0a451be9574d591622ba869648cfb0d9fab4",
+    "services/parser/uv.lock": "479f00cad91df5443fcdfdea1babdb3673d7f77121352aec7b81bd0b5322fa95",
     "pnpm-lock.yaml": "df303931304ae42c6c4fdd8c1c262c60e3e9613f8d303d069ded76e7c717edb3"
   },
   "parserDistributions": [
@@ -289,7 +289,7 @@
       "licenseExpression": null,
       "license": null,
       "classifiers": [],
-      "metadataSHA256": "1b522cbf23e0da3a9dbc9a72c3aac7eebe56952d0c1bd5150c637b5fd0f8d091"
+      "metadataSHA256": "0f3130a609064f99a5941eaa7f831e672a6720bbc35ebc9357facd2d1e2b6f9d"
     },
     {
       "name": "types-defusedxml",
@@ -330,6 +330,14 @@
       "license": null,
       "classifiers": [],
       "metadataSHA256": "b05084ca1d50879865178d9fff9fabeab61bdfb1f361bfbde95421ffc8f9be46"
+    },
+    {
+      "name": "xberg",
+      "version": "1.3.8",
+      "licenseExpression": "MIT",
+      "license": null,
+      "classifiers": [],
+      "metadataSHA256": "56c8fd1ae03b8f4a59ef0ea3268a8c106f79750ee84399b93b0f4ff1c224a8eb"
     }
   ],
   "licenseTexts": [
@@ -572,6 +580,18 @@
     {
       "path": "deploy/licenses/parser/typing-extensions-4.16.0.txt",
       "sha256": "3b2f81fe21d181c499c59a256c8e1968455d6689d269aa85373bfb6af41da3bf"
+    },
+    {
+      "path": "deploy/licenses/parser/xberg-1.3.8.txt",
+      "sha256": "2df0cbac46062748fa0f582c5717df32d66607de4d37af1473ce785c31b60b54"
+    },
+    {
+      "path": "deploy/licenses/postgres-runtime-copyright-sha256.txt",
+      "sha256": "9544795836498aa61fded278d8e7d93b064ee5a5fceeadb5f91a4fade702b202"
+    },
+    {
+      "path": "deploy/licenses/postgres-runtime-debian.tsv",
+      "sha256": "c7a025404444a04099b651cd63e5f5dde0c3dce70a93f7c52730f2215db98278"
     },
     {
       "path": "deploy/licenses/tokenizer/go-sentencepiece-1.1.0.txt",
