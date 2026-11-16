@@ -181,15 +181,15 @@ class _FakePDFPage:
     height = 842.0
     rotation = 0
     bbox = (0, 0, 595.0, 842.0)
-    chars: list[dict[str, Any]] = []
-    images: list[dict[str, Any]] = []
-    objects: dict[str, list[dict[str, Any]]] = {}
-    rects: list[dict[str, Any]] = []
-    curves: list[dict[str, Any]] = []
-    lines: list[dict[str, Any]] = []
-    edges: list[dict[str, Any]] = []
 
     def __init__(self, annots: list[dict[str, Any]]) -> None:
+        self.chars: list[dict[str, Any]] = []
+        self.images: list[dict[str, Any]] = []
+        self.objects: dict[str, list[dict[str, Any]]] = {}
+        self.rects: list[dict[str, Any]] = []
+        self.curves: list[dict[str, Any]] = []
+        self.lines: list[dict[str, Any]] = []
+        self.edges: list[dict[str, Any]] = []
         self.annots = annots
 
     def find_tables(self, *args: Any, **kwargs: Any) -> list[Any]:
